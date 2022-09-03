@@ -11,6 +11,8 @@ namespace CompasPac.BL
     {
         public static async Task<string> DisableRealtimeMonitoring()
         {
+            if (!WinInfo.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
+                return "This Command work onli Windows 10";
             var procinfo = new ProcessStartInfo()
             {
                 UseShellExecute = false,
@@ -26,6 +28,8 @@ namespace CompasPac.BL
         
         public static async Task<string> EnableRealtimeMonitoring()
         {
+            if (!WinInfo.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
+                return "This Command work onli Windows 10";
             var procinfo = new ProcessStartInfo()
             {
                 UseShellExecute = false,
@@ -40,6 +44,8 @@ namespace CompasPac.BL
         }
         public static async Task<bool> CheckDefenderDisable()
         {
+            if (!WinInfo.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
+                return false;
             Process proc = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -58,7 +64,6 @@ namespace CompasPac.BL
             while (!proc.StandardOutput.EndOfStream)
             {
                 string line = await proc.StandardOutput.ReadLineAsync();
-
                 if (line.StartsWith(@"DisableRealtimeMonitoring") && line.EndsWith("False"))
                     return false;
             }
