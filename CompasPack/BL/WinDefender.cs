@@ -9,25 +9,34 @@ namespace CompasPac.BL
 {
     public static class WinDefender
     {
-
         public static async Task<string> DisableRealtimeMonitoring()
         {
-            var proc = new ProcessStartInfo()
+            var procinfo = new ProcessStartInfo()
             {
                 UseShellExecute = false,
                 WindowStyle = ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = false,
+                RedirectStandardOutput = true,
                 FileName = "powershell.exe",
                 Arguments = "Set-MpPreference -DisableRealtimeMonitoring $true",
                 CreateNoWindow = true
             };
-            Process.Start(proc)
-                .WaitForExit();
-
-            if(await CheckDefenderDisable())
-              return "Set-MpPreference -DisableRealtimeMonitoring $true: OK!!!\n";
-            else
-              return "Set-MpPreference -DisableRealtimeMonitoring $false: OK!!!\n";
+            var proc =  Process.Start(procinfo);
+            return await proc.StandardOutput.ReadToEndAsync();
+        }
+        
+        public static async Task<string> EnableRealtimeMonitoring()
+        {
+            var procinfo = new ProcessStartInfo()
+            {
+                UseShellExecute = false,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                FileName = "powershell.exe",
+                Arguments = "Set-MpPreference -DisableRealtimeMonitoring $false",
+                CreateNoWindow = true
+            };
+            var proc = Process.Start(procinfo);
+            return await proc.StandardOutput.ReadToEndAsync();
         }
         public static async Task<bool> CheckDefenderDisable()
         {

@@ -71,7 +71,7 @@ namespace CompasPac.BL
                     else
                     {
                         if (userProgram.DisableDefender)
-                            stringBuilder.Append(await WinDefender.DisableRealtimeMonitoring());
+                            await WinDefender.DisableRealtimeMonitoring();
 
                         Process proc = Process.Start(StartInfo);
                         await proc.WaitForExitAsync();

