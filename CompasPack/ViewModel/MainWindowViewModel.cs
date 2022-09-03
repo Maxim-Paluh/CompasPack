@@ -46,6 +46,7 @@ namespace CompasPac.ViewModel
             SelectUserPresetCommand = new DelegateCommand(OnSelectUserPreset);
             InstallCommand = new DelegateCommand(OnInstall);
             OnlyFreeCommand = new DelegateCommand(OnOnlyFree);
+            ClearConsoleCommand = new DelegateCommand(OnClearConsole);
 
             AUCCommand = new DelegateCommand(OnAUC);
             IconCommand = new DelegateCommand(OnIcon);
@@ -141,6 +142,10 @@ namespace CompasPac.ViewModel
                
             }
             IsEnabled = true;
+        }
+        private void OnClearConsole()
+        {
+            TextConsole = WinInfo.GetSystemInfo();
         }
         //--------------------------------------
         private void OnAUC()
@@ -321,6 +326,7 @@ namespace CompasPac.ViewModel
         public ICommand SelectUserPresetCommand { get; }
         public ICommand OnlyFreeCommand { get; }
         public ICommand InstallCommand { get; }
+        public ICommand ClearConsoleCommand { get; }
 
         public ICommand AUCCommand { get; }
         public ICommand IconCommand { get; }
