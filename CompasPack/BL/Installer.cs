@@ -31,7 +31,7 @@ namespace CompasPac.BL
                 }
                 else
                 {
-                    if(await Network.SpeedTestOk())
+                    if(await Network.IsFastSpeed())
                     {
                         exeFile = Directory.GetFiles(userProgram.PathFolder)
                          .Where(x => x.Contains(userProgram.OnlineInstaller.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".exe")).FirstOrDefault();

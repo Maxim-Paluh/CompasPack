@@ -12,31 +12,35 @@ namespace CompasPac.BL
 {
     public static class Network
     {
-        public static async Task<bool> SpeedTestOk()
+        public static async Task<bool> IsFastSpeed()
+        {
+            if (await SpeedTest() >= 1)
+                return true;
+            else return false;
+        }
+
+
+        public static async Task<double> SpeedTest()
         {
             try
             {
                 var watch = new Stopwatch();
 
                 byte[] data;
-                using (var client = new System.Net.WebClient())
+                using (var client = new WebClient())
                 {
                     watch.Start();
-                    data = await client.DownloadDataTaskAsync("https://upload.wikimedia.org/wikipedia/commons/f/ff/Pizigani_1367_Chart_10MB.jpg");
+                    data = await client.DownloadDataTaskAsync("http://speedtest.tele2.net/10MB.zip");
                     watch.Stop();
                 }
 
-                var speed = data.LongLength / 1024 / 1024 / watch.Elapsed.TotalSeconds;
-
-                if (speed >= 1)
-                    return true;
-                else return false;
-
+                return data.LongLength / 1024 / 1024 / watch.Elapsed.TotalSeconds;
             }
             catch (Exception)
             {
-                return false;
+                return 0;
             }
+
         }
     }
 }

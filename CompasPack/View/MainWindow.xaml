@@ -172,6 +172,7 @@
                 <Button Content="Icon" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding IconCommand}" Width="75"></Button>
                 <Button Content="Default" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding DefaultCommand}" Width="75"></Button>
                 <Button Content="AppLog" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding AppLogCommand}" Width="75"></Button>
+                <Button Content="SpeedTest" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding SpeedTestCommand}" Width="75"></Button>
             </WrapPanel>
 
             <Button     Grid.Row="2" Margin="0 0 0 5" Content="Встановти" IsEnabled="{Binding IsEnabled}" Command="{Binding InstallCommand}"></Button>

@@ -19,6 +19,7 @@ using System.IO;
 using CompasPac.View.Service;
 using Microsoft.VisualBasic;
 using CompasPack.View;
+using System.Data;
 
 namespace CompasPac.ViewModel
 {
@@ -50,6 +51,7 @@ namespace CompasPac.ViewModel
             IconCommand = new DelegateCommand(OnIcon);
             DefaultCommand = new DelegateCommand(OnDefault);
             AppLogCommand = new DelegateCommand(OnAppLog);
+            SpeedTestCommand = new DelegateCommand(OnSpeedTest);
 
             ClosedAppCommand = new DelegateCommand(OnClosedApp);
             SetDefaultGroupProgramCommand = new DelegateCommand(OnSetDefaultGroupProgram);
@@ -60,6 +62,7 @@ namespace CompasPac.ViewModel
 
             _eventAggregator.GetEvent<SelectSingleProgramEvent>().Subscribe(SelectSingleProgram);
         }
+
 
         private void OnAppLog()
         {
@@ -95,6 +98,18 @@ namespace CompasPac.ViewModel
                 await _iOManager.SetDefaultGroupProgram();
                 await LoadAsync();
             }
+        }
+
+        private async void OnSpeedTest()
+        {
+            TextConsole += "<------------------Start test speed---------------------->\n";
+            TextConsole += $"Start test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+            IsEnabled = false;
+            var speed = await Network.SpeedTest();
+            TextConsole += $"End test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+            TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
+            TextConsole += "<-------------------End test speed----------------------->\n";
+            IsEnabled = true;
         }
 
         private void OnClosedApp()
@@ -135,7 +150,7 @@ namespace CompasPac.ViewModel
 
         private async void OnInstall()
         {
-            TextConsole = TextConsole + "<--------------------Start Install----------------------->\n";
+            TextConsole += "<--------------------Start Install----------------------->\n";
             IsEnabled = false;
             var userPrograms = GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels).Where(x => x.Install == true);
 
@@ -258,6 +273,7 @@ namespace CompasPac.ViewModel
         public ICommand IconCommand { get; }
         public ICommand DefaultCommand { get; }
         public ICommand AppLogCommand { get; }
+        public ICommand SpeedTestCommand { get; }
 
 
         public ICommand ClosedAppCommand { get; }
@@ -265,6 +281,7 @@ namespace CompasPac.ViewModel
         public ICommand SetDefaultUserPresetProgramCommand { get; }
         public ICommand CheckUpdateProgramCommand { get; }
         public ICommand AboutProgramCommand { get; }
+
 
     }
 }
