@@ -100,9 +100,45 @@ namespace CompasPac.ViewModel
             IsEnabled = false;
             var userPrograms = GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels).Where(x => x.Install == true);
 
-            foreach (var userProgram in userPrograms)
+            foreach (var userProgramViewModel in userPrograms)
             {
-                TextConsole += await Installer.InstallProgram(userProgram);
+                if(WinInfo.IsInstallPrograms(WinInfo.ListInstallPrograms(), userProgramViewModel.UserProgram.InstallProgramName))
+                {
+                    TextConsole += $"Programs: {userProgramViewModel.UserProgram.ProgramName}, Already Installed!!!\n";
+                    TextConsole += "<-------------------------------------------------------->\n";
+                }
+                else
+                {
+                    TextConsole += $"Start Install Programs: {userProgramViewModel.UserProgram.ProgramName}\n";
+                    if (userProgramViewModel.UserProgram.DisableDefender)
+                    {
+                        TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+                        var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
+                        if (!string.IsNullOrWhiteSpace(ResponseDefender))
+                            TextConsole += $"Response defender: {ResponseDefender}\n";
+                        TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+                        TextConsole += $"Resault: {await WinDefender.CheckDefenderDisable()}\n";
+                    }
+
+                    if (userProgramViewModel.UserProgram.OnlineInstaller != null)
+                    {
+                        TextConsole += $"Start speed test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+                        var speed = await Network.SpeedTest();
+                        TextConsole += $"End speed test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+                        TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
+
+                        if (speed >= 0.5)
+                            TextConsole += await Installer.InstallProgram(userProgramViewModel, true);
+                        else
+                            TextConsole += await Installer.InstallProgram(userProgramViewModel, false);
+                    }
+                    else
+                    {
+                        TextConsole += await Installer.InstallProgram(userProgramViewModel, false);
+                    }
+                    TextConsole += "<-------------------------------------------------------->\n";
+                }
+               
             }
             IsEnabled = true;
         }

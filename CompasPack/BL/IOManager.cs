@@ -61,7 +61,6 @@ namespace CompasPac.BL
             SettingUserPresetProgramFileNamePath = Directory.GetCurrentDirectory() + "\\" + "SettingsPreset.json";
             PathRoot = Path.GetPathRoot(Directory.GetCurrentDirectory());
         }
-
         public async Task<List<GroupProgram>> GetGroupPrograms()
         {
             FileInfo fileSettingsJson = new FileInfo(SettingsGroupProgramFileNamePath);
@@ -90,7 +89,6 @@ namespace CompasPac.BL
                 return new List<GroupProgram>();
             }
         }
-
         public async Task<List<UserPresetProgram>> GetUserPresetProgram()
         {
             FileInfo fileSettingsJson = new FileInfo(SettingUserPresetProgramFileNamePath);
@@ -115,19 +113,16 @@ namespace CompasPac.BL
 
 
         }
-
         public async Task SetDefaultGroupProgram()
         {
             var SettingsJsonExample = JsonConvert.SerializeObject(GetDefaultGroupProgram(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
             await File.WriteAllTextAsync(SettingsGroupProgramFileNamePath, SettingsJsonExample).ConfigureAwait(false);
         }
-
         public async Task SetDefaultUserPresetProgram()
         {
             var SettingsJsonExample = JsonConvert.SerializeObject(GetDefaultUserPresetProgram(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
             await File.WriteAllTextAsync(SettingUserPresetProgramFileNamePath, SettingsJsonExample).ConfigureAwait(false);
         }
-
         private List<GroupProgram> GetDefaultGroupProgram()
         {
 
@@ -222,7 +217,7 @@ namespace CompasPac.BL
 
                             OnlineInstaller = new OnlineInstaller()
                             {
-                                Arguments = new List<string>() { "/S" },
+                                Arguments = new List<string>() { "-ms"},
                                 FileName= "FirefoxInstaller"
                             }
                         },
@@ -564,8 +559,7 @@ namespace CompasPac.BL
             };
 
             return groupPrograms;
-        }
-       
+        }  
         private List<UserPresetProgram> GetDefaultUserPresetProgram()
         {
             return new List<UserPresetProgram>()
@@ -593,7 +587,6 @@ namespace CompasPac.BL
                 }
             };
         }
-
         public void OpenAppLog()
         {
             if (!Directory.Exists(CompasPacLog))

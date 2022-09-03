@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
+using System.IO;
 
 namespace CompasPac.BL
 {
@@ -79,7 +80,6 @@ namespace CompasPac.BL
                 }
             }
             
-
             using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(Programs))
             {
                 foreach (string subkey_name in key.GetSubKeyNames())
@@ -93,11 +93,19 @@ namespace CompasPac.BL
                 }
             }
 
+            //Developers opera very stupid
+            var pathOpera = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\Opera");
+            if (Directory.Exists(pathOpera))
+                programs.Add("Opera");
+
             return programs;
         }
 
-        public static bool IsInstallPrograms(List<string> programs, string Name)
+        public static bool IsInstallPrograms(List<string> programs, string? Name)
         {
+            if (string.IsNullOrWhiteSpace(Name))
+                return false;
+
             if (programs.Where(x => x.Contains(Name, StringComparison.InvariantCultureIgnoreCase)).Count() >= 1)
                 return true;
             return false;

@@ -7,34 +7,34 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
+using System.IO;
 
 namespace CompasPac.BL
 {
     public static class Network
     {
-        public static async Task<bool> IsFastSpeed()
-        {
-            if (await SpeedTest() >= 1)
-                return true;
-            else return false;
-        }
-
-
         public static async Task<double> SpeedTest()
         {
             try
             {
                 var watch = new Stopwatch();
 
-                byte[] data;
-                using (var client = new WebClient())
+                watch.Start();
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://github.com/Maxim-Paluh/SpeedTest/raw/main/10MB");
+                request.Timeout = 10000;
+                WebResponse response = await request.GetResponseAsync();
+                using (Stream stream = response.GetResponseStream())
                 {
-                    watch.Start();
-                    data = await client.DownloadDataTaskAsync("https://github.com/Maxim-Paluh/SpeedTest/raw/main/10MB");
-                    watch.Stop();
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        request.Timeout = 10000;
+                        await reader.ReadToEndAsync();
+                    }
                 }
 
-                return data.LongLength / 1024 / 1024 / watch.Elapsed.TotalSeconds;
+                watch.Stop();
+                return 10485760 / 1024 / 1024 / watch.Elapsed.TotalSeconds;
             }
             catch (Exception)
             {
@@ -43,4 +43,5 @@ namespace CompasPac.BL
 
         }
     }
+
 }
