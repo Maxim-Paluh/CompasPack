@@ -125,18 +125,18 @@ namespace CompasPac.ViewModel
         }
         private async void OnSpeedTest()
         {
-            TextConsole += "<------------------Start test speed---------------------->\n";
+            TextConsole += "<-----------------Start test speed--------------------->\n";
             TextConsole += $"Start test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
             IsEnabled = false;
             var speed = await Network.SpeedTest();
             TextConsole += $"End test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
             TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
-            TextConsole += "<-------------------End test speed----------------------->\n";
+            TextConsole += "<------------------End test speed---------------------->\n";
             IsEnabled = true;
         }
         private async void OnOffDefender()
         {
-            TextConsole += "<------------------Start off defender---------------------->\n";
+            TextConsole += "<----------------Start off defender-------------------->\n";
             TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
             IsEnabled = false;
             var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
@@ -144,12 +144,12 @@ namespace CompasPac.ViewModel
                 TextConsole += $"Response defender: {ResponseDefender}\n";
             TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
             TextConsole += $"Resault: {await WinDefender.CheckDefenderDisable()}\n";
-            TextConsole += "<-------------------End off defender----------------------->\n";
+            TextConsole += "<-----------------End off defender--------------------->\n";
             IsEnabled = true;
         }
         private async void OnOnDefender()
         {
-            TextConsole += "<-------------------Start on defender---------------------->\n";
+            TextConsole += "<-----------------Start on defender-------------------->\n";
             TextConsole += $"Start on defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
             IsEnabled = false;
             var ResponseDefender = (await WinDefender.EnableRealtimeMonitoring()).Trim();
@@ -157,7 +157,7 @@ namespace CompasPac.ViewModel
                 TextConsole += $"Response defender: {ResponseDefender}\n";
             TextConsole += $"End on defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
             TextConsole += $"Resault: {!(await WinDefender.CheckDefenderDisable())}\n";
-            TextConsole += "<--------------------End on defender----------------------->\n";
+            TextConsole += "<------------------End on defender--------------------->\n";
             IsEnabled = true;
         }
         //--------------------------------------

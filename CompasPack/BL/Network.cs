@@ -30,7 +30,7 @@ namespace CompasPac.BL
                 using (var client = new WebClient())
                 {
                     watch.Start();
-                    data = await client.DownloadDataTaskAsync("http://speedtest.tele2.net/10MB.zip");
+                    data = await client.DownloadDataTaskAsync("https://github.com/Maxim-Paluh/SpeedTest/raw/main/10MB");
                     watch.Stop();
                 }
 
