@@ -22,11 +22,11 @@ namespace CompasPac.BL
                 using (var client = new System.Net.WebClient())
                 {
                     watch.Start();
-                    data = await client.DownloadDataTaskAsync("https://github.com/Maxim-Paluh/SpeedTest/raw/main/download");
+                    data = await client.DownloadDataTaskAsync("https://upload.wikimedia.org/wikipedia/commons/f/ff/Pizigani_1367_Chart_10MB.jpg");
                     watch.Stop();
                 }
 
-                var speed = data.LongLength / 1024 / 1024 / watch.Elapsed.TotalSeconds; // instead of [Seconds] property
+                var speed = data.LongLength / 1024 / 1024 / watch.Elapsed.TotalSeconds;
 
                 if (speed >= 1)
                     return true;

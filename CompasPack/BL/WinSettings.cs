@@ -25,8 +25,6 @@ namespace CompasPac.BL
                 argument = "Shell:::{2559a1f7-21d7-11d4-bdaf-00c04f60b9f0}";
                 fileName = "explorer.exe";
             }
-
-
             Process proc = new Process()
             {
                 StartInfo = new ProcessStartInfo
