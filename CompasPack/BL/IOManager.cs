@@ -20,6 +20,12 @@ namespace CompasPac.BL
 
         public Task SetDefaultGroupProgram();
         public Task SetDefaultUserPresetProgram();
+
+
+        public string CpuZ { get; set; }
+        public string Aida { get; set; }
+        public string CrystalDisk { get; set; }
+        public string FurMark { get; set; }
     }
 
     public class IOManager : IIOManager
@@ -30,6 +36,10 @@ namespace CompasPac.BL
         private static string _settingUserPresetProgramFileNamePath;
         private static string _pathRoot;
         private string _compasPacLogName = "CompasPackLog";
+        private string cpuZ = "Programs\\Portable\\CPU-Z\\cpuz_x32.exe"; 
+        private string aida = "Programs\\Portable\\AIDA64\\aida64.exe";
+        private string crystalDisk = "Programs\\Portable\\CrystalDisk\\DiskInfo32.exe";
+        private string furMark = "Programs\\Portable\\FurMark\\FurMark.exe";
 
         public string CurrentDirectoryPath
         {
@@ -52,6 +62,10 @@ namespace CompasPac.BL
             set { _pathRoot = value; }
         }
         public string CompasPacLog { get; set; }
+        public string CpuZ { get; set; }
+        public string Aida { get; set; }
+        public string CrystalDisk { get; set; }
+        public string FurMark { get; set; }
         public IOManager(IMessageDialogService messageDialogService)
         {
             _messageDialogService = messageDialogService;
@@ -60,6 +74,11 @@ namespace CompasPac.BL
             SettingsGroupProgramFileNamePath = Directory.GetCurrentDirectory() + "\\" + "SettingsPrograms.json";
             SettingUserPresetProgramFileNamePath = Directory.GetCurrentDirectory() + "\\" + "SettingsPreset.json";
             PathRoot = Path.GetPathRoot(Directory.GetCurrentDirectory());
+
+            CpuZ = Path.Combine(PathRoot, cpuZ);
+            Aida = Path.Combine(PathRoot, aida);
+            CrystalDisk = Path.Combine(PathRoot, crystalDisk);
+            FurMark = Path.Combine(PathRoot, furMark);
         }
         public async Task<List<GroupProgram>> GetGroupPrograms()
         {
@@ -314,6 +333,20 @@ namespace CompasPac.BL
                         new UserProgram()
                         {
                             Id = 9,
+                            ProgramName = "ACDSeePro3",
+                            InstallProgramName = "ACDSeePro",
+                            Description =   $"",
+                            Arguments = new List<string>() {"/quiet"},
+                            IsFree = true,
+                            DisableDefender = false,
+                            PathFolder = "Programs\\" + "Media\\",
+                            FileName = "",
+                            Architecture = "x86",
+                            FileImage = "ACDSeePro3.ico",
+                        },
+                        new UserProgram()
+                        {
+                            Id = 10,
                             ProgramName = "K-Lite Codec Pack",
                             InstallProgramName = "K-Lite",
                             Description =   $"K-Lite Codec Pack - це колекція аудіо та відео кодеків для Microsoft Windows DirectShow,\n" +
@@ -329,7 +362,7 @@ namespace CompasPac.BL
                         },
                         new UserProgram()
                         {
-                            Id = 10,
+                            Id = 11,
                             ProgramName = "Notepad++",
                             InstallProgramName = "Notepad++",
                             Description =   $"Notepad++ - це текстовий редактор, призначений для програмістів і тих, кого не влаштовує скромна функціональність програми «блокнот», що входить до складу Windows.\n" +
@@ -345,8 +378,8 @@ namespace CompasPac.BL
                         },
                         new UserProgram()
                         {
-                            Id = 11,
-                            ProgramName = "WinRAR",
+                            Id = 12,
+                            ProgramName = "WinRAR 4.00",
                             InstallProgramName = "WinRAR",
                             Description =   $"WinRAR — це файловий архіватор для Windows з високим ступенем стиснення,\n" +
                                             $"є одним із найкращих архіваторів за співвідношенням ступеня стиснення до швидкості роботи.\n" +
@@ -361,7 +394,23 @@ namespace CompasPac.BL
                         },
                         new UserProgram()
                         {
-                            Id = 12,
+                            Id = 13,
+                            ProgramName = "WinRAR 5.40",
+                            InstallProgramName = "WinRAR",
+                            Description =   $"WinRAR — це файловий архіватор для Windows з високим ступенем стиснення,\n" +
+                                            $"є одним із найкращих архіваторів за співвідношенням ступеня стиснення до швидкості роботи.\n" +
+                                            $"Розповсюджується як умовно-безкоштовне програмне забезпечення.",
+                            Arguments = new List<string>() {"-y"},
+                            IsFree = false,
+                            DisableDefender = false,
+                            PathFolder = "Programs\\" + "Media\\",
+                            FileName = "WinRAR540",
+                            Architecture = "x64",
+                            FileImage = "WinRAR.png",
+                        },
+                        new UserProgram()
+                        {
+                            Id = 14,
                             ProgramName = "7-Zip",
                             InstallProgramName = "7-Zip",
                             Description =   $"7-Zip — файловий архіватор з високим ступенем стиснення.\n" +
@@ -389,7 +438,7 @@ namespace CompasPac.BL
                     {
                         new UserProgram()
                         {
-                            Id = 13,
+                            Id = 15,
                             ProgramName = "AIDA64",
                             InstallProgramName = "AIDA64",
                             Description =   $"AIDA64 — це утиліта FinalWire Ltd. для тестування та ідентифікації компонентів персонального комп'ютера під керуванням операційних систем Windows,\n" +
@@ -404,7 +453,7 @@ namespace CompasPac.BL
                         },
                         new UserProgram()
                         {
-                            Id = 14,
+                            Id = 16,
                             ProgramName = "AnyDesk",
                             InstallProgramName = "AnyDesk",
                             Description =   $"AnyDesk — це програма віддаленого робочого столу із закритим кодом, що поширюється компанією AnyDesk Software GmbH\n" +
@@ -419,7 +468,7 @@ namespace CompasPac.BL
                         },
                         new UserProgram()
                         {
-                            Id = 15,
+                            Id = 17,
                             ProgramName = "Total Commander",
                             InstallProgramName = "Total Commander",
                             Description =   $"Total Commander — популярний двопанельний файловий менеджер із закритим початковим кодом для операційних систем Windows, Windows CE, Windows Mobile і Android.",
@@ -433,7 +482,7 @@ namespace CompasPac.BL
                         },
                         new UserProgram()
                         {
-                            Id = 16,
+                            Id = 18,
                             ProgramName = "Unlocker",
                             InstallProgramName = "Unlocker",
                             Description =   $"Unlocker — це безкоштовна утиліта, яка дозволяє розблокувати файли, що використовуються системним процесом або перебувають у закритому доступі.",
@@ -460,7 +509,7 @@ namespace CompasPac.BL
                     UserPrograms = new List<UserProgram>()
                     {
                         new UserProgram(){
-                            Id = 17,
+                            Id = 19,
                             ProgramName = "Microsoft Office 2003",
                             Description =   $"Microsoft Office 2003 - пакет офісних додатків, який розповсюджується компанією Microsoft для операційних системи Windows.\n" +
                                             $"Випуск розпочався 19 серпня 2003, на ринок був випущений 21 жовтня 2003. Його попередником є ​​Microsoft Office XP, а наступником - Microsoft Office 2007.\n" +
@@ -474,7 +523,7 @@ namespace CompasPac.BL
                             FileImage = "Office2003.png",
                         },
                          new UserProgram(){
-                            Id = 18,
+                            Id = 20,
                             ProgramName = "Microsoft Office 2007",
                             Description =   $"Microsoft Office 2007 - версія пакету додатків Microsoft Office, що послідувала за Microsoft Office 2003 і попередник Microsoft Office 2010.\n" +
                                             $"Надійшла у продаж для організацій 30 листопада 2006, для індивідуальних клієнтів — 30 січня 2007.\n" +
@@ -488,7 +537,7 @@ namespace CompasPac.BL
                             FileImage = "Office2007.png",
                         },
                           new UserProgram(){
-                            Id = 19,
+                            Id = 21,
                             ProgramName = "Microsoft Office 2010",
                             Description =   $"Microsoft Office 2010 - версія додатків офісного пакету для операційної системи Microsoft Windows.\n" +
                                             $"Office 2010 є наступником Microsoft Office 2007 та попередником Microsoft Office 2013.\n" +
@@ -503,7 +552,7 @@ namespace CompasPac.BL
                             FileImage = "Office2010.png",
                         },
                            new UserProgram(){
-                            Id = 20,
+                            Id = 22,
                             ProgramName = "Microsoft Office 2016",
                             InstallProgramName = "плюс 2016",
                             Description =   $"Microsoft Office 2016 — остання версія популярного офісного пакету компанії Microsoft, що розповсюджувався за допомогою MSI-інсталятора.\n" +
@@ -528,7 +577,7 @@ namespace CompasPac.BL
                      UserPrograms = new List<UserProgram>()
                     {
                      new UserProgram(){
-                            Id = 21,
+                            Id = 23,
                             ProgramName = "Report Greg_House_M_D",
                             Description =   $"Ставив Greg_House_M_D",
                             Arguments = new List<string>() {"Greg_House_M_D"},
@@ -540,7 +589,7 @@ namespace CompasPac.BL
                             FileImage = "LogInstall.png",
                         },
                      new UserProgram(){
-                            Id = 22,
+                            Id = 24,
                             ProgramName = "Report Vadimakus",
                             Description =   $"Ставив Vadimakus",
                             Arguments = new List<string>() {"Vadimakus"},
@@ -576,14 +625,14 @@ namespace CompasPac.BL
                     Id=0,
                     Name = "User Windows 10",
                     Description="Для Windows 10",
-                    IdPrograms = new List<int>() {2, 3, 5, 8, 9, 10, 12, 13, 15, 16, 21 }
+                    IdPrograms = new List<int>() {2, 3, 4, 5, 8, 10,11, 13, 14, 15, 17, 18, 22, 23 }
                 },
                 new UserPresetProgram()
                 {
                     Id=1,
                     Name = "User Windows 7",
                     Description="Для Windows 7",
-                    IdPrograms = new List<int>() {1, 2, 3, 5, 8, 9, 10, 12, 13, 15, 16, 21 }
+                    IdPrograms = new List<int>() {1, 2, 3, 4, 5, 8, 10, 11, 12, 14, 15, 17, 18, 22, 23 }
                 }
             };
         }
