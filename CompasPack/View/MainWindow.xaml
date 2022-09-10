@@ -174,7 +174,12 @@
                 <Button Content="SpeedTest" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding SpeedTestCommand}" Width="75"></Button>
                 <Button Content="OffDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OffDefenderCommand}" Width="75"></Button>
                 <Button Content="OnDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OnDefenderCommand}" Width="75"></Button>
-                
+
+                <Button Content="CPU-Z" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenCpuZCommand}" Width="75"></Button>
+                <Button Content="AIDA64" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenAidaCommand}" Width="75"></Button>
+                <Button Content="Crystal" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenCrystalCommand}" Width="75"></Button>
+                <Button Content="FurMark" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenFurMarkCommand}" Width="75"></Button>
+
                 <Button Content="AppLog" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding AppLogCommand}" Width="75"></Button>
             </WrapPanel>
 

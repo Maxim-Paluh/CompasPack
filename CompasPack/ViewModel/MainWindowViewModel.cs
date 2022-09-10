@@ -56,6 +56,11 @@ namespace CompasPac.ViewModel
             OffDefenderCommand = new DelegateCommand(OnOffDefender);
             OnDefenderCommand = new DelegateCommand(OnOnDefender);
 
+            OpenAidaCommand = new DelegateCommand(OnOpenAida);
+            OpenCpuZCommand = new DelegateCommand(OnOpenCpuZ);
+            OpenCrystalCommand = new DelegateCommand(OnOpenCrystal);
+            OpenFurMarkCommand = new DelegateCommand(OnOpenFurMark);
+
             ClosedAppCommand = new DelegateCommand(OnClosedApp);
             SetDefaultGroupProgramCommand = new DelegateCommand(OnSetDefaultGroupProgram);
             SetDefaultUserPresetProgramCommand = new DelegateCommand(OnSetDefaultUserPresetProgram);
@@ -201,6 +206,40 @@ namespace CompasPac.ViewModel
             TextConsole += "<------------------End on defender--------------------->\n";
             IsEnabled = true;
         }
+        private void OnOpenFurMark()
+        {
+            OpenProgram(_iOManager.FurMark);
+        }
+        private void OnOpenCrystal()
+        {
+            OpenProgram(_iOManager.CrystalDisk);
+        }
+        private void OnOpenCpuZ()
+        {
+            OpenProgram(_iOManager.CpuZ);
+        }
+        private void OnOpenAida()
+        {
+            OpenProgram(_iOManager.Aida);
+        }
+
+        private void OpenProgram(string path)
+        {
+            if (File.Exists(path))
+            {
+                new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = path,
+                    }
+                }.Start();
+            }
+            else
+            {
+                _messageDialogService.ShowInfoDialog($"Виконуваний файл не знайдено: {path}", "Помилка!");
+            }
+        }
         //--------------------------------------
         private void OnClosedApp()
         {
@@ -335,6 +374,10 @@ namespace CompasPac.ViewModel
         public ICommand SpeedTestCommand { get; }
         public ICommand OffDefenderCommand { get; }
         public ICommand OnDefenderCommand { get; }
+        public ICommand OpenAidaCommand { get; }
+        public ICommand OpenCpuZCommand { get; }
+        public ICommand OpenCrystalCommand { get; }
+        public ICommand OpenFurMarkCommand { get; }
 
         public ICommand ClosedAppCommand { get; }
         public ICommand SetDefaultGroupProgramCommand { get; }
