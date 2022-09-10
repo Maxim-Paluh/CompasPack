@@ -334,7 +334,7 @@ namespace CompasPac.BL
                         {
                             Id = 9,
                             ProgramName = "ACDSeePro3",
-                            InstallProgramName = "ACDSeePro",
+                            InstallProgramName = "ACDSee",
                             Description =   $"",
                             Arguments = new List<string>() {"/quiet"},
                             IsFree = true,

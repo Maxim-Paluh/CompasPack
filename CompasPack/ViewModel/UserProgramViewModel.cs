@@ -67,7 +67,7 @@ namespace CompasPac.ViewModel
         {
             Install = !Install;
             if (Install)
-                Background = new SolidColorBrush(Colors.LightYellow);
+                Background = new SolidColorBrush(Colors.NavajoWhite);
             else
                 Background = new SolidColorBrush(Colors.LightGray);
 
@@ -83,7 +83,7 @@ namespace CompasPac.ViewModel
         public void SelectProgram()
         {
             Install = true;
-            Background = new SolidColorBrush(Colors.LightYellow);
+            Background = new SolidColorBrush(Colors.NavajoWhite);
             if (GroupProgram.SingleChoice)
             {
                 _eventAggregator.GetEvent<SelectSingleProgramEvent>().Publish(new SelectSingleProgramEventArgs()
