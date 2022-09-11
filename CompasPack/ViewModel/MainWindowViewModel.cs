@@ -64,7 +64,8 @@ namespace CompasPac.ViewModel
             OpenCpuZCommand = new DelegateCommand(OnOpenCpuZ);
             OpenCrystalCommand = new DelegateCommand(OnOpenCrystal);
             OpenFurMarkCommand = new DelegateCommand(OnOpenFurMark);
-            OpenTotalCommanderCommand = new DelegateCommand(OnOpenTotalCommander);
+            OpenTotalCommander951Command = new DelegateCommand(OnOpenTotalCommander951);
+            OpenTotalCommander700Command = new DelegateCommand(OnOpenTotalCommander700);
             OpenWinRarCommand = new DelegateCommand(OnOpenWinRar);
 
             ClosedAppCommand = new DelegateCommand(OnClosedApp);
@@ -233,9 +234,13 @@ namespace CompasPac.ViewModel
         {
             OpenProgram(_iOManager.Aida);
         }
-        private void OnOpenTotalCommander()
+        private void OnOpenTotalCommander951()
         {
-            OpenProgram(_iOManager.TotalCommander);
+            OpenProgram(_iOManager.TotalCommander951);
+        }
+        private void OnOpenTotalCommander700()
+        {
+            OpenProgram(_iOManager.TotalCommander700);
         }
         private void OnOpenWinRar()
         {
@@ -398,7 +403,8 @@ namespace CompasPac.ViewModel
         public ICommand OpenCpuZCommand { get; }
         public ICommand OpenCrystalCommand { get; }
         public ICommand OpenFurMarkCommand { get; }
-        public ICommand OpenTotalCommanderCommand { get; }
+        public ICommand OpenTotalCommander951Command { get; }
+        public ICommand OpenTotalCommander700Command { get; }
         public ICommand OpenWinRarCommand { get; }
 
 

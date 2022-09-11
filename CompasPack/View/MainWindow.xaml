@@ -128,7 +128,8 @@
             <MenuItem Header="Портативне ПЗ">
                 <MenuItem Header="Crystal" Command="{Binding OpenCrystalCommand}"></MenuItem>
                 <MenuItem Header="AIDA64" Command="{Binding OpenAidaCommand}"></MenuItem>
-                <MenuItem Header="TotalCMD" Command="{Binding OpenTotalCommanderCommand}"></MenuItem>
+                <MenuItem Header="TotalCMD 7.00" Command="{Binding OpenTotalCommander700Command}"></MenuItem>
+                <MenuItem Header="TotalCMD 9.51" Command="{Binding OpenTotalCommander951Command}"></MenuItem>
                 <Separator></Separator>
                 <MenuItem Header="WinRar" Command="{Binding OpenWinRarCommand}"></MenuItem>
                 <Separator></Separator>

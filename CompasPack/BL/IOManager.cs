@@ -27,7 +27,8 @@ namespace CompasPac.BL
         public string Aida { get; set; }
         public string CrystalDisk { get; set; }
         public string FurMark { get; set; }
-        public string TotalCommander { get; set; }
+        public string TotalCommander951 { get; set; }
+        public string TotalCommander700 { get; set; }
         public string WinRar { get; set; }
     }
 
@@ -43,7 +44,8 @@ namespace CompasPac.BL
         private string aida = "Programs\\Portable\\AIDA64\\aida64.exe";
         private string crystalDisk = "Programs\\Portable\\CrystalDisk\\DiskInfo32.exe";
         private string furMark = "Programs\\Portable\\FurMark\\FurMark.exe";
-        private string totalCommander = "Programs\\Portable\\TotalCommander\\TOTALCMD.EXE";
+        private string totalCommander951 = "Programs\\Portable\\TotalCommander951\\TOTALCMD.EXE";
+        private string totalCommander700 = "Programs\\Portable\\TotalCommander700\\Totalcmd.exe";
         private string winRar = "\\Programs\\Portable\\WinRAR\\WinRAR.exe";
 
         public string CurrentDirectoryPath
@@ -72,7 +74,8 @@ namespace CompasPac.BL
         public string Aida { get; set; }
         public string CrystalDisk { get; set; }
         public string FurMark { get; set; }    
-        public string TotalCommander { get; set; }
+        public string TotalCommander951 { get; set; }
+        public string TotalCommander700 { get; set; }
         public string WinRar { get; set; }
 
         public IOManager(IMessageDialogService messageDialogService)
@@ -90,7 +93,8 @@ namespace CompasPac.BL
             Aida = Path.Combine(PathRoot, aida);
             CrystalDisk = Path.Combine(PathRoot, crystalDisk);
             FurMark = Path.Combine(PathRoot, furMark);
-            TotalCommander = Path.Combine(PathRoot, totalCommander);
+            TotalCommander951 = Path.Combine(PathRoot, totalCommander951);
+            TotalCommander700 = Path.Combine(PathRoot, totalCommander700);
             WinRar = Path.Combine(PathRoot, winRar);
         }
         public async Task<List<GroupProgram>> GetGroupPrograms()
