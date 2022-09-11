@@ -87,7 +87,7 @@ namespace CompasPac.BL
             SettingUserPresetProgramFileNamePath = Directory.GetCurrentDirectory() + "\\" + "SettingsPreset.json";
             PathRoot = Path.GetPathRoot(Directory.GetCurrentDirectory());
 
-            CompasExampleFile = Path.Combine(PathRoot, "Programs\\ExampleFile");
+            CompasExampleFile = Path.Combine(PathRoot, "Programs\\!ExampleFile");
 
             CpuZ = Path.Combine(PathRoot, cpuZ);
             Aida = Path.Combine(PathRoot, aida);
@@ -113,7 +113,7 @@ namespace CompasPac.BL
                 foreach (var program in temp.SelectMany(group => group.UserPrograms))
                 {
                     program.PathFolder = Path.Combine(PathRoot, program.PathFolder);
-                    program.FileImage = program.PathFolder+"\\Icon\\" + program.FileImage;
+                    program.FileImage = PathRoot+"Programs\\!ExampleFile\\Icon\\" + program.FileImage;
                 }
                 return temp;
             }
