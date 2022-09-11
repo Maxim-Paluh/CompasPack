@@ -20,6 +20,7 @@ using CompasPac.View.Service;
 using Microsoft.VisualBasic;
 using CompasPack.View;
 using System.Data;
+using System.ComponentModel.Design;
 
 namespace CompasPac.ViewModel
 {
@@ -51,15 +52,20 @@ namespace CompasPac.ViewModel
             AUCCommand = new DelegateCommand(OnAUC);
             IconCommand = new DelegateCommand(OnIcon);
             DefaultCommand = new DelegateCommand(OnDefault);
-            AppLogCommand = new DelegateCommand(OnAppLog);
+
             SpeedTestCommand = new DelegateCommand(OnSpeedTest);
             OffDefenderCommand = new DelegateCommand(OnOffDefender);
             OnDefenderCommand = new DelegateCommand(OnOnDefender);
+
+            OpenAppLogCommand = new DelegateCommand(OnOpenAppLog);
+            OpenExampleFileCommand = new DelegateCommand(OnOpenExampleFile);
 
             OpenAidaCommand = new DelegateCommand(OnOpenAida);
             OpenCpuZCommand = new DelegateCommand(OnOpenCpuZ);
             OpenCrystalCommand = new DelegateCommand(OnOpenCrystal);
             OpenFurMarkCommand = new DelegateCommand(OnOpenFurMark);
+            OpenTotalCommanderCommand = new DelegateCommand(OnOpenTotalCommander);
+            OpenWinRarCommand = new DelegateCommand(OnOpenWinRar);
 
             ClosedAppCommand = new DelegateCommand(OnClosedApp);
             SetDefaultGroupProgramCommand = new DelegateCommand(OnSetDefaultGroupProgram);
@@ -165,9 +171,13 @@ namespace CompasPac.ViewModel
         {
             WinSettings.OpenDefaultPrograms();
         }
-        private void OnAppLog()
+        private void OnOpenAppLog()
         {
             _iOManager.OpenAppLog();
+        }
+        private void OnOpenExampleFile()
+        {
+            _iOManager.OpenExampleFile();
         }
         private async void OnSpeedTest()
         {
@@ -206,6 +216,7 @@ namespace CompasPac.ViewModel
             TextConsole += "<------------------End on defender--------------------->\n";
             IsEnabled = true;
         }
+        //--------------------------------------
         private void OnOpenFurMark()
         {
             OpenProgram(_iOManager.FurMark);
@@ -221,6 +232,14 @@ namespace CompasPac.ViewModel
         private void OnOpenAida()
         {
             OpenProgram(_iOManager.Aida);
+        }
+        private void OnOpenTotalCommander()
+        {
+            OpenProgram(_iOManager.TotalCommander);
+        }
+        private void OnOpenWinRar()
+        {
+            OpenProgram(_iOManager.WinRar);
         }
 
         private void OpenProgram(string path)
@@ -370,7 +389,8 @@ namespace CompasPac.ViewModel
         public ICommand AUCCommand { get; }
         public ICommand IconCommand { get; }
         public ICommand DefaultCommand { get; }
-        public ICommand AppLogCommand { get; }
+        public ICommand OpenAppLogCommand { get; }
+        public ICommand OpenExampleFileCommand { get; }
         public ICommand SpeedTestCommand { get; }
         public ICommand OffDefenderCommand { get; }
         public ICommand OnDefenderCommand { get; }
@@ -378,6 +398,9 @@ namespace CompasPac.ViewModel
         public ICommand OpenCpuZCommand { get; }
         public ICommand OpenCrystalCommand { get; }
         public ICommand OpenFurMarkCommand { get; }
+        public ICommand OpenTotalCommanderCommand { get; }
+        public ICommand OpenWinRarCommand { get; }
+
 
         public ICommand ClosedAppCommand { get; }
         public ICommand SetDefaultGroupProgramCommand { get; }

@@ -17,6 +17,7 @@ namespace CompasPac.BL
         public Task<List<GroupProgram>> GetGroupPrograms();
 
         public void OpenAppLog();
+        public void OpenExampleFile();
 
         public Task SetDefaultGroupProgram();
         public Task SetDefaultUserPresetProgram();
@@ -26,6 +27,8 @@ namespace CompasPac.BL
         public string Aida { get; set; }
         public string CrystalDisk { get; set; }
         public string FurMark { get; set; }
+        public string TotalCommander { get; set; }
+        public string WinRar { get; set; }
     }
 
     public class IOManager : IIOManager
@@ -40,6 +43,8 @@ namespace CompasPac.BL
         private string aida = "Programs\\Portable\\AIDA64\\aida64.exe";
         private string crystalDisk = "Programs\\Portable\\CrystalDisk\\DiskInfo32.exe";
         private string furMark = "Programs\\Portable\\FurMark\\FurMark.exe";
+        private string totalCommander = "Programs\\Portable\\TotalCommander\\TOTALCMD.EXE";
+        private string winRar = "\\Programs\\Portable\\WinRAR\\WinRAR.exe";
 
         public string CurrentDirectoryPath
         {
@@ -62,10 +67,14 @@ namespace CompasPac.BL
             set { _pathRoot = value; }
         }
         public string CompasPacLog { get; set; }
+        public string CompasExampleFile { get; set; }
         public string CpuZ { get; set; }
         public string Aida { get; set; }
         public string CrystalDisk { get; set; }
-        public string FurMark { get; set; }
+        public string FurMark { get; set; }    
+        public string TotalCommander { get; set; }
+        public string WinRar { get; set; }
+
         public IOManager(IMessageDialogService messageDialogService)
         {
             _messageDialogService = messageDialogService;
@@ -75,10 +84,14 @@ namespace CompasPac.BL
             SettingUserPresetProgramFileNamePath = Directory.GetCurrentDirectory() + "\\" + "SettingsPreset.json";
             PathRoot = Path.GetPathRoot(Directory.GetCurrentDirectory());
 
+            CompasExampleFile = Path.Combine(PathRoot, "Programs\\ExampleFile");
+
             CpuZ = Path.Combine(PathRoot, cpuZ);
             Aida = Path.Combine(PathRoot, aida);
             CrystalDisk = Path.Combine(PathRoot, crystalDisk);
             FurMark = Path.Combine(PathRoot, furMark);
+            TotalCommander = Path.Combine(PathRoot, totalCommander);
+            WinRar = Path.Combine(PathRoot, winRar);
         }
         public async Task<List<GroupProgram>> GetGroupPrograms()
         {
@@ -654,6 +667,13 @@ namespace CompasPac.BL
             if (!Directory.Exists(CompasPacLog))
                 Directory.CreateDirectory(CompasPacLog);
             Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", CompasPacLog);
+        }
+
+        public void OpenExampleFile()
+        {
+            if (!Directory.Exists(CompasExampleFile))
+                Directory.CreateDirectory(CompasExampleFile);
+            Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", CompasExampleFile);
         }
     }
 }

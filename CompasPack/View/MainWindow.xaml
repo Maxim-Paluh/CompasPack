@@ -125,6 +125,17 @@
             <MenuItem Header="Файл">
                 <MenuItem Header="Вихід" Command="{Binding ClosedAppCommand}"></MenuItem>
             </MenuItem>
+            <MenuItem Header="Портативне ПЗ">
+                <MenuItem Header="Crystal" Command="{Binding OpenCrystalCommand}"></MenuItem>
+                <MenuItem Header="AIDA64" Command="{Binding OpenAidaCommand}"></MenuItem>
+                <MenuItem Header="TotalCMD" Command="{Binding OpenTotalCommanderCommand}"></MenuItem>
+                <Separator></Separator>
+                <MenuItem Header="WinRar" Command="{Binding OpenWinRarCommand}"></MenuItem>
+                <Separator></Separator>
+                <MenuItem Header="CPU-Z" Command="{Binding OpenCpuZCommand}"></MenuItem>
+                <MenuItem Header="FurMark" Command="{Binding OpenFurMarkCommand}"></MenuItem>
+                
+            </MenuItem>
             <MenuItem Header="Налаштування">
                 <MenuItem Header="Скинути шаблон програм" Command="{Binding SetDefaultGroupProgramCommand}"></MenuItem>
                 <MenuItem Header="Скинути шаблон набору програм" Command="{Binding SetDefaultUserPresetProgramCommand}"></MenuItem>
@@ -167,22 +178,29 @@
                 <CheckBox IsEnabled="{Binding IsEnabled}" Margin="5 3 5 0" IsChecked="{Binding OnlyFree}" Command="{Binding OnlyFreeCommand}" Grid.Column="1" Content="Only Free"></CheckBox>
             </Grid>
 
-            <WrapPanel  Grid.Row="1">
-                <Button Content="AUC" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding AUCCommand}" Width="75"></Button>
-                <Button Content="Icon" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding IconCommand}" Width="75"></Button>
-                <Button Content="Default" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding DefaultCommand}" Width="75"></Button>
-                <Button Content="SpeedTest" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding SpeedTestCommand}" Width="75"></Button>
-                <Button Content="OffDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OffDefenderCommand}" Width="75"></Button>
-                <Button Content="OnDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OnDefenderCommand}" Width="75"></Button>
-
-                <Button Content="CPU-Z" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenCpuZCommand}" Width="75"></Button>
-                <Button Content="AIDA64" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenAidaCommand}" Width="75"></Button>
-                <Button Content="Crystal" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenCrystalCommand}" Width="75"></Button>
-                <Button Content="FurMark" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenFurMarkCommand}" Width="75"></Button>
-
-                <Button Content="AppLog" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding AppLogCommand}" Width="75"></Button>
-            </WrapPanel>
-
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <WrapPanel  Grid.Row="0">
+                    <Button Content="AUC" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding AUCCommand}" Width="75"></Button>
+                    <Button Content="Icon" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding IconCommand}" Width="75"></Button>
+                    <Button Content="Default" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding DefaultCommand}" Width="75"></Button>
+                </WrapPanel>
+                <WrapPanel Grid.Row="1">
+                    <Button Content="SpeedTest" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding SpeedTestCommand}" Width="75"></Button>
+                    <Button Content="OffDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OffDefenderCommand}" Width="75"></Button>
+                    <Button Content="OnDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OnDefenderCommand}" Width="75"></Button>
+                </WrapPanel>
+                <WrapPanel Grid.Row="2">
+                    <Button Content="AppLog" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenAppLogCommand}" Width="75"></Button>
+                    <Button Content="Example File" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenExampleFileCommand}" Width="75"></Button>
+                </WrapPanel>
+            </Grid>
+            
+            
             <Button     Grid.Row="2" Margin="0 0 0 5" Content="Встановти" IsEnabled="{Binding IsEnabled}" Command="{Binding InstallCommand}"></Button>
            
             <TextBox    Grid.Row="3" Background="Blue" Foreground="Yellow" Text="{Binding TextConsole, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
