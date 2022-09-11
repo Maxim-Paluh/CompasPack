@@ -150,47 +150,6 @@ namespace CompasPac.BL
                 new GroupProgram()
                 {
                     Id = 0,
-                    Name = "Антивірусне програмне забезпечення",
-                    Description = $"Антивірус - це спеціалізована програма для знаходження комп'ютерних вірусів,\n" +
-                    $"а також небажаних (шкідливих) програм загалом, та відновлення заражених (модифікованих) такими програмами файлів,\n" +
-                    $"а також для профілактики — запобігання зараженню (модифікації) файлів чи операційної системи шкідливим кодом.",
-                    SingleChoice = true,
-                    UserPrograms = new List<UserProgram>
-                    {
-                        new UserProgram()
-                        {
-                            Id = 0,
-                            ProgramName = "360 Total Security",
-                            InstallProgramName = "360 Total Security",
-                            Description = $"360 Total Security — це програма, розроблена китайською компанією Qihoo 360,\n" +
-                            $" яка займається інтернет-безпекою.",
-                            Arguments = new List<string>() {"/S"},
-                            IsFree = true,
-                            DisableDefender = false,
-                            PathFolder = "Programs\\" + "Antivirus\\",
-                            FileName = "360TS",
-                            Architecture = "x86",
-                            FileImage = "360TS.png",
-                        },
-                        new UserProgram()
-                        {
-                            Id = 1,
-                            ProgramName = "Microsoft Security Essentials",
-                            InstallProgramName = "Security Essentials",
-                            Description = "Microsoft Security Essentials (MSE) — безкоштовний пакет антивірусних програм від компанії Microsoft.",
-                            Arguments = new List<string>() {"/s", "/runwgacheck"},
-                            IsFree = true,
-                            DisableDefender = false,
-                            PathFolder = "Programs\\" + "Antivirus\\",
-                            FileName = "MSEInstall",
-                            Architecture = "x64",
-                            FileImage = "MSEInstall.png"
-                        }
-                    }
-                },
-                new GroupProgram()
-                {
-                    Id = 1,
                     Name = "Браузери",
                     Description = $"Браузер - це програмне забезпечення для комп'ютера або іншого електронного пристрою, як правило, під'єднаного до Інтернету,\n" +
                     $"що дає можливість користувачеві взаємодіяти з текстом, малюнками або іншою інформацією на гіпертекстовій вебсторінці.\n" +
@@ -201,7 +160,7 @@ namespace CompasPac.BL
                     {
                         new UserProgram()
                         {
-                            Id = 2,
+                            Id = 0,
                             ProgramName = "Google Chrome",
                             InstallProgramName = "Chrome",
                             Description =   $"Google Chrome - це безкоштовний веббраузер, розроблений компанією Google на основі браузера\n" +
@@ -222,7 +181,7 @@ namespace CompasPac.BL
                         },
                         new UserProgram()
                         {
-                            Id = 3,
+                            Id = 1,
                             ProgramName = "Mozilla Firefox",
                             InstallProgramName = "Mozilla",
                             Description = "Mozilla Firefox - це вільний безкоштовний браузер з відкритим кодом, використовує ядро Quantum (вдосконалений Gecko).",
@@ -242,7 +201,7 @@ namespace CompasPac.BL
                         },
                         new UserProgram()
                         {
-                            Id = 4,
+                            Id = 2,
                             ProgramName = "Opera",
                             InstallProgramName = "Opera",
                             Description = "Opera — веббраузер розробки норвезької компанії Opera Software. Вперше випущений у 1994 році групою дослідників з норвезької компанії Telenor.",
@@ -265,7 +224,7 @@ namespace CompasPac.BL
                 },
                 new GroupProgram()
                 {
-                    Id = 2,
+                    Id = 1,
                     Name = "Аудіовізуальні медіа",
                     Description = $"Різноманітні програми для перегляду медіа файлів",
                     SingleChoice = false,
@@ -273,7 +232,7 @@ namespace CompasPac.BL
                     {
                         new UserProgram()
                         {
-                            Id = 5,
+                            Id = 3,
                             ProgramName = "Adobe Acrobat Reader",
                             InstallProgramName = "Adobe",
                             Description =   $"Adobe Acrobat Reader — це програмний продукт виробництва Adobe для роботи з PDF-файлами.",
@@ -285,38 +244,9 @@ namespace CompasPac.BL
                             Architecture = "x86",
                             FileImage = "Adobe.png",
                         },
-                         new UserProgram()
-                        {
-                            Id =6,
-                            ProgramName = "STDU Viewer",
-                            InstallProgramName = "STDU",
-                            Description =   $"STDU Viewer - це невеликий за розміром переглядач PDF, DjVu, Comic Book Archive (CBR або CBZ), XPS, TCR, TIFF, TXT, EMF, WMF, BMP, GIF, JPG, JPEG, PNG, PSD\n" +
-                                            $"для Microsoft Windows безкоштовний для некомерційного використання.",
-                            Arguments = new List<string>() {"/VERYSILENT"},
-                            IsFree = true,
-                            DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
-                            FileName = "stduviewer",
-                            Architecture = "x86",
-                            FileImage = "stduviewer.png",
-                        },
                         new UserProgram()
                         {
-                            Id =7,
-                            ProgramName = "AIMP",
-                            InstallProgramName = "AIMP",
-                            Description =   $"AIMP — безкоштовний аудіопрогравач з закритим початковим кодом, написаний на Delphi російським програмістом Артемом Ізмайловим.",
-                            Arguments = new List<string>() {"/SILENT", "/AUTO"},
-                            IsFree = true,
-                            DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
-                            FileName = "AIMP",
-                            Architecture = "x86",
-                            FileImage = "AIMP.ico",
-                        },
-                        new UserProgram()
-                        {
-                            Id = 8,
+                            Id = 4,
                             ProgramName = "FastStone",
                             InstallProgramName = "FastStone",
                             Description =   $"FastStone Image Viewer - це програма для перегляду, сканування, редагування та пакетної обробки зображень під виконанням операційної системи Microsoft Window.\n" +
@@ -329,24 +259,10 @@ namespace CompasPac.BL
                             FileName = "FastStone",
                             Architecture = "x86",
                             FileImage = "FastStone.png",
-                        },
+                        }, 
                         new UserProgram()
                         {
-                            Id = 9,
-                            ProgramName = "ACDSeePro3",
-                            InstallProgramName = "ACDSee",
-                            Description =   $"",
-                            Arguments = new List<string>() {"/quiet"},
-                            IsFree = true,
-                            DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
-                            FileName = "",
-                            Architecture = "x86",
-                            FileImage = "ACDSeePro3.ico",
-                        },
-                        new UserProgram()
-                        {
-                            Id = 10,
+                            Id = 5,
                             ProgramName = "K-Lite Codec Pack",
                             InstallProgramName = "K-Lite",
                             Description =   $"K-Lite Codec Pack - це колекція аудіо та відео кодеків для Microsoft Windows DirectShow,\n" +
@@ -362,7 +278,7 @@ namespace CompasPac.BL
                         },
                         new UserProgram()
                         {
-                            Id = 11,
+                            Id = 6,
                             ProgramName = "Notepad++",
                             InstallProgramName = "Notepad++",
                             Description =   $"Notepad++ - це текстовий редактор, призначений для програмістів і тих, кого не влаштовує скромна функціональність програми «блокнот», що входить до складу Windows.\n" +
@@ -375,42 +291,10 @@ namespace CompasPac.BL
                             FileName = "npp",
                             Architecture = "x64",
                             FileImage = "npp.png",
-                        },
+                        },                   
                         new UserProgram()
                         {
-                            Id = 12,
-                            ProgramName = "WinRAR 4.00",
-                            InstallProgramName = "WinRAR",
-                            Description =   $"WinRAR — це файловий архіватор для Windows з високим ступенем стиснення,\n" +
-                                            $"є одним із найкращих архіваторів за співвідношенням ступеня стиснення до швидкості роботи.\n" +
-                                            $"Розповсюджується як умовно-безкоштовне програмне забезпечення.",
-                            Arguments = new List<string>() {"-y"},
-                            IsFree = false,
-                            DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
-                            FileName = "WinRAR40",
-                            Architecture = "x86",
-                            FileImage = "WinRAR.png",
-                        },
-                        new UserProgram()
-                        {
-                            Id = 13,
-                            ProgramName = "WinRAR 5.40",
-                            InstallProgramName = "WinRAR",
-                            Description =   $"WinRAR — це файловий архіватор для Windows з високим ступенем стиснення,\n" +
-                                            $"є одним із найкращих архіваторів за співвідношенням ступеня стиснення до швидкості роботи.\n" +
-                                            $"Розповсюджується як умовно-безкоштовне програмне забезпечення.",
-                            Arguments = new List<string>() {"-y"},
-                            IsFree = false,
-                            DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
-                            FileName = "WinRAR540",
-                            Architecture = "x64",
-                            FileImage = "WinRAR.png",
-                        },
-                        new UserProgram()
-                        {
-                            Id = 14,
+                            Id = 7,
                             ProgramName = "7-Zip",
                             InstallProgramName = "7-Zip",
                             Description =   $"7-Zip — файловий архіватор з високим ступенем стиснення.\n" +
@@ -426,11 +310,86 @@ namespace CompasPac.BL
                             Architecture = "x64",
                             FileImage = "7-Zip.png",
                         },
+                        new UserProgram()
+                        {
+                            Id = 8,
+                            ProgramName = "WinRAR 4.00",
+                            InstallProgramName = "WinRAR",
+                            Description =   $"WinRAR — це файловий архіватор для Windows з високим ступенем стиснення,\n" +
+                                            $"є одним із найкращих архіваторів за співвідношенням ступеня стиснення до швидкості роботи.\n" +
+                                            $"Розповсюджується як умовно-безкоштовне програмне забезпечення.",
+                            Arguments = new List<string>() {"-y"},
+                            IsFree = false,
+                            DisableDefender = false,
+                            PathFolder = "Programs\\" + "Media\\",
+                            FileName = "WinRAR40",
+                            Architecture = "x86",
+                            FileImage = "WinRAR.png",
+                        },
+                        new UserProgram()
+                        {
+                            Id = 9,
+                            ProgramName = "WinRAR 5.40",
+                            InstallProgramName = "WinRAR",
+                            Description =   $"WinRAR — це файловий архіватор для Windows з високим ступенем стиснення,\n" +
+                                            $"є одним із найкращих архіваторів за співвідношенням ступеня стиснення до швидкості роботи.\n" +
+                                            $"Розповсюджується як умовно-безкоштовне програмне забезпечення.",
+                            Arguments = new List<string>() {"-y"},
+                            IsFree = false,
+                            DisableDefender = false,
+                            PathFolder = "Programs\\" + "Media\\",
+                            FileName = "WinRAR540",
+                            Architecture = "x64",
+                            FileImage = "WinRAR.png",
+                        },
+                        new UserProgram()
+                        {
+                            Id =10,
+                            ProgramName = "STDU Viewer",
+                            InstallProgramName = "STDU",
+                            Description =   $"STDU Viewer - це невеликий за розміром переглядач PDF, DjVu, Comic Book Archive (CBR або CBZ), XPS, TCR, TIFF, TXT, EMF, WMF, BMP, GIF, JPG, JPEG, PNG, PSD\n" +
+                                            $"для Microsoft Windows безкоштовний для некомерційного використання.",
+                            Arguments = new List<string>() {"/VERYSILENT"},
+                            IsFree = true,
+                            DisableDefender = false,
+                            PathFolder = "Programs\\" + "Media\\",
+                            FileName = "stduviewer",
+                            Architecture = "x86",
+                            FileImage = "stduviewer.png",
+                        },
+                        new UserProgram()
+                        {
+                            Id =11,
+                            ProgramName = "AIMP",
+                            InstallProgramName = "AIMP",
+                            Description =   $"AIMP — безкоштовний аудіопрогравач з закритим початковим кодом, написаний на Delphi російським програмістом Артемом Ізмайловим.",
+                            Arguments = new List<string>() {"/SILENT", "/AUTO"},
+                            IsFree = true,
+                            DisableDefender = false,
+                            PathFolder = "Programs\\" + "Media\\",
+                            FileName = "AIMP",
+                            Architecture = "x86",
+                            FileImage = "AIMP.ico",
+                        },
+                          new UserProgram()
+                        {
+                            Id = 12,
+                            ProgramName = "ACDSeePro3",
+                            InstallProgramName = "ACDSee",
+                            Description =   $"",
+                            Arguments = new List<string>() {"/quiet"},
+                            IsFree = true,
+                            DisableDefender = false,
+                            PathFolder = "Programs\\" + "Media\\",
+                            FileName = "",
+                            Architecture = "x86",
+                            FileImage = "ACDSeePro3.ico",
+                        }
                     }
                 },
                 new GroupProgram()
                 {
-                    Id = 3,
+                    Id = 2,
                     Name = "Утиліти",
                     Description = $"Сервісні програми, що допомагають керувати файлами, отримувати інформацію про комп'ютер, діагностувати й усувати проблеми, забезпечувати ефективну роботу системи. Утиліти розширюють можливості ОС.",
                     SingleChoice = false,
@@ -438,7 +397,21 @@ namespace CompasPac.BL
                     {
                         new UserProgram()
                         {
-                            Id = 15,
+                            Id = 13,
+                            ProgramName = "Unlocker",
+                            InstallProgramName = "Unlocker",
+                            Description =   $"Unlocker — це безкоштовна утиліта, яка дозволяє розблокувати файли, що використовуються системним процесом або перебувають у закритому доступі.",
+                            Arguments = new List<string>() {"-y", "-fm0"},
+                            IsFree = true,
+                            DisableDefender = false,
+                            PathFolder = "Programs\\" + "Tools\\",
+                            FileName = "Unlocker",
+                            Architecture = "x86",
+                            FileImage = "Unlocker.png",
+                        },
+                        new UserProgram()
+                        {
+                            Id = 14,
                             ProgramName = "AIDA64",
                             InstallProgramName = "AIDA64",
                             Description =   $"AIDA64 — це утиліта FinalWire Ltd. для тестування та ідентифікації компонентів персонального комп'ютера під керуванням операційних систем Windows,\n" +
@@ -453,7 +426,7 @@ namespace CompasPac.BL
                         },
                         new UserProgram()
                         {
-                            Id = 16,
+                            Id = 15,
                             ProgramName = "AnyDesk",
                             InstallProgramName = "AnyDesk",
                             Description =   $"AnyDesk — це програма віддаленого робочого столу із закритим кодом, що поширюється компанією AnyDesk Software GmbH\n" +
@@ -468,8 +441,8 @@ namespace CompasPac.BL
                         },
                         new UserProgram()
                         {
-                            Id = 17,
-                            ProgramName = "Total Commander",
+                            Id = 16,
+                            ProgramName = "Total Commander 7.0",
                             InstallProgramName = "Total Commander",
                             Description =   $"Total Commander — популярний двопанельний файловий менеджер із закритим початковим кодом для операційних систем Windows, Windows CE, Windows Mobile і Android.",
                             Arguments = new List<string>() {"/S", "/IE"},
@@ -482,24 +455,23 @@ namespace CompasPac.BL
                         },
                         new UserProgram()
                         {
-                            Id = 18,
-                            ProgramName = "Unlocker",
-                            InstallProgramName = "Unlocker",
-                            Description =   $"Unlocker — це безкоштовна утиліта, яка дозволяє розблокувати файли, що використовуються системним процесом або перебувають у закритому доступі.",
-                            Arguments = new List<string>() {"-y", "-fm0"},
-                            IsFree = true,
-                            DisableDefender = false,
+                            Id = 17,
+                            ProgramName = "Total Commander 9.51",
+                            InstallProgramName = "Total Commander",
+                            Description =   $"Total Commander — популярний двопанельний файловий менеджер із закритим початковим кодом для операційних систем Windows, Windows CE, Windows Mobile і Android.",
+                            Arguments = new List<string>() {"/S", "/IE"},
+                            IsFree = false,
+                            DisableDefender = true,
                             PathFolder = "Programs\\" + "Tools\\",
-                            FileName = "Unlocker",
+                            FileName = "TotalCommander",
                             Architecture = "x86",
-                            FileImage = "Unlocker.png",
+                            FileImage = "TotalCommander.png",
                         }
-
                     }
                 },
                 new GroupProgram()
                 {
-                    Id = 4,
+                    Id = 3,
                     Name = "Office",
                     Description =   $"Microsoft Office — офісний пакет, створений корпорацією Microsoft для операційних систем Windows, macOS, iOS та Android.\n" +
                                     $"До складу цього пакету входить програмне забезпечення для роботи з різними типами документів: текстами, електронними таблицями, презентаціями, базами даних тощо.\n" +
@@ -509,7 +481,7 @@ namespace CompasPac.BL
                     UserPrograms = new List<UserProgram>()
                     {
                         new UserProgram(){
-                            Id = 19,
+                            Id = 18,
                             ProgramName = "Microsoft Office 2003",
                             Description =   $"Microsoft Office 2003 - пакет офісних додатків, який розповсюджується компанією Microsoft для операційних системи Windows.\n" +
                                             $"Випуск розпочався 19 серпня 2003, на ринок був випущений 21 жовтня 2003. Його попередником є ​​Microsoft Office XP, а наступником - Microsoft Office 2007.\n" +
@@ -523,7 +495,7 @@ namespace CompasPac.BL
                             FileImage = "Office2003.png",
                         },
                          new UserProgram(){
-                            Id = 20,
+                            Id = 19,
                             ProgramName = "Microsoft Office 2007",
                             Description =   $"Microsoft Office 2007 - версія пакету додатків Microsoft Office, що послідувала за Microsoft Office 2003 і попередник Microsoft Office 2010.\n" +
                                             $"Надійшла у продаж для організацій 30 листопада 2006, для індивідуальних клієнтів — 30 січня 2007.\n" +
@@ -537,7 +509,7 @@ namespace CompasPac.BL
                             FileImage = "Office2007.png",
                         },
                           new UserProgram(){
-                            Id = 21,
+                            Id = 20,
                             ProgramName = "Microsoft Office 2010",
                             Description =   $"Microsoft Office 2010 - версія додатків офісного пакету для операційної системи Microsoft Windows.\n" +
                                             $"Office 2010 є наступником Microsoft Office 2007 та попередником Microsoft Office 2013.\n" +
@@ -552,7 +524,7 @@ namespace CompasPac.BL
                             FileImage = "Office2010.png",
                         },
                            new UserProgram(){
-                            Id = 22,
+                            Id = 21,
                             ProgramName = "Microsoft Office 2016",
                             InstallProgramName = "плюс 2016",
                             Description =   $"Microsoft Office 2016 — остання версія популярного офісного пакету компанії Microsoft, що розповсюджувався за допомогою MSI-інсталятора.\n" +
@@ -570,6 +542,47 @@ namespace CompasPac.BL
                 },
                 new GroupProgram()
                 {
+                    Id = 4,
+                    Name = "Антивірусне програмне забезпечення",
+                    Description = $"Антивірус - це спеціалізована програма для знаходження комп'ютерних вірусів,\n" +
+                    $"а також небажаних (шкідливих) програм загалом, та відновлення заражених (модифікованих) такими програмами файлів,\n" +
+                    $"а також для профілактики — запобігання зараженню (модифікації) файлів чи операційної системи шкідливим кодом.",
+                    SingleChoice = true,
+                    UserPrograms = new List<UserProgram>
+                    {
+                        new UserProgram()
+                        {
+                            Id = 22,
+                            ProgramName = "360 Total Security",
+                            InstallProgramName = "360 Total Security",
+                            Description = $"360 Total Security — це програма, розроблена китайською компанією Qihoo 360,\n" +
+                            $" яка займається інтернет-безпекою.",
+                            Arguments = new List<string>() {"/S"},
+                            IsFree = true,
+                            DisableDefender = false,
+                            PathFolder = "Programs\\" + "Antivirus\\",
+                            FileName = "360TS",
+                            Architecture = "x86",
+                            FileImage = "360TS.png",
+                        },
+                        new UserProgram()
+                        {
+                            Id = 23,
+                            ProgramName = "Microsoft Security Essentials",
+                            InstallProgramName = "Security Essentials",
+                            Description = "Microsoft Security Essentials (MSE) — безкоштовний пакет антивірусних програм від компанії Microsoft.",
+                            Arguments = new List<string>() {"/s", "/runwgacheck"},
+                            IsFree = true,
+                            DisableDefender = false,
+                            PathFolder = "Programs\\" + "Antivirus\\",
+                            FileName = "MSEInstall",
+                            Architecture = "x64",
+                            FileImage = "MSEInstall.png"
+                        }
+                    }
+                },
+                new GroupProgram()
+                {
                     Id = 5,
                     Name = "Report CompasPac",
                     Description = "Звіти про встановлення",
@@ -577,7 +590,7 @@ namespace CompasPac.BL
                      UserPrograms = new List<UserProgram>()
                     {
                      new UserProgram(){
-                            Id = 23,
+                            Id = 24,
                             ProgramName = "Report Greg_House_M_D",
                             Description =   $"Ставив Greg_House_M_D",
                             Arguments = new List<string>() {"Greg_House_M_D"},
@@ -589,7 +602,7 @@ namespace CompasPac.BL
                             FileImage = "LogInstall.png",
                         },
                      new UserProgram(){
-                            Id = 24,
+                            Id = 25,
                             ProgramName = "Report Vadimakus",
                             Description =   $"Ставив Vadimakus",
                             Arguments = new List<string>() {"Vadimakus"},
@@ -603,7 +616,7 @@ namespace CompasPac.BL
                      },
 
                 },
-
+               
 
             };
 
@@ -625,14 +638,14 @@ namespace CompasPac.BL
                     Id=0,
                     Name = "User Windows 10",
                     Description="Для Windows 10",
-                    IdPrograms = new List<int>() {2, 3, 4, 5, 8, 10,11, 13, 14, 15, 17, 18, 22, 23 }
+                    IdPrograms = new List<int>() {0, 1, 2, 3, 4, 5, 6, 7, 9, 13, 24 }
                 },
                 new UserPresetProgram()
                 {
                     Id=1,
                     Name = "User Windows 7",
                     Description="Для Windows 7",
-                    IdPrograms = new List<int>() {1, 2, 3, 4, 5, 8, 10, 11, 12, 14, 15, 17, 18, 22, 23 }
+                    IdPrograms = new List<int>() {0, 1, 2, 3, 4, 5, 6, 7, 8, 13, 23, 24 }
                 }
             };
         }
