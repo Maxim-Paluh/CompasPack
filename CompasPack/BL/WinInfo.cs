@@ -78,6 +78,19 @@ namespace CompasPac.BL
                         }
                     }
                 }
+                using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64).OpenSubKey(Programs))
+                {
+                    foreach (string subkey_name in key.GetSubKeyNames())
+                    {
+                        using (RegistryKey subkey = key.OpenSubKey(subkey_name))
+                        {
+                            var temp = subkey.GetValue("DisplayName");
+                            if (temp != null)
+                                programs.Add(temp.ToString());
+                        }
+                    }
+                }
+
             }
             
             using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(Programs))
@@ -92,11 +105,19 @@ namespace CompasPac.BL
                     }
                 }
             }
+            using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).OpenSubKey(Programs))
+            {
+                foreach (string subkey_name in key.GetSubKeyNames())
+                {
+                    using (RegistryKey subkey = key.OpenSubKey(subkey_name))
+                    {
+                        var temp = subkey.GetValue("DisplayName");
+                        if (temp != null)
+                            programs.Add(temp.ToString());
+                    }
+                }
+            }
 
-            //Developers opera very stupid
-            var pathOpera = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\Opera");
-            if (Directory.Exists(pathOpera))
-                programs.Add("Opera");
 
             return programs;
         }
