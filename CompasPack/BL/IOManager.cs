@@ -113,7 +113,7 @@ namespace CompasPac.BL
                 foreach (var program in temp.SelectMany(group => group.UserPrograms))
                 {
                     program.PathFolder = Path.Combine(PathRoot, program.PathFolder);
-                    program.FileImage = program.PathFolder + program.FileImage;
+                    program.FileImage = program.PathFolder+"\\Icon\\" + program.FileImage;
                 }
                 return temp;
             }
