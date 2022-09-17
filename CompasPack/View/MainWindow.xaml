@@ -134,6 +134,7 @@
                 <MenuItem Header="WinRar" Command="{Binding OpenWinRarCommand}"></MenuItem>
                 <Separator></Separator>
                 <MenuItem Header="CPU-Z" Command="{Binding OpenCpuZCommand}"></MenuItem>
+                <MenuItem Header="GPU-Z" Command="{Binding OpenGpuZCommand}"></MenuItem>
                 <MenuItem Header="FurMark" Command="{Binding OpenFurMarkCommand}"></MenuItem>
                 
             </MenuItem>

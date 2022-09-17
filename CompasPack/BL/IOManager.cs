@@ -24,6 +24,7 @@ namespace CompasPac.BL
 
 
         public string CpuZ { get; set; }
+        public string GpuZ { get; set; }
         public string Aida { get; set; }
         public string CrystalDisk { get; set; }
         public string FurMark { get; set; }
@@ -40,13 +41,14 @@ namespace CompasPac.BL
         private static string _settingUserPresetProgramFileNamePath;
         private static string _pathRoot;
         private string _compasPacLogName = "CompasPackLog";
-        private string cpuZ = "Programs\\Portable\\CPU-Z\\cpuz_x32.exe"; 
-        private string aida = "Programs\\Portable\\AIDA64\\aida64.exe";
-        private string crystalDisk = "Programs\\Portable\\CrystalDisk\\DiskInfo32.exe";
-        private string furMark = "Programs\\Portable\\FurMark\\FurMark.exe";
-        private string totalCommander951 = "Programs\\Portable\\TotalCommander951\\TOTALCMD.EXE";
-        private string totalCommander700 = "Programs\\Portable\\TotalCommander700\\Totalcmd.exe";
-        private string winRar = "\\Programs\\Portable\\WinRAR\\WinRAR.exe";
+        private string cpuZ = "Programs\\!Portable\\CPU-Z\\cpuz_x32.exe";
+        private string gpuZ = "Programs\\!Portable\\FurMark\\gpuz.exe";
+        private string aida = "Programs\\!Portable\\AIDA64\\aida64.exe";
+        private string crystalDisk = "Programs\\!Portable\\CrystalDisk\\DiskInfo32.exe";
+        private string furMark = "Programs\\!Portable\\FurMark\\FurMark.exe";
+        private string totalCommander951 = "Programs\\!Portable\\TotalCommander951\\TOTALCMD.EXE";
+        private string totalCommander700 = "Programs\\!Portable\\TotalCommander700\\Totalcmd.exe";
+        private string winRar = "\\Programs\\!Portable\\WinRAR\\WinRAR.exe";
 
         public string CurrentDirectoryPath
         {
@@ -71,6 +73,7 @@ namespace CompasPac.BL
         public string CompasPacLog { get; set; }
         public string CompasExampleFile { get; set; }
         public string CpuZ { get; set; }
+        public string GpuZ { get; set; }
         public string Aida { get; set; }
         public string CrystalDisk { get; set; }
         public string FurMark { get; set; }    
@@ -90,6 +93,7 @@ namespace CompasPac.BL
             CompasExampleFile = Path.Combine(PathRoot, "Programs\\!ExampleFile");
 
             CpuZ = Path.Combine(PathRoot, cpuZ);
+            GpuZ = Path.Combine(PathRoot, gpuZ);
             Aida = Path.Combine(PathRoot, aida);
             CrystalDisk = Path.Combine(PathRoot, crystalDisk);
             FurMark = Path.Combine(PathRoot, furMark);

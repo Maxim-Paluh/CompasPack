@@ -62,6 +62,7 @@ namespace CompasPac.ViewModel
 
             OpenAidaCommand = new DelegateCommand(OnOpenAida);
             OpenCpuZCommand = new DelegateCommand(OnOpenCpuZ);
+            OpenGpuZCommand = new DelegateCommand(OnOpenGpuZ);
             OpenCrystalCommand = new DelegateCommand(OnOpenCrystal);
             OpenFurMarkCommand = new DelegateCommand(OnOpenFurMark);
             OpenTotalCommander951Command = new DelegateCommand(OnOpenTotalCommander951);
@@ -229,6 +230,10 @@ namespace CompasPac.ViewModel
         private void OnOpenCpuZ()
         {
             OpenProgram(_iOManager.CpuZ);
+        }
+        private void OnOpenGpuZ()
+        {
+            OpenProgram(_iOManager.GpuZ);
         }
         private void OnOpenAida()
         {
@@ -401,6 +406,7 @@ namespace CompasPac.ViewModel
         public ICommand OnDefenderCommand { get; }
         public ICommand OpenAidaCommand { get; }
         public ICommand OpenCpuZCommand { get; }
+        public ICommand OpenGpuZCommand { get; }
         public ICommand OpenCrystalCommand { get; }
         public ICommand OpenFurMarkCommand { get; }
         public ICommand OpenTotalCommander951Command { get; }

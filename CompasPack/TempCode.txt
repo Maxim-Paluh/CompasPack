@@ -37,3 +37,6 @@ Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersio
               return "Set-MpPreference -DisableRealtimeMonitoring $true: OK!!!\n";
             else
               return "Set-MpPreference -DisableRealtimeMonitoring $false: OK!!!\n";
+
+
+var cpu = new ManagementObjectSearcher("select * from Win32_Processor").Get().Cast<ManagementObject>().First()["MaxClockSpeed"];
