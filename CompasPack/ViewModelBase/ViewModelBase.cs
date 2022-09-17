@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace CompasPac
+namespace CompasPack
 {
     public class ViewModelBase : INotifyPropertyChanged
     {

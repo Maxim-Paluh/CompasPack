@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace CompasPac.Data
+namespace CompasPack.Data
 {
     public class GroupProgram 
     {

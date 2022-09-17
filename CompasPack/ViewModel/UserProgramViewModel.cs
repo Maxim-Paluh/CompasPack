@@ -1,6 +1,6 @@
-﻿using CompasPac.BL;
-using CompasPac.Data;
-using CompasPac.Event;
+﻿using CompasPack.BL;
+using CompasPack.Data;
+using CompasPack.Event;
 using Prism.Commands;
 using Prism.Events;
 using System;
@@ -12,7 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace CompasPac.ViewModel
+namespace CompasPack.ViewModel
 {
     public class UserProgramViewModel : ViewModelBase
     {
@@ -114,10 +114,8 @@ namespace CompasPac.ViewModel
                 IsInstall = new SolidColorBrush(Colors.Yellow);
                 VisibilityIsInstall = Visibility.Hidden;
             }
-
         }
 
         public ICommand SelectProgramCommand { get; }
-
     }
 }

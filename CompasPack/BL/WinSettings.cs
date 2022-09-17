@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Xml.Linq;
 
-namespace CompasPac.BL
+namespace CompasPack.BL
 {
     public static class WinSettings
     {

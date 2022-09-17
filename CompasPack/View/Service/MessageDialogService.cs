@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace CompasPac.View.Service
+namespace CompasPack.View.Service
 {
     public interface IMessageDialogService
     {

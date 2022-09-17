@@ -9,7 +9,7 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using System.IO;
 
-namespace CompasPac.BL
+namespace CompasPack.BL
 {
     public static class WinInfo
     {

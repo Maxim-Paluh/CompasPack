@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics;
 using System.IO;
 
-string CompasPacLogName = "CompasPackLog";
-var CompasPacLog = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+"\\"+ CompasPacLogName;
+string CompasPackLogName = "CompasPackLog";
+var CompasPackLog = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+"\\"+ CompasPackLogName;
 var CurrentDirectory = Directory.GetCurrentDirectory();
 var Root = Path.GetPathRoot(CurrentDirectory);
-var AidaPath = Path.Combine(Root, "Programs\\Portable\\AIDA64");
+var AidaPath = Path.Combine(Root, "Programs\\!Portable\\AIDA64");
 
-if (!Directory.Exists(CompasPacLog))
-    Directory.CreateDirectory(CompasPacLog);
+if (!Directory.Exists(CompasPackLog))
+    Directory.CreateDirectory(CompasPackLog);
 
 var DataTime = DateTime.Now.ToString().Replace(':', '.').Replace(' ', '_');
 
@@ -25,7 +25,7 @@ var proc = new ProcessStartInfo()
 {
     UseShellExecute = true,
     FileName = AidaPath + "\\aida64.exe",
-    Arguments = "/R " + CompasPacLog + $"\\{DataTime}. " + "/HTML " + "/CUSTOM " + AidaPath+ "\\ForLog.rpf",
+    Arguments = "/R " + CompasPackLog + $"\\{DataTime}. " + "/HTML " + "/CUSTOM " + AidaPath+ "\\ForLog.rpf",
 };
 
 var process = Process.Start(proc);

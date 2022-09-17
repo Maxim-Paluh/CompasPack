@@ -1,5 +1,5 @@
-﻿using CompasPac.Data;
-using CompasPac.View.Service;
+﻿using CompasPack.Data;
+using CompasPack.View.Service;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CompasPac.BL
+namespace CompasPakc.BL
 {
     public interface IIOManager
     {
@@ -40,7 +40,7 @@ namespace CompasPac.BL
         private static string _settingsGroupProgramNameFilePath;
         private static string _settingUserPresetProgramFileNamePath;
         private static string _pathRoot;
-        private string _compasPacLogName = "CompasPackLog";
+        private string _compasPackLogName = "CompasPackLog";
         private string cpuZ = "Programs\\!Portable\\CPU-Z\\cpuz_x32.exe";
         private string gpuZ = "Programs\\!Portable\\FurMark\\gpuz.exe";
         private string aida = "Programs\\!Portable\\AIDA64\\aida64.exe";
@@ -70,7 +70,7 @@ namespace CompasPac.BL
             get { return _pathRoot; }
             set { _pathRoot = value; }
         }
-        public string CompasPacLog { get; set; }
+        public string CompasPackLog { get; set; }
         public string CompasExampleFile { get; set; }
         public string CpuZ { get; set; }
         public string GpuZ { get; set; }
@@ -84,7 +84,7 @@ namespace CompasPac.BL
         public IOManager(IMessageDialogService messageDialogService)
         {
             _messageDialogService = messageDialogService;
-            CompasPacLog = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + _compasPacLogName;
+            CompasPackLog = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + _compasPackLogName;
             CurrentDirectoryPath = Directory.GetCurrentDirectory();
             SettingsGroupProgramFileNamePath = Directory.GetCurrentDirectory() + "\\" + "SettingsPrograms.json";
             SettingUserPresetProgramFileNamePath = Directory.GetCurrentDirectory() + "\\" + "SettingsPreset.json";
@@ -605,7 +605,7 @@ namespace CompasPac.BL
                 new GroupProgram()
                 {
                     Id = 5,
-                    Name = "Report CompasPac",
+                    Name = "Report CompasPack",
                     Description = "Звіти про встановлення",
                     SingleChoice = true,
                      UserPrograms = new List<UserProgram>()
@@ -672,9 +672,9 @@ namespace CompasPac.BL
         }
         public void OpenAppLog()
         {
-            if (!Directory.Exists(CompasPacLog))
-                Directory.CreateDirectory(CompasPacLog);
-            Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", CompasPacLog);
+            if (!Directory.Exists(CompasPackLog))
+                Directory.CreateDirectory(CompasPackLog);
+            Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", CompasPackLog);
         }
 
         public void OpenExampleFile()

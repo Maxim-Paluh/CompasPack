@@ -8,7 +8,7 @@ using System.Windows.Media;
 using Newtonsoft.Json;
 using Prism.Commands;
 
-namespace CompasPac.Data
+namespace CompasPack.Data
 {
     public class UserProgram
     {

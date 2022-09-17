@@ -1,15 +1,18 @@
 ﻿using Autofac;
-using CompasPac.BL;
-using CompasPac.View.Service;
-using CompasPac.ViewModel;
+using CompasPack.BL;
+using CompasPack.View.Service;
+using CompasPack.ViewModel;
+using CompasPack;
+using CompasPack.ViewModel;
 using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CompasPakc.BL;
 
-namespace CompasPac.Startup
+namespace CompasPack.Startup
 {
     public class Bootstrapper
     {
@@ -21,6 +24,10 @@ namespace CompasPac.Startup
             builder.RegisterType<MainWindow>().AsSelf();
             builder.RegisterType<MainWindowViewModel>().AsSelf();
 
+
+
+            builder.RegisterType<ProgramsViewModel>().Keyed<IDetailViewModel>(nameof(ProgramsViewModel));
+            builder.RegisterType<ReportViewModel>().Keyed<IDetailViewModel>(nameof(ReportViewModel));
 
             /////////////////////////////////////////////////////////////////////////////////
             // Register Event Aggregator

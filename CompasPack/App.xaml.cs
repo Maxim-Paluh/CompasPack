@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using CompasPac.Startup;
+using CompasPack.Startup;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace CompasPac
+namespace CompasPack
 {
     /// <summary>
     /// Interaction logic for App.xaml

@@ -1,5 +1,5 @@
-﻿using CompasPac.Data;
-using CompasPac.ViewModel;
+﻿using CompasPack.Data;
+using CompasPack.ViewModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 
 
-namespace CompasPac.BL
+namespace CompasPack.BL
 {
     public static class Installer
     {
@@ -48,7 +48,6 @@ namespace CompasPac.BL
             {
                 var StartInfo = new ProcessStartInfo
                 {
-
                     FileName = Path.Combine(userProgram.PathFolder, exeFile),
                     Arguments = arguments,
                     UseShellExecute = false
