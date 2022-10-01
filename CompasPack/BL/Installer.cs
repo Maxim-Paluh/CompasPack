@@ -20,35 +20,37 @@ namespace CompasPack.BL
             var userProgram = userProgramViewMode.UserProgram;
             StringBuilder stringBuilder = new StringBuilder();
 
-            string? exeFile = null;
+            string? ExecutableFile = null;
             string? arguments = null;
             if (onlineInstall)
             {
-                exeFile = Directory.GetFiles(userProgram.PathFolder)
-                 .Where(x => x.Contains(userProgram.OnlineInstaller.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".exe")).FirstOrDefault();
-                arguments = String.Join(" ", userProgram.OnlineInstaller.Arguments);
+                var File = Directory.GetFiles(userProgram.PathFolder)
+                    .Where(x => x.Contains(userProgram.OnlineInstaller.FileName, StringComparison.InvariantCultureIgnoreCase))
+                   . Where(x => x.Contains("exe") || x.Contains("msi")).FirstOrDefault();
+
+                arguments = string.Join(" ", userProgram.OnlineInstaller.Arguments);
             }
-            if (exeFile == null)
+            if (ExecutableFile == null)
             {
-                var exeFiles = Directory.GetFiles(userProgram.PathFolder)
-                   .Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".exe"));
+                var Files = Directory.GetFiles(userProgram.PathFolder)
+                   .Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase)).Where(x => x.Contains("exe") || x.Contains("msi"));
                 if (userProgram.Architecture == "x64")
                 {
                     if (WinInfo.GetIs64BitOperatingSystem())
-                        exeFile = exeFiles.Where(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                        ExecutableFile = Files.Where(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
                     else
-                        exeFile = exeFiles.Where(x => x.Contains("x86", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                        ExecutableFile = Files.Where(x => x.Contains("x86", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
                 }
                 else
-                    exeFile = exeFiles.LastOrDefault();
+                    ExecutableFile = Files.LastOrDefault();
                 arguments = String.Join(" ", userProgram.Arguments);
             }
 
-            if (exeFile != null)
+            if (ExecutableFile != null)
             {
                 var StartInfo = new ProcessStartInfo
                 {
-                    FileName = Path.Combine(userProgram.PathFolder, exeFile),
+                    FileName = Path.Combine(userProgram.PathFolder, ExecutableFile),
                     Arguments = arguments,
                     UseShellExecute = false
                 };

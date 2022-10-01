@@ -397,12 +397,14 @@ namespace CompasPakc.BL
                             Id = 12,
                             ProgramName = "ACDSeePro3",
                             InstallProgramName = "ACDSee",
-                            Description =   $"",
+                            Description =   $"ACDSeePro3 - умовно-безкоштовна програма для перегляду і організації зображень для Microsoft Windows, а так само для Mac OS X, що випускається ACD Systems.\n" +
+                                            $"Містить численні інструменти для обробки зображень, у тому числі і пакетної. В останніх версіях має два режими перегляду:\n" +
+                                            $"швидкий, в якому доступні тільки інструменти повороту зображення і зміна масштабу, і повний, з завантаженням всіх інструментів обробки.",
                             Arguments = new List<string>() {"/quiet"},
                             IsFree = true,
                             DisableDefender = false,
                             PathFolder = "Programs\\" + "Media\\",
-                            FileName = "",
+                            FileName = "ACDSee",
                             Architecture = "x86",
                             FileImage = "ACDSeePro3.ico",
                         }
