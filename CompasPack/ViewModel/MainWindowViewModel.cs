@@ -53,7 +53,7 @@ namespace CompasPack.ViewModel
         //******************************************************
         public async Task LoadAsync()
         {
-           // OnCreateNewFormExecute(typeof(ProgramsViewModel));
+            OnCreateNewFormExecute(typeof(ProgramsViewModel));
         }
         //******************************************************
         //--------------------------------------
