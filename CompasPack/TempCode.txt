@@ -18,9 +18,7 @@ var cpu = new ManagementObjectSearcher("select * from Win32_Processor").Get().Ca
 control.exe														/name Microsoft.DefaultPrograms /page pageDefaultProgram
 Канонические имена элементов панель управления					https://docs.microsoft.com/ru-ru/windows/win32/shell/controlpanel-canonical-names#default-programs
 Список команд shell:CLSID в Windows 10 для системных папок		https://winreviewer.com/shell-guid-clsid-list-windows-10/
-
-
-
+Here Are All the Rundll32 Commands for Windows 10               https://www.majorgeeks.com/content/page/here_are_all_the_rundll32_commands_for_windows_10.html
 
 
 Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall

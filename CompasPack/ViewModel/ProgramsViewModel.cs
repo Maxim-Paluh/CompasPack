@@ -44,16 +44,16 @@ namespace CompasPack.ViewModel
 
             AUCCommand = new DelegateCommand(OnAUC);
             IconCommand = new DelegateCommand(OnIcon);
+            OpenDesktopIconSettingsCommand = new DelegateCommand(OnOpenDesktopIconSettings);
+            
+            OpenAppLogCommand = new DelegateCommand(OnOpenAppLog);
+            OpenExampleFileCommand = new DelegateCommand(OnOpenExampleFile);
             DefaultCommand = new DelegateCommand(OnDefault);
+            
 
             SpeedTestCommand = new DelegateCommand(OnSpeedTest);
             OffDefenderCommand = new DelegateCommand(OnOffDefender);
             OnDefenderCommand = new DelegateCommand(OnOnDefender);
-
-            OpenAppLogCommand = new DelegateCommand(OnOpenAppLog);
-            OpenExampleFileCommand = new DelegateCommand(OnOpenExampleFile);
-
-
 
             _eventAggregator.GetEvent<SelectSingleProgramEvent>().Subscribe(SelectSingleProgram);
         }
@@ -252,18 +252,24 @@ namespace CompasPack.ViewModel
         {
             WinSettings.OpenIcon();
         }
+        private void OnOpenDesktopIconSettings()
+        {
+            WinSettings.OpenDesktopIconSettings();
+        }
+        //**************************************************
         private void OnDefault()
         {
             WinSettings.OpenDefaultPrograms();
-        }
-        private void OnOpenAppLog()
-        {
-            _iOManager.OpenAppLog();
         }
         private void OnOpenExampleFile()
         {
             _iOManager.OpenExampleFile();
         }
+        private void OnOpenAppLog()
+        {
+            _iOManager.OpenAppLog();
+        }
+        //***************************************************
         private async void OnSpeedTest()
         {
             TextConsole += "<-----------------Start test speed--------------------->\n";
@@ -313,12 +319,16 @@ namespace CompasPack.ViewModel
         //++++++++++++++++++++++++++++++++++++++++++++++++++++
         public ICommand AUCCommand { get; }
         public ICommand IconCommand { get; }
+        public ICommand OpenDesktopIconSettingsCommand { get; }
+        //****************************************************
         public ICommand DefaultCommand { get; }
-        public ICommand OpenAppLogCommand { get; }
         public ICommand OpenExampleFileCommand { get; }
+        public ICommand OpenAppLogCommand { get; }
+        //****************************************************
         public ICommand SpeedTestCommand { get; }
         public ICommand OffDefenderCommand { get; }
         public ICommand OnDefenderCommand { get; }
+
         //--------------------------------------
     }
 }
