@@ -13,6 +13,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CompasPakc.BL;
+using System.IO;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace CompasPack.ViewModel
 {
@@ -48,8 +51,8 @@ namespace CompasPack.ViewModel
             
             OpenAppLogCommand = new DelegateCommand(OnOpenAppLog);
             OpenExampleFileCommand = new DelegateCommand(OnOpenExampleFile);
+            OpenKMSAutoCommand = new DelegateCommand(OpenKMSAuto);
             DefaultCommand = new DelegateCommand(OnDefault);
-            
 
             SpeedTestCommand = new DelegateCommand(OnSpeedTest);
             OffDefenderCommand = new DelegateCommand(OnOffDefender);
@@ -265,6 +268,81 @@ namespace CompasPack.ViewModel
         {
             _iOManager.OpenExampleFile();
         }
+        private async void OpenKMSAuto()
+        {
+            int countOpenKMSAuto = 0;
+            a:
+            if(!await WinDefender.CheckDefenderDisable())
+            {
+                OnOffDefender();
+            }
+            var pathKMS = KMSAuto.FindKMSAutoExe(_iOManager);
+            if (!string.IsNullOrWhiteSpace(pathKMS))
+            {
+                Process proc = new Process()
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = pathKMS,
+                        UseShellExecute = false,
+                    }
+                };
+                proc.Start();
+            }
+            else
+            {
+                if (File.Exists(_iOManager.WinRar))
+                {
+                    var pathRar = KMSAuto.FindKMSAutoRar(_iOManager);
+                    int countUnrar = 0;
+                    if (!string.IsNullOrWhiteSpace(pathRar))
+                    {
+                        b:
+                        try
+                        {
+                            ProcessStartInfo ps = new ProcessStartInfo();
+                            ps.FileName = _iOManager.WinRar;
+                            ps.Arguments = $@"x -o- {pathRar} {_iOManager.Crack}";
+                            var proc = Process.Start(ps);
+                            if (!proc.WaitForExit(20000))
+                            {
+                                try
+                                {
+                                    proc.Kill();
+                                }
+                                catch (Exception)
+                                {
+                                }
+
+                                try
+                                {
+                                    proc.Close();
+                                }
+                                catch (Exception)
+                                {
+                                }
+
+                                if (countUnrar < 3)
+                                {
+                                    countUnrar++;
+                                    System.Threading.Thread.Sleep(5000);
+                                    goto b;
+                                }
+                                throw new Exception("Error UnRar");
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            throw new Exception("Error UnRar");
+                        }
+                        if (countOpenKMSAuto < 2)
+                        {
+                            goto a;
+                        }
+                    }
+                }
+            }
+        }
         private void OnOpenAppLog()
         {
             _iOManager.OpenAppLog();
@@ -323,6 +401,7 @@ namespace CompasPack.ViewModel
         //****************************************************
         public ICommand DefaultCommand { get; }
         public ICommand OpenExampleFileCommand { get; }
+        public ICommand OpenKMSAutoCommand { get; }
         public ICommand OpenAppLogCommand { get; }
         //****************************************************
         public ICommand SpeedTestCommand { get; }

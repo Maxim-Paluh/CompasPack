@@ -31,6 +31,8 @@ namespace CompasPakc.BL
         public string TotalCommander951 { get; set; }
         public string TotalCommander700 { get; set; }
         public string WinRar { get; set; }
+        public string Rar { get; set; }
+        public string Crack { get; set; }
     }
 
     public class IOManager : IIOManager
@@ -48,7 +50,10 @@ namespace CompasPakc.BL
         private string furMark = "Programs\\!Portable\\FurMark\\FurMark.exe";
         private string totalCommander951 = "Programs\\!Portable\\TotalCommander951\\TOTALCMD.EXE";
         private string totalCommander700 = "Programs\\!Portable\\TotalCommander700\\Totalcmd.exe";
-        private string winRar = "\\Programs\\!Portable\\WinRAR\\WinRAR.exe";
+        private string winRar = "Programs\\!Portable\\WinRAR\\WinRAR.exe";
+        private string rar = "Programs\\!Portable\\WinRAR\\Rar.exe";
+        private string crack = "Programs\\!Crack";
+
 
         public string CurrentDirectoryPath
         {
@@ -80,6 +85,8 @@ namespace CompasPakc.BL
         public string TotalCommander951 { get; set; }
         public string TotalCommander700 { get; set; }
         public string WinRar { get; set; }
+        public string Rar { get; set; }
+        public string Crack { get; set; }
 
         public IOManager(IMessageDialogService messageDialogService)
         {
@@ -100,6 +107,8 @@ namespace CompasPakc.BL
             TotalCommander951 = Path.Combine(PathRoot, totalCommander951);
             TotalCommander700 = Path.Combine(PathRoot, totalCommander700);
             WinRar = Path.Combine(PathRoot, winRar);
+            Rar = Path.Combine(PathRoot, rar);
+            Crack = Path.Combine(PathRoot, crack);
         }
         public async Task<List<GroupProgram>> GetGroupPrograms()
         {
