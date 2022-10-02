@@ -208,16 +208,6 @@ namespace CompasPack.ViewModel
                 else
                 {
                     TextConsole += $"Start Install Programs: {userProgramViewModel.UserProgram.ProgramName}\n";
-                    if (userProgramViewModel.UserProgram.DisableDefender)
-                    {
-                        TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                        var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
-                        if (!string.IsNullOrWhiteSpace(ResponseDefender))
-                            TextConsole += $"Response defender: {ResponseDefender}\n";
-                        TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                        TextConsole += $"Resault: {await WinDefender.CheckDefenderDisable()}\n";
-                    }
-
                     if (userProgramViewModel.UserProgram.OnlineInstaller != null)
                     {
                         TextConsole += $"Start speed test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
@@ -226,19 +216,159 @@ namespace CompasPack.ViewModel
                         TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
 
                         if (speed >= 0.5)
-                            TextConsole += await Installer.InstallProgram(userProgramViewModel, true);
+                            await InstallProgram(userProgramViewModel, true);
                         else
-                            TextConsole += await Installer.InstallProgram(userProgramViewModel, false);
+                            await InstallProgram(userProgramViewModel, false);
                     }
                     else
                     {
-                        TextConsole += await Installer.InstallProgram(userProgramViewModel, false);
+                         await InstallProgram(userProgramViewModel, false);
                     }
                     TextConsole += "<-------------------------------------------------------->\n";
                 }
 
             }
             IsEnabled = true;
+        }
+        private async Task InstallProgram(UserProgramViewModel userProgramViewMode, bool onlineInstall)
+        {
+            var userProgram = userProgramViewMode.UserProgram;
+            string? ExecutableFile = null;
+            string? arguments = null;
+            int countOpen = 0;
+            a:
+            if (userProgramViewMode.UserProgram.DisableDefender)
+            {
+                if (!await WinDefender.CheckDefenderDisable())
+                {
+                    TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+                    IsEnabled = false;
+                    var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
+                    if (!string.IsNullOrWhiteSpace(ResponseDefender))
+                        TextConsole += $"Response defender: {ResponseDefender}\n";
+                    TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+                }
+                TextConsole += $"Defender is disable: {await WinDefender.CheckDefenderDisable()}\n";
+            }
+            if (onlineInstall)
+            {
+                var File = Directory.GetFiles(userProgram.PathFolder)
+                    .Where(x => x.Contains(userProgram.OnlineInstaller.FileName, StringComparison.InvariantCultureIgnoreCase))
+                   .Where(x => x.Contains("exe") || x.Contains("msi")).FirstOrDefault();
+
+                arguments = string.Join(" ", userProgram.OnlineInstaller.Arguments);
+            }
+            if (ExecutableFile == null)
+            {
+                var Files = Directory.GetFiles(userProgram.PathFolder)
+                   .Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase)).Where(x => x.Contains("exe") || x.Contains("msi"));
+                if (userProgram.Architecture == "x64")
+                {
+                    if (WinInfo.GetIs64BitOperatingSystem())
+                        ExecutableFile = Files.Where(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                    else
+                        ExecutableFile = Files.Where(x => x.Contains("x86", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                }
+                else
+                    ExecutableFile = Files.LastOrDefault();
+                arguments = String.Join(" ", userProgram.Arguments);
+            }
+
+            if (userProgram.DisableDefender)
+                TextConsole += $"Find {userProgram.FileName} (Try {countOpen + 1} with 3), Resault:\n";
+            
+            if (ExecutableFile != null)
+            {
+                if (userProgram.DisableDefender)
+                    TextConsole += $"OK!!!, Find File and start Install: {ExecutableFile}\n";
+                else
+                    TextConsole += $"File: {ExecutableFile}\n";
+                TextConsole += $"Arguments: {arguments}\n";
+                
+                var StartInfo = new ProcessStartInfo
+                {
+                    FileName =  ExecutableFile,
+                    Arguments = arguments,
+                    UseShellExecute = false
+                };
+                try
+                {
+                    Process proc = Process.Start(StartInfo);
+                    await proc.WaitForExitAsync();
+                    TextConsole += $"Programs: {userProgram.ProgramName}, Installed!!!\n";
+                    userProgramViewMode.CheckInstall(WinInfo.ListInstallPrograms());
+                }
+                catch (Exception exp)
+                {
+                    TextConsole += $"Program: {userProgram.ProgramName}.\nError install: \n{exp.Message}\n";
+                }
+            }
+            else
+            {
+                if (userProgram.DisableDefender)
+                {
+                    TextConsole += $"Error, Not Find {userProgram.FileName}\n";
+                    TextConsole += $"Find Rar.exe, Resault:\n";
+                    
+                    if (File.Exists(_iOManager.WinRar))
+                    {
+                        TextConsole += $"OK!!!, Path: {_iOManager.WinRar}\n";
+                        var pathRar = Directory.GetFiles(userProgram.PathFolder).Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault();
+                        int countUnrar = 0;
+                        TextConsole += $"Find arkhive {userProgram.FileName}, Resault:\n";
+                        if (!string.IsNullOrWhiteSpace(pathRar))
+                        {
+                            TextConsole += $"OK!!!, Path: {pathRar}\n";
+                        b:
+                            try
+                            {
+                                ProcessStartInfo ps = new ProcessStartInfo();
+                                ps.FileName = _iOManager.WinRar;
+                                ps.Arguments = $@"x -p1234 -o- {pathRar} {userProgram.PathFolder}";
+                                TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
+                                var proc = Process.Start(ps);
+                                if (!proc.WaitForExit(20000))
+                                {
+                                    try { proc.Kill(); } catch (Exception) { }
+                                    try { proc.Close(); } catch (Exception) { }
+
+                                    TextConsole += "Error UnRar\n";
+                                    if (countUnrar < 2)
+                                    {
+                                        countUnrar++;
+                                        await Task.Delay(5000);
+                                        goto b;
+                                    }
+                                }
+                                else
+                                {
+                                    TextConsole += $"OK!!!\n";
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                TextConsole += "Error UnRar\n";
+                            }
+                            if (countOpen < 2)
+                            {
+                                countOpen++;
+                                TextConsole += "********************************************************\n";
+                                goto a;
+                            }
+                        }
+                        else
+                        {
+                            TextConsole += $"Error, Not Find arkhive {userProgram.FileName}\n";
+                        }
+                    }
+                    else
+                    {
+                        TextConsole += $"Error, Not Find Rar.exe\n";
+                    }
+                }
+                 else
+                    TextConsole += $"Not fount file: {userProgram.FileName} In folder: {userProgram.PathFolder}\n";
+            }
         }
         private void OnClearConsole()
         {
@@ -347,7 +477,7 @@ namespace CompasPack.ViewModel
                         if (countOpenKMSAuto < 2)
                         {
                             countOpenKMSAuto++;
-                            TextConsole += "--------------------------------------------------------\n";
+                            TextConsole += "********************************************************\n";
                             goto a;
                         }
                     }
