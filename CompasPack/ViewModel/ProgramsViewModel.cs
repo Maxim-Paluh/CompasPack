@@ -242,7 +242,6 @@ namespace CompasPack.ViewModel
                 if (!await WinDefender.CheckDefenderDisable())
                 {
                     TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                    IsEnabled = false;
                     var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
                     if (!string.IsNullOrWhiteSpace(ResponseDefender))
                         TextConsole += $"Response defender: {ResponseDefender}\n";
@@ -423,7 +422,6 @@ namespace CompasPack.ViewModel
             if(!await WinDefender.CheckDefenderDisable())
             {
                 TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                IsEnabled = false;
                 var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
                 if (!string.IsNullOrWhiteSpace(ResponseDefender))
                     TextConsole += $"Response defender: {ResponseDefender}\n";
