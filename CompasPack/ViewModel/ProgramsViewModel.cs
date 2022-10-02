@@ -427,7 +427,10 @@ namespace CompasPack.ViewModel
                     TextConsole += $"Response defender: {ResponseDefender}\n";
                 TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
             }
-            TextConsole += $"Defender is disable: {await WinDefender.CheckDefenderDisable()}\n";
+            var Defender = await WinDefender.CheckDefenderDisable();
+            TextConsole += $"Defender is disable: {Defender}\n";
+            if (!Defender)
+                return;
             //------------------------------------------------------------------------------------------------------
             var pathKMS = KMSAuto.FindKMSAutoExe(_iOManager);
             TextConsole += $"Find KMSAuto (Try {countOpenKMSAuto+1} with 3), Resault:\n";
@@ -531,7 +534,7 @@ namespace CompasPack.ViewModel
             if (!string.IsNullOrWhiteSpace(ResponseDefender))
                 TextConsole += $"Response defender: {ResponseDefender}\n";
             TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-            TextConsole += $"Resault: {await WinDefender.CheckDefenderDisable()}\n";
+            TextConsole += $"Defender is disable: {await WinDefender.CheckDefenderDisable()}\n";
             TextConsole += "<-----------------End off defender--------------------->\n";
             IsEnabled = true;
         }
@@ -544,7 +547,7 @@ namespace CompasPack.ViewModel
             if (!string.IsNullOrWhiteSpace(ResponseDefender))
                 TextConsole += $"Response defender: {ResponseDefender}\n";
             TextConsole += $"End on defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-            TextConsole += $"Resault: {!(await WinDefender.CheckDefenderDisable())}\n";
+            TextConsole += $"Defender is disable: {await WinDefender.CheckDefenderDisable()}\n";
             TextConsole += "<------------------End on defender--------------------->\n";
             IsEnabled = true;
         }
