@@ -270,15 +270,27 @@ namespace CompasPack.ViewModel
         }
         private async void OpenKMSAuto()
         {
+            //------------------------------------------------------------------------------------------------------
+            TextConsole += "<-----------------Start open KMSAuto-------------------->\n";
+            
             int countOpenKMSAuto = 0;
             a:
             if(!await WinDefender.CheckDefenderDisable())
             {
-                OnOffDefender();
+                TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+                IsEnabled = false;
+                var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
+                if (!string.IsNullOrWhiteSpace(ResponseDefender))
+                    TextConsole += $"Response defender: {ResponseDefender}\n";
+                TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
             }
+            TextConsole += $"Defender is disable: {await WinDefender.CheckDefenderDisable()}\n";
+            //------------------------------------------------------------------------------------------------------
             var pathKMS = KMSAuto.FindKMSAutoExe(_iOManager);
+            TextConsole += $"Find KMSAuto (Try {countOpenKMSAuto+1} with 3), Resault:\n";
             if (!string.IsNullOrWhiteSpace(pathKMS))
             {
+                TextConsole += $"OK!!!, Path: {pathKMS}\n";
                 Process proc = new Process()
                 {
                     StartInfo = new ProcessStartInfo
@@ -291,57 +303,65 @@ namespace CompasPack.ViewModel
             }
             else
             {
+                TextConsole += $"Error, Not Find KMSAuto\n";
+                TextConsole += $"Find Rar.exe, Resault:\n";
                 if (File.Exists(_iOManager.WinRar))
                 {
+                    TextConsole += $"OK!!!, Path: {_iOManager.WinRar}\n";
                     var pathRar = KMSAuto.FindKMSAutoRar(_iOManager);
                     int countUnrar = 0;
+                    TextConsole += $"Find arkhive KMSAuto, Resault:\n";
                     if (!string.IsNullOrWhiteSpace(pathRar))
                     {
+                        TextConsole += $"OK!!!, Path: {pathRar}\n";
                         b:
                         try
                         {
                             ProcessStartInfo ps = new ProcessStartInfo();
                             ps.FileName = _iOManager.WinRar;
                             ps.Arguments = $@"x -o- {pathRar} {_iOManager.Crack}";
+                            TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
                             var proc = Process.Start(ps);
                             if (!proc.WaitForExit(20000))
                             {
-                                try
-                                {
-                                    proc.Kill();
-                                }
-                                catch (Exception)
-                                {
-                                }
-
-                                try
-                                {
-                                    proc.Close();
-                                }
-                                catch (Exception)
-                                {
-                                }
-
-                                if (countUnrar < 3)
+                                try { proc.Kill(); } catch (Exception) { }
+                                try { proc.Close(); } catch (Exception) { }
+                                
+                                TextConsole += "Error UnRar\n";
+                                if (countUnrar < 2)
                                 {
                                     countUnrar++;
-                                    System.Threading.Thread.Sleep(5000);
+                                    await Task.Delay(5000);
                                     goto b;
-                                }
-                                throw new Exception("Error UnRar");
+                                } 
                             }
+                            else
+                            {
+                                TextConsole += $"OK!!!\n";
+                            } 
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            throw new Exception("Error UnRar");
+                            TextConsole += "Error UnRar\n";
                         }
                         if (countOpenKMSAuto < 2)
                         {
+                            countOpenKMSAuto++;
+                            TextConsole += "--------------------------------------------------------\n";
                             goto a;
                         }
                     }
+                    else
+                    {
+                        TextConsole += $"Error, Not Find arkhive KMSAuto\n";
+                    }
+                }
+                else
+                {
+                    TextConsole += $"Error, Not Find Rar.exe\n";
                 }
             }
+            TextConsole += "<-----------------End open KMSAuto--------------------->\n";
         }
         private void OnOpenAppLog()
         {
