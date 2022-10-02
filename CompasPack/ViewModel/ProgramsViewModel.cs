@@ -296,6 +296,7 @@ namespace CompasPack.ViewModel
                     Process proc = Process.Start(StartInfo);
                     await proc.WaitForExitAsync();
                     TextConsole += $"Programs: {userProgram.ProgramName}, Installed!!!\n";
+                    await Task.Delay(1000);
                     userProgramViewMode.CheckInstall(WinInfo.ListInstallPrograms());
                 }
                 catch (Exception exp)
