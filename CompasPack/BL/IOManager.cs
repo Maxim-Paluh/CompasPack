@@ -364,7 +364,7 @@ namespace CompasPakc.BL
                             Description =   $"WinRAR — це файловий архіватор для Windows з високим ступенем стиснення,\n" +
                                             $"є одним із найкращих архіваторів за співвідношенням ступеня стиснення до швидкості роботи.\n" +
                                             $"Розповсюджується як умовно-безкоштовне програмне забезпечення.",
-                            Arguments = new List<string>() {"-y"},
+                            Arguments = new List<string>() {"/s"},
                             IsFree = false,
                             DisableDefender = false,
                             PathFolder = "Programs\\" + "Media\\WinRar540\\",
