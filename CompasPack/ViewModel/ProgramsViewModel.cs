@@ -462,7 +462,7 @@ namespace CompasPack.ViewModel
                         {
                             ProcessStartInfo ps = new ProcessStartInfo();
                             ps.FileName = _iOManager.WinRar;
-                            ps.Arguments = $@"x -o- {pathRar} {_iOManager.Crack}";
+                            ps.Arguments = $@"x -p1234 -o- {pathRar} {_iOManager.Crack}";
                             TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
                             var proc = Process.Start(ps);
                             if (!proc.WaitForExit(20000))
