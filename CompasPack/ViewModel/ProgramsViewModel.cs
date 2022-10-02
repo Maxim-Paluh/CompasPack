@@ -252,9 +252,9 @@ namespace CompasPack.ViewModel
             }
             if (onlineInstall)
             {
-                var File = Directory.GetFiles(userProgram.PathFolder)
-                    .Where(x => x.Contains(userProgram.OnlineInstaller.FileName, StringComparison.InvariantCultureIgnoreCase))
-                   .Where(x => x.Contains("exe") || x.Contains("msi")).FirstOrDefault();
+                ExecutableFile = Directory.GetFiles(userProgram.PathFolder)
+               .Where(x => x.Contains(userProgram.OnlineInstaller.FileName, StringComparison.InvariantCultureIgnoreCase))
+               .Where(x => x.Contains("exe") || x.Contains("msi")).FirstOrDefault();
 
                 arguments = string.Join(" ", userProgram.OnlineInstaller.Arguments);
             }
@@ -283,14 +283,28 @@ namespace CompasPack.ViewModel
                     TextConsole += $"OK!!!, Find File and start Install: {ExecutableFile}\n";
                 else
                     TextConsole += $"File: {ExecutableFile}\n";
-                TextConsole += $"Arguments: {arguments}\n";
                 
-                var StartInfo = new ProcessStartInfo
+                ProcessStartInfo? StartInfo = null;
+                if (ExecutableFile.EndsWith(".msi"))
                 {
-                    FileName =  ExecutableFile,
-                    Arguments = arguments,
-                    UseShellExecute = false
-                };
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "msiexec",
+                        Arguments = $"/i {ExecutableFile} {arguments}",
+                        UseShellExecute = false
+                    };
+                    TextConsole += $"Install MSI File!!!\n";
+                }
+                else 
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = ExecutableFile,
+                        Arguments = arguments,
+                        UseShellExecute = false
+                    };
+                }
+                TextConsole += $"Arguments: {StartInfo.Arguments}\n";
                 try
                 {
                     Process proc = Process.Start(StartInfo);
