@@ -430,7 +430,10 @@ namespace CompasPack.ViewModel
             var Defender = await WinDefender.CheckDefenderDisable();
             TextConsole += $"Defender is disable: {Defender}\n";
             if (!Defender)
+            {
+                TextConsole += "<-----------------End open KMSAuto--------------------->\n";
                 return;
+            }
             //------------------------------------------------------------------------------------------------------
             var pathKMS = KMSAuto.FindKMSAutoExe(_iOManager);
             TextConsole += $"Find KMSAuto (Try {countOpenKMSAuto+1} with 3), Resault:\n";
