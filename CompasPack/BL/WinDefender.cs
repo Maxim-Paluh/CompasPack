@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CompasPack.BL
 {
@@ -70,5 +72,38 @@ namespace CompasPack.BL
             return true;
         }
 
+        public static bool CheckTamperProtectionDisable()
+        {
+            if (!WinInfo.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
+                return true;
+            
+            var path = "SOFTWARE\\Microsoft\\Windows Defender\\Features";
+            var key = "TamperProtection";
+            try
+            {
+                if (WinInfo.GetIs64BitOperatingSystem())
+                {
+                    RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(path);
+                    if (rk == null) return false;
+
+                    if (rk.GetValue(key).ToString() == "5")
+                        return false;
+                    else
+                        return true;
+                }
+                else
+                {
+                    RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(path);
+                    if (rk == null) return false;
+
+                    if (rk.GetValue(key).ToString() == "5")
+                        return false;
+                    else
+                        return true;
+                }
+
+            }
+            catch { return false; }
+        }
     }
 }

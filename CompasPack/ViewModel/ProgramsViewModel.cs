@@ -193,11 +193,20 @@ namespace CompasPack.ViewModel
             OnSelectUserPreset();
         }
         private async void OnInstall()
-        {
-            TextConsole += "<--------------------Start Install----------------------->\n";
-            IsEnabled = false;
+        { 
             var userPrograms = GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels).Where(x => x.Install == true);
-
+            var t = userPrograms.FirstOrDefault().IsInstall.ToString();
+            if (userPrograms.Any(x => x.UserProgram.DisableDefender == true && x.IsInstall.ToString() == "#FFFF0000"))
+            {
+                if (!WinDefender.CheckTamperProtectionDisable())
+                {
+                    _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!\n" +
+                        $"Оскільки встановлення одної з програм потребує автоматичного відключення ативірусного ПЗ!!!", "Помилка!");
+                    return;
+                }
+            }
+            IsEnabled = false;
+            TextConsole += "<--------------------Start Install----------------------->\n";
             foreach (var userProgramViewModel in userPrograms)
             {
                 if (WinInfo.IsInstallPrograms(WinInfo.ListInstallPrograms(), userProgramViewModel.UserProgram.InstallProgramName))
@@ -247,7 +256,13 @@ namespace CompasPack.ViewModel
                         TextConsole += $"Response defender: {ResponseDefender}\n";
                     TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
                 }
-                TextConsole += $"Defender is disable: {await WinDefender.CheckDefenderDisable()}\n";
+                var Defender = await WinDefender.CheckDefenderDisable();
+                TextConsole += $"Defender is disable: {Defender}\n";
+                if (!Defender)
+                {
+                    TextConsole += "Error defender is disable\n";
+                    return;
+                }
             }
             if (onlineInstall)
             {
@@ -414,12 +429,17 @@ namespace CompasPack.ViewModel
         }
         private async void OpenKMSAuto()
         {
+            if (!WinDefender.CheckTamperProtectionDisable())
+            {
+                _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
+                return;
+            }
             //------------------------------------------------------------------------------------------------------
             TextConsole += "<-----------------Start open KMSAuto-------------------->\n";
-            
+
             int countOpenKMSAuto = 0;
             a:
-            if(!await WinDefender.CheckDefenderDisable())
+            if (!await WinDefender.CheckDefenderDisable())
             {
                 TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
                 var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
@@ -436,7 +456,7 @@ namespace CompasPack.ViewModel
             }
             //------------------------------------------------------------------------------------------------------
             var pathKMS = KMSAuto.FindKMSAutoExe(_iOManager);
-            TextConsole += $"Find KMSAuto (Try {countOpenKMSAuto+1} with 3), Resault:\n";
+            TextConsole += $"Find KMSAuto (Try {countOpenKMSAuto + 1} with 3), Resault:\n";
             if (!string.IsNullOrWhiteSpace(pathKMS))
             {
                 TextConsole += $"OK!!!, Path: {pathKMS}\n";
@@ -463,7 +483,7 @@ namespace CompasPack.ViewModel
                     if (!string.IsNullOrWhiteSpace(pathRar))
                     {
                         TextConsole += $"OK!!!, Path: {pathRar}\n";
-                        b:
+                    b:
                         try
                         {
                             ProcessStartInfo ps = new ProcessStartInfo();
@@ -475,19 +495,19 @@ namespace CompasPack.ViewModel
                             {
                                 try { proc.Kill(); } catch (Exception) { }
                                 try { proc.Close(); } catch (Exception) { }
-                                
+
                                 TextConsole += "Error UnRar\n";
                                 if (countUnrar < 2)
                                 {
                                     countUnrar++;
                                     await Task.Delay(5000);
                                     goto b;
-                                } 
+                                }
                             }
                             else
                             {
                                 TextConsole += $"OK!!!\n";
-                            } 
+                            }
                         }
                         catch (Exception)
                         {
@@ -530,29 +550,43 @@ namespace CompasPack.ViewModel
         }
         private async void OnOffDefender()
         {
-            TextConsole += "<----------------Start off defender-------------------->\n";
-            TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-            IsEnabled = false;
-            var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
-            if (!string.IsNullOrWhiteSpace(ResponseDefender))
-                TextConsole += $"Response defender: {ResponseDefender}\n";
-            TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-            TextConsole += $"Defender is disable: {await WinDefender.CheckDefenderDisable()}\n";
-            TextConsole += "<-----------------End off defender--------------------->\n";
-            IsEnabled = true;
+            if (WinDefender.CheckTamperProtectionDisable())
+            {
+                IsEnabled = false;
+                TextConsole += "<----------------Start off defender-------------------->\n";
+                TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+                var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
+                if (!string.IsNullOrWhiteSpace(ResponseDefender))
+                    TextConsole += $"Response defender: {ResponseDefender}\n";
+                TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+                TextConsole += $"Defender is disable: {await WinDefender.CheckDefenderDisable()}\n";
+                TextConsole += "<-----------------End off defender--------------------->\n";
+                IsEnabled = true;
+            }
+            else
+            {
+                _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
+            }
         }
         private async void OnOnDefender()
         {
-            TextConsole += "<-----------------Start on defender-------------------->\n";
-            TextConsole += $"Start on defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-            IsEnabled = false;
-            var ResponseDefender = (await WinDefender.EnableRealtimeMonitoring()).Trim();
-            if (!string.IsNullOrWhiteSpace(ResponseDefender))
-                TextConsole += $"Response defender: {ResponseDefender}\n";
-            TextConsole += $"End on defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-            TextConsole += $"Defender is disable: {await WinDefender.CheckDefenderDisable()}\n";
-            TextConsole += "<------------------End on defender--------------------->\n";
-            IsEnabled = true;
+            if (WinDefender.CheckTamperProtectionDisable())
+            {
+                IsEnabled = false;
+                TextConsole += "<-----------------Start on defender-------------------->\n";
+                TextConsole += $"Start on defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+                var ResponseDefender = (await WinDefender.EnableRealtimeMonitoring()).Trim();
+                if (!string.IsNullOrWhiteSpace(ResponseDefender))
+                    TextConsole += $"Response defender: {ResponseDefender}\n";
+                TextConsole += $"End on defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+                TextConsole += $"Defender is disable: {await WinDefender.CheckDefenderDisable()}\n";
+                TextConsole += "<------------------End on defender--------------------->\n";
+                IsEnabled = true;
+            }
+            else
+            {
+                _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
+            }
         }
 
         //--------------------------------------
