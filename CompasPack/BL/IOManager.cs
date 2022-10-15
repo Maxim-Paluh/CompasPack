@@ -37,22 +37,30 @@ namespace CompasPakc.BL
 
     public class IOManager : IIOManager
     {
+        private static string _portable = "!Portable\\";
+        private static string _install = "!Install\\";
+
         private IMessageDialogService _messageDialogService;
         private string _currentDirectoryPath;
         private static string _settingsGroupProgramNameFilePath;
         private static string _settingUserPresetProgramFileNamePath;
         private static string _pathRoot;
+
         private string _compasPackLogName = "CompasPackLog";
-        private string cpuZ = "Programs\\!Portable\\CPU-Z\\cpuz_x32.exe";
-        private string gpuZ = "Programs\\!Portable\\FurMark\\gpuz.exe";
-        private string aida = "Programs\\!Portable\\AIDA64\\aida64.exe";
-        private string crystalDisk = "Programs\\!Portable\\CrystalDisk\\DiskInfo32.exe";
-        private string furMark = "Programs\\!Portable\\FurMark\\FurMark.exe";
-        private string totalCommander951 = "Programs\\!Portable\\TotalCommander951\\TOTALCMD.EXE";
-        private string totalCommander700 = "Programs\\!Portable\\TotalCommander700\\Totalcmd.exe";
-        private string winRar = "Programs\\!Portable\\WinRAR\\WinRAR.exe";
-        private string rar = "Programs\\!Portable\\WinRAR\\Rar.exe";
-        private string crack = "Programs\\!Crack";
+        private string crack = _portable + "!Crack";
+
+        
+
+        private string cpuZ =               _portable + "CPU-Z\\cpuz_x32.exe";
+        private string gpuZ =               _portable + "FurMark\\gpuz.exe";
+        private string aida =               _portable + "AIDA64\\aida64.exe";
+        private string crystalDisk =        _portable + "CrystalDisk\\DiskInfo32.exe";
+        private string furMark =            _portable + "FurMark\\FurMark.exe";
+        private string totalCommander951 =  _portable + "TotalCommander951\\TOTALCMD.EXE";
+        private string totalCommander700 =  _portable + "TotalCommander700\\Totalcmd.exe";
+        private string winRar =             _portable + "WinRAR\\WinRAR.exe";
+        private string rar =                _portable + "WinRAR\\Rar.exe";
+
 
 
         public string CurrentDirectoryPath
@@ -97,7 +105,7 @@ namespace CompasPakc.BL
             SettingUserPresetProgramFileNamePath = Directory.GetCurrentDirectory() + "\\" + "SettingsPreset.json";
             PathRoot = Path.GetPathRoot(Directory.GetCurrentDirectory());
 
-            CompasExampleFile = Path.Combine(PathRoot, "Programs\\!ExampleFile");
+            CompasExampleFile = Path.Combine(PathRoot, _install + "!ExampleFile");
 
             CpuZ = Path.Combine(PathRoot, cpuZ);
             GpuZ = Path.Combine(PathRoot, gpuZ);
@@ -126,7 +134,7 @@ namespace CompasPakc.BL
                 foreach (var program in temp.SelectMany(group => group.UserPrograms))
                 {
                     program.PathFolder = Path.Combine(PathRoot, program.PathFolder);
-                    program.FileImage = PathRoot+"Programs\\!ExampleFile\\Icon\\" + program.FileImage;
+                    program.FileImage = PathRoot+ _install +"!ExampleFile\\Icon\\" + program.FileImage;
                 }
                 return temp;
             }
@@ -198,7 +206,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/silent", "/install"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Browser\\",
+                            PathFolder = _install + "Browser\\",
                             FileName = "Chrome",
                             Architecture = "x64",
                             FileImage = "Chrome.png",
@@ -218,7 +226,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() { "/S"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Browser\\",
+                            PathFolder = _install + "Browser\\",
                             FileName = "Firefox",
                             Architecture = "x64",
                             FileImage = "Firefox.png",
@@ -238,7 +246,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() { "/silent", "/allusers=1", "/launchbrowser=0", "/setdefaultbrowser=0"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Browser\\",
+                            PathFolder = _install + "Browser\\",
                             FileName = "opera",
                             Architecture = "x64",
                             FileImage = "Opera.png",
@@ -269,7 +277,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/sAll"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
+                            PathFolder = _install + "Media\\",
                             FileName = "Adobe",
                             Architecture = "x86",
                             FileImage = "Adobe.png",
@@ -285,7 +293,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/S", "/I"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
+                            PathFolder = _install + "Media\\",
                             FileName = "FastStone",
                             Architecture = "x86",
                             FileImage = "FastStone.png",
@@ -301,7 +309,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/SP-", "/verysilent"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
+                            PathFolder = _install + "Media\\",
                             FileName = "K-Lite_Codec_Pack_1550_Mega",
                             Architecture = "x86",
                             FileImage = "K-Lite_Codec_Pack_1550_Mega.png",
@@ -317,7 +325,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/S"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
+                            PathFolder = _install + "Media\\",
                             FileName = "npp",
                             Architecture = "x64",
                             FileImage = "npp.png",
@@ -335,7 +343,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/S"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
+                            PathFolder = _install + "Media\\",
                             FileName = "7z",
                             Architecture = "x64",
                             FileImage = "7-Zip.png",
@@ -351,7 +359,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"-y"},
                             IsFree = false,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
+                            PathFolder = _install + "Media\\",
                             FileName = "WinRAR40",
                             Architecture = "x86",
                             FileImage = "WinRAR.png",
@@ -367,7 +375,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/s"},
                             IsFree = false,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\WinRar540\\",
+                            PathFolder = _install + "Media\\WinRar540\\",
                             FileName = "WinRAR540",
                             Architecture = "x64",
                             FileImage = "WinRAR.png",
@@ -382,7 +390,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/VERYSILENT"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
+                            PathFolder = _install + "Media\\",
                             FileName = "stduviewer",
                             Architecture = "x86",
                             FileImage = "stduviewer.png",
@@ -396,7 +404,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/SILENT", "/AUTO"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
+                            PathFolder = _install + "Media\\",
                             FileName = "AIMP",
                             Architecture = "x86",
                             FileImage = "AIMP.ico",
@@ -412,7 +420,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/quiet"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Media\\",
+                            PathFolder = _install + "Media\\",
                             FileName = "ACDSee",
                             Architecture = "x86",
                             FileImage = "ACDSeePro3.ico",
@@ -436,7 +444,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"-y", "-fm0"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Tools\\",
+                            PathFolder = _install + "Tools\\",
                             FileName = "Unlocker",
                             Architecture = "x86",
                             FileImage = "Unlocker.png",
@@ -451,7 +459,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/silent", "/IE"},
                             IsFree = false,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Tools\\AIDA\\",
+                            PathFolder = _install + "Tools\\AIDA\\",
                             FileName = "AIDA64",
                             Architecture = "x86",
                             FileImage = "AIDA64.png",
@@ -466,7 +474,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() { "--install \"C:\\Program Files (x86)\\AnyDesk\"", "--start-with-win", "--create-shortcuts", "--create-desktop-icon", "--silent"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Tools\\",
+                            PathFolder = _install + "Tools\\",
                             FileName = "AnyDesk",
                             Architecture = "x86",
                             FileImage = "AnyDesk.png",
@@ -480,7 +488,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/S", "/IE"},
                             IsFree = false,
                             DisableDefender = true,
-                            PathFolder = "Programs\\" + "Tools\\",
+                            PathFolder = _install + "Tools\\",
                             FileName = "TotalCommander",
                             Architecture = "x86",
                             FileImage = "TotalCommander.png",
@@ -494,7 +502,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/S", "/IE"},
                             IsFree = false,
                             DisableDefender = true,
-                            PathFolder = "Programs\\" + "Tools\\",
+                            PathFolder = _install + "Tools\\",
                             FileName = "TotalCommander",
                             Architecture = "x86",
                             FileImage = "TotalCommander.png",
@@ -521,7 +529,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {""},
                             IsFree = false,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Office\\Office 2003\\",
+                            PathFolder = _install + "Office\\Office 2003\\",
                             FileName = "SETUP",
                             Architecture = "x86",
                             FileImage = "Office2003.png",
@@ -535,7 +543,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {""},
                             IsFree = false,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Office\\Office 2007\\",
+                            PathFolder = _install + "Office\\Office 2007\\",
                             FileName = "setup",
                             Architecture = "x86",
                             FileImage = "Office2007.png",
@@ -550,7 +558,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {""},
                             IsFree = false,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Office\\Office 2010\\",
+                            PathFolder = _install + "Office\\Office 2010\\",
                             FileName = "Office_ProPlus_2010_RePack",
                             Architecture = "x86",
                             FileImage = "Office2010.png",
@@ -565,7 +573,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {""},
                             IsFree = false,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Office\\Office 2016\\",
+                            PathFolder = _install + "Office\\Office 2016\\",
                             FileName = "Office_ProPlus_2016_RePack",
                             Architecture = "x86",
                             FileImage = "Office2016.png",
@@ -592,7 +600,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/S"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Antivirus\\",
+                            PathFolder = _install + "Antivirus\\",
                             FileName = "360TS",
                             Architecture = "x86",
                             FileImage = "360TS.png",
@@ -606,7 +614,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"/s", "/runwgacheck"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Antivirus\\",
+                            PathFolder = _install + "Antivirus\\",
                             FileName = "MSEInstall",
                             Architecture = "x64",
                             FileImage = "MSEInstall.png"
@@ -628,7 +636,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"Greg_House_M_D"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Tools\\",
+                            PathFolder = _install + "Tools\\",
                             FileName = "LogInstall",
                             Architecture = "x86",
                             FileImage = "LogInstall.png",
@@ -640,7 +648,7 @@ namespace CompasPakc.BL
                             Arguments = new List<string>() {"Vadimakus"},
                             IsFree = true,
                             DisableDefender = false,
-                            PathFolder = "Programs\\" + "Tools\\",
+                            PathFolder = _install + "Tools\\",
                             FileName = "LogInstall",
                             Architecture = "x86",
                             FileImage = "LogInstall.png",
