@@ -16,11 +16,14 @@ namespace CompasPakc.BL
         public Task<List<UserPresetProgram>> GetUserPresetProgram();
         public Task<List<GroupProgram>> GetGroupPrograms();
 
+        public Task<UserReport> GetUserReport();
+
         public void OpenAppLog();
         public void OpenExampleFile();
 
         public Task SetDefaultGroupProgram();
         public Task SetDefaultUserPresetProgram();
+        public Task SetUserReport();
 
 
         public string CpuZ { get; set; }
@@ -44,6 +47,7 @@ namespace CompasPakc.BL
         private string _currentDirectoryPath;
         private static string _settingsGroupProgramNameFilePath;
         private static string _settingUserPresetProgramFileNamePath;
+        private static string _settingsUserReportPath;
         private static string _pathRoot;
 
         private string _compasPackLogName = "CompasPackLog";
@@ -78,6 +82,12 @@ namespace CompasPakc.BL
             get { return _settingUserPresetProgramFileNamePath; }
             set { _settingUserPresetProgramFileNamePath = value; }
         }
+        public string SettingsUserReportPath
+        {
+            get { return _settingsUserReportPath; }
+            set { _settingsUserReportPath = value; }
+        }
+
         public string PathRoot
         {
             get { return _pathRoot; }
@@ -103,6 +113,7 @@ namespace CompasPakc.BL
             CurrentDirectoryPath = Directory.GetCurrentDirectory();
             SettingsGroupProgramFileNamePath = Directory.GetCurrentDirectory() + "\\" + "SettingsPrograms.json";
             SettingUserPresetProgramFileNamePath = Directory.GetCurrentDirectory() + "\\" + "SettingsPreset.json";
+            SettingsUserReportPath = Directory.GetCurrentDirectory() + "\\" + "SettingsUserReport.json";
             PathRoot = Path.GetPathRoot(Directory.GetCurrentDirectory());
 
             CompasExampleFile = Path.Combine(PathRoot, _install + "!ExampleFile");
@@ -633,7 +644,7 @@ namespace CompasPakc.BL
                             Id = 24,
                             ProgramName = "Report Greg_House_M_D",
                             Description =   $"Ставив Greg_House_M_D",
-                            Arguments = new List<string>() {"Greg_House_M_D"},
+                            Arguments = new List<string>() { "\\LogInstall", "Name:Greg_House_M_D"},
                             IsFree = true,
                             DisableDefender = false,
                             PathFolder = _install + "Tools\\",
@@ -645,7 +656,7 @@ namespace CompasPakc.BL
                             Id = 25,
                             ProgramName = "Report Vadimakus",
                             Description =   $"Ставив Vadimakus",
-                            Arguments = new List<string>() {"Vadimakus"},
+                            Arguments = new List<string>() { "\\LogInstall", "Name:Vadimakus"},
                             IsFree = true,
                             DisableDefender = false,
                             PathFolder = _install + "Tools\\",
@@ -695,12 +706,42 @@ namespace CompasPakc.BL
                 Directory.CreateDirectory(CompasPackLog);
             Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", CompasPackLog);
         }
-
         public void OpenExampleFile()
         {
             if (!Directory.Exists(CompasExampleFile))
                 Directory.CreateDirectory(CompasExampleFile);
             Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", CompasExampleFile);
+        }
+
+
+
+        public async Task SetUserReport()
+        {
+            var SettingsJsonExample = JsonConvert.SerializeObject(ReportHelper.GetUserReport(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
+            await File.WriteAllTextAsync(SettingsUserReportPath, SettingsJsonExample).ConfigureAwait(false);
+        }
+        public async Task<UserReport> GetUserReport()
+        {
+            FileInfo fileSettingsJson = new FileInfo(SettingsUserReportPath);
+
+            if (!fileSettingsJson.Exists)
+                await SetUserReport();
+
+            try
+            {
+                var temp = JsonConvert.DeserializeObject<UserReport>(await
+                File.ReadAllTextAsync(SettingsUserReportPath),
+                new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error, });
+
+                return temp;
+            }
+            catch (Exception exp)
+            {
+                _messageDialogService.ShowInfoDialog($"Шаблон для списку програм має помилку, для вирішення проблеми:\n\n" +
+                    $"1. Виправіть помилку:\n{exp.Message}\n\n" +
+                    $"2. Згенеруйте файл по замовчуванню в меню налаштувань програми!", "Error");
+                return ReportHelper.GetUserReport();
+            }
         }
     }
 }

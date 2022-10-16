@@ -18,6 +18,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -28,10 +29,12 @@
 
 
 
-            <TextBlock Grid.Column="0" Grid.Row="0" Text="ProcessorName"></TextBlock>
-            <TextBox  Grid.Column="1" Grid.Row="0" Text="{Binding ProcessorName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="Processor Name"></TextBlock>
+            <TextBox  Grid.Column="1" Grid.Row="0" Text="{Binding ProcessorNameSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+           
+            <TextBox  Grid.Column="2" Grid.Row="0"  Text="{Binding UserReport.Motherboard.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
-            <TextBlock Grid.Column="0" Grid.Row="1" Text="BaseBoardName"></TextBlock>
+            <TextBlock Grid.Column="0" Grid.Row="1" Text=""></TextBlock>
             <TextBox  Grid.Column="1" Grid.Row="1" Text="{Binding BaseBoardName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
         </Grid>

@@ -40,7 +40,7 @@ namespace CompasPack.Startup
 
             /////////////////////////////////////////////////////////////////////////////////
             // Register Controller
-            builder.RegisterType<IOManager>().As<IIOManager>();
+            builder.RegisterType<IOManager>().As<IIOManager>().SingleInstance();
             /////////////////////////////////////////////////////////////////////////////////
             // Register API
 

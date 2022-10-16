@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CompasPack.Enum;
+using CompasPakc.BL;
 using Prism.Commands;
 
 namespace CompasPack.ViewModel
@@ -16,9 +17,11 @@ namespace CompasPack.ViewModel
         private TypeReport _reportType;
 
         private IDetailViewModel? _reportformViewModel;
+        private readonly IIOManager _iOManager;
 
-        public ReportViewModel()
+        public ReportViewModel(IIOManager iOManager)
         {
+            _iOManager = iOManager;
             GenerateReportCommand = new DelegateCommand(OnGenerateReport);
         }
 
@@ -27,7 +30,7 @@ namespace CompasPack.ViewModel
             switch (ReportType)
             {
                 case TypeReport.Computer:
-                    ReportFormViewModel = new ComputerReportViewModel();
+                    ReportFormViewModel = new ComputerReportViewModel(_iOManager);
                     break;
                 case TypeReport.Laptop:
                     ReportFormViewModel = new LaptopReportViewModel();
