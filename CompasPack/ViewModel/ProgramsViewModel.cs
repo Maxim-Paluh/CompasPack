@@ -154,6 +154,7 @@ namespace CompasPack.ViewModel
         public void Unsubscribe()
         {
             _eventAggregator.GetEvent<SelectSingleProgramEvent>().Unsubscribe(SelectSingleProgram);
+            UserPresetPrograms.Clear();
         }
 
         public bool HasChanges()
