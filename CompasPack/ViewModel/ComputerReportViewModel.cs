@@ -16,18 +16,24 @@ using CompasPack.Data;
 
 using System.Xml.Linq;
 using System.Xml.XPath;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace CompasPack.ViewModel
 {
     public class ComputerReportViewModel : ViewModelBase, IDetailViewModel
     {
         private string _processorNameSource;
-        private string _processorXPath;
         private string _processorName;
+        private string _processorClock;
 
-        private string _processorParameters;
+        private string _motherboardNameSource;
+        private string _motherboardName;
 
-        private string _baseBoardName;
+        private string _memoryTypeSource;
+        private string _memorySizeSource;
+        private string _memoryFrequencySource;
+        private string _memory;
         private readonly IIOManager _iOManager;
         private UserReport _userReport;
 
@@ -63,26 +69,72 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
-        public string ProcessorParameters
+        public string ProcessorClock
         {
-            get { return _processorParameters; }
+            get { return _processorClock; }
             set
             {
-                _processorParameters = value;
+                _processorClock = value;
                 OnPropertyChanged();
             }
         }
 
-        public string BaseBoardName
+        public string MotherboardNameSource
         {
-            get { return _baseBoardName; }
+            get { return _motherboardName; }
             set
             {
-                _baseBoardName = value;
+                _motherboardName = value;
                 OnPropertyChanged();
             }
         }
+        public string MotherboardName
+        {
+            get { return _motherboardNameSource; }
+            set
+            {
+                _motherboardNameSource = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string MemoryTypeSource
+        {
+            get { return _memoryTypeSource; }
+            set
+            {
+                _memoryTypeSource = value;
+                OnPropertyChanged();
+            }
+        }
+        public string MemorySizeSource
+        {
+            get { return _memorySizeSource; }
+            set
+            {
+                _memorySizeSource = value;
+                OnPropertyChanged();
+            }
+        }
+        public string MemoryFrequencySource
+        {
+            get { return _memoryFrequencySource; }
+            set
+            {
+                _memoryFrequencySource = value;
+                OnPropertyChanged();
+            }
+        }
+        public string Memory
+        {
+            get { return _memory; }
+            set
+            {
+                _memory = value;
+                OnPropertyChanged();
+            }
+        }
+
         public bool HasChanges()
         {
             throw new NotImplementedException();
@@ -90,15 +142,6 @@ namespace CompasPack.ViewModel
 
         public async Task LoadAsync(int? Id)
         {
-            UserReport = await _iOManager.GetUserReport();
-
-            _iOManager.SetUserReport();
-
-
-
-            //_userReport = ReportHelper.GetUserReport();
-
-
             //-------------------------------------------------------------------------------------------------------------------
             ProcessStartInfo? StartInfo = new ProcessStartInfo
             {
@@ -120,56 +163,87 @@ namespace CompasPack.ViewModel
                 return;
             //-------------------------------------------------------------------------------------------------------------------
             XDocument? document;
-            using (var stream = File.OpenText(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\Report.xml"))
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            using (var stream = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\Report.xml", Encoding.GetEncoding("windows-1251")))
             {
                 document = await XDocument.LoadAsync(stream, LoadOptions.PreserveWhitespace, new System.Threading.CancellationToken());
             }
             //-------------------------------------------------------------------------------------------------------------------
 
-            //var t = document.XPathSelectElement("");
-
-            ManagementObjectSearcher processors = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
-
-            foreach (ManagementObject processor in processors.Get())
+            UserReport = await _iOManager.GetUserReport();
             {
-                ProcessorNameSource += processor.Properties["Name"].Value;
+                ManagementObjectSearcher processors = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
+                var processor = processors.Get().Cast<ManagementObject>().First();
+                ProcessorNameSource += processor["Name"];
+                var temp = processor["MaxClockSpeed"];
+                if (temp != null)
+                    ProcessorClock += $"{(double.Parse(temp.ToString()) / 1000).ToString().Replace(',', '.')}GHz";
 
-                //if (property != null)
-                //    {
-                //        if (property.Name == "Name")
-                //        {
-                //            ProcessorNameSource = property.Value.ToString();
-                //            break;
-                //        }
-                //    }
-                //}
-                //foreach (PropertyData property in processor.Properties)
-                //{
-                //    if (property.Name == "MaxClockSpeed")
-                //    ProcessorParameters += $"{double.Parse(property.Value.ToString()) / 1000}(GHz)";
-                //if (property.Name == "NumberOfCores")
-                //    ProcessorParameters += $"(core:{property.Value}";
+                var tempProcessorName = ProcessorNameSource;
+                foreach (var item in UserReport.CPU.Regex)
+                    tempProcessorName = Regex.Replace(tempProcessorName, item, "");
+                
+                ProcessorName = tempProcessorName + " " + ProcessorClock;
+            }
+            {
+                var tempMotherboardNameSource = document.XPathSelectElement(UserReport.Motherboard.XPath);
+                if(tempMotherboardNameSource != null)
+                    MotherboardNameSource = tempMotherboardNameSource.Value;
+                else
+                    MotherboardNameSource = "Not found";
 
+                var tempMotherboardName = MotherboardNameSource;
+                foreach (var item in UserReport.Motherboard.Regex)
+                    tempMotherboardName = Regex.Replace(tempMotherboardName, item, "");
+                
+                MotherboardName = tempMotherboardName;
+            }
+            {
+                var tempMemoryTypeSource = document.XPathSelectElement(UserReport.Memory.MemoryType.XPath);
+                if(tempMemoryTypeSource!=null)
+                    MemoryTypeSource = tempMemoryTypeSource.Value;
+                else
+                    MemoryTypeSource = "Not found";
+
+                ManagementObjectSearcher memorys = new ManagementObjectSearcher("SELECT * FROM Win32_PhysicalMemory");
+                UInt64 total = 0;
+                foreach (ManagementObject ram in memorys.Get())
+                    total += (UInt64)ram.GetPropertyValue("Capacity");
+                
+                MemorySizeSource = total / 1073741824 + "GB";         
+
+                var tempMemoryFrequencySource = document.XPathSelectElement(UserReport.Memory.MemoryFrequency.XPath);
+                if (tempMemoryFrequencySource != null)
+                    MemoryFrequencySource = tempMemoryFrequencySource.Value;
+                else
+                    MemoryFrequencySource = "Not found";
+
+                var tempMemoryType = MemoryTypeSource;
+                foreach (var item in UserReport.Memory.MemoryType.Regex)
+                    tempMemoryType = Regex.Replace(tempMemoryType, item, "");
+                
+                var tempMemoryFrequency = MemoryFrequencySource;
+                foreach (var item in UserReport.Memory.MemoryFrequency.Regex)
+                    tempMemoryFrequency = Regex.Replace(tempMemoryFrequency, item, "");
+
+                Memory = $"{tempMemoryType} - {MemorySizeSource} ({tempMemoryFrequency}MHz)";
             }
 
 
+            //ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DisplayConfiguration");
 
-
-
-
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DisplayConfiguration");
-
-            string graphicsCard = string.Empty;
-            foreach (ManagementObject mo in searcher.Get())
-            {
-                foreach (PropertyData property in mo.Properties)
-                {
-                    if (property.Name == "Description")
-                    {
-                        graphicsCard = property.Value.ToString();
-                    }
-                }
-            }
+            //string graphicsCard = string.Empty;
+            //foreach (ManagementObject mo in searcher.Get())
+            //{
+            //    foreach (PropertyData property in mo.Properties)
+            //    {
+            //        if (property.Name == "Description")
+            //        {
+            //            graphicsCard = property.Value.ToString();
+            //        }
+            //    }
+            //}
         }
 
         public void Unsubscribe()

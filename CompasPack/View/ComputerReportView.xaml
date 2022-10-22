@@ -5,9 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CompasPack.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-
-    <Border  BorderBrush="DarkBlue" Margin="2" BorderThickness="1" CornerRadius="3">
+             d:DesignHeight="450" d:DesignWidth="900">
+    <UserControl.Resources>
+        <DataTemplate x:Key="Regexemplate">
+            <TextBlock Margin="2" Text="{Binding}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    <Border  BorderBrush="DarkBlue" Margin="2"  BorderThickness="1" CornerRadius="3">
         <Border.Background>
             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
                 <GradientStop Color="AliceBlue" Offset="0.0" />
@@ -17,27 +22,158 @@
         </Border.Background>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
 
+            <Border Grid.Row="0"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0" FontSize="14" FontWeight="Bold"  Text="Processor:">
+                    </TextBlock>
+                    <WrapPanel Grid.Row="0" Grid.Column="1"  Margin="4" HorizontalAlignment="Left">
+                        <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Name:"></TextBlock>
+                        <TextBox MinWidth="40" Text="{Binding ProcessorNameSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </WrapPanel>
+                    <WrapPanel Grid.Row="1" Grid.Column="1" Margin="4" >
+                        <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Clock:"></TextBlock>
+                        <TextBox MinWidth="40" Text="{Binding ProcessorClock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </WrapPanel>
+                    <WrapPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Margin="4" >
+                        <TextBlock Margin="5 0 5 0"  Width="40" Grid.RowSpan="2" Text="Regex:"></TextBlock>
+                        <Border BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
+                            <ScrollViewer MaxHeight="40" Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl  ItemsSource="{Binding UserReport.CPU.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
+                              ItemTemplate="{StaticResource Regexemplate}"/>
+                            </ScrollViewer>
+                        </Border>
+                    </WrapPanel>
+                    <WrapPanel Grid.Row="0" Grid.Column="3"  Grid.RowSpan="2" Margin="4" HorizontalAlignment="Right">
+                        <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>
+                        <TextBox Margin="5 0 0 0" MinWidth="300" Text="{Binding ProcessorName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </WrapPanel>
+                </Grid>
+            </Border>
 
 
+            <Border Grid.Row="1"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0" FontSize="14" FontWeight="Bold"  Text="Motherboard:">
+                    </TextBlock>
+                    <WrapPanel Grid.Column="1" Margin="4" HorizontalAlignment="Left">
+                        <TextBlock Grid.Column="0" Grid.Row="0" Text="XPath:"></TextBlock>
+                        <TextBox Margin="5 0 0 0" MinWidth="200" Text="{Binding UserReport.Motherboard.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </WrapPanel>
+                    <WrapPanel  Grid.Column="2"  Margin="4" >
+                        <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Name:"></TextBlock>
+                        <TextBox MinWidth="40" Text="{Binding MotherboardNameSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </WrapPanel>
+                    <WrapPanel  Grid.Column="3"  Margin="4" >
+                        <TextBlock Margin="5 0 5 0"  Width="40" Text="Regex:"></TextBlock>
+                        <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
+                            <ScrollViewer Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl  ItemsSource="{Binding UserReport.Motherboard.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
+                              ItemTemplate="{StaticResource Regexemplate}"/>
+                            </ScrollViewer>
+                        </Border>
+                    </WrapPanel>
+                    <WrapPanel Grid.Column="4"   Margin="4" HorizontalAlignment="Right">
+                        <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>
+                        <TextBox Margin="5 0 0 0" MinWidth="300" Text="{Binding MotherboardName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </WrapPanel>
+                </Grid>
+            </Border>
 
-            <TextBlock Grid.Column="0" Grid.Row="0" Text="Processor Name"></TextBlock>
-            <TextBox  Grid.Column="1" Grid.Row="0" Text="{Binding ProcessorNameSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-           
-            <TextBox  Grid.Column="2" Grid.Row="0"  Text="{Binding UserReport.Motherboard.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
-            <TextBlock Grid.Column="0" Grid.Row="1" Text=""></TextBlock>
-            <TextBox  Grid.Column="1" Grid.Row="1" Text="{Binding BaseBoardName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <Border Grid.Row="2"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0" FontSize="14" FontWeight="Bold"  Text="Memory:">
+                    </TextBlock>
+                    <WrapPanel Grid.Column="1" Grid.Row="0"  Margin="4" HorizontalAlignment="Left">
+                        <TextBlock Grid.Column="0" Grid.Row="0" Text="XPath:"></TextBlock>
+                        <TextBox Margin="5 0 0 0" MinWidth="200" Text="{Binding UserReport.Motherboard.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </WrapPanel>
+                    <WrapPanel Grid.Column="1" Grid.Row="2" Margin="4" HorizontalAlignment="Left">
+                        <TextBlock Grid.Column="0" Grid.Row="0" Text="XPath:"></TextBlock>
+                        <TextBox Margin="5 0 0 0" MinWidth="200" Text="{Binding UserReport.Memory.MemoryFrequency.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </WrapPanel>
+
+                    <WrapPanel  Grid.Column="2" Grid.Row="0"  Margin="4" >
+                        <TextBlock Grid.Column="0" Width="60" Grid.Row="0" Text="Type:"></TextBlock>
+                        <TextBox MinWidth="40" Text="{Binding MemoryTypeSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </WrapPanel>
+                    <WrapPanel  Grid.Column="2" Grid.Row="1"  Margin="4" >
+                        <TextBlock Grid.Column="0" Width="60" Grid.Row="0" Text="Size:"></TextBlock>
+                        <TextBox MinWidth="40" Text="{Binding MemorySizeSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </WrapPanel>
+                    <WrapPanel  Grid.Column="2" Grid.Row="2" Margin="4" >
+                        <TextBlock Grid.Column="0" Width="60" Grid.Row="0" Text="Frequency:"></TextBlock>
+                        <TextBox MinWidth="40" Text="{Binding MemoryFrequencySource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </WrapPanel>
+                    
+                    <WrapPanel  Grid.Column="3"  Margin="4" >
+                        <TextBlock Margin="5 0 5 0"  Width="40" Grid.RowSpan="2" Text="Regex:"></TextBlock>
+                        <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
+                            <ScrollViewer Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl  ItemsSource="{Binding UserReport.Memory.MemoryType.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
+                              ItemTemplate="{StaticResource Regexemplate}"/>
+                            </ScrollViewer>
+                        </Border>
+                    </WrapPanel>
+                    <WrapPanel  Grid.Column="3" Grid.Row="2"  Margin="4">
+                        <TextBlock Margin="5 0 5 0"  Width="40" Grid.RowSpan="2" Text="Regex:"></TextBlock>
+                        <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
+                            <ScrollViewer Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl  ItemsSource="{Binding UserReport.Memory.MemoryFrequency.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  MinWidth="40"
+                              ItemTemplate="{StaticResource Regexemplate}"/>
+                            </ScrollViewer>
+                        </Border>
+                    </WrapPanel>
+                    
+                    <WrapPanel Grid.Column="4"  Grid.RowSpan="3" Margin="4" HorizontalAlignment="Right">
+                        <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>
+                        <TextBox Margin="5 0 0 0" MinWidth="300" Text="{Binding Memory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </WrapPanel>
+                    
+                </Grid>
+            </Border>
 
         </Grid>
     </Border>
-    
+
 </UserControl>

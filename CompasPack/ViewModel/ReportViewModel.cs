@@ -108,7 +108,7 @@ namespace CompasPack.ViewModel
         }
         public void Unsubscribe()
         {
-            throw new NotImplementedException();
+           
         }
 
         public ICommand GenerateReportCommand { get; }

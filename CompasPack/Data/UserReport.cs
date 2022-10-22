@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CompasPack.Data
@@ -12,11 +13,29 @@ namespace CompasPack.Data
         {
             return new UserReport()
             {
+                CPU = new CPU()
+                {
+                    Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)", "\\{(?:[^}{]|\\{[^}{]*\\))*\\}", "Test" }
+                },
                 Motherboard = new Motherboard()
                 {
                     XPath = "/Report/Page[5]/Group[1]/Item[2]/Value",
-                    Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)" }
+                    Regex = new List<string>() { "Test" }
+                },
+                Memory = new Memory()
+                {
+                    MemoryType = new MemoryType()
+                    {
+                        XPath= "/Report/Page[5]/Group[3]/Item[1]/Value",
+                        Regex = new List<string>() { " ??SDRAM" }
+                    },
+                    MemoryFrequency = new MemoryFrequency()
+                    {
+                        XPath = "/Report/Page[5]/Group[3]/Item[5]/Value",
+                        Regex = new List<string>() { "\\D" }
+                    }
                 }
+                
             };
         }
     }
@@ -26,7 +45,19 @@ namespace CompasPack.Data
 
     public class UserReport : ViewModelBase
     {
+        private CPU _cpu;
         private Motherboard _motherboard;
+        private Memory _memory;
+        //---------------------------------
+        public CPU CPU
+        {
+            get { return _cpu; }
+            set
+            {
+                _cpu = value;
+                OnPropertyChanged();
+            }
+        }
         public Motherboard Motherboard
         {
             get { return _motherboard; }
@@ -35,18 +66,63 @@ namespace CompasPack.Data
                 _motherboard = value;
                 OnPropertyChanged();
             }
+        }  
+        public Memory Memory
+        {
+            get { return _memory; }
+            set
+            {
+                _memory = value;
+                OnPropertyChanged();
+            }
         }
-        public Memory Memory { get; set; }
     }
 
-    public class CPU : ViewModelBase
+    public class CPU : ReportBase
     {
-        public List<string> Regex { get; set; }
     }
 
-    public class Motherboard : ViewModelBase
+    public class Motherboard : ReportBase
     {
+       
+    }
+
+    public class Memory : ViewModelBase
+    {
+        private MemoryType _memoryType;
+        private MemoryFrequency _memoryFrequency;
+        public MemoryType MemoryType
+        {
+            get { return _memoryType; }
+            set
+            {
+                _memoryType = value;
+                OnPropertyChanged();
+            }
+        }
+        public MemoryFrequency MemoryFrequency
+        {
+            get { return _memoryFrequency; }
+            set
+            {
+                _memoryFrequency = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+    public class MemoryType : ReportBase
+    {
+    }
+
+    public class MemoryFrequency : ReportBase
+    {
+    }
+
+    public class ReportBase : ViewModelBase
+    {
+        private List<string> _regex;
         private string xPath;
+
         public string XPath
         {
             get { return xPath; }
@@ -56,59 +132,15 @@ namespace CompasPack.Data
                 OnPropertyChanged();
             }
         }
-        public List<string> Regex { get; set; }
-    }
-
-    public class Memory
-    {
-        public MemorySize MemorySize { get; set; }
-        public MemoryFrequency MemoryFrequency { get; set; }
-
-        public string NameSPD { get; set; }
-        public string XPathSPD { get; set; }
-        public List<MemorySPD> MemorySPDs { get; set; }
-    }
-
-    public class MemorySize
-    {
-        public string XPath { get; set; }
-        public List<string> Regex { get; set; }
-    }
-
-    public class MemoryFrequency
-    {
-        public string XPath { get; set; }
-        public List<string> Regex { get; set; }
-    }
-
-    public class MemorySPD
-    {
-        public MemorySPDName MemorySPDName { get; set; }
-        public MemorySPDSize MemorySPDSize { get; set; }
-        public MemorySPDType MemorySPDType { get; set; }
-    }
-
-    public class MemorySPDName
-    {
-        public string XPath { get; set; }
-        public List<string> Regex { get; set; }
-    }
-    public class MemorySPDSize
-    {
-        public string XPath { get; set; }
-        public List<string> Regex { get; set; }
-    }
-
-    public class MemorySPDType
-    {
-        public string XPath { get; set; }
-        public List<string> Regex { get; set; }
-    }
-
-    public class MemorySPDSpeed
-    {
-        public string XPath { get; set; }
-        public List<string> Regex { get; set; }
+        public List<string> Regex
+        {
+            get { return _regex; }
+            set
+            {
+                _regex = value;
+                OnPropertyChanged();
+            }
+        }
     }
 
 }

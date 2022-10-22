@@ -724,7 +724,9 @@ namespace CompasPakc.BL
         {
             FileInfo fileSettingsJson = new FileInfo(SettingsUserReportPath);
 
-            if (!fileSettingsJson.Exists)
+
+
+            //if (!fileSettingsJson.Exists)
                 await SetUserReport();
 
             try

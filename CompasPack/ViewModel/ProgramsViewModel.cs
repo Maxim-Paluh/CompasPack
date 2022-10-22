@@ -27,7 +27,7 @@ namespace CompasPack.ViewModel
         private int _selectedUserPreset;
         private string _textConsole;
         private bool _isEnabled;
-
+        SubscriptionToken _token;
         public ProgramsViewModel(IMessageDialogService messageDialogService, IIOManager iOManager, IEventAggregator eventAggregator)
         {
             UserPresetPrograms = new ObservableCollection<UserPresetProgram>();
@@ -58,7 +58,7 @@ namespace CompasPack.ViewModel
             OffDefenderCommand = new DelegateCommand(OnOffDefender);
             OnDefenderCommand = new DelegateCommand(OnOnDefender);
 
-            _eventAggregator.GetEvent<SelectSingleProgramEvent>().Subscribe(SelectSingleProgram);
+            _token = _eventAggregator.GetEvent<SelectSingleProgramEvent>().Subscribe(SelectSingleProgram);
         }
 
         public ObservableCollection<UserPresetProgram> UserPresetPrograms { get; }
@@ -153,7 +153,7 @@ namespace CompasPack.ViewModel
 
         public void Unsubscribe()
         {
-            _eventAggregator.GetEvent<SelectSingleProgramEvent>().Unsubscribe(SelectSingleProgram);
+            //_eventAggregator.GetEvent<SelectSingleProgramEvent>().Unsubscribe(_token);
             UserPresetPrograms.Clear();
         }
 
