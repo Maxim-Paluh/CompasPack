@@ -18,6 +18,8 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Prism.Commands;
+using System.Collections.ObjectModel;
 
 namespace CompasPack.ViewModel
 {
@@ -34,8 +36,15 @@ namespace CompasPack.ViewModel
         private string _memorySizeSource;
         private string _memoryFrequencySource;
         private string _memory;
+
+        private string _videoControllersSource;
+        private string _videoControllers;
+        private string _videoControllersSize;
+
+
         private readonly IIOManager _iOManager;
         private UserReport _userReport;
+
 
         public ComputerReportViewModel(IIOManager iOManager)
         {
@@ -135,6 +144,33 @@ namespace CompasPack.ViewModel
             }
         }
 
+        public string VideoControllers
+        {
+            get { return _videoControllers; }
+            set
+            {
+                _videoControllers = value;
+                OnPropertyChanged();
+            }
+        }
+        public string VideoControllersSource
+        {
+            get { return _videoControllersSource; }
+            set
+            {
+                _videoControllersSource = value;
+                OnPropertyChanged();
+            }
+        }
+        public string VideoControllersSize
+        {
+            get { return _videoControllersSize; }
+            set
+            {
+                _videoControllersSize = value;
+                OnPropertyChanged();
+            }
+        }
         public bool HasChanges()
         {
             throw new NotImplementedException();
@@ -231,19 +267,37 @@ namespace CompasPack.ViewModel
             }
 
 
-            //ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DisplayConfiguration");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController");
 
-            //string graphicsCard = string.Empty;
-            //foreach (ManagementObject mo in searcher.Get())
-            //{
-            //    foreach (PropertyData property in mo.Properties)
-            //    {
-            //        if (property.Name == "Description")
-            //        {
-            //            graphicsCard = property.Value.ToString();
-            //        }
-            //    }
-            //}
+
+            var tempSize = string.Empty;
+            foreach (ManagementObject mo in searcher.Get())
+            {
+                var tempDescription = mo["Description"];
+                var tempAdapterRAM = mo["AdapterRAM"];
+                if (tempDescription != null)
+                    VideoControllersSource += tempDescription.ToString() + "\n";
+                else
+                    VideoControllersSource = "Not found";
+                if (tempAdapterRAM != null)
+                    VideoControllersSize += $"({double.Parse(tempAdapterRAM.ToString()) / 1073741824}Gb)\n";
+                else
+                    VideoControllersSize = "Not found";
+            }
+
+            VideoControllersSource = VideoControllersSource.TrimEnd();
+            VideoControllersSize = VideoControllersSize.TrimEnd();
+
+            var tempVideo = VideoControllersSource.Split('\n');
+            var tempVideoSize = VideoControllersSize.Split('\n');
+            for (int i = 0; i < tempVideo.Count(); i++)
+            {
+                var tempVideoRegex = tempVideo[i];
+                foreach (var item in UserReport.VideoController.Regex)
+                    tempVideoRegex = Regex.Replace(tempVideoRegex, item, "");
+                VideoControllers += $"{tempVideoRegex} {tempVideoSize[i]}\n";
+            }
+            VideoControllers = VideoControllers.TrimEnd();
         }
 
         public void Unsubscribe()

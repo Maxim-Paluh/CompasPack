@@ -100,11 +100,6 @@ namespace CompasPack.ViewModel
 
            //     }
            // }
-
-
-           
-            
-
         }
         public void Unsubscribe()
         {

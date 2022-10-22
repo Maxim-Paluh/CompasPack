@@ -34,6 +34,10 @@ namespace CompasPack.Data
                         XPath = "/Report/Page[5]/Group[3]/Item[5]/Value",
                         Regex = new List<string>() { "\\D" }
                     }
+                },
+                VideoController = new VideoController()
+                {
+                    Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)"}
                 }
                 
             };
@@ -48,6 +52,8 @@ namespace CompasPack.Data
         private CPU _cpu;
         private Motherboard _motherboard;
         private Memory _memory;
+        private VideoController _videoController;
+
         //---------------------------------
         public CPU CPU
         {
@@ -73,6 +79,15 @@ namespace CompasPack.Data
             set
             {
                 _memory = value;
+                OnPropertyChanged();
+            }
+        }
+        public VideoController VideoController
+        {
+            get { return _videoController; }
+            set
+            {
+                _videoController = value;
                 OnPropertyChanged();
             }
         }
@@ -113,9 +128,13 @@ namespace CompasPack.Data
     public class MemoryType : ReportBase
     {
     }
-
     public class MemoryFrequency : ReportBase
     {
+    }
+
+    public class VideoController : ReportBase
+    {
+
     }
 
     public class ReportBase : ViewModelBase
