@@ -13,9 +13,7 @@ namespace CompasPack.ViewModel
 {
     public class ReportViewModel : ViewModelBase, IDetailViewModel
     {
-        private string _lastIdReport;
         private TypeReport _reportType;
-
         private IDetailViewModel? _reportformViewModel;
         private readonly IIOManager _iOManager;
 
@@ -76,30 +74,12 @@ namespace CompasPack.ViewModel
         }
         public bool HasChanges()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public async Task LoadAsync(int? Id)
         {
 
-            //var cpu = new ManagementObjectSearcher("select * from Win32_Processor").Get().Cast<ManagementObject>().First()["MaxClockSpeed"];
-
-
-           //var f = new ManagementObjectSearcher("SELECT * FROM Win32_SystemEnclosure").Get().Cast<ManagementObject>().FirstOrDefault()["ChassisTypes"];
-
-           // foreach (ManagementObject processor in SystemEnclosure.)
-           // {
-
-           //     foreach (PropertyData property in processor.Properties)
-           //     {
-           //         if (property != null)
-                    
-
-           //             return;
-                    
-
-           //     }
-           // }
         }
         public void Unsubscribe()
         {

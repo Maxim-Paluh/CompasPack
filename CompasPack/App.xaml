@@ -5,6 +5,8 @@
              Startup="Application_Startup"
              DispatcherUnhandledException="Application_DispatcherUnhandledException">
     <Application.Resources>
-         
+        <DataTemplate x:Key="Regexemplate">
+            <TextBlock Margin="2" Text="{Binding}"/>
+        </DataTemplate>
     </Application.Resources>
 </Application>

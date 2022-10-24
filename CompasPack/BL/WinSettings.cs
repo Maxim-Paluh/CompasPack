@@ -38,7 +38,6 @@ namespace CompasPack.BL
             };
             proc.Start();
         }
-
         public static void OpenIcon()
         {
             Process proc = new Process()
@@ -53,8 +52,6 @@ namespace CompasPack.BL
             };
             proc.Start();
         }
-
-
         public static void OpenAUC()
         {
             Process proc = new Process()
@@ -68,7 +65,6 @@ namespace CompasPack.BL
             };
             proc.Start();
         }
-
         public static void OpenDesktopIconSettings()
         {
             Process proc = new Process()

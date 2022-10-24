@@ -5,13 +5,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace CompasPack.Data
+namespace CompasPack.ViewModel
 {
-    public static class ReportHelper
+    public static class SettingsReportHelper
     {
-        public static UserReport GetUserReport()
+        public static SettingsReportViewModel GetUserReport()
         {
-            return new UserReport()
+            return new SettingsReportViewModel()
             {
                 CPU = new CPU()
                 {
@@ -20,13 +20,13 @@ namespace CompasPack.Data
                 Motherboard = new Motherboard()
                 {
                     XPath = "/Report/Page[5]/Group[1]/Item[2]/Value",
-                    Regex = new List<string>() { "Test" }
+                    Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)" }
                 },
                 Memory = new Memory()
                 {
                     MemoryType = new MemoryType()
                     {
-                        XPath= "/Report/Page[5]/Group[3]/Item[1]/Value",
+                        XPath = "/Report/Page[5]/Group[3]/Item[1]/Value",
                         Regex = new List<string>() { " ??SDRAM" }
                     },
                     MemoryFrequency = new MemoryFrequency()
@@ -37,9 +37,9 @@ namespace CompasPack.Data
                 },
                 VideoController = new VideoController()
                 {
-                    Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)"}
+                    Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)" }
                 }
-                
+
             };
         }
     }
@@ -47,7 +47,7 @@ namespace CompasPack.Data
 
 
 
-    public class UserReport : ViewModelBase
+    public class SettingsReportViewModel : ViewModelBase
     {
         private CPU _cpu;
         private Motherboard _motherboard;
@@ -72,7 +72,7 @@ namespace CompasPack.Data
                 _motherboard = value;
                 OnPropertyChanged();
             }
-        }  
+        }
         public Memory Memory
         {
             get { return _memory; }
@@ -99,7 +99,7 @@ namespace CompasPack.Data
 
     public class Motherboard : ReportBase
     {
-       
+
     }
 
     public class Memory : ViewModelBase

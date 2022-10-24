@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CompasPack.ViewModel;
 
 namespace CompasPakc.BL
 {
@@ -16,7 +17,7 @@ namespace CompasPakc.BL
         public Task<List<UserPresetProgram>> GetUserPresetProgram();
         public Task<List<GroupProgram>> GetGroupPrograms();
 
-        public Task<UserReport> GetUserReport();
+        public Task<SettingsReportViewModel> GetUserReport();
 
         public void OpenAppLog();
         public void OpenExampleFile();
@@ -717,10 +718,10 @@ namespace CompasPakc.BL
 
         public async Task SetUserReport()
         {
-            var SettingsJsonExample = JsonConvert.SerializeObject(ReportHelper.GetUserReport(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
+            var SettingsJsonExample = JsonConvert.SerializeObject(SettingsReportHelper.GetUserReport(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
             await File.WriteAllTextAsync(SettingsUserReportPath, SettingsJsonExample).ConfigureAwait(false);
         }
-        public async Task<UserReport> GetUserReport()
+        public async Task<SettingsReportViewModel> GetUserReport()
         {
             FileInfo fileSettingsJson = new FileInfo(SettingsUserReportPath);
 
@@ -731,7 +732,7 @@ namespace CompasPakc.BL
 
             try
             {
-                var temp = JsonConvert.DeserializeObject<UserReport>(await
+                var temp = JsonConvert.DeserializeObject<SettingsReportViewModel>(await
                 File.ReadAllTextAsync(SettingsUserReportPath),
                 new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error, });
 
@@ -742,7 +743,7 @@ namespace CompasPakc.BL
                 _messageDialogService.ShowInfoDialog($"Шаблон для списку програм має помилку, для вирішення проблеми:\n\n" +
                     $"1. Виправіть помилку:\n{exp.Message}\n\n" +
                     $"2. Згенеруйте файл по замовчуванню в меню налаштувань програми!", "Error");
-                return ReportHelper.GetUserReport();
+                return SettingsReportHelper.GetUserReport();
             }
         }
     }

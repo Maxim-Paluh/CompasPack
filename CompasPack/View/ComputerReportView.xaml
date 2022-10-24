@@ -5,10 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CompasPack.View"
              mc:Ignorable="d" 
+             xmlns:ViewModel="clr-namespace:CompasPack.ViewModel"
+             xmlns:View="clr-namespace:CompasPack.View"
              d:DesignHeight="450" d:DesignWidth="900">
     <UserControl.Resources>
-        <DataTemplate x:Key="Regexemplate">
-            <TextBlock Margin="2" Text="{Binding}"/>
+        <DataTemplate DataType="{x:Type ViewModel:CPUViewModel}">
+            <View:CPUView/>
         </DataTemplate>
     </UserControl.Resources>
 
@@ -31,43 +33,7 @@
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Column="0" Grid.Row="0" FontSize="14" FontWeight="Bold"  Text="Processor:">
-                    </TextBlock>
-                    <WrapPanel Grid.Row="0" Grid.Column="1"  Margin="4" HorizontalAlignment="Left">
-                        <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Name:"></TextBlock>
-                        <TextBox MinWidth="40" Text="{Binding ProcessorNameSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-                    <WrapPanel Grid.Row="1" Grid.Column="1" Margin="4" >
-                        <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Clock:"></TextBlock>
-                        <TextBox MinWidth="40" Text="{Binding ProcessorClock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-                    <WrapPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Margin="4" >
-                        <TextBlock Margin="5 0 5 0"  Width="40" Grid.RowSpan="2" Text="Regex:"></TextBlock>
-                        <Border BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
-                            <ScrollViewer MaxHeight="40" Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
-                                <ItemsControl  ItemsSource="{Binding UserReport.CPU.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
-                              ItemTemplate="{StaticResource Regexemplate}"/>
-                            </ScrollViewer>
-                        </Border>
-                    </WrapPanel>
-                    <WrapPanel Grid.Row="0" Grid.Column="3"  Grid.RowSpan="2" Margin="4" HorizontalAlignment="Right">
-                        <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>
-                        <TextBox Margin="5 0 0 0" MinWidth="300" Text="{Binding ProcessorName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-                </Grid>
-            </Border>
+            <ContentControl  Grid.Row="0"  Content="{Binding CPUViewModel}"/>
 
             <Border Grid.Row="1"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
                 <Grid>
