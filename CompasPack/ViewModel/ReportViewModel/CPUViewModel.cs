@@ -13,7 +13,7 @@ namespace CompasPack.ViewModel
     {
         private string _name;
         private string _clock;
-        private string _result;
+        
         public CPUViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
         {
             SettingsReport = settingsReport;
@@ -37,16 +37,6 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public string Result
-        {
-            get { return _result; }
-            set
-            {
-                _result = value;
-                OnPropertyChanged();
-            }
-        }
-
         public void Load()
         {
             ManagementObjectSearcher processors = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");

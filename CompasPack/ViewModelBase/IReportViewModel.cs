@@ -16,7 +16,7 @@ namespace CompasPack
     {
         private XDocument? _document;
         private SettingsReportViewModel? _settingsReport;
-
+        private string _result;
         public SettingsReportViewModel? SettingsReport
         {
             get { return _settingsReport; }
@@ -32,6 +32,15 @@ namespace CompasPack
             set
             {
                 _document = value;
+                OnPropertyChanged();
+            }
+        }
+        public string Result
+        {
+            get { return _result; }
+            set
+            {
+                _result = value;
                 OnPropertyChanged();
             }
         }

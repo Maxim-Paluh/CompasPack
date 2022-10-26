@@ -26,9 +26,7 @@ namespace CompasPack.ViewModel
     public class ComputerReportViewModel : ViewModelBase, IDetailViewModel
     {
         private CPUViewModel _CPUViewModel;
-
-        private string _motherboardNameSource;
-        private string _motherboardName;
+        private MotherboardViewModel _motherboardViewModel;
 
         private string _memoryTypeSource;
         private string _memorySizeSource;
@@ -57,22 +55,12 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
-        public string MotherboardNameSource
+        public MotherboardViewModel MotherboardViewModel
         {
-            get { return _motherboardName; }
+            get { return _motherboardViewModel; }
             set
             {
-                _motherboardName = value;
-                OnPropertyChanged();
-            }
-        }
-        public string MotherboardName
-        {
-            get { return _motherboardNameSource; }
-            set
-            {
-                _motherboardNameSource = value;
+                _motherboardViewModel = value;
                 OnPropertyChanged();
             }
         }
@@ -180,20 +168,9 @@ namespace CompasPack.ViewModel
             var UserReport = await _iOManager.GetUserReport();
 
             CPUViewModel = new CPUViewModel(UserReport, document);
+            MotherboardViewModel = new MotherboardViewModel(UserReport, document);
             CPUViewModel.Load();
-            {
-                var tempMotherboardNameSource = document.XPathSelectElement(UserReport.Motherboard.XPath);
-                if(tempMotherboardNameSource != null)
-                    MotherboardNameSource = tempMotherboardNameSource.Value;
-                else
-                    MotherboardNameSource = "Not found";
-
-                var tempMotherboardName = MotherboardNameSource;
-                foreach (var item in UserReport.Motherboard.Regex)
-                    tempMotherboardName = Regex.Replace(tempMotherboardName, item, "");
-                
-                MotherboardName = tempMotherboardName;
-            }
+            MotherboardViewModel.Load();
             {
                 var tempMemoryTypeSource = document.XPathSelectElement(UserReport.Memory.MemoryType.XPath);
                 if(tempMemoryTypeSource!=null)

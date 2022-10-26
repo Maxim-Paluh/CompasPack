@@ -12,6 +12,10 @@
         <DataTemplate DataType="{x:Type ViewModel:CPUViewModel}">
             <View:CPUView/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type ViewModel:MotherboardViewModel}">
+            <View:MotherboardView/>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Border  BorderBrush="DarkBlue" Margin="2"  BorderThickness="1" CornerRadius="3">
@@ -34,44 +38,8 @@
             </Grid.RowDefinitions>
 
             <ContentControl  Grid.Row="0"  Content="{Binding CPUViewModel}"/>
+            <ContentControl  Grid.Row="1"  Content="{Binding MotherboardViewModel}"/>
 
-            <Border Grid.Row="1"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Column="0" Grid.Row="0" FontSize="14" FontWeight="Bold"  Text="Motherboard:">
-                    </TextBlock>
-                    <WrapPanel Grid.Column="1" Margin="4" HorizontalAlignment="Left">
-                        <TextBlock Grid.Column="0" Grid.Row="0" Text="XPath:"></TextBlock>
-                        <TextBox Margin="5 0 0 0" MinWidth="200" Text="{Binding UserReport.Motherboard.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-                    <WrapPanel  Grid.Column="2"  Margin="4" >
-                        <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Name:"></TextBlock>
-                        <TextBox MinWidth="40" Text="{Binding MotherboardNameSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-                    <WrapPanel  Grid.Column="3"  Margin="4" >
-                        <TextBlock Margin="5 0 5 0"  Width="40" Text="Regex:"></TextBlock>
-                        <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
-                            <ScrollViewer Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
-                                <ItemsControl  ItemsSource="{Binding UserReport.Motherboard.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
-                              ItemTemplate="{StaticResource Regexemplate}"/>
-                            </ScrollViewer>
-                        </Border>
-                    </WrapPanel>
-                    <WrapPanel Grid.Column="4"   Margin="4" HorizontalAlignment="Right">
-                        <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>
-                        <TextBox Margin="5 0 0 0" MinWidth="300" Text="{Binding MotherboardName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-                </Grid>
-            </Border>
 
             <Border Grid.Row="2"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
                 <Grid>
