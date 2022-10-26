@@ -10,7 +10,7 @@
     <Window.Resources>
 
         <DataTemplate DataType="{x:Type ViewModel:ProgramsViewModel}">
-            <View:Programs/>
+            <View:ProgramsView/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type ViewModel:ReportViewModel}">

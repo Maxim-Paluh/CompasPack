@@ -18,9 +18,9 @@ namespace CompasPack.View
     /// <summary>
     /// Логика взаимодействия для Programs.xaml
     /// </summary>
-    public partial class Programs : UserControl
+    public partial class ProgramsView : UserControl
     {
-        public Programs()
+        public ProgramsView()
         {
             InitializeComponent();
         }
