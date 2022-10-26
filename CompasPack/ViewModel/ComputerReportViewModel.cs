@@ -27,11 +27,7 @@ namespace CompasPack.ViewModel
     {
         private CPUViewModel _CPUViewModel;
         private MotherboardViewModel _motherboardViewModel;
-
-        private string _memoryTypeSource;
-        private string _memorySizeSource;
-        private string _memoryFrequencySource;
-        private string _memory;
+        private MemoryViewModel _memoryViewModel;
 
         private string _videoControllersSource;
         private string _videoControllers;
@@ -64,43 +60,16 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
+        public MemoryViewModel MemoryViewModel
+        {
+            get { return _memoryViewModel; }
+            set
+            {
+                _memoryViewModel = value;
+                OnPropertyChanged();
+            }
+        }
 
-        public string MemoryTypeSource
-        {
-            get { return _memoryTypeSource; }
-            set
-            {
-                _memoryTypeSource = value;
-                OnPropertyChanged();
-            }
-        }
-        public string MemorySizeSource
-        {
-            get { return _memorySizeSource; }
-            set
-            {
-                _memorySizeSource = value;
-                OnPropertyChanged();
-            }
-        }
-        public string MemoryFrequencySource
-        {
-            get { return _memoryFrequencySource; }
-            set
-            {
-                _memoryFrequencySource = value;
-                OnPropertyChanged();
-            }
-        }
-        public string Memory
-        {
-            get { return _memory; }
-            set
-            {
-                _memory = value;
-                OnPropertyChanged();
-            }
-        }
 
         public string VideoControllers
         {
@@ -169,38 +138,10 @@ namespace CompasPack.ViewModel
 
             CPUViewModel = new CPUViewModel(UserReport, document);
             MotherboardViewModel = new MotherboardViewModel(UserReport, document);
+            MemoryViewModel = new MemoryViewModel(UserReport, document);
             CPUViewModel.Load();
             MotherboardViewModel.Load();
-            {
-                var tempMemoryTypeSource = document.XPathSelectElement(UserReport.Memory.MemoryType.XPath);
-                if(tempMemoryTypeSource!=null)
-                    MemoryTypeSource = tempMemoryTypeSource.Value;
-                else
-                    MemoryTypeSource = "Not found";
-
-                ManagementObjectSearcher memorys = new ManagementObjectSearcher("SELECT * FROM Win32_PhysicalMemory");
-                UInt64 total = 0;
-                foreach (ManagementObject ram in memorys.Get())
-                    total += (UInt64)ram.GetPropertyValue("Capacity");
-                
-                MemorySizeSource = total / 1073741824 + "GB";         
-
-                var tempMemoryFrequencySource = document.XPathSelectElement(UserReport.Memory.MemoryFrequency.XPath);
-                if (tempMemoryFrequencySource != null)
-                    MemoryFrequencySource = tempMemoryFrequencySource.Value;
-                else
-                    MemoryFrequencySource = "Not found";
-
-                var tempMemoryType = MemoryTypeSource;
-                foreach (var item in UserReport.Memory.MemoryType.Regex)
-                    tempMemoryType = Regex.Replace(tempMemoryType, item, "");
-                
-                var tempMemoryFrequency = MemoryFrequencySource;
-                foreach (var item in UserReport.Memory.MemoryFrequency.Regex)
-                    tempMemoryFrequency = Regex.Replace(tempMemoryFrequency, item, "");
-
-                Memory = $"{tempMemoryType} - {MemorySizeSource} ({tempMemoryFrequency}MHz)";
-            }
+            MemoryViewModel.Load();
             {
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController");
                 foreach (ManagementObject mo in searcher.Get())

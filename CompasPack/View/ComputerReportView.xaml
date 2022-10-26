@@ -16,6 +16,10 @@
         <DataTemplate DataType="{x:Type ViewModel:MotherboardViewModel}">
             <View:MotherboardView/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type ViewModel:MemoryViewModel}">
+            <View:MemoryView/>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Border  BorderBrush="DarkBlue" Margin="2"  BorderThickness="1" CornerRadius="3">
@@ -39,72 +43,9 @@
 
             <ContentControl  Grid.Row="0"  Content="{Binding CPUViewModel}"/>
             <ContentControl  Grid.Row="1"  Content="{Binding MotherboardViewModel}"/>
+            <ContentControl  Grid.Row="2"  Content="{Binding MemoryViewModel}"/>
 
 
-            <Border Grid.Row="2"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Column="0" Grid.Row="0" FontSize="14" FontWeight="Bold"  Text="Memory:">
-                    </TextBlock>
-                    <WrapPanel Grid.Column="1" Grid.Row="0"  Margin="4" HorizontalAlignment="Left">
-                        <TextBlock Grid.Column="0" Grid.Row="0" Text="XPath:"></TextBlock>
-                        <TextBox Margin="5 0 0 0" MinWidth="200" Text="{Binding UserReport.Motherboard.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-                    <WrapPanel Grid.Column="1" Grid.Row="2" Margin="4" HorizontalAlignment="Left">
-                        <TextBlock Grid.Column="0" Grid.Row="0" Text="XPath:"></TextBlock>
-                        <TextBox Margin="5 0 0 0" MinWidth="200" Text="{Binding UserReport.Memory.MemoryFrequency.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-
-                    <WrapPanel  Grid.Column="2" Grid.Row="0"  Margin="4" >
-                        <TextBlock Grid.Column="0" Width="60" Grid.Row="0" Text="Type:"></TextBlock>
-                        <TextBox MinWidth="40" Text="{Binding MemoryTypeSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-                    <WrapPanel  Grid.Column="2" Grid.Row="1"  Margin="4" >
-                        <TextBlock Grid.Column="0" Width="60" Grid.Row="0" Text="Size:"></TextBlock>
-                        <TextBox MinWidth="40" Text="{Binding MemorySizeSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-                    <WrapPanel  Grid.Column="2" Grid.Row="2" Margin="4" >
-                        <TextBlock Grid.Column="0" Width="60" Grid.Row="0" Text="Frequency:"></TextBlock>
-                        <TextBox MinWidth="40" Text="{Binding MemoryFrequencySource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-
-                    <WrapPanel  Grid.Column="3"  Margin="4" >
-                        <TextBlock Margin="5 0 5 0"  Width="40" Grid.RowSpan="2" Text="Regex:"></TextBlock>
-                        <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
-                            <ScrollViewer Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
-                                <ItemsControl  ItemsSource="{Binding UserReport.Memory.MemoryType.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
-                              ItemTemplate="{StaticResource Regexemplate}"/>
-                            </ScrollViewer>
-                        </Border>
-                    </WrapPanel>
-                    <WrapPanel  Grid.Column="3" Grid.Row="2"  Margin="4">
-                        <TextBlock Margin="5 0 5 0"  Width="40" Grid.RowSpan="2" Text="Regex:"></TextBlock>
-                        <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
-                            <ScrollViewer Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
-                                <ItemsControl  ItemsSource="{Binding UserReport.Memory.MemoryFrequency.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  MinWidth="40"
-                              ItemTemplate="{StaticResource Regexemplate}"/>
-                            </ScrollViewer>
-                        </Border>
-                    </WrapPanel>
-
-                    <WrapPanel Grid.Column="4"  Grid.RowSpan="3" Margin="4" HorizontalAlignment="Right">
-                        <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>
-                        <TextBox Margin="5 0 0 0" MinWidth="300" Text="{Binding Memory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-
-                </Grid>
-            </Border>
 
             <Border Grid.Row="3"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
                 <Grid>
