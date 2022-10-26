@@ -12,13 +12,14 @@
         <DataTemplate DataType="{x:Type ViewModel:CPUViewModel}">
             <View:CPUView/>
         </DataTemplate>
-
         <DataTemplate DataType="{x:Type ViewModel:MotherboardViewModel}">
             <View:MotherboardView/>
         </DataTemplate>
-
         <DataTemplate DataType="{x:Type ViewModel:MemoryViewModel}">
             <View:MemoryView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:VideoViewModel}">
+            <View:VideoView/>
         </DataTemplate>
     </UserControl.Resources>
 
@@ -44,46 +45,10 @@
             <ContentControl  Grid.Row="0"  Content="{Binding CPUViewModel}"/>
             <ContentControl  Grid.Row="1"  Content="{Binding MotherboardViewModel}"/>
             <ContentControl  Grid.Row="2"  Content="{Binding MemoryViewModel}"/>
+            <ContentControl  Grid.Row="3"  Content="{Binding VideoViewModel}"/>
 
 
-
-            <Border Grid.Row="3"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="VideoController:">
-                    </TextBlock>
-                    <WrapPanel Grid.Column="1" Grid.Row="0"  Margin="4" HorizontalAlignment="Left">
-                        <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Name:"></TextBlock>
-                        <TextBox MinWidth="40" Text="{Binding VideoControllersSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-                    <WrapPanel Grid.Column="1" Grid.Row="1" Margin="4" HorizontalAlignment="Left">
-                        <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Size:"></TextBlock>
-                        <TextBox MinWidth="40" Text="{Binding VideoControllersSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    </WrapPanel>
-                    <WrapPanel  Grid.Column="2"  Margin="4" Grid.RowSpan="2">
-                        <TextBlock Margin="5 0 5 0"  Width="40" Text="Regex:"></TextBlock>
-                        <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3" >
-                            <ScrollViewer Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
-                                <ItemsControl  ItemsSource="{Binding UserReport.VideoController.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
-                              ItemTemplate="{StaticResource Regexemplate}"/>
-                            </ScrollViewer>
-                        </Border>
-                    </WrapPanel>
-                    <WrapPanel Grid.Column="3"   Margin="4" HorizontalAlignment="Right">
-                        <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>
-                        <TextBox Text="{Binding VideoControllers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" ></TextBox>
-                    </WrapPanel>
-                </Grid>
-            </Border>
+           
 
         </Grid>
     </Border>

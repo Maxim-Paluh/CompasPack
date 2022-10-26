@@ -28,10 +28,8 @@ namespace CompasPack.ViewModel
         private CPUViewModel _CPUViewModel;
         private MotherboardViewModel _motherboardViewModel;
         private MemoryViewModel _memoryViewModel;
+        private VideoViewModel _videoViewModel;
 
-        private string _videoControllersSource;
-        private string _videoControllers;
-        private string _videoControllersSize;
 
 
         private readonly IIOManager _iOManager;
@@ -69,32 +67,12 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
-
-        public string VideoControllers
+        public VideoViewModel VideoViewModel
         {
-            get { return _videoControllers; }
+            get { return _videoViewModel; }
             set
             {
-                _videoControllers = value;
-                OnPropertyChanged();
-            }
-        }
-        public string VideoControllersSource
-        {
-            get { return _videoControllersSource; }
-            set
-            {
-                _videoControllersSource = value;
-                OnPropertyChanged();
-            }
-        }
-        public string VideoControllersSize
-        {
-            get { return _videoControllersSize; }
-            set
-            {
-                _videoControllersSize = value;
+                _videoViewModel = value;
                 OnPropertyChanged();
             }
         }
@@ -139,42 +117,11 @@ namespace CompasPack.ViewModel
             CPUViewModel = new CPUViewModel(UserReport, document);
             MotherboardViewModel = new MotherboardViewModel(UserReport, document);
             MemoryViewModel = new MemoryViewModel(UserReport, document);
+            VideoViewModel = new VideoViewModel(UserReport);
             CPUViewModel.Load();
             MotherboardViewModel.Load();
             MemoryViewModel.Load();
-            {
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController");
-                foreach (ManagementObject mo in searcher.Get())
-                {
-                    var tempDescription = mo["Description"];
-                    var tempAdapterRAM = mo["AdapterRAM"];
-                    if (tempDescription != null)
-                        VideoControllersSource += tempDescription.ToString() + "\n";
-                    else
-                        VideoControllersSource = "Not found";
-                    if (tempAdapterRAM != null)
-                        VideoControllersSize += $"({double.Parse(tempAdapterRAM.ToString()) / 1073741824}Gb)\n";
-                    else
-                        VideoControllersSize = "Not found";
-                }
-
-                VideoControllersSource = VideoControllersSource.TrimEnd();
-                VideoControllersSize = VideoControllersSize.TrimEnd();
-
-                var tempVideo = VideoControllersSource.Split('\n');
-                var tempVideoSize = VideoControllersSize.Split('\n');
-                for (int i = 0; i < tempVideo.Count(); i++)
-                {
-                    var tempVideoRegex = tempVideo[i];
-                    foreach (var item in UserReport.VideoController.Regex)
-                        tempVideoRegex = Regex.Replace(tempVideoRegex, item, "");
-                    VideoControllers += $"{tempVideoRegex} {tempVideoSize[i]}\n";
-                }
-                VideoControllers = VideoControllers.TrimEnd();
-            }
-            {
-                
-            }
+            VideoViewModel.Load();
         }
 
 
