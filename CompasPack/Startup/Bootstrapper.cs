@@ -21,7 +21,7 @@ namespace CompasPack.Startup
             var builder = new ContainerBuilder();
             /////////////////////////////////////////////////////////////////////////////////
             // Register View Model
-            builder.RegisterType<MainWindow>().AsSelf();
+            builder.RegisterType<MainWindowView>().AsSelf();
             builder.RegisterType<MainWindowViewModel>().AsSelf();
 
 

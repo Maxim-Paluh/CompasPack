@@ -17,7 +17,7 @@ namespace CompasPack
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            MainWindow mainWindow = new Bootstrapper().Bootstrap().Resolve<MainWindow>();
+            MainWindowView mainWindow = new Bootstrapper().Bootstrap().Resolve<MainWindowView>();
             mainWindow.Show();
         }
 
