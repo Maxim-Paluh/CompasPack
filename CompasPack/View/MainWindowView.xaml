@@ -14,7 +14,7 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type ViewModel:ReportViewModel}">
-            <View:Reports/>
+            <View:ReportsView/>
         </DataTemplate>
 
     </Window.Resources>

@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace CompasPack.View
 {
     /// <summary>
-    /// Логика взаимодействия для Reports.xaml
+    /// Логика взаимодействия для ReportsView.xaml
     /// </summary>
-    public partial class Reports : UserControl
+    public partial class ReportsView : UserControl
     {
-        public Reports()
+        public ReportsView()
         {
             InitializeComponent();
         }
