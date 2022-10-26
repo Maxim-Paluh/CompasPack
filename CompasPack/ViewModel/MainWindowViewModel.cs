@@ -139,7 +139,7 @@ namespace CompasPack.ViewModel
         }
         private void OnAboutProgram()
         {
-            var About = new About();
+            var About = new AboutView();
             About.ShowDialog();
         }
         private void OnCreateNewFormExecute(Type viewModelType)

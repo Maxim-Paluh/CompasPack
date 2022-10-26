@@ -17,9 +17,9 @@ namespace CompasPack.View
     /// <summary>
     /// Логика взаимодействия для About.xaml
     /// </summary>
-    public partial class About : Window
+    public partial class AboutView : Window
     {
-        public About()
+        public AboutView()
         {
             InitializeComponent();
         }
