@@ -29,7 +29,7 @@ namespace CompasPack.ViewModel
         private MotherboardViewModel _motherboardViewModel;
         private MemoryViewModel _memoryViewModel;
         private VideoViewModel _videoViewModel;
-
+        private PhysicalDiskViewModel _physicalDiskViewModel;
 
 
         private readonly IIOManager _iOManager;
@@ -76,6 +76,15 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
+        public PhysicalDiskViewModel PhysicalDiskViewModel
+        {
+            get { return _physicalDiskViewModel; }
+            set
+            {
+                _physicalDiskViewModel = value;
+                OnPropertyChanged();
+            }
+        }
         public bool HasChanges()
         {
             throw new NotImplementedException();
@@ -118,10 +127,12 @@ namespace CompasPack.ViewModel
             MotherboardViewModel = new MotherboardViewModel(UserReport, document);
             MemoryViewModel = new MemoryViewModel(UserReport, document);
             VideoViewModel = new VideoViewModel(UserReport);
+            PhysicalDiskViewModel = new PhysicalDiskViewModel(UserReport, document);
             CPUViewModel.Load();
             MotherboardViewModel.Load();
             MemoryViewModel.Load();
             VideoViewModel.Load();
+            PhysicalDiskViewModel.Load();
         }
 
 
