@@ -6,7 +6,57 @@
              xmlns:local="clr-namespace:CompasPack.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+    <UserControl.Resources>
+
+    </UserControl.Resources>
+    <Border BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="PhysicalDisk:"></TextBlock>
+            <ItemsControl Grid.Column="1" MaxWidth="800" HorizontalAlignment="Left"  ItemsSource="{Binding Disks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
+                            <Grid>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Margin="1" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"  Text="{Binding Name}"></TextBlock>
+
+                                <WrapPanel Grid.Row="1">
+                                <CheckBox  Margin="1" Command="{Binding Path=DataContext.SelectDiskCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" IsChecked="{Binding IsSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
+                                <TextBlock Margin="1" Text="{Binding Type}"></TextBlock>
+                                <TextBlock Margin="1" Text=" - "></TextBlock>
+                                <TextBlock Margin="1" Text="{Binding Size}"></TextBlock>
+                                </WrapPanel>
+
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+            <WrapPanel Grid.Column="2"   Margin="4" HorizontalAlignment="Right">
+                <TextBlock FontWeight="Bold" Text="Resault:"></TextBlock>
+                <TextBox Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" ></TextBox>
+            </WrapPanel>
+
+        </Grid>
+    </Border>
 </UserControl>

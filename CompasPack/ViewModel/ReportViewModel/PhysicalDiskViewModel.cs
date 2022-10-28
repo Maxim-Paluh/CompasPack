@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Prism.Commands;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
@@ -17,7 +20,19 @@ namespace CompasPack.ViewModel
             SettingsReport = settingsReport;
             Document = xDocument;
             Disks = new ObservableCollection<Disk>();
+            SelectDiskCommand = new DelegateCommand(OnSelectDisk);
         }
+
+        private void OnSelectDisk()
+        {
+            Result = String.Empty;
+            foreach (var item in Disks.Where(x => x.IsSelect))
+                Result += $"{item.Type} - {item.Size} | ";
+
+            Result = Result.TrimEnd(new char[] { ' ', '|' });
+
+        }
+
         public ObservableCollection<Disk> Disks { get; set; }
 
         public void Load()
@@ -27,7 +42,7 @@ namespace CompasPack.ViewModel
 
             var searcher = new ManagementObjectSearcher("SELECT * FROM MSFT_PhysicalDisk");
             searcher.Scope = scope;
-
+            List<Disk> tempListDisk = new List<Disk>();
             foreach (var drive in searcher.Get())
             {
                 string model = "";
@@ -36,7 +51,16 @@ namespace CompasPack.ViewModel
 
                 string Size = "";
                 if (drive["Size"] != null)
-                    Size = (UInt64.Parse(drive.Properties["Size"].Value.ToString()) / 1000000000).ToString();
+                {
+                    var temp = UInt64.Parse(drive.Properties["Size"].Value.ToString());
+                    if(temp / 1000000000<1000)
+                        Size = $"{temp/1000000000}Gb";
+                    else
+                    {
+                        double tempTb = (double)temp / 1000000000 / 1000;
+                        Size = $"{Math.Round(tempTb, 3)}Tb";
+                    }
+                }
 
                 ushort busBuff=0;
                 if (drive["BusType"] != null) ;
@@ -47,20 +71,24 @@ namespace CompasPack.ViewModel
                     ushort.TryParse(drive["MediaType"].ToString(), out mediaBuff);
 
 
-                if (busBuff == 17)
+                if (busBuff == 17) //NVMe
+                    tempListDisk.Add(new Disk() { Name = model, Size = Size, Type = busTypeMap[busBuff], IsSelect = true, Order = 0 });
+                else if (busBuff == 3 || busBuff == 8 || busBuff == 11) //ATA RAID SATA
                 {
-                    Disks.Add(new Disk() { Name = model, Size = Size, Type = busTypeMap[busBuff], IsSelect = true });
-
+                    var temp = new Disk() { Name = model, Size = Size, Type = mediaTypeMap[mediaBuff], IsSelect = true };
+                    if (mediaBuff == 4) // SSD
+                        temp.Order = 1;
+                    if (mediaBuff == 3) // HDD
+                        temp.Order = 2;
+                    tempListDisk.Add(temp);
                 }
-                else if (busBuff == 3 || busBuff == 8 || busBuff == 11)
-                {
-                    Disks.Add(new Disk() { Name = model, Size = Size, Type = mediaTypeMap[mediaBuff], IsSelect = true });
-                }
-                else
-                {
-                    Disks.Add(new Disk() { Name = model, Size = Size, Type = $"{busTypeMap[busBuff]} {mediaTypeMap[mediaBuff]}", IsSelect = false });
-                }
+                else //Other
+                    tempListDisk.Add(new Disk() { Name = model, Size = Size, Type = $"{busTypeMap[busBuff]} {mediaTypeMap[mediaBuff]}", IsSelect = false, Order = 3});   
             }
+
+            foreach (var disk in tempListDisk.OrderBy(x => x.Order))
+                Disks.Add(disk);
+            OnSelectDisk();
         }
 
 
@@ -96,12 +124,14 @@ namespace CompasPack.ViewModel
             {4, "SSD"},
             {5, "SCM"},
          };
+
+        public ICommand SelectDiskCommand { get; }
     }
 
     public class Disk : ViewModelBase
     {
         private bool _isSelect;
-
+        public int Order { get; set; }
         public string Name { get; set; }
         public string Size { get; set; }
 
