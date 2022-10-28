@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
+using System.Windows.Controls;
+using System.Windows.Interop;
 
 namespace CompasPack.ViewModel
 {
@@ -38,8 +44,13 @@ namespace CompasPack.ViewModel
                 VideoController = new VideoController()
                 {
                     Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)" }
-                }
-
+                },
+                PowerSupply = new List<string>() {  "1stPlayer", "2N", "AeroCool", "Antec", "Argus", "ASPower", "ASUS", "Azza", "Be quiet!", "Casecom",
+                                                    "Chenbro", "Chieftec", "Chieftronic", "CoolerMaster", "Corsair", "Cougar", "Deepcool", "Dell", "Delux",
+                                                    "Enermax", "Extradigital", "Fractal Design", "Frime", "FrimeCom", "FSP", "Gamemax", "GIGABYTE", "Golden Field", "GreatWall",
+                                                    "Greenvision", "High Power", "HP", "IBM", "INTEL", "Inter-Tech", "Lenovo", "Logic concept", "LogicPower", "Meraki", "Modecom",
+                                                    "MSI", "Nikon", "NZXT", "Qdion", "QNap", "Qube", "Rezone Case", "Seasonic", "Segotep", "Silver Stone", "Supermicro", "TECNOWARE",
+                                                    "ThermalTake", "Vinga", "Xilence", "Zalman"}
             };
         }
     }
@@ -53,6 +64,7 @@ namespace CompasPack.ViewModel
         private Motherboard _motherboard;
         private Memory _memory;
         private VideoController _videoController;
+        private List<string> _powersupply;
 
         //---------------------------------
         public CPU CPU
@@ -79,6 +91,15 @@ namespace CompasPack.ViewModel
             set
             {
                 _memory = value;
+                OnPropertyChanged();
+            }
+        }
+        public List<string> PowerSupply
+        {
+            get { return _powersupply; }
+            set
+            {
+                _powersupply = value;
                 OnPropertyChanged();
             }
         }
@@ -131,11 +152,11 @@ namespace CompasPack.ViewModel
     public class MemoryFrequency : ReportBase
     {
     }
-
     public class VideoController : ReportBase
     {
 
     }
+
 
     public class ReportBase : ViewModelBase
     {
