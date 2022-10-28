@@ -94,21 +94,21 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public List<string> PowerSupply
-        {
-            get { return _powersupply; }
-            set
-            {
-                _powersupply = value;
-                OnPropertyChanged();
-            }
-        }
         public VideoController VideoController
         {
             get { return _videoController; }
             set
             {
                 _videoController = value;
+                OnPropertyChanged();
+            }
+        }
+        public List<string> PowerSupply
+        {
+            get { return _powersupply; }
+            set
+            {
+                _powersupply = value;
                 OnPropertyChanged();
             }
         }

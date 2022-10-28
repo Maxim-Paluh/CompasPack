@@ -24,6 +24,9 @@
         <DataTemplate DataType="{x:Type ViewModel:PhysicalDiskViewModel}">
             <View:PhysicalDiskView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:PowerSupplyViewModel}">
+            <View:PowerSupplyView/>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Border  BorderBrush="DarkBlue" Margin="2"  BorderThickness="1" CornerRadius="3">
@@ -44,6 +47,7 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
 
             <ContentControl  Grid.Row="0"  Content="{Binding CPUViewModel}"/>
@@ -51,7 +55,7 @@
             <ContentControl  Grid.Row="2"  Content="{Binding MemoryViewModel}"/>
             <ContentControl  Grid.Row="3"  Content="{Binding VideoViewModel}"/>
             <ContentControl  Grid.Row="4"  Content="{Binding PhysicalDiskViewModel}"/>
-
+            <ContentControl  Grid.Row="5"  Content="{Binding PowerSupplyViewModel}"/>
 
 
         </Grid>

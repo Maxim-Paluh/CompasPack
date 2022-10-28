@@ -15,9 +15,9 @@ namespace CompasPack
     public class ReportViewModelBase : ViewModelBase
     {
         private XDocument? _document;
-        private SettingsReportViewModel? _settingsReport;
+        private SettingsReportViewModel _settingsReport;
         private string _result;
-        public SettingsReportViewModel? SettingsReport
+        public SettingsReportViewModel SettingsReport
         {
             get { return _settingsReport; }
             set

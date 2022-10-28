@@ -7,6 +7,35 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <Border Grid.Row="3"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="PowerSupply:">
+                </TextBlock>
+                <WrapPanel Grid.Column="1" Grid.Row="0"  Margin="4" HorizontalAlignment="Left">
+                    <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Name:"></TextBlock>
+                    <ComboBox   Grid.Row="11"  MinWidth="150"
+                                ItemsSource="{Binding SettingsReport.PowerSupply}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True"
+                                Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    </ComboBox>
+                </WrapPanel>
+                <WrapPanel  Grid.Column="2"  Margin="4" Grid.RowSpan="2">
+                    <TextBlock Margin="5 0 5 0"  Width="40" Text="Power:"></TextBlock>
+                    <TextBox Margin="5 0 5 0"  Width="40" Text="{Binding Power, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                </WrapPanel>
+                <WrapPanel Grid.Column="3"   Margin="4" HorizontalAlignment="Right">
+                    <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>
+                    <TextBox Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" ></TextBox>
+                </WrapPanel>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>
