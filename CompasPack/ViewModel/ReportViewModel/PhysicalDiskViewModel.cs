@@ -30,7 +30,6 @@ namespace CompasPack.ViewModel
                 Result += $"{item.Type} - {item.Size} | ";
 
             Result = Result.TrimEnd(new char[] { ' ', '|' });
-
         }
 
         public ObservableCollection<Disk> Disks { get; set; }
@@ -63,7 +62,7 @@ namespace CompasPack.ViewModel
                 }
 
                 ushort busBuff=0;
-                if (drive["BusType"] != null) ;
+                if (drive["BusType"] != null)
                     ushort.TryParse(drive["BusType"].ToString(), out busBuff);
 
                 ushort mediaBuff=0;

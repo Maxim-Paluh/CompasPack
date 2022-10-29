@@ -20,11 +20,20 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Prism.Commands;
 using CompasPack.ViewModel;
+using System.Windows.Input;
 
 namespace CompasPack.ViewModel
 {
     public class ComputerReportViewModel : ViewModelBase, IDetailViewModel
     {
+        private SettingsReportViewModel _settingsReportViewModel;
+        private XDocument _xDocument;
+        private IIOManager _ioManager;
+
+        private string _reportFile;
+        private string _reportPath;
+
+        private PCCaseViewModel _pCCaseViewModel;
         private CPUViewModel _CPUViewModel;
         private MotherboardViewModel _motherboardViewModel;
         private MemoryViewModel _memoryViewModel;
@@ -32,15 +41,21 @@ namespace CompasPack.ViewModel
         private PhysicalDiskViewModel _physicalDiskViewModel;
         private PowerSupplyViewModel _powerSupplyView;
 
-
-        private readonly IIOManager _iOManager;
-
-
-        public ComputerReportViewModel(IIOManager iOManager)
+        public ComputerReportViewModel(IIOManager iOManager,SettingsReportViewModel settingsReportViewModel, XDocument xDocument)
         {
-            _iOManager = iOManager;
+            _ioManager = iOManager;
+            _settingsReportViewModel = settingsReportViewModel;
+            _xDocument = xDocument;
         }
-
+        public PCCaseViewModel PCCaseViewModel
+        {
+            get { return _pCCaseViewModel; }
+            set
+            {
+                _pCCaseViewModel = value;
+                OnPropertyChanged();
+            }
+        }
         public CPUViewModel CPUViewModel
         {
             get { return _CPUViewModel; }
@@ -95,65 +110,56 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public bool HasChanges()
+
+        public string ReportFile
         {
-            throw new NotImplementedException();
+            get { return _reportFile; }
+            set
+            {
+                _reportFile = value;
+                OnPropertyChanged();
+            }
+        }
+        public string ReportPath
+        {
+            get { return _reportPath; }
+            set
+            {
+                _reportPath = value;
+                OnPropertyChanged();
+            }
         }
 
         public async Task LoadAsync(int? Id)
         {
-            //-------------------------------------------------------------------------------------------------------------------
-            ProcessStartInfo? StartInfo = new ProcessStartInfo
-            {
-                FileName = _iOManager.Aida,
-                Arguments = "/R " + Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\Report. " + "/XML " + "/CUSTOM " + Path.GetDirectoryName(_iOManager.Aida) + "\\ForReportPC.rpf",
-                UseShellExecute = false
-            };
-            try
-            {
-                if (!File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\Report.xml"))
-                {
-                    Process proc = Process.Start(StartInfo);
-                    await proc.WaitForExitAsync();
-                }
-            }
-            catch (Exception) { }
+            PCCaseViewModel = new PCCaseViewModel();
+            CPUViewModel = new CPUViewModel(_settingsReportViewModel, _xDocument);
+            MotherboardViewModel = new MotherboardViewModel(_settingsReportViewModel, _xDocument);
+            MemoryViewModel = new MemoryViewModel(_settingsReportViewModel, _xDocument);
+            VideoViewModel = new VideoViewModel(_settingsReportViewModel);
+            PhysicalDiskViewModel = new PhysicalDiskViewModel(_settingsReportViewModel, _xDocument);
+            PowerSupplyViewModel = new PowerSupplyViewModel(_settingsReportViewModel);
 
-            if (!File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\Report.xml"))
-                return;
-            //-------------------------------------------------------------------------------------------------------------------
-            XDocument? document;
-
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            using (var stream = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\Report.xml", Encoding.GetEncoding("windows-1251")))
-            {
-                document = await XDocument.LoadAsync(stream, LoadOptions.PreserveWhitespace, new System.Threading.CancellationToken());
-            }
-            //-------------------------------------------------------------------------------------------------------------------
-
-            var UserReport = await _iOManager.GetUserReport();
-
-            CPUViewModel = new CPUViewModel(UserReport, document);
-            MotherboardViewModel = new MotherboardViewModel(UserReport, document);
-            MemoryViewModel = new MemoryViewModel(UserReport, document);
-            VideoViewModel = new VideoViewModel(UserReport);
-            PhysicalDiskViewModel = new PhysicalDiskViewModel(UserReport, document);
-            PowerSupplyViewModel = new PowerSupplyViewModel(UserReport);
             CPUViewModel.Load();
             MotherboardViewModel.Load();
             MemoryViewModel.Load();
             VideoViewModel.Load();
             PhysicalDiskViewModel.Load();
             PowerSupplyViewModel.Load();
+
+            ReportPath = _ioManager.ReportPC;
+            ReportFile = $"Report_{_ioManager.GetLastReport(_ioManager.ReportPC)+1:000}";
         }
-
-
-       
-
-
+        public bool HasChanges()
+        {
+            return false;
+        }
         public void Unsubscribe()
         {
-            throw new NotImplementedException();
+
         }
+
+        public ICommand SaveReportCommand { get; set; }
+        public ICommand SavePriceCommand { get; set; }
     }
 }

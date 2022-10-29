@@ -15,7 +15,7 @@ namespace CompasPack.ViewModel
 {
     public static class SettingsReportHelper
     {
-        public static SettingsReportViewModel GetUserReport()
+        public static SettingsReportViewModel GetSettingsReport()
         {
             return new SettingsReportViewModel()
             {

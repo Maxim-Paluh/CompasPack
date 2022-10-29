@@ -5,6 +5,7 @@ using System.Management;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml.Linq;
 using CompasPack.Enum;
 using CompasPakc.BL;
 using Prism.Commands;
@@ -15,11 +16,26 @@ namespace CompasPack.ViewModel
     {
         private TypeReport _reportType;
         private IDetailViewModel? _reportformViewModel;
-        private readonly IIOManager _iOManager;
+        private readonly IIOManager _ioManager;
+
+        private SettingsReportViewModel _settingsReportViewModel;
+        private XDocument _xDocument;
+
+        private bool _isEnable;
+
+        public bool IsEnable
+        {
+            get { return _isEnable; }
+            set { _isEnable = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public ReportViewModel(IIOManager iOManager)
         {
-            _iOManager = iOManager;
+            IsEnable = false;
+            _ioManager = iOManager;
             GenerateReportCommand = new DelegateCommand(OnGenerateReport);
         }
 
@@ -28,13 +44,13 @@ namespace CompasPack.ViewModel
             switch (ReportType)
             {
                 case TypeReport.Computer:
-                    ReportFormViewModel = new ComputerReportViewModel(_iOManager);
+                    ReportFormViewModel = new ComputerReportViewModel(_ioManager, _settingsReportViewModel, _xDocument);
                     break;
                 case TypeReport.Laptop:
-                    ReportFormViewModel = new LaptopReportViewModel();
+                    ReportFormViewModel = new LaptopReportViewModel(_ioManager, _settingsReportViewModel, _xDocument);
                     break;
                 case TypeReport.Monitor:
-                    ReportFormViewModel = new MonitorReportViewModel();
+                    ReportFormViewModel = new MonitorReportViewModel(_ioManager, _settingsReportViewModel, _xDocument);
                     break;
                 default:
                     ReportFormViewModel = null;
@@ -79,7 +95,10 @@ namespace CompasPack.ViewModel
 
         public async Task LoadAsync(int? Id)
         {
-
+            _ioManager.CheckReportFolders();
+            _settingsReportViewModel = await _ioManager.GetSettingsReport();
+            _xDocument = await _ioManager.GetXDocument();
+            IsEnable = true;
         }
         public void Unsubscribe()
         {

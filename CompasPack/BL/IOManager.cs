@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CompasPack.ViewModel;
+using System.Xml.Linq;
+using System.Text.RegularExpressions;
 
 namespace CompasPakc.BL
 {
@@ -17,14 +19,17 @@ namespace CompasPakc.BL
         public Task<List<UserPresetProgram>> GetUserPresetProgram();
         public Task<List<GroupProgram>> GetGroupPrograms();
 
-        public Task<SettingsReportViewModel> GetUserReport();
+        public Task<SettingsReportViewModel> GetSettingsReport();
+        public Task<XDocument> GetXDocument();
+        public void CheckReportFolders();
+        public int GetLastReport(string type);
 
         public void OpenAppLog();
         public void OpenExampleFile();
 
         public Task SetDefaultGroupProgram();
         public Task SetDefaultUserPresetProgram();
-        public Task SetUserReport();
+        public Task SetSettingsReport();
 
 
         public string CpuZ { get; set; }
@@ -37,63 +42,37 @@ namespace CompasPakc.BL
         public string WinRar { get; set; }
         public string Rar { get; set; }
         public string Crack { get; set; }
+
+        public string ReportPC { get; set; }
+        public string ReportLaptop { get; set; }
+        public string ReportMonitor { get; set; }
     }
 
     public class IOManager : IIOManager
     {
-        private static string _portable = "!Portable\\";
-        private static string _install = "!Install\\";
-
         private IMessageDialogService _messageDialogService;
-        private string _currentDirectoryPath;
-        private static string _settingsGroupProgramNameFilePath;
-        private static string _settingUserPresetProgramFileNamePath;
-        private static string _settingsUserReportPath;
-        private static string _pathRoot;
 
-        private string _compasPackLogName = "CompasPackLog";
-        private string crack = _portable + "!Crack";
+        private static readonly string _portable = "!Portable\\";
+        private static readonly string _install = "!Install\\";
 
-        
+        private static readonly string _compasPackLogName = "CompasPackLog";
+        private static readonly string crack = _portable + "!Crack";
 
-        private string cpuZ =               _portable + "CPU-Z\\cpuz_x32.exe";
-        private string gpuZ =               _portable + "FurMark\\gpuz.exe";
-        private string aida =               _portable + "AIDA64\\aida64.exe";
-        private string crystalDisk =        _portable + "CrystalDisk\\DiskInfo32.exe";
-        private string furMark =            _portable + "FurMark\\FurMark.exe";
-        private string totalCommander951 =  _portable + "TotalCommander951\\TOTALCMD.EXE";
-        private string totalCommander700 =  _portable + "TotalCommander700\\Totalcmd.exe";
-        private string winRar =             _portable + "WinRAR\\WinRAR.exe";
-        private string rar =                _portable + "WinRAR\\Rar.exe";
+        private static readonly string cpuZ =               _portable + "CPU-Z\\cpuz_x32.exe";
+        private static readonly string gpuZ =               _portable + "FurMark\\gpuz.exe";
+        private static readonly string aida =               _portable + "AIDA64\\aida64.exe";
+        private static readonly string crystalDisk =        _portable + "CrystalDisk\\DiskInfo32.exe";
+        private static readonly string furMark =            _portable + "FurMark\\FurMark.exe";
+        private static readonly string totalCommander951 =  _portable + "TotalCommander951\\TOTALCMD.EXE";
+        private static readonly string totalCommander700 =  _portable + "TotalCommander700\\Totalcmd.exe";
+        private static readonly string winRar =             _portable + "WinRAR\\WinRAR.exe";
+        private static readonly string rar =                _portable + "WinRAR\\Rar.exe";
 
-
-
-        public string CurrentDirectoryPath
-        {
-            get { return _currentDirectoryPath; }
-            set { _currentDirectoryPath = value; }
-        }
-        public string SettingsGroupProgramFileNamePath
-        {
-            get { return _settingsGroupProgramNameFilePath; }
-            set { _settingsGroupProgramNameFilePath = value; }
-        }
-        public string SettingUserPresetProgramFileNamePath
-        {
-            get { return _settingUserPresetProgramFileNamePath; }
-            set { _settingUserPresetProgramFileNamePath = value; }
-        }
-        public string SettingsUserReportPath
-        {
-            get { return _settingsUserReportPath; }
-            set { _settingsUserReportPath = value; }
-        }
-
-        public string PathRoot
-        {
-            get { return _pathRoot; }
-            set { _pathRoot = value; }
-        }
+        public string CurrentDirectoryPath { get; set; }
+        public string SettingsGroupProgramFileNamePath { get; set; }
+        public string SettingUserPresetProgramFileNamePath { get; set; }
+        public string SettingsUserReportPath { get; set; }
+        public string PathRoot { get; set; }
         public string CompasPackLog { get; set; }
         public string CompasExampleFile { get; set; }
         public string CpuZ { get; set; }
@@ -106,6 +85,11 @@ namespace CompasPakc.BL
         public string WinRar { get; set; }
         public string Rar { get; set; }
         public string Crack { get; set; }
+        public string Report { get; set; }
+
+        public string ReportPC { get; set; }
+        public string ReportLaptop{ get; set; }
+        public string ReportMonitor { get; set; }
 
         public IOManager(IMessageDialogService messageDialogService)
         {
@@ -129,6 +113,11 @@ namespace CompasPakc.BL
             WinRar = Path.Combine(PathRoot, winRar);
             Rar = Path.Combine(PathRoot, rar);
             Crack = Path.Combine(PathRoot, crack);
+
+            Report = Path.Combine(PathRoot, "Report");
+            ReportPC = Path.Combine(Report, "pc");
+            ReportLaptop = Path.Combine(Report, "notebook");
+            ReportMonitor = Path.Combine(Report, "monitor");
         }
         public async Task<List<GroupProgram>> GetGroupPrograms()
         {
@@ -716,19 +705,16 @@ namespace CompasPakc.BL
 
 
 
-        public async Task SetUserReport()
+        public async Task SetSettingsReport()
         {
-            var SettingsJsonExample = JsonConvert.SerializeObject(SettingsReportHelper.GetUserReport(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
+            var SettingsJsonExample = JsonConvert.SerializeObject(SettingsReportHelper.GetSettingsReport(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
             await File.WriteAllTextAsync(SettingsUserReportPath, SettingsJsonExample).ConfigureAwait(false);
         }
-        public async Task<SettingsReportViewModel> GetUserReport()
+        public async Task<SettingsReportViewModel> GetSettingsReport()
         {
             FileInfo fileSettingsJson = new FileInfo(SettingsUserReportPath);
-
-
-
             //if (!fileSettingsJson.Exists)
-                await SetUserReport();
+                await SetSettingsReport();
 
             try
             {
@@ -743,8 +729,68 @@ namespace CompasPakc.BL
                 _messageDialogService.ShowInfoDialog($"Шаблон для списку програм має помилку, для вирішення проблеми:\n\n" +
                     $"1. Виправіть помилку:\n{exp.Message}\n\n" +
                     $"2. Згенеруйте файл по замовчуванню в меню налаштувань програми!", "Error");
-                return SettingsReportHelper.GetUserReport();
+                return SettingsReportHelper.GetSettingsReport();
             }
+        }
+        public async Task<XDocument> GetXDocument()
+        {
+
+            if (!Directory.Exists(CompasPackLog))
+                Directory.CreateDirectory(CompasPackLog);
+            ProcessStartInfo? StartInfo = new ProcessStartInfo
+            {
+                FileName = Aida,
+                Arguments = "/R " + CompasPackLog + "\\Report. " + "/XML " + "/CUSTOM " + Path.GetDirectoryName(Aida) + "\\ForReportPC.rpf",
+                UseShellExecute = false
+            };
+            try
+            {
+                if (!File.Exists(CompasPackLog + "\\Report.xml"))
+                {
+                    Process proc = Process.Start(StartInfo);
+                    await proc.WaitForExitAsync();
+                }
+            }
+            catch (Exception) { }
+
+            if (!File.Exists(CompasPackLog + "\\Report.xml"))
+                return null;
+            //-------------------------------------------------------------------------------------------------------------------
+            XDocument? document;
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            using (var stream = new StreamReader(CompasPackLog + "\\Report.xml", Encoding.GetEncoding("windows-1251")))
+            {
+                document = await XDocument.LoadAsync(stream, LoadOptions.PreserveWhitespace, new System.Threading.CancellationToken());
+            }
+            return document;
+            //-------------------------------------------------------------------------------------------------------------------
+        }
+
+        public void CheckReportFolders()
+        {
+            if (!Directory.Exists(Report))
+                Directory.CreateDirectory(Report);
+            if (!Directory.Exists(ReportPC))
+                Directory.CreateDirectory(ReportPC);
+            if (!Directory.Exists(ReportLaptop))
+                Directory.CreateDirectory(ReportLaptop);
+            if (!Directory.Exists(ReportMonitor))
+                Directory.CreateDirectory(ReportMonitor);
+        }
+        
+        public int GetLastReport(string paht)
+        {
+            var lastString = Directory.GetFiles(paht).Select(x => x = Regex.Match(x, "\\d+").Value).OrderBy(x => x).LastOrDefault();
+            if (lastString != null)
+            {
+                if (int.TryParse(lastString, out int last))
+                    return last;     
+                else
+                    return -1;
+            }
+            else
+                return 0;
         }
     }
 }
