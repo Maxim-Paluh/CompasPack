@@ -7,6 +7,7 @@ using System.Management;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml.Linq;
 
@@ -15,12 +16,15 @@ namespace CompasPack.ViewModel
     public class PhysicalDiskViewModel : ReportViewModelBase, IReportViewModel
     {
         private Disk _selectedDisk;
+        private static object _lock = new object();
         public PhysicalDiskViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
         {
             SettingsReport = settingsReport;
             Document = xDocument;
             Disks = new ObservableCollection<Disk>();
             SelectDiskCommand = new DelegateCommand(OnSelectDisk);
+
+            BindingOperations.EnableCollectionSynchronization(Disks, _lock);
         }
 
         private void OnSelectDisk()

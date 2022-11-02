@@ -7,6 +7,7 @@ using System.Management;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml.Linq;
 
@@ -15,12 +16,14 @@ namespace CompasPack.ViewModel
     public class VideoViewModel : ReportViewModelBase, IReportViewModel
     {
         private VideoAdapter _selectedVideoAdapter;
-
+        private static object _lock = new object();
         public VideoViewModel(SettingsReportViewModel settingsReport)
         {
             SettingsReport = settingsReport;
             VideoAdapters = new ObservableCollection<VideoAdapter>();
             SelectVideoAdapterCommand = new DelegateCommand(OnSelectVideoAdapter);
+
+            BindingOperations.EnableCollectionSynchronization(VideoAdapters, _lock);
         }
 
         private void OnSelectVideoAdapter()
