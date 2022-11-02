@@ -84,11 +84,11 @@
                     </WrapPanel>
                     <WrapPanel Grid.Row="0" Grid.Column="2"  Margin="4" HorizontalAlignment="Right">
                         <TextBlock  Grid.Row="0" FontWeight="Bold" Text="Save report: "></TextBlock>
-                        <Button Margin="5 0 0 0" Content="Save" Width="50"></Button>
+                        <Button Margin="5 0 0 0" Content="Save" Command="{Binding SaveReportCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"></Button>
                     </WrapPanel>
                     <WrapPanel Grid.Row="1" Grid.Column="3"  Margin="4" HorizontalAlignment="Right">
                         <TextBlock  Grid.Row="0" FontWeight="Bold" Text="Save price: "></TextBlock>
-                        <Button Margin="5 0 0 0" Content="Save" Width="50"></Button>
+                        <Button Margin="5 0 0 0" Content="Save" Command="{Binding SavePriceCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"></Button>
                     </WrapPanel>
                 </Grid>
             </Border>

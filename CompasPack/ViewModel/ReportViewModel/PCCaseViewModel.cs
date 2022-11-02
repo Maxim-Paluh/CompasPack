@@ -11,7 +11,10 @@ namespace CompasPack.ViewModel
     public class PCCaseViewModel : ReportViewModelBase
     {
         private string _name;
-
+        public PCCaseViewModel()
+        {
+            Name = "";
+        }
         public string Name
         {
             get { return _name; }

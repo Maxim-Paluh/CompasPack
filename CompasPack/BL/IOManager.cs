@@ -16,6 +16,8 @@ namespace CompasPakc.BL
 {
     public interface IIOManager
     {
+        public Task WriteAllTextAsync(string path, string text);
+
         public Task<List<UserPresetProgram>> GetUserPresetProgram();
         public Task<List<GroupProgram>> GetGroupPrograms();
 
@@ -31,6 +33,7 @@ namespace CompasPakc.BL
         public Task SetDefaultUserPresetProgram();
         public Task SetSettingsReport();
 
+        public string CompasPackLog { get; set; }
 
         public string CpuZ { get; set; }
         public string GpuZ { get; set; }
@@ -703,6 +706,10 @@ namespace CompasPakc.BL
             Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", CompasExampleFile);
         }
 
+        public async Task WriteAllTextAsync(string path, string text)
+        {
+            await File.WriteAllTextAsync(path, text).ConfigureAwait(false);
+        }
 
 
         public async Task SetSettingsReport()

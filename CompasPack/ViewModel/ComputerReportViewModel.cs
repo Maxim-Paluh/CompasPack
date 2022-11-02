@@ -12,8 +12,6 @@ using System.Linq;
 using System.Management;
 using System.Text;
 using System.Threading.Tasks;
-using CompasPack.Data;
-
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Globalization;
@@ -21,6 +19,9 @@ using System.Text.RegularExpressions;
 using Prism.Commands;
 using CompasPack.ViewModel;
 using System.Windows.Input;
+using System.Security.Principal;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace CompasPack.ViewModel
 {
@@ -29,6 +30,8 @@ namespace CompasPack.ViewModel
         private SettingsReportViewModel _settingsReportViewModel;
         private XDocument _xDocument;
         private IIOManager _ioManager;
+
+        private bool _isEnable;
 
         private string _reportFile;
         private string _reportPath;
@@ -41,12 +44,53 @@ namespace CompasPack.ViewModel
         private PhysicalDiskViewModel _physicalDiskViewModel;
         private PowerSupplyViewModel _powerSupplyView;
 
-        public ComputerReportViewModel(IIOManager iOManager,SettingsReportViewModel settingsReportViewModel, XDocument xDocument)
+        public ComputerReportViewModel(IIOManager iOManager, SettingsReportViewModel settingsReportViewModel, XDocument xDocument)
         {
+            IsEnable = false;
             _ioManager = iOManager;
             _settingsReportViewModel = settingsReportViewModel;
             _xDocument = xDocument;
+
+            SaveReportCommand = new DelegateCommand(OnSaveReport);
+            SavePriceCommand = new DelegateCommand(OnSavePrice);
         }
+
+        private void OnSavePrice()
+        {
+            throw new NotImplementedException();
+        }
+
+        private async void OnSaveReport()
+        {
+            IsEnable = false;
+            if (!Directory.Exists(_ioManager.CompasPackLog))
+                Directory.CreateDirectory(_ioManager.CompasPackLog);
+            ProcessStartInfo? StartInfo = new ProcessStartInfo
+            {
+                FileName = _ioManager.Aida,
+                Arguments = "/R " + _ioManager.ReportPC + $"\\{ReportFile}. " + "/HML " + "/CUSTOM " + Path.GetDirectoryName(_ioManager.Aida) + "\\ForReportPC.rpf",
+                UseShellExecute = false
+            };
+            try
+            {
+                Process proc = Process.Start(StartInfo);
+                await proc.WaitForExitAsync();
+            }
+            catch (Exception) { }
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"{PCCaseViewModel.Result}\t");
+            stringBuilder.AppendLine($"{CPUViewModel.Result}\t");
+            stringBuilder.AppendLine($"{MotherboardViewModel.Result}\t");
+            stringBuilder.AppendLine($"{MemoryViewModel.Result}\t");
+            stringBuilder.AppendLine($"{VideoViewModel.Result}\t");
+            stringBuilder.AppendLine($"{PhysicalDiskViewModel.Result}\t");
+            stringBuilder.AppendLine($"{PowerSupplyViewModel.Result}\t");
+            stringBuilder.AppendLine($"ID: {_ioManager.GetLastReport(_ioManager.ReportPC) + 1:000} (Прийшов {DateTime.Now:dd.MM.yyyy})\t");
+
+            await _ioManager.WriteAllTextAsync($"{_ioManager.ReportPC}\\{ReportFile}.txt", stringBuilder.ToString());
+            IsEnable = true;
+        }
+
         public PCCaseViewModel PCCaseViewModel
         {
             get { return _pCCaseViewModel; }
@@ -111,6 +155,16 @@ namespace CompasPack.ViewModel
             }
         }
 
+        public bool IsEnable
+        {
+            get { return _isEnable; }
+            set
+            {
+                _isEnable = value;
+                OnPropertyChanged();
+            }
+        }
+
         public string ReportFile
         {
             get { return _reportFile; }
@@ -140,19 +194,23 @@ namespace CompasPack.ViewModel
             PhysicalDiskViewModel = new PhysicalDiskViewModel(_settingsReportViewModel, _xDocument);
             PowerSupplyViewModel = new PowerSupplyViewModel(_settingsReportViewModel);
 
-            CPUViewModel.Load();
-            MotherboardViewModel.Load();
-            MemoryViewModel.Load();
-            VideoViewModel.Load();
-            PhysicalDiskViewModel.Load();
-            PowerSupplyViewModel.Load();
+            await Task.Factory.StartNew(() =>
+            {
+                CPUViewModel.Load();
+                MotherboardViewModel.Load();
+                MemoryViewModel.Load();
+                VideoViewModel.Load();
+                PhysicalDiskViewModel.Load();
+                PowerSupplyViewModel.Load();
+            });
 
             ReportPath = _ioManager.ReportPC;
-            ReportFile = $"Report_{_ioManager.GetLastReport(_ioManager.ReportPC)+1:000}";
+            ReportFile = $"Report_{_ioManager.GetLastReport(_ioManager.ReportPC) + 1:000}";
+            IsEnable = true;
         }
         public bool HasChanges()
         {
-            return false;
+            return !IsEnable;
         }
         public void Unsubscribe()
         {
