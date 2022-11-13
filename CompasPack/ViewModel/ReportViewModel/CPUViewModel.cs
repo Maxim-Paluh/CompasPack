@@ -44,7 +44,7 @@ namespace CompasPack.ViewModel
             Name += processor["Name"];
             var temp = processor["MaxClockSpeed"];
             if (temp != null)
-                _clock += $"{(double.Parse(temp.ToString()) / 1000).ToString().Replace(',', '.')}GHz";
+                Clock += $"{(double.Parse(temp.ToString()) / 1000).ToString().Replace(',', '.')}GHz";
 
             var tempName = Name;
             foreach (var item in SettingsReport.CPU.Regex)
