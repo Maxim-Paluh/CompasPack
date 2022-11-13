@@ -77,17 +77,20 @@ namespace CompasPack.ViewModel
                 await proc.WaitForExitAsync();
             }
             catch (Exception) { }
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"{PCCaseViewModel.Result}\t");
-            stringBuilder.AppendLine($"{CPUViewModel.Result}\t");
-            stringBuilder.AppendLine($"{MotherboardViewModel.Result}\t");
-            stringBuilder.AppendLine($"{MemoryViewModel.Result}\t");
-            stringBuilder.AppendLine($"{VideoViewModel.Result}\t");
-            stringBuilder.AppendLine($"{PhysicalDiskViewModel.Result}\t");
-            stringBuilder.AppendLine($"{PowerSupplyViewModel.Result}\t");
-            stringBuilder.AppendLine($"ID: {_ioManager.GetLastReport(_ioManager.ReportPC) + 1:000} (Прийшов {DateTime.Now:dd.MM.yyyy})\t");
+            
+            string html = $"<html><head><style>table{{font-family: Arial;font-size: 13px;}}</style>" +
+                $"</head><body><table><tbody>" +
+                $"<tr><th>{PCCaseViewModel.Result}</th><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+                $"<tr><td>{CPUViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+                $"<tr><td>{MotherboardViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+                $"<tr><td>{MemoryViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+                $"<tr><td>{VideoViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+                $"<tr><td>{PhysicalDiskViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+                $"<tr><td>{PowerSupplyViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+                $"<tr><td><b>ID: {_ioManager.GetLastReport(_ioManager.ReportPC):000} (Прийшов {DateTime.Now:dd.MM.yyyy})</b></td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+                $"<tr><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"> </td></tr></tbody></table></body></html>";
 
-            await _ioManager.WriteAllTextAsync($"{_ioManager.ReportPC}\\{ReportFile}.txt", stringBuilder.ToString());
+            await _ioManager.WriteAllTextAsync($"{_ioManager.ReportPC}\\{ReportFile}.html", html);
             IsEnable = true;
         }
 

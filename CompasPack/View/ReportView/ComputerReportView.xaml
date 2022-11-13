@@ -80,7 +80,7 @@
                         <TextBlock Grid.Column="0" MinWidth="40" Grid.Row="0" Text="{Binding ReportPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
                         <TextBlock Grid.Column="0"  Grid.Row="0" Text="\"></TextBlock>
                         <TextBox Margin="5 0 5 0"  MinWidth="40" Text="{Binding ReportFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                        <TextBlock Grid.Column="0"  Grid.Row="0" Text=".htm and .txt"></TextBlock>
+                        <TextBlock Grid.Column="0"  Grid.Row="0" Text=".htm and .html"></TextBlock>
                     </WrapPanel>
                     <WrapPanel Grid.Row="0" Grid.Column="2"  Margin="4" HorizontalAlignment="Right">
                         <TextBlock  Grid.Row="0" FontWeight="Bold" Text="Save report: "></TextBlock>
