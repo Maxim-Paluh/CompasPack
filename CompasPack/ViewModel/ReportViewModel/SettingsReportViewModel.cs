@@ -45,12 +45,14 @@ namespace CompasPack.ViewModel
                 {
                     Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)" }
                 },
-                PowerSupply = new List<string>() {  "1stPlayer", "2N", "AeroCool", "Antec", "Argus", "ASPower", "ASUS", "Azza", "Be quiet!", "Casecom",
-                                                    "Chenbro", "Chieftec", "Chieftronic", "CoolerMaster", "Corsair", "Cougar", "Deepcool", "Dell", "Delux",
-                                                    "Enermax", "Extradigital", "Fractal Design", "Frime", "FrimeCom", "FSP", "Gamemax", "GIGABYTE", "Golden Field", "GreatWall",
-                                                    "Greenvision", "High Power", "HP", "IBM", "INTEL", "Inter-Tech", "Lenovo", "Logic concept", "LogicPower", "Meraki", "Modecom",
-                                                    "MSI", "Nikon", "NZXT", "Qdion", "QNap", "Qube", "Rezone Case", "Seasonic", "Segotep", "Silver Stone", "Supermicro", "TECNOWARE",
-                                                    "ThermalTake", "Vinga", "Xilence", "Zalman"}
+                PowerSupply = new List<string>() { "1stPlayer", "2N", "AeroCool", "Antec", "Argus", "ASPower", "ASUS", "Azza", "Be quiet!", "Casecom", "Chenbro", "Chieftec", "Chieftronic", "CoolerMaster", 
+                    "Corsair", "Cougar", "Deepcool", "Dell", "Delux", "Enermax", "Extradigital", "Fractal Design", "Frime", "FrimeCom", "FSP", "Gamemax", "GIGABYTE", "Golden Field", "GreatWall", "Greenvision",
+                    "High Power", "HP", "IBM", "INTEL", "Inter-Tech", "Lenovo", "Logic concept", "LogicPower", "Meraki", "Modecom", "MSI", "Nikon", "NZXT", "Qdion", "QNap", "Qube", "Rezone Case", "Seasonic",
+                    "Segotep", "Silver Stone", "Supermicro", "TECNOWARE", "ThermalTake", "Vinga", "Xilence", "Zalman" },
+                
+                Laptops = new List<string>() {  "Acer", "Apple", "Asus", "Dell", "Fujitsu", "Gigabyte", "Google", "HP", "Huawei", "Lenovo", "LG", "MSI", "Panasonic", "Philips", "Samsung", "Sony", "Toshiba", "VAIO",
+                                                "AGB Supreme Technology", "Alienware", "Avell", "Axioo", "BenQ", "Bmax", "BOXX Technologies", "Casper", "CHUWI", "Clevo", "Corsair", "CyberPowerPC", "Digital Storm", "Durabook", "Dynabook", "Eluktronics", "Epson", "Eurocom", "Evoo", "Falcon Northwest", "Framework Computer", "Gateway", "Geo", "Getac", "Grundig", "HCL", "Honor", "HTC", "Hyundai Technology", "IBM", "Illegear", "Lava International", "Machenike", "Maguay", "Medion", "Metabox", "Microsoft", "Microtech", "Monster Notebook", "Multilaser", "NEC", "Njoy", "Nokia", "Obsidian-PC", "Olivetti", "Onkyo", "Optima", "Origin PC", "OverPowered", "Packard Bell", "Positivo", "Purism", "Razer", "Realme", "Sager Notebook computers", "Shenzhen Jumper Technology", "Slimbook", "Star Labs", "System76", "TUXEDO Computers", "UMAX", "Vastking", "Velocity Micro", "Vestel", "VIT", "Walmart", "Walton", "Wipro", "Xiaomi", "XMG", "Xolo", "Zeuslap", "Zyrex"
+                                             }
             };
         }
     }
@@ -65,6 +67,7 @@ namespace CompasPack.ViewModel
         private Memory _memory;
         private VideoController _videoController;
         private List<string> _powersupply;
+        private List<string> _laptops;
 
         //---------------------------------
         public CPU CPU
@@ -109,6 +112,16 @@ namespace CompasPack.ViewModel
             set
             {
                 _powersupply = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public List<string> Laptops
+        {
+            get { return _laptops; }
+            set
+            {
+                _laptops = value;
                 OnPropertyChanged();
             }
         }

@@ -119,7 +119,7 @@ namespace CompasPakc.BL
 
             Report = Path.Combine(PathRoot, "Report");
             ReportPC = Path.Combine(Report, "pc");
-            ReportLaptop = Path.Combine(Report, "notebook");
+            ReportLaptop = Path.Combine(Report, "laptop");
             ReportMonitor = Path.Combine(Report, "monitor");
         }
         public async Task<List<GroupProgram>> GetGroupPrograms()
@@ -747,7 +747,7 @@ namespace CompasPakc.BL
             ProcessStartInfo? StartInfo = new ProcessStartInfo
             {
                 FileName = Aida,
-                Arguments = "/R " + CompasPackLog + "\\Report. " + "/XML " + "/CUSTOM " + Path.GetDirectoryName(Aida) + "\\ForReportPC.rpf",
+                Arguments = "/R " + CompasPackLog + "\\Report. " + "/XML " + "/CUSTOM " + Path.GetDirectoryName(Aida) + "\\ForReport.rpf",
                 UseShellExecute = false
             };
             try

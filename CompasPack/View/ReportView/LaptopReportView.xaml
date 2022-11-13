@@ -4,9 +4,90 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CompasPack.View"
+             xmlns:ViewModel="clr-namespace:CompasPack.ViewModel"
+             xmlns:View="clr-namespace:CompasPack.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type ViewModel:LaptopMainViewModel}">
+            <View:LaptopMainView/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type ViewModel:PCCaseViewModel}">
+            <View:PCCaseView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:CPUViewModel}">
+            <View:CPUView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:MemoryViewModel}">
+            <View:MemoryView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:VideoViewModel}">
+            <View:VideoView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:PhysicalDiskViewModel}">
+            <View:PhysicalDiskView/>
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    <Border  BorderBrush="DarkBlue" Margin="2"  BorderThickness="1" CornerRadius="3">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Color="AliceBlue" Offset="0.0" />
+                <GradientStop Color="LightCyan" Offset="0.5" />
+                <GradientStop Color="AliceBlue" Offset="1.0" />
+            </LinearGradientBrush>
+        </Border.Background>
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <ContentControl  Grid.Row="0"  Content="{Binding LaptopMainViewModel}"/>
+            <ContentControl  Grid.Row="1"  Content="{Binding CPUViewModel}"/>
+            <ContentControl  Grid.Row="2"  Content="{Binding MemoryViewModel}"/>
+            <ContentControl  Grid.Row="3"  Content="{Binding VideoViewModel}"/>
+            <ContentControl  Grid.Row="4"  Content="{Binding PhysicalDiskViewModel}"/>
+
+            <Border Grid.Row="5"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="SaveReportAndPrice:">
+                    </TextBlock>
+                    <WrapPanel  Grid.Row="0" Grid.Column="1"   Margin="4" HorizontalAlignment="Left">
+                        <TextBlock Grid.Column="0" MinWidth="40" Grid.Row="0" Text="{Binding ReportPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+                        <TextBlock Grid.Column="0"  Grid.Row="0" Text="\"></TextBlock>
+                        <TextBox Margin="5 0 5 0"  MinWidth="40" Text="{Binding ReportFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                        <TextBlock Grid.Column="0"  Grid.Row="0" Text=".htm and .html"></TextBlock>
+                    </WrapPanel>
+                    <WrapPanel Grid.Row="0" Grid.Column="2"  Margin="4" HorizontalAlignment="Right">
+                        <TextBlock  Grid.Row="0" FontWeight="Bold" Text="Save report: "></TextBlock>
+                        <Button Margin="5 0 0 0" Content="Save" Command="{Binding SaveReportCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"></Button>
+                    </WrapPanel>
+                    <WrapPanel Grid.Row="1" Grid.Column="3"  Margin="4" HorizontalAlignment="Right">
+                        <TextBlock  Grid.Row="0" FontWeight="Bold" Text="Save price: "></TextBlock>
+                        <Button Margin="5 0 0 0" Content="Save" Command="{Binding SavePriceCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"></Button>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Border>
 </UserControl>

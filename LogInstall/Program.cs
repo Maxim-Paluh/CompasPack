@@ -58,7 +58,7 @@ switch (typeReport)
             {
                 UseShellExecute = false,
                 FileName = AidaPath + "\\aida64.exe",
-                Arguments = "/R " + CompasPackLog + "\\Report. " + "/XML " + "/CUSTOM " + AidaPath + "\\ForReportPC.rpf",
+                Arguments = "/R " + CompasPackLog + "\\Report. " + "/XML " + "/CUSTOM " + AidaPath + "\\ForReport.rpf",
             };
 
             var process = Process.Start(proc);

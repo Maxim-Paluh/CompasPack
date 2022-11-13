@@ -3,7 +3,6 @@ using CompasPack.BL;
 using CompasPack.View.Service;
 using CompasPack.ViewModel;
 using CompasPack;
-using CompasPack.ViewModel;
 using Prism.Events;
 using System;
 using System.Collections.Generic;

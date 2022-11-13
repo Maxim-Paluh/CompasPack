@@ -68,7 +68,7 @@ namespace CompasPack.ViewModel
             ProcessStartInfo? StartInfo = new ProcessStartInfo
             {
                 FileName = _ioManager.Aida,
-                Arguments = "/R " + _ioManager.ReportPC + $"\\{ReportFile}. " + "/HML " + "/CUSTOM " + Path.GetDirectoryName(_ioManager.Aida) + "\\ForReportPC.rpf",
+                Arguments = "/R " + _ioManager.ReportPC + $"\\{ReportFile}. " + "/HML " + "/CUSTOM " + Path.GetDirectoryName(_ioManager.Aida) + "\\ForReport.rpf",
                 UseShellExecute = false
             };
             try

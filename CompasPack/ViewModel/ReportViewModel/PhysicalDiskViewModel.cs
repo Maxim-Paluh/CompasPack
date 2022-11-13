@@ -15,7 +15,6 @@ namespace CompasPack.ViewModel
 {
     public class PhysicalDiskViewModel : ReportViewModelBase, IReportViewModel
     {
-        private Disk _selectedDisk;
         private static object _lock = new object();
         public PhysicalDiskViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
         {
