@@ -69,8 +69,10 @@
                         <ColumnDefinition Width="auto"></ColumnDefinition>
                         <ColumnDefinition Width="auto"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
+
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
                     </Grid.RowDefinitions>
@@ -82,13 +84,25 @@
                         <TextBox Margin="5 0 5 0"  MinWidth="40" Text="{Binding ReportFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                         <TextBlock Grid.Column="0"  Grid.Row="0" Text=".htm and .html"></TextBlock>
                     </WrapPanel>
+                    <WrapPanel  Grid.Row="1" Grid.Column="1"   Margin="4" HorizontalAlignment="Left">
+                        <TextBlock Grid.Column="0" MinWidth="40" Grid.Row="0" Text="{Binding ReportPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+                        <TextBlock Grid.Column="0"  Grid.Row="0" Text="\"></TextBlock>
+                        <TextBox Margin="5 0 5 0"  MinWidth="40" Text="{Binding PriceFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                        <TextBlock Grid.Column="0"  Grid.Row="0" Text=".docx"></TextBlock>
+                    </WrapPanel>
                     <WrapPanel Grid.Row="0" Grid.Column="2"  Margin="4" HorizontalAlignment="Right">
                         <TextBlock  Grid.Row="0" FontWeight="Bold" Text="Save report: "></TextBlock>
                         <Button Margin="5 0 0 0" Content="Save" Command="{Binding SaveReportCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"></Button>
+                        <Button Margin="5 0 0 0" Content="Open" Command="{Binding OpenReportCommand}" IsEnabled="{Binding IsEnableOpenReport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"></Button>
                     </WrapPanel>
                     <WrapPanel Grid.Row="1" Grid.Column="3"  Margin="4" HorizontalAlignment="Right">
                         <TextBlock  Grid.Row="0" FontWeight="Bold" Text="Save price: "></TextBlock>
                         <Button Margin="5 0 0 0" Content="Save" Command="{Binding SavePriceCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"></Button>
+                        <Button Margin="5 0 0 0" Content="Open" Command="{Binding OpenPriceCommand}" IsEnabled="{Binding IsEnableOpenPrice, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"></Button>
+                    </WrapPanel>
+                    <WrapPanel Grid.Row="2" Grid.Column="4"  Margin="4" HorizontalAlignment="Right">
+                        <TextBlock  Grid.Row="0" FontWeight="Bold" Text="Open Folder: "></TextBlock>
+                        <Button Margin="5 0 0 0" Content="Open" Command="{Binding OpenFolderCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"></Button>
                     </WrapPanel>
                 </Grid>
             </Border>

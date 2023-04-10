@@ -184,5 +184,6 @@ namespace CompasPack.ViewModel
 
         public ICommand SaveReportCommand { get; set; }
         public ICommand SavePriceCommand { get; set; }
+        public ICommand OpenFolderCommand { get; set; }
     }
 }

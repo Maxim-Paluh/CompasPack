@@ -24,6 +24,7 @@
 
     </UserControl.Resources>
 
+    <ScrollViewer HorizontalScrollBarVisibility="Auto">
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -40,4 +41,6 @@
         </WrapPanel>
         <ContentControl Grid.ColumnSpan="2" Grid.Row="1"  Content="{Binding ReportFormViewModel}"/>
     </Grid>
+    </ScrollViewer>
+    
 </UserControl>

@@ -30,7 +30,7 @@ namespace CompasPack.ViewModel
         {
             Result = String.Empty;
             foreach (var item in Disks.Where(x => x.IsSelect))
-                Result += $"{item.Type} - {item.Size} | ";
+                Result += $"{item.Type}-{item.Size} | ";
 
             Result = Result.TrimEnd(new char[] { ' ', '|' });
         }

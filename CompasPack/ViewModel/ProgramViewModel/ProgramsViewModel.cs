@@ -426,7 +426,7 @@ namespace CompasPack.ViewModel
         }
         private void OnOpenExampleFile()
         {
-            _iOManager.OpenExampleFile();
+            _iOManager.OpenFolder(_iOManager.CompasExampleFile);
         }
         private async void OpenKMSAuto()
         {
@@ -535,7 +535,7 @@ namespace CompasPack.ViewModel
         }
         private void OnOpenAppLog()
         {
-            _iOManager.OpenAppLog();
+            _iOManager.OpenFolder(_iOManager.CompasPackLog);
         }
         //***************************************************
         private async void OnSpeedTest()

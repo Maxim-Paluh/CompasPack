@@ -21,7 +21,7 @@ namespace CompasPack.ViewModel
             {
                 CPU = new CPU()
                 {
-                    Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)", "\\{(?:[^}{]|\\{[^}{]*\\))*\\}", "Test" }
+                    Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)", "\\{(?:[^}{]|\\{[^}{]*\\))*\\}" }
                 },
                 Motherboard = new Motherboard()
                 {

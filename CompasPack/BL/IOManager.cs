@@ -26,14 +26,15 @@ namespace CompasPakc.BL
         public void CheckReportFolders();
         public int GetLastReport(string type);
 
-        public void OpenAppLog();
-        public void OpenExampleFile();
+        public void OpenFolder(string path);
+        public void OpenFolderAndSelectFile(string path);
 
         public Task SetDefaultGroupProgram();
         public Task SetDefaultUserPresetProgram();
         public Task SetSettingsReport();
 
         public string CompasPackLog { get; set; }
+        public string CompasExampleFile { get; set; }
 
         public string CpuZ { get; set; }
         public string GpuZ { get; set; }
@@ -693,19 +694,20 @@ namespace CompasPakc.BL
                 }
             };
         }
-        public void OpenAppLog()
+        public void OpenFolder(string path)
         {
-            if (!Directory.Exists(CompasPackLog))
-                Directory.CreateDirectory(CompasPackLog);
-            Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", CompasPackLog);
-        }
-        public void OpenExampleFile()
-        {
-            if (!Directory.Exists(CompasExampleFile))
+            if (!Directory.Exists(path))
                 Directory.CreateDirectory(CompasExampleFile);
-            Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", CompasExampleFile);
+            Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", path);
         }
-
+        public void OpenFolderAndSelectFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                string argument = "/select, \"" + path + "\"";
+                Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", argument);
+            }
+        }
         public async Task WriteAllTextAsync(string path, string text)
         {
             await File.WriteAllTextAsync(path, text).ConfigureAwait(false);

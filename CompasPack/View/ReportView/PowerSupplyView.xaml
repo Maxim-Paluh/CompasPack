@@ -23,13 +23,27 @@
                 <WrapPanel Grid.Column="1" Grid.Row="0"  Margin="4" HorizontalAlignment="Left">
                     <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Name:"></TextBlock>
                     <ComboBox   Grid.Row="11"  MinWidth="150"
-                                ItemsSource="{Binding SettingsReport.PowerSupply}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True"
-                                Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                ItemsSource="{Binding SettingsReport.PowerSupply}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True">
+                        <ComboBox.Text>
+                            <Binding Path="Text" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <DataErrorValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </ComboBox.Text>
                     </ComboBox>
                 </WrapPanel>
                 <WrapPanel  Grid.Column="2"  Margin="4" Grid.RowSpan="2">
                     <TextBlock Margin="5 0 5 0"  Width="40" Text="Power:"></TextBlock>
-                    <TextBox Margin="5 0 5 0"  Width="40" Text="{Binding Power, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox Margin="5 0 5 0"  Width="40">
+                        <TextBox.Text>
+                            <Binding Path="Power" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <DataErrorValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                 </WrapPanel>
                 <WrapPanel Grid.Column="3"   Margin="4" HorizontalAlignment="Right">
                     <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>

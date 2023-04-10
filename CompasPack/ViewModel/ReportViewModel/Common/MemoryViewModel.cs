@@ -64,7 +64,7 @@ namespace CompasPack.ViewModel
             foreach (ManagementObject ram in memorys.Get())
                 total += (UInt64)ram.GetPropertyValue("Capacity");
 
-            Size = total / 1073741824 + "GB";
+            Size = total / 1073741824 + "Gb";
 
             var tempFrequency = Document.XPathSelectElement(SettingsReport.Memory.MemoryFrequency.XPath);
             if (tempFrequency != null)
@@ -80,7 +80,7 @@ namespace CompasPack.ViewModel
             foreach (var item in SettingsReport.Memory.MemoryFrequency.Regex)
                 tempMemoryFrequency = Regex.Replace(tempMemoryFrequency, item, "");
 
-            Result = $"{tempMemoryType} - {Size} ({tempMemoryFrequency}MHz)";
+            Result = $"{tempMemoryType}-{Size} ({tempMemoryFrequency}MHz)";
         }
     }
 }

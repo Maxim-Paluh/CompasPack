@@ -20,7 +20,15 @@
                 <TextBlock Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="PCCase:"/>
                 <WrapPanel  Grid.Column="1"  Margin="4" Grid.RowSpan="2">
                     <TextBlock Margin="5 0 5 0"  Width="40" Text="Name:"></TextBlock>
-                    <TextBox Margin="5 0 5 0"  Width="80" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox Margin="5 0 5 0"  Width="80">
+                        <TextBox.Text>
+                            <Binding Path="Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <DataErrorValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                 </WrapPanel>
                 <WrapPanel Grid.Column="2"   Margin="4" HorizontalAlignment="Right">
                     <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>
