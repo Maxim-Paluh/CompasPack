@@ -110,6 +110,19 @@
                     </Border>
                 </ScrollViewer>
             </DataTemplate>
+        <Style x:Key="ChangeColorButton" TargetType="Button">
+            <Style.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ColorAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)" To="CadetBlue"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
     
     
@@ -158,23 +171,23 @@
                 </Grid.RowDefinitions>
                 <WrapPanel  Grid.Row="0">
                     <TextBlock Margin="0 0 10 0" Text="Before:"></TextBlock>
-                    <Button Content="AUC" Margin="0 0 5 5"  Command="{Binding AUCCommand}" Width="75"></Button>
-                    <Button Content="Icon" Margin="0 0 5 5" Command="{Binding IconCommand}" Width="75"></Button>
-                    <Button Content="DesktopIcon" Margin="0 0 5 5" Command="{Binding OpenDesktopIconSettingsCommand}" Width="75"></Button>
+                    <Button Content="AUC" Margin="0 0 5 5"  Command="{Binding AUCCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                    <Button Content="Icon" Margin="0 0 5 5" Command="{Binding IconCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                    <Button Content="DesktopIcon" Margin="0 0 5 5" Command="{Binding OpenDesktopIconSettingsCommand}" Width="75" Style="{StaticResource ChangeColorButton}">
+                    </Button>
                 </WrapPanel>
                 <WrapPanel Grid.Row="1">
                     <TextBlock Margin="0 0 18 0" Text="After:"></TextBlock>
-                    <Button Content="Default" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding DefaultCommand}" Width="75"></Button>
-                    <Button Content="Example File" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenExampleFileCommand}" Width="75"></Button>
-                    <Button Content="Auto" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenKMSAutoCommand}" Width="75"></Button>
-                    <Button Content="AppLog" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenAppLogCommand}" Width="75"></Button>
+                    <Button Content="Default" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding DefaultCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                    <Button Content="Example File" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenExampleFileCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                    <Button Content="Auto" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenKMSAutoCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                    <Button Content="AppLog" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenAppLogCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
                 </WrapPanel>
                 <WrapPanel Grid.Row="2">
                     <Button Content="SpeedTest" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding SpeedTestCommand}" Width="75"></Button>
                     <Button Content="OffDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OffDefenderCommand}" Width="75"></Button>
                     <Button Content="OnDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OnDefenderCommand}" Width="75"></Button>
                 </WrapPanel>
-                
             </Grid>
 
 

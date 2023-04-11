@@ -36,14 +36,9 @@ namespace CompasPack.ViewModel
         private IIOManager _ioManager;
 
         private bool _isEnable;
-        private bool _isEnableOpenReport;
-        private bool _isEnableOpenPrice;
 
-
-
-        private string _reportFile;
-        private string _priceFile;
         private string _reportPath;
+        private int _indexReport;
 
         private PCCaseViewModel _pCCaseViewModel;
         private CPUViewModel _CPUViewModel;
@@ -65,8 +60,8 @@ namespace CompasPack.ViewModel
             ReportPath = _ioManager.ReportPC;
 
             SaveReportCommand = new DelegateCommand(OnSaveReport);
+
             OpenReportCommand = new DelegateCommand(OnOpenReport);
-            SavePriceCommand = new DelegateCommand(OnSavePrice);
             OpenPriceCommand = new DelegateCommand(OnOpenPrice);
             OpenFolderCommand = new DelegateCommand(OnOpenFolder);
 
@@ -81,23 +76,24 @@ namespace CompasPack.ViewModel
                 return;
             }
 
-            if(File.Exists($"{ReportPath}\\{ReportFile}.html"))
+            if(File.Exists($"{ReportPath}\\Report_{IndexReport:000}.html"))
             {
                 var res = _messageDialogService.ShowYesNoDialog("Файл з таким ім'ям вже існує, ви хочете його замінити (це невідворотня дія)", "Попередження!");
                if (res == MessageDialogResult.No || res==MessageDialogResult.Cancel)
                 { return; }    
             }
 
+            await Task.Delay(100);
             IsEnable = false;
-            IsEnableOpenReport = false;      
-            var temp = IsEnableOpenPrice;
-            IsEnableOpenPrice = false;
+
+            #region Aida .hml
+
             if (!Directory.Exists(_ioManager.CompasPackLog))
                 Directory.CreateDirectory(_ioManager.CompasPackLog);
             ProcessStartInfo? StartInfo = new ProcessStartInfo
             {
                 FileName = _ioManager.Aida,
-                Arguments = "/R " + ReportPath + $"\\{ReportFile}. " + "/HML " + "/CUSTOM " + System.IO.Path.GetDirectoryName(_ioManager.Aida) + "\\ForReport.rpf",
+                Arguments = "/R " + ReportPath + $"\\Report_{IndexReport:000}. " + "/HML " + "/CUSTOM " + System.IO.Path.GetDirectoryName(_ioManager.Aida) + "\\ForReport.rpf",
                 UseShellExecute = false
             };
             try
@@ -106,7 +102,9 @@ namespace CompasPack.ViewModel
                 await proc.WaitForExitAsync();
             }
             catch (Exception) { }
+            #endregion
 
+            #region FastReport .html
             string html = $"<html><head><style>table{{font-family: Arial;font-size: 13px;}}</style>" +
                 $"</head><body><table><tbody>" +
                 $"<tr><th>{PCCaseViewModel.Result}</th><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
@@ -116,48 +114,22 @@ namespace CompasPack.ViewModel
                 $"<tr><td>{VideoViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
                 $"<tr><td>{PhysicalDiskViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
                 $"<tr><td>{PowerSupplyViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-                $"<tr><td><b>ID: {_ioManager.GetLastReport(ReportPath):000} (Прийшов {DateTime.Now:dd.MM.yyyy})</b></td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+                $"<tr><td><b>ID: {IndexReport:000} (Прийшов {DateTime.Now:dd.MM.yyyy})</b></td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
                 $"<tr><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"> </td></tr></tbody></table></body></html>";
 
-            await _ioManager.WriteAllTextAsync($"{ReportPath}\\{ReportFile}.html", html);
-            IsEnable = true;
-            IsEnableOpenReport = true;
-            IsEnableOpenPrice = temp;
-        }
-        private void OnOpenReport()
-        {
-            if (!File.Exists($"{ReportPath}\\{ReportFile}.html"))
-                _messageDialogService.ShowInfoDialog("Такого файлу нема!", "Помилка!");
-            _ioManager.OpenFolderAndSelectFile($"{ReportPath}\\{ReportFile}.html");
-        }
-        private async void OnSavePrice()
-        {
-            if (string.IsNullOrWhiteSpace(PCCaseViewModel.Name) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Text) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Power) || !PowerSupplyViewModel.Power.All(char.IsDigit))
-            {
-                _messageDialogService.ShowInfoDialog("Заповни всі поля виділені червоним", "Помилка!");
-                return;
-            }
+            await _ioManager.WriteAllTextAsync($"{ReportPath}\\Report_{IndexReport:000}.html", html);
+            #endregion
 
-            if (File.Exists($"{ReportPath}\\{PriceFile}.docx"))
-            {
-                var res = _messageDialogService.ShowYesNoDialog("Файл з таким ім'ям вже існує, ви хочете його замінити (це невідворотня дія)", "Попередження!");
-                if (res == MessageDialogResult.No || res == MessageDialogResult.Cancel)
-                { return; }
-            }
 
-            IsEnable = false;
-            IsEnableOpenPrice = false;
-            var temp = IsEnableOpenReport;
-            IsEnableOpenReport = false;
-            
+            #region Price .docx
             var documentPath = $"{ReportPath}\\SourcePrice\\document.xml";
             if (!File.Exists(documentPath))
             {
-                _messageDialogService.ShowInfoDialog($"Не знайдено файл: {documentPath}","Помилка!");
+                _messageDialogService.ShowInfoDialog($"Не знайдено файл: {documentPath}", "Помилка!");
                 return;
             }
-            var unzipPath= $"{ReportPath}\\SourcePrice\\unzip\\word";
-            if (!Directory.Exists(unzipPath)) 
+            var unzipPath = $"{ReportPath}\\SourcePrice\\unzip\\word";
+            if (!Directory.Exists(unzipPath))
             {
                 _messageDialogService.ShowInfoDialog($"Не знайдено папку: {documentPath}", "Помилка!");
                 return;
@@ -166,7 +138,7 @@ namespace CompasPack.ViewModel
             string text = string.Empty;
             using (StreamReader reader = new StreamReader($"{unzipPath}\\document.xml"))
             {
-                text = await reader.ReadToEndAsync();    
+                text = await reader.ReadToEndAsync();
             }
 
             text = text.Replace("compascpu", CPUViewModel.Result);
@@ -175,24 +147,33 @@ namespace CompasPack.ViewModel
             text = text.Replace("compasgpu", VideoViewModel.Result);
             text = text.Replace("compashdd", PhysicalDiskViewModel.Result);
             text = text.Replace("compaspower", PowerSupplyViewModel.Result);
-            text = text.Replace("compasid", $"{_ioManager.GetLastReport(ReportPath) + 1:000}");
+            text = text.Replace("compasid", $"{IndexReport:000}");
 
             using (StreamWriter writer = new StreamWriter($"{unzipPath}\\document.xml", false))
             {
                 await writer.WriteLineAsync(text);
             }
-            
-            ZipFile.CreateFromDirectory($"{ReportPath}\\SourcePrice\\unzip", $"{ReportPath}\\{PriceFile}.docx", CompressionLevel.SmallestSize, false);
-            
+            if (File.Exists($"{ReportPath}\\Report_{IndexReport:000}.docx"))
+            {
+                File.Delete($"{ReportPath}\\Report_{IndexReport:000}.docx");
+            }
+            ZipFile.CreateFromDirectory($"{ReportPath}\\SourcePrice\\unzip", $"{ReportPath}\\Report_{IndexReport:000}.docx", CompressionLevel.SmallestSize, false);
+            #endregion
+
             IsEnable = true;
-            IsEnableOpenReport = temp;
-            IsEnableOpenPrice = true;
         }
+        private void OnOpenReport()
+        {
+            if (!File.Exists($"{ReportPath}\\Report_{IndexReport:000}.html"))
+                _messageDialogService.ShowInfoDialog("Такого файлу нема!", "Помилка!");
+            _ioManager.OpenFolderAndSelectFile($"{ReportPath}\\Report_{IndexReport:000}.html");
+        }
+      
         private void OnOpenPrice()
         {
-            if (!File.Exists($"{ReportPath}\\{PriceFile}.docx"))
+            if (!File.Exists($"{ReportPath}\\Report_{IndexReport:000}.docx"))
                 _messageDialogService.ShowInfoDialog("Такого файлу нема!", "Помилка!");
-            _ioManager.OpenFolderAndSelectFile($"{ReportPath}\\{PriceFile}.docx");
+            _ioManager.OpenFolderAndSelectFile($"{ReportPath}\\Report_{IndexReport:000}.docx");
         }
         private void OnOpenFolder()
         {
@@ -276,45 +257,8 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public bool IsEnableOpenReport
-        {
-            get { return _isEnableOpenReport; }
-            set 
-            { 
-                _isEnableOpenReport = value;
-                OnPropertyChanged();
-            }
-        }
-        public bool IsEnableOpenPrice
-        {
-            get { return _isEnableOpenPrice; }
-            set
-            {
-                _isEnableOpenPrice = value;
-                OnPropertyChanged();
-            }
-        }
 
-        public string ReportFile
-        {
-            get { return _reportFile; }
-            set
-            {
-                _reportFile = value; 
-                OnPropertyChanged();
-                IsEnableOpenReport = true;
-            }
-        }
-        public string PriceFile
-        {
-            get { return _priceFile; }
-            set
-            {
-                _priceFile = value;
-                OnPropertyChanged();
-                IsEnableOpenPrice = true;
-            }
-        }
+
         public string ReportPath
         {
             get { return _reportPath; }
@@ -324,6 +268,17 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
+        public int IndexReport
+        {
+            get { return _indexReport; }
+            set
+            {
+                _indexReport = value;
+                OnPropertyChanged();
+            }
+        }
+
+        
 
         public async Task LoadAsync(int? Id)
         {
@@ -344,13 +299,8 @@ namespace CompasPack.ViewModel
                 PhysicalDiskViewModel.Load();
                 PowerSupplyViewModel.Load();
             });
+            IndexReport = _ioManager.GetLastReport(ReportPath) + 1;
 
-
-
-            ReportFile = $"Report_{_ioManager.GetLastReport(ReportPath) + 1:000}";
-            PriceFile = $"Price_{_ioManager.GetLastReport(ReportPath) + 1:000}";
-            IsEnableOpenReport = false;
-            IsEnableOpenPrice = false;
             IsEnable = true;
         }
         public bool HasChanges()
