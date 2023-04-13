@@ -36,7 +36,6 @@ namespace CompasPack.ViewModel
         private IIOManager _ioManager;
 
         private bool _isEnable;
-
         private string _reportPath;
         private int _indexReport;
 
@@ -48,6 +47,34 @@ namespace CompasPack.ViewModel
         private PhysicalDiskViewModel _physicalDiskViewModel;
         private PowerSupplyViewModel _powerSupplyView;
         private IMessageDialogService _messageDialogService;
+
+        public bool IsEnable
+        {
+            get { return _isEnable; }
+            set
+            {
+                _isEnable = value;
+                OnPropertyChanged();
+            }
+        }
+        public string ReportPath
+        {
+            get { return _reportPath; }
+            set
+            {
+                _reportPath = value;
+                OnPropertyChanged();
+            }
+        }
+        public int IndexReport
+        {
+            get { return _indexReport; }
+            set
+            {
+                _indexReport = value;
+                OnPropertyChanged();
+            }
+        }
 
         public ComputerReportViewModel(IIOManager iOManager, SettingsReportViewModel settingsReportViewModel, XDocument xDocument, IMessageDialogService messageDialogService)
         {
@@ -67,7 +94,6 @@ namespace CompasPack.ViewModel
 
         }
 
-
         private async void OnSaveReport()
         {
             if (string.IsNullOrWhiteSpace(PCCaseViewModel.Name) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Text) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Power) || !PowerSupplyViewModel.Power.All(char.IsDigit))
@@ -76,20 +102,38 @@ namespace CompasPack.ViewModel
                 return;
             }
 
-            if(File.Exists($"{ReportPath}\\Report_{IndexReport:000}.html"))
+            bool checkHml = File.Exists($"{ReportPath}\\Report_{IndexReport:000}.htm");
+            bool checkHtml = File.Exists($"{ReportPath}\\Report_{IndexReport:000}.html");
+            bool checkDocx = File.Exists($"{ReportPath}\\Report_{IndexReport:000}.docx");
+
+            if (checkHml || checkHtml || checkDocx)
             {
-                var res = _messageDialogService.ShowYesNoDialog("Файл з таким ім'ям вже існує, ви хочете його замінити (це невідворотня дія)", "Попередження!");
-               if (res == MessageDialogResult.No || res==MessageDialogResult.Cancel)
-                { return; }    
+                string listFile = string.Empty;
+                if (checkHml)
+                    listFile += $"{ReportPath}\\Report_{IndexReport:000}.htm\n";
+                if(checkHtml)
+                    listFile += $"{ReportPath}\\Report_{IndexReport:000}.html\n";
+                if (checkDocx)
+                    listFile += $"{ReportPath}\\Report_{IndexReport:000}.docx\n";
+
+                var res = _messageDialogService.ShowYesNoDialog($"В папці призначення вже є файл(и):\n\n{listFile}\nВи хочете замінити його(їх)\n\n(Це невідворотня дія, зробіть їх копію!)", "Попередження!");
+                if (res == MessageDialogResult.No || res == MessageDialogResult.Cancel)
+                { return; }
             }
 
             await Task.Delay(100);
             IsEnable = false;
 
-            #region Aida .hml
+            await GetHML();
 
-            if (!Directory.Exists(_ioManager.CompasPackLog))
-                Directory.CreateDirectory(_ioManager.CompasPackLog);
+            await GetHTML();
+
+            await GetDOCX();
+
+            IsEnable = true;
+        }
+        private async Task GetHML()
+        {
             ProcessStartInfo? StartInfo = new ProcessStartInfo
             {
                 FileName = _ioManager.Aida,
@@ -98,77 +142,95 @@ namespace CompasPack.ViewModel
             };
             try
             {
-                Process proc = Process.Start(StartInfo);
+                Process proc = Process.Start(StartInfo); 
                 await proc.WaitForExitAsync();
             }
-            catch (Exception) { }
-            #endregion
-
-            #region FastReport .html
-            string html = $"<html><head><style>table{{font-family: Arial;font-size: 13px;}}</style>" +
-                $"</head><body><table><tbody>" +
-                $"<tr><th>{PCCaseViewModel.Result}</th><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-                $"<tr><td>{CPUViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-                $"<tr><td>{MotherboardViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-                $"<tr><td>{MemoryViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-                $"<tr><td>{VideoViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-                $"<tr><td>{PhysicalDiskViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-                $"<tr><td>{PowerSupplyViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-                $"<tr><td><b>ID: {IndexReport:000} (Прийшов {DateTime.Now:dd.MM.yyyy})</b></td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-                $"<tr><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"> </td></tr></tbody></table></body></html>";
-
-            await _ioManager.WriteAllTextAsync($"{ReportPath}\\Report_{IndexReport:000}.html", html);
-            #endregion
-
-
-            #region Price .docx
-            var documentPath = $"{ReportPath}\\SourcePrice\\document.xml";
-            if (!File.Exists(documentPath))
+            catch (Exception e)
             {
-                _messageDialogService.ShowInfoDialog($"Не знайдено файл: {documentPath}", "Помилка!");
-                return;
+                _messageDialogService.ShowInfoDialog($"В процесі формування звіту AIDA64 відбулася помилка.\n\nФайл: {ReportPath}\\Report_{IndexReport:000}.htm не створено!\n\nЗвернись до розробника і скинь фото:\n\n" +
+                    $"{e.Message}\n\n{e.StackTrace}", "Помилка");
             }
-            var unzipPath = $"{ReportPath}\\SourcePrice\\unzip\\word";
-            if (!Directory.Exists(unzipPath))
-            {
-                _messageDialogService.ShowInfoDialog($"Не знайдено папку: {documentPath}", "Помилка!");
-                return;
-            }
-            File.Copy(documentPath, $"{unzipPath}\\document.xml", true);
-            string text = string.Empty;
-            using (StreamReader reader = new StreamReader($"{unzipPath}\\document.xml"))
-            {
-                text = await reader.ReadToEndAsync();
-            }
-
-            text = text.Replace("compascpu", CPUViewModel.Result);
-            text = text.Replace("compasmotherboard", MotherboardViewModel.Result);
-            text = text.Replace("compasmemory", MemoryViewModel.Result);
-            text = text.Replace("compasgpu", VideoViewModel.Result);
-            text = text.Replace("compashdd", PhysicalDiskViewModel.Result);
-            text = text.Replace("compaspower", PowerSupplyViewModel.Result);
-            text = text.Replace("compasid", $"{IndexReport:000}");
-
-            using (StreamWriter writer = new StreamWriter($"{unzipPath}\\document.xml", false))
-            {
-                await writer.WriteLineAsync(text);
-            }
-            if (File.Exists($"{ReportPath}\\Report_{IndexReport:000}.docx"))
-            {
-                File.Delete($"{ReportPath}\\Report_{IndexReport:000}.docx");
-            }
-            ZipFile.CreateFromDirectory($"{ReportPath}\\SourcePrice\\unzip", $"{ReportPath}\\Report_{IndexReport:000}.docx", CompressionLevel.SmallestSize, false);
-            #endregion
-
-            IsEnable = true;
         }
+        private async Task GetHTML()
+        {
+            try
+            {
+                string html = $"<html><head><style>table{{font-family: Arial;font-size: 13px;}}</style>" +
+               $"</head><body><table><tbody>" +
+               $"<tr><th>{PCCaseViewModel.Result}</th><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+               $"<tr><td>{CPUViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+               $"<tr><td>{MotherboardViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+               $"<tr><td>{MemoryViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+               $"<tr><td>{VideoViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+               $"<tr><td>{PhysicalDiskViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+               $"<tr><td>{PowerSupplyViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+               $"<tr><td><b>ID: {IndexReport:000} (Прийшов {DateTime.Now:dd.MM.yyyy})</b></td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+               $"<tr><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"> </td></tr></tbody></table></body></html>";
+               await _ioManager.WriteAllTextAsync($"{ReportPath}\\Report_{IndexReport:000}.html", html);
+            }
+            catch (Exception e)
+            {
+                _messageDialogService.ShowInfoDialog($"В процесі формування звіту HTML відбулася помилка.\n\nФайл: {ReportPath}\\Report_{IndexReport:000}.html не створено!\n\nЗвернись до розробника і скинь фото:\n\n" +
+                   $"{e.Message}\n\n{e.StackTrace}", "Помилка");
+            }
+           
+        }
+        private async Task GetDOCX()
+        {
+            try
+            {
+                var documentPath = $"{ReportPath}\\SourcePrice\\document.xml";
+                if (!File.Exists(documentPath))
+                {
+                    _messageDialogService.ShowInfoDialog($"Не знайдено файл: {documentPath}", "Помилка!");
+                    return;
+                }
+                
+                var unzipPath = $"{ReportPath}\\SourcePrice\\unzip\\word";
+                if (!Directory.Exists(unzipPath))
+                {
+                    _messageDialogService.ShowInfoDialog($"Не знайдено папку: {documentPath}", "Помилка!");
+                    return;
+                }
+                
+                File.Copy(documentPath, $"{unzipPath}\\document.xml", true);
+                string text = string.Empty;
+                using (StreamReader reader = new StreamReader($"{unzipPath}\\document.xml"))
+                {
+                    text = await reader.ReadToEndAsync();
+                }
+
+                text = text.Replace("compascpu", CPUViewModel.Result);
+                text = text.Replace("compasmotherboard", MotherboardViewModel.Result);
+                text = text.Replace("compasmemory", MemoryViewModel.Result);
+                text = text.Replace("compasgpu", VideoViewModel.Result);
+                text = text.Replace("compashdd", PhysicalDiskViewModel.Result);
+                text = text.Replace("compaspower", PowerSupplyViewModel.Result);
+                text = text.Replace("compasid", $"{IndexReport:000}");
+
+                using (StreamWriter writer = new StreamWriter($"{unzipPath}\\document.xml", false))
+                {
+                    await writer.WriteLineAsync(text);
+                }
+                
+                if (File.Exists($"{ReportPath}\\Report_{IndexReport:000}.docx"))
+                    File.Delete($"{ReportPath}\\Report_{IndexReport:000}.docx");
+                
+                ZipFile.CreateFromDirectory($"{ReportPath}\\SourcePrice\\unzip", $"{ReportPath}\\Report_{IndexReport:000}.docx", CompressionLevel.SmallestSize, false);
+            }
+            catch (Exception e)
+            {
+                _messageDialogService.ShowInfoDialog($"В процесі формування звіту docx відбулася помилка.\n\nФайл: {ReportPath}\\Report_{IndexReport:000}.docx не створено!\n\nЗвернись до розробника і скинь фото:\n\n" +
+                  $"{e.Message}\n\n{e.StackTrace}", "Помилка");
+            } 
+        }
+      
         private void OnOpenReport()
         {
             if (!File.Exists($"{ReportPath}\\Report_{IndexReport:000}.html"))
                 _messageDialogService.ShowInfoDialog("Такого файлу нема!", "Помилка!");
             _ioManager.OpenFolderAndSelectFile($"{ReportPath}\\Report_{IndexReport:000}.html");
         }
-      
         private void OnOpenPrice()
         {
             if (!File.Exists($"{ReportPath}\\Report_{IndexReport:000}.docx"))
@@ -179,10 +241,6 @@ namespace CompasPack.ViewModel
         {
             _ioManager.OpenFolder(ReportPath);
         }
-
-       
-
-       
 
         public PCCaseViewModel PCCaseViewModel
         {
@@ -247,38 +305,6 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
-        public bool IsEnable
-        {
-            get { return _isEnable; }
-            set
-            {
-                _isEnable = value;
-                OnPropertyChanged();
-            }
-        }
-
-
-        public string ReportPath
-        {
-            get { return _reportPath; }
-            set
-            {
-                _reportPath = value;
-                OnPropertyChanged();
-            }
-        }
-        public int IndexReport
-        {
-            get { return _indexReport; }
-            set
-            {
-                _indexReport = value;
-                OnPropertyChanged();
-            }
-        }
-
-        
 
         public async Task LoadAsync(int? Id)
         {

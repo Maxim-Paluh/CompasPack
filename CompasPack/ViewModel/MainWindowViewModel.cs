@@ -51,7 +51,7 @@ namespace CompasPack.ViewModel
             CreateFormCommand = new DelegateCommand<Type>(OnCreateNewFormExecute);
         }
         //******************************************************
-        public async Task LoadAsync()
+        public void LoadAsync()
         {
             OnCreateNewFormExecute(typeof(ProgramsViewModel));
         }

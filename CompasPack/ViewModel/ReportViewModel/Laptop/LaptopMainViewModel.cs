@@ -11,12 +11,36 @@ namespace CompasPack.ViewModel
     {
         private string _brand;
         private string _model;
+        private string _line;
+        private KeyValuePair<string, List<string>> _lines;
 
         public LaptopMainViewModel(SettingsReportViewModel settingsReport)
         {
             SettingsReport = settingsReport;
         }
 
+        public KeyValuePair<string, List<string>> Lines
+        {
+            get { return _lines; }
+            set
+            {
+                _lines = value;
+                OnPropertyChanged();
+            }
+        }
+        public string Line
+        {
+            get { return _line; }
+            set
+            {
+                _line = value;
+                OnPropertyChanged();
+                if(!string.IsNullOrWhiteSpace(_line))
+                    Result = $"{_brand} {_line} {_model}";
+                else
+                    Result = $"{_brand} {_model}";
+            }
+        }
         public string Brand
         {
             get { return _brand; }
@@ -24,7 +48,10 @@ namespace CompasPack.ViewModel
             {
                 _brand = value;
                 OnPropertyChanged();
-                Result = $"{_brand} {_model}";
+                if (!string.IsNullOrWhiteSpace(_line))
+                    Result = $"{_brand} {_line} {_model}";
+                else
+                    Result = $"{_brand} {_model}";
             }
         }
 
@@ -35,7 +62,10 @@ namespace CompasPack.ViewModel
             {
                 _model = value;
                 OnPropertyChanged();
-                Result = $"{_brand} {_model}";
+                if (!string.IsNullOrWhiteSpace(_line))
+                    Result = $"{_brand} {_line} {_model}";
+                else
+                    Result = $"{_brand} {_model}";
             }
         }
 

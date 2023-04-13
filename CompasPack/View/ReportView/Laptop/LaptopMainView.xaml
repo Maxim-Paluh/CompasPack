@@ -21,15 +21,24 @@
                 <TextBlock Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="Main:">
                 </TextBlock>
                 <WrapPanel Grid.Column="1" Grid.Row="0"  Margin="4" HorizontalAlignment="Left">
-                    <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Brand:"></TextBlock>
-                    <ComboBox   Grid.Row="11"  MinWidth="150"
-                                ItemsSource="{Binding SettingsReport.Laptops}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True"
+                    <TextBlock Grid.Column="0" Width="55" Grid.Row="0" Text="Brand:" FontSize="18"></TextBlock>
+                    <ComboBox   Grid.Row="11"  MinWidth="100"
+                                ItemsSource="{Binding SettingsReport.Laptops}" 
+                                DisplayMemberPath="Key"
+                                SelectedItem="{Binding Lines, UpdateSourceTrigger=PropertyChanged}"
+                                IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True"
                                 Text="{Binding Brand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    </ComboBox>
+                    <TextBlock Margin="5 0 0 0" Grid.Column="0" Width="40" Grid.Row="0" Text="Line:" FontSize="18"></TextBlock>
+                    <ComboBox   Grid.Row="11"  MinWidth="100"
+                                ItemsSource="{Binding Lines.Value}"
+                                IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True"
+                                Text="{Binding Line, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     </ComboBox>
                 </WrapPanel>
                 <WrapPanel  Grid.Column="2"  Margin="4" Grid.RowSpan="2">
                     <TextBlock Margin="5 0 5 0"  Width="40" Text="Model:"></TextBlock>
-                    <TextBox Margin="5 0 5 0"  MinWidth="40" Text="{Binding Model, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox Margin="5 0 5 0" Height="22"  MinWidth="100" Text="{Binding Model, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel Grid.Column="3"   Margin="4" HorizontalAlignment="Right">
                     <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>

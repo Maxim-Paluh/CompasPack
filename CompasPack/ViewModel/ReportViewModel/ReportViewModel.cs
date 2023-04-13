@@ -50,7 +50,7 @@ namespace CompasPack.ViewModel
                     ReportFormViewModel = new ComputerReportViewModel(_ioManager, _settingsReportViewModel, _xDocument, _messageDialogService);
                     break;
                 case TypeReport.Laptop:
-                    ReportFormViewModel = new LaptopReportViewModel(_ioManager, _settingsReportViewModel, _xDocument);
+                    ReportFormViewModel = new LaptopReportViewModel(_ioManager, _settingsReportViewModel, _xDocument, _messageDialogService);
                     break;
                 case TypeReport.Monitor:
                     ReportFormViewModel = new MonitorReportViewModel(_ioManager, _settingsReportViewModel, _xDocument);
@@ -99,9 +99,10 @@ namespace CompasPack.ViewModel
         public async Task LoadAsync(int? Id)
         {
             _ioManager.CheckReportFolders();
-            _settingsReportViewModel = await _ioManager.GetSettingsReport();
             _xDocument = await _ioManager.GetXDocument();
-            IsEnable = true;
+            _settingsReportViewModel = await _ioManager.GetSettingsReport();
+            if (_settingsReportViewModel!= null)
+                IsEnable = true;
         }
         public void Unsubscribe()
         {

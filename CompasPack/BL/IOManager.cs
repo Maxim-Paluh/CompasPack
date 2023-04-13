@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using CompasPack.ViewModel;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Documents;
 
 namespace CompasPakc.BL
 {
@@ -62,15 +63,15 @@ namespace CompasPakc.BL
         private static readonly string _compasPackLogName = "CompasPackLog";
         private static readonly string crack = _portable + "!Crack";
 
-        private static readonly string cpuZ =               _portable + "CPU-Z\\cpuz_x32.exe";
-        private static readonly string gpuZ =               _portable + "FurMark\\gpuz.exe";
-        private static readonly string aida =               _portable + "AIDA64\\aida64.exe";
-        private static readonly string crystalDisk =        _portable + "CrystalDisk\\DiskInfo32.exe";
-        private static readonly string furMark =            _portable + "FurMark\\FurMark.exe";
-        private static readonly string totalCommander951 =  _portable + "TotalCommander951\\TOTALCMD.EXE";
-        private static readonly string totalCommander700 =  _portable + "TotalCommander700\\Totalcmd.exe";
-        private static readonly string winRar =             _portable + "WinRAR\\WinRAR.exe";
-        private static readonly string rar =                _portable + "WinRAR\\Rar.exe";
+        private static readonly string cpuZ = _portable + "CPU-Z\\cpuz_x32.exe";
+        private static readonly string gpuZ = _portable + "FurMark\\gpuz.exe";
+        private static readonly string aida = _portable + "AIDA64\\aida64.exe";
+        private static readonly string crystalDisk = _portable + "CrystalDisk\\DiskInfo32.exe";
+        private static readonly string furMark = _portable + "FurMark\\FurMark.exe";
+        private static readonly string totalCommander951 = _portable + "TotalCommander951\\TOTALCMD.EXE";
+        private static readonly string totalCommander700 = _portable + "TotalCommander700\\Totalcmd.exe";
+        private static readonly string winRar = _portable + "WinRAR\\WinRAR.exe";
+        private static readonly string rar = _portable + "WinRAR\\Rar.exe";
 
         public string CurrentDirectoryPath { get; set; }
         public string SettingsGroupProgramFileNamePath { get; set; }
@@ -83,7 +84,7 @@ namespace CompasPakc.BL
         public string GpuZ { get; set; }
         public string Aida { get; set; }
         public string CrystalDisk { get; set; }
-        public string FurMark { get; set; }    
+        public string FurMark { get; set; }
         public string TotalCommander951 { get; set; }
         public string TotalCommander700 { get; set; }
         public string WinRar { get; set; }
@@ -92,7 +93,7 @@ namespace CompasPakc.BL
         public string Report { get; set; }
 
         public string ReportPC { get; set; }
-        public string ReportLaptop{ get; set; }
+        public string ReportLaptop { get; set; }
         public string ReportMonitor { get; set; }
 
         public IOManager(IMessageDialogService messageDialogService)
@@ -123,68 +124,7 @@ namespace CompasPakc.BL
             ReportLaptop = Path.Combine(Report, "laptop");
             ReportMonitor = Path.Combine(Report, "monitor");
         }
-        public async Task<List<GroupProgram>> GetGroupPrograms()
-        {
-            FileInfo fileSettingsJson = new FileInfo(SettingsGroupProgramFileNamePath);
 
-            if (!fileSettingsJson.Exists)
-                await SetDefaultGroupProgram();
-
-            try
-            {
-                var temp = JsonConvert.DeserializeObject<List<GroupProgram>>(await
-                File.ReadAllTextAsync(SettingsGroupProgramFileNamePath),
-                new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error, });
-
-                foreach (var program in temp.SelectMany(group => group.UserPrograms))
-                {
-                    program.PathFolder = Path.Combine(PathRoot, program.PathFolder);
-                    program.FileImage = PathRoot+ _install +"!ExampleFile\\Icon\\" + program.FileImage;
-                }
-                return temp;
-            }
-            catch (Exception exp)
-            {
-                _messageDialogService.ShowInfoDialog($"Шаблон для списку програм має помилку, для вирішення проблеми:\n\n" +
-                    $"1. Виправіть помилку:\n{exp.Message}\n\n" +
-                    $"2. Згенеруйте файл по замовчуванню в меню налаштувань програми!", "Error");
-                return new List<GroupProgram>();
-            }
-        }
-        public async Task<List<UserPresetProgram>> GetUserPresetProgram()
-        {
-            FileInfo fileSettingsJson = new FileInfo(SettingUserPresetProgramFileNamePath);
-
-            if (!fileSettingsJson.Exists)
-                await SetDefaultUserPresetProgram();
-            
-            try
-            {
-                return JsonConvert.DeserializeObject<List<UserPresetProgram>>(await
-            File.ReadAllTextAsync(SettingUserPresetProgramFileNamePath),
-            new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error, });
-            }
-            catch (Exception exp)
-            {
-                _messageDialogService.ShowInfoDialog($"Шаблон набору програм має помилку, для вирішення проблеми:\n\n" +
-                    $"1. Виправіть помилку:\n{exp.Message}\n\n" +
-                    $"2. Згенеруйте файл по замовчуванню в меню налаштувань програми!", "Error");
-                return new List<UserPresetProgram>();
-            }
-
-
-
-        }
-        public async Task SetDefaultGroupProgram()
-        {
-            var SettingsJsonExample = JsonConvert.SerializeObject(GetDefaultGroupProgram(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
-            await File.WriteAllTextAsync(SettingsGroupProgramFileNamePath, SettingsJsonExample).ConfigureAwait(false);
-        }
-        public async Task SetDefaultUserPresetProgram()
-        {
-            var SettingsJsonExample = JsonConvert.SerializeObject(GetDefaultUserPresetProgram(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
-            await File.WriteAllTextAsync(SettingUserPresetProgramFileNamePath, SettingsJsonExample).ConfigureAwait(false);
-        }
         private List<GroupProgram> GetDefaultGroupProgram()
         {
 
@@ -302,7 +242,7 @@ namespace CompasPakc.BL
                             FileName = "FastStone",
                             Architecture = "x86",
                             FileImage = "FastStone.png",
-                        }, 
+                        },
                         new UserProgram()
                         {
                             Id = 5,
@@ -334,7 +274,7 @@ namespace CompasPakc.BL
                             FileName = "npp",
                             Architecture = "x64",
                             FileImage = "npp.png",
-                        },                   
+                        },
                         new UserProgram()
                         {
                             Id = 7,
@@ -661,12 +601,46 @@ namespace CompasPakc.BL
                      },
 
                 },
-               
+
 
             };
 
             return groupPrograms;
-        }  
+        }
+        public async Task SetDefaultGroupProgram()
+        {
+            var SettingsJsonExample = JsonConvert.SerializeObject(GetDefaultGroupProgram(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
+            await File.WriteAllTextAsync(SettingsGroupProgramFileNamePath, SettingsJsonExample).ConfigureAwait(false);
+        }
+        public async Task<List<GroupProgram>> GetGroupPrograms()
+        {
+            FileInfo fileSettingsJson = new FileInfo(SettingsGroupProgramFileNamePath);
+
+            if (!fileSettingsJson.Exists)
+                await SetDefaultGroupProgram();
+
+            try
+            {
+                var temp = JsonConvert.DeserializeObject<List<GroupProgram>>(await
+                File.ReadAllTextAsync(SettingsGroupProgramFileNamePath),
+                new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error, });
+
+                foreach (var program in temp.SelectMany(group => group.UserPrograms))
+                {
+                    program.PathFolder = Path.Combine(PathRoot, program.PathFolder);
+                    program.FileImage = PathRoot + _install + "!ExampleFile\\Icon\\" + program.FileImage;
+                }
+                return temp;
+            }
+            catch (Exception exp)
+            {
+                _messageDialogService.ShowInfoDialog($"Шаблон для списку програм має помилку, для вирішення проблеми:\n\n" +
+                    $"1. Виправіть помилку:\n{exp.Message}\n\n" +
+                    $"2. Згенеруйте файл по замовчуванню в меню налаштувань програми!", "Error");
+                return new List<GroupProgram>();
+            }
+        }
+
         private List<UserPresetProgram> GetDefaultUserPresetProgram()
         {
             return new List<UserPresetProgram>()
@@ -694,6 +668,204 @@ namespace CompasPakc.BL
                 }
             };
         }
+        public async Task SetDefaultUserPresetProgram()
+        {
+            var SettingsJsonExample = JsonConvert.SerializeObject(GetDefaultUserPresetProgram(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
+            await File.WriteAllTextAsync(SettingUserPresetProgramFileNamePath, SettingsJsonExample).ConfigureAwait(false);
+        }
+        public async Task<List<UserPresetProgram>> GetUserPresetProgram()
+        {
+            FileInfo fileSettingsJson = new FileInfo(SettingUserPresetProgramFileNamePath);
+
+            if (!fileSettingsJson.Exists)
+                await SetDefaultUserPresetProgram();
+
+            try
+            {
+                return JsonConvert.DeserializeObject<List<UserPresetProgram>>(await
+            File.ReadAllTextAsync(SettingUserPresetProgramFileNamePath),
+            new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error, });
+            }
+            catch (Exception exp)
+            {
+                _messageDialogService.ShowInfoDialog($"Шаблон набору програм має помилку, для вирішення проблеми:\n\n" +
+                    $"1. Виправіть помилку:\n{exp.Message}\n\n" +
+                    $"2. Згенеруйте файл по замовчуванню в меню налаштувань програми!", "Error");
+                return new List<UserPresetProgram>();
+            }
+
+
+
+        }
+
+        private SettingsReportViewModel GetDefaultSettingsReport()
+        {
+            return new SettingsReportViewModel()
+            {
+                CPU = new CPU()
+                {
+                    Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)", "\\{(?:[^}{]|\\{[^}{]*\\))*\\}" }
+                },
+                Motherboard = new Motherboard()
+                {
+                    XPath = "/Report/Page[5]/Group[1]/Item[2]/Value",
+                    Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)" }
+                },
+                Memory = new Memory()
+                {
+                    MemoryType = new MemoryType()
+                    {
+                        XPath = "/Report/Page[5]/Group[3]/Item[1]/Value",
+                        Regex = new List<string>() { " ??SDRAM" }
+                    },
+                    MemoryFrequency = new MemoryFrequency()
+                    {
+                        XPath = "/Report/Page[5]/Group[3]/Item[5]/Value",
+                        Regex = new List<string>() { "\\D" }
+                    }
+                },
+                VideoController = new VideoController()
+                {
+                    Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)" }
+                },
+                PowerSupply = new List<string>() { "1stPlayer", "2N", "AeroCool", "Antec", "Argus", "ASPower", "ASUS", "Azza", "Be quiet!", "Casecom", "Chenbro", "Chieftec", "Chieftronic", "CoolerMaster",
+                    "Corsair", "Cougar", "Deepcool", "Dell", "Delux", "Enermax", "Extradigital", "Fractal Design", "Frime", "FrimeCom", "FSP", "Gamemax", "GIGABYTE", "Golden Field", "GreatWall", "Greenvision",
+                    "High Power", "HP", "IBM", "INTEL", "Inter-Tech", "Lenovo", "Logic concept", "LogicPower", "Meraki", "Modecom", "MSI", "Nikon", "NZXT", "Qdion", "QNap", "Qube", "Rezone Case", "Seasonic",
+                    "Segotep", "Silver Stone", "Supermicro", "TECNOWARE", "ThermalTake", "Vinga", "Xilence", "Zalman" },
+
+                Laptops = new Dictionary<string, List<string>>() 
+                {
+                    {"Dell", new List<string>() { "Alienware", "G Series", "Inspiron", "Latitude", "Precision", "Vostro", "XPS" } },
+                    
+                    {"HP", new List<string>() { "Eliteboo", "Envy", "Omen", "Pavilion", "ZBook", "Spectre", "Victus", "ProBook", "OmniBook" } },
+                    
+                    {"Lenovo", new List<string>() { "IdeaPad", "Legion", "ThinkPad", "ThinkBook", "Yoga" } },
+                    
+                    {"Apple", new List<string>() { "MacBook", "MacBook Air", "MacBook Pro" } },
+
+                    {"Acer", new List<string>() { "Aspire", "Enduro", "Extensa", "Ferrari", "Nitro", "Predator", "Swift", "Spin", "Switch", "TravelMate" } },
+                    {"Asus", new List<string>() { "Zenbook", "Vivobook", "Chromebook", "ROG", "TUF", "ZEPHYRUS", "EeeBook", "Experbook", "Transformer", "ASUSPRO", "ProArt" } },
+                    
+                    {"Microsoft", new List<string>() { "Surface Pro", "Surface Studio", "Microsoft Surface", "Surface Go" } },
+                    
+                    //--------------------------------------------------------------------------
+                    {"Fujitsu", new List<string>() {  } },
+                    {"Gigabyte", new List<string>() {  } },
+                    {"Google", new List<string>() {  } },
+                    {"Huawei", new List<string>() {  } },
+                    {"LG", new List<string>() {  } },
+                    {"MSI", new List<string>() {  } },
+                    {"Panasonic", new List<string>() {  } },
+                    {"Philips", new List<string>() {  } },
+                    {"Samsung", new List<string>() {  } },
+                    {"Sony", new List<string>() {  } },
+                    {"Toshiba", new List<string>() {  } },
+                    {"VAIO", new List<string>() {  } },
+                    {"AGB Supreme Technology", new List<string>() {  } },
+                    {"Alienware", new List<string>() {  } },
+                    {"Avell", new List<string>() {  } },
+                    {"Axioo", new List<string>() {  } },
+                    {"BenQ", new List<string>() {  } },
+                    {"Bmax", new List<string>() {  } },
+                    {"BOXX Technologies", new List<string>() {  } },
+                    {"Casper", new List<string>() {  } },
+                    {"CHUWI", new List<string>() {  } },
+                    {"Clevo", new List<string>() {  } },
+                    {"Corsair", new List<string>() {  } },
+                    {"CyberPowerPC", new List<string>() {  } },
+                    {"Digital Storm", new List<string>() {  } },
+                    {"Durabook", new List<string>() {  } },
+                    {"Dynabook", new List<string>() {  } },
+                    {"Eluktronics", new List<string>() {  } },
+                    {"Epson", new List<string>() {  } },
+                    {"Eurocom", new List<string>() {  } },
+                    {"Evoo", new List<string>() {  } },
+                    {"Falcon Northwest", new List<string>() {  } },
+                    {"Framework Computer", new List<string>() {  } },
+                    {"Gateway", new List<string>() {  } },
+                    {"Geo", new List<string>() {  } },
+                    {"Getac", new List<string>() {  } },
+                    {"Grundig", new List<string>() {  } },
+                    {"HCL", new List<string>() {  } },
+                    {"Honor", new List<string>() {  } },
+                    {"HTC", new List<string>() {  } },
+                    {"Hyundai Technology", new List<string>() {  } },
+                    {"IBM", new List<string>() {  } },
+                    {"Illegear", new List<string>() {  } },
+                    {"Lava International", new List<string>() {  } },
+                    {"Machenike", new List<string>() {  } },
+                    {"Maguay", new List<string>() {  } },
+                    {"Medion", new List<string>() {  } },
+                    {"Metabox", new List<string>() {  } },
+                    {"Microtech", new List<string>() {  } },
+                    {"Monster Notebook", new List<string>() {  } },
+                    {"Multilaser", new List<string>() {  } },
+                    {"NEC", new List<string>() {  } },
+                    {"Njoy", new List<string>() {  } },
+                    {"Nokia", new List<string>() {  } },
+                    {"Obsidian-PC", new List<string>() {  } },
+                    {"Olivetti", new List<string>() {  } },
+                    {"Onkyo", new List<string>() {  } },
+                    {"Optima", new List<string>() {  } },
+                    {"Origin PC", new List<string>() {  } },
+                    {"OverPowered", new List<string>() {  } },
+                    {"Packard Bell", new List<string>() {  } },
+                    {"Positivo", new List<string>() {  } },
+                    {"Purism", new List<string>() {  } },
+                    {"Razer", new List<string>() {  } },
+                    {"Realme", new List<string>() {  } },
+                    {"Sager", new List<string>() {  } },
+                    {"Notebook computers", new List<string>() {  } },
+                    {"Shenzhen Jumper Technology", new List<string>() {  } },
+                    {"Slimbook", new List<string>() {  } },
+                    {"Star Labs", new List<string>() {  } },
+                    {"System76", new List<string>() {  } },
+                    {"TUXEDO Computers", new List<string>() {  } },
+                    {"UMAX", new List<string>() {  } },
+                    {"Vastking", new List<string>() {  } },
+                    {"Velocity Micro", new List<string>() {  } },
+                    {"Vestel", new List<string>() {  } },
+                    {"VIT", new List<string>() {  } },
+                    {"Walmart", new List<string>() {  } },
+                    {"Walton", new List<string>() {  } },
+                    {"Wipro", new List<string>() {  } },
+                    {"Xiaomi", new List<string>() {  } },
+                    {"XMG", new List<string>() {  } },
+                    {"Xolo", new List<string>() {  } },
+                    {"Zeuslap", new List<string>() {  } },
+                    {"Zyrex", new List<string>() {  } }
+                }
+            };
+        }
+        public async Task SetSettingsReport()
+        {
+            var SettingsJsonExample = JsonConvert.SerializeObject(GetDefaultSettingsReport(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
+            await File.WriteAllTextAsync(SettingsUserReportPath, SettingsJsonExample).ConfigureAwait(false);
+        }
+        public async Task<SettingsReportViewModel> GetSettingsReport()
+        {
+            FileInfo fileSettingsJson = new FileInfo(SettingsUserReportPath);
+            //if (!fileSettingsJson.Exists)
+            await SetSettingsReport();
+
+            try
+            {
+                var temp = JsonConvert.DeserializeObject<SettingsReportViewModel>(await
+                File.ReadAllTextAsync(SettingsUserReportPath),
+                new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error, });
+
+                return temp;
+            }
+            catch (Exception exp)
+            {
+                _messageDialogService.ShowInfoDialog($"Шаблон для звіту має помилку, для вирішення проблеми:\n\n" +
+                    $"1. Виправіть помилку:\n{exp.Message}\n\n" +
+                    $"2. Видаліть файл SettingsUserReport.json і перезавантажте програму, буде згенеровано файл по замовчуванню!", "Error");
+                return null;
+            }
+        }
+
+
         public void OpenFolder(string path)
         {
             if (!Directory.Exists(path))
@@ -708,38 +880,33 @@ namespace CompasPakc.BL
                 Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", argument);
             }
         }
+        public void CheckReportFolders()
+        {
+            if (!Directory.Exists(Report))
+                Directory.CreateDirectory(Report);
+            if (!Directory.Exists(ReportPC))
+                Directory.CreateDirectory(ReportPC);
+            if (!Directory.Exists(ReportLaptop))
+                Directory.CreateDirectory(ReportLaptop);
+            if (!Directory.Exists(ReportMonitor))
+                Directory.CreateDirectory(ReportMonitor);
+        }
+        public int GetLastReport(string paht)
+        {
+            var lastString = Directory.GetFiles(paht).Select(x => x = Regex.Match(x, "\\d+").Value).OrderBy(x => x).LastOrDefault();
+            if (lastString != null)
+            {
+                if (int.TryParse(lastString, out int last))
+                    return last;
+                else
+                    return -1;
+            }
+            else
+                return -1;
+        }
         public async Task WriteAllTextAsync(string path, string text)
         {
             await File.WriteAllTextAsync(path, text).ConfigureAwait(false);
-        }
-
-
-        public async Task SetSettingsReport()
-        {
-            var SettingsJsonExample = JsonConvert.SerializeObject(SettingsReportHelper.GetSettingsReport(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
-            await File.WriteAllTextAsync(SettingsUserReportPath, SettingsJsonExample).ConfigureAwait(false);
-        }
-        public async Task<SettingsReportViewModel> GetSettingsReport()
-        {
-            FileInfo fileSettingsJson = new FileInfo(SettingsUserReportPath);
-            //if (!fileSettingsJson.Exists)
-                await SetSettingsReport();
-
-            try
-            {
-                var temp = JsonConvert.DeserializeObject<SettingsReportViewModel>(await
-                File.ReadAllTextAsync(SettingsUserReportPath),
-                new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error, });
-
-                return temp;
-            }
-            catch (Exception exp)
-            {
-                _messageDialogService.ShowInfoDialog($"Шаблон для списку програм має помилку, для вирішення проблеми:\n\n" +
-                    $"1. Виправіть помилку:\n{exp.Message}\n\n" +
-                    $"2. Згенеруйте файл по замовчуванню в меню налаштувань програми!", "Error");
-                return SettingsReportHelper.GetSettingsReport();
-            }
         }
         public async Task<XDocument> GetXDocument()
         {
@@ -776,30 +943,9 @@ namespace CompasPakc.BL
             //-------------------------------------------------------------------------------------------------------------------
         }
 
-        public void CheckReportFolders()
-        {
-            if (!Directory.Exists(Report))
-                Directory.CreateDirectory(Report);
-            if (!Directory.Exists(ReportPC))
-                Directory.CreateDirectory(ReportPC);
-            if (!Directory.Exists(ReportLaptop))
-                Directory.CreateDirectory(ReportLaptop);
-            if (!Directory.Exists(ReportMonitor))
-                Directory.CreateDirectory(ReportMonitor);
-        }
-        
-        public int GetLastReport(string paht)
-        {
-            var lastString = Directory.GetFiles(paht).Select(x => x = Regex.Match(x, "\\d+").Value).OrderBy(x => x).LastOrDefault();
-            if (lastString != null)
-            {
-                if (int.TryParse(lastString, out int last))
-                    return last;     
-                else
-                    return -1;
-            }
-            else
-                return -1;
-        }
+
+
+
+
     }
 }
