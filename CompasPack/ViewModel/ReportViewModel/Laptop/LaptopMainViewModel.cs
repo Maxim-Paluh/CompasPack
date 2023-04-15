@@ -33,7 +33,7 @@ namespace CompasPack.ViewModel
                             error = "Введи значення";
                         break;
                     case "Model":
-                        if (string.IsNullOrWhiteSpace(Brand))
+                        if (string.IsNullOrWhiteSpace(Model))
                             error = "Введи значення";
                         break;
                 }
