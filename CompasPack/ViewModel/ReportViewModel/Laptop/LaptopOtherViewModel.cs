@@ -33,7 +33,7 @@ namespace CompasPack.ViewModel
         private bool _DVDRom;
         private bool _ethernet;
         private bool _touchScreen;
-
+        private bool _keyboardLight;
 
         public bool TouchScreen
         {
@@ -125,6 +125,16 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
+        public bool KeyboardLight
+        {
+            get { return _keyboardLight; }
+            set
+            {
+                _keyboardLight = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public Hardware? WebCam
         {
@@ -521,12 +531,14 @@ namespace CompasPack.ViewModel
         }
 
         private List<string> GetHardware()
-        { 
+        {
             var temp = new List<string>();
-            if(!string.IsNullOrWhiteSpace(LaptopMonitorResolution))
+            if (!string.IsNullOrWhiteSpace(LaptopMonitorResolution))
                 temp.Add(LaptopMonitorResolution);
             if (TouchScreen)
                 temp.Add($"TouchScreen");
+            if (KeyboardLight)
+                temp.Add($"Keyboard Light");
             if (WiFi)
                 temp.Add($"Wi-Fi");
             if (HDMI)
@@ -568,7 +580,7 @@ namespace CompasPack.ViewModel
         }
 
         public ICommand TestWebCamCommand { get; set; }
-        public ICommand TestMicrophoneCommand { get; set; }    
+        public ICommand TestMicrophoneCommand { get; set; }
         public ICommand ChangeHardwareCommand { get; set; }
     }
 }
