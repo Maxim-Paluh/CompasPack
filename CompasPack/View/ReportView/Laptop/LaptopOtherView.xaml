@@ -20,9 +20,72 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
                 <!--Row_0-->
                 <TextBlock Grid.Column="0" Grid.Row="0" FontSize="14" FontWeight="Bold"  Text="LaptopOther:"></TextBlock>
+                <WrapPanel Grid.Column="1" Grid.Row="0"  Margin="4" HorizontalAlignment="Left">
+                    <TextBlock Margin="5 0 5 0" Grid.Column="0" Grid.Row="0" Text="Test:"></TextBlock>
+                    <Button Margin="5 0 5 0" Content="Web Cam" Command="{Binding TestWebCamCommand}" Style="{StaticResource ChangeColorButton}"></Button>
+                    <Button Margin="5 0 5 0" Content="Microphone" Command="{Binding TestMicrophoneCommand}" Style="{StaticResource ChangeColorButton}"></Button>
+                </WrapPanel>
+                <WrapPanel  Grid.Column="2" Grid.Row="0" Margin="4" >
+                    <TextBlock Grid.Column="0" Width="45" Grid.Row="0" Text="Display:"></TextBlock>
+                    <TextBox MinWidth="80"  Text="{Binding LaptopMonitorResolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                </WrapPanel>
+                <CheckBox Margin="4" Grid.Column="3" Grid.Row="0" Content="HDMI" IsChecked="{Binding HDMI, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ChangeHardwareCommand}"></CheckBox>
+                
+                <WrapPanel Grid.Column="4"   Margin="4" HorizontalAlignment="Right">
+                    <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>
+                    <TextBox Margin="5 0 0 0" MinWidth="300" Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                </WrapPanel>
+                
+                <!--Row_1-->
+                <TextBlock Margin="9 0 5 0" Grid.Column="1" Grid.Row="1" Text="Result:"></TextBlock>
+                <CheckBox Margin="4" Grid.Column="2" Grid.Row="1" Content="Wi-Fi" IsChecked="{Binding WiFi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ChangeHardwareCommand}"></CheckBox>
+                <CheckBox Margin="4" Grid.Column="3" Grid.Row="1" Content="DisplayPort" IsChecked="{Binding DisplayPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ChangeHardwareCommand}"></CheckBox>
+                
+                <!--Row_2-->
+                <WrapPanel Grid.Column="1" Grid.Row="2"  Margin="4" HorizontalAlignment="Left">
+                    <TextBlock Margin="5 0 5 0" Width="70" Grid.Column="0" Grid.Row="0" Text="Web Cam:"></TextBlock>
+                    <ComboBox Margin="5 0 5 0"  MinWidth="87" 
+                              ItemsSource="{Binding HardwareValues}">
+                        <ComboBox.SelectedItem>
+                            <Binding Path="WebCam" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <DataErrorValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </ComboBox.SelectedItem>
+                    </ComboBox>
+                </WrapPanel>
+                <CheckBox Margin="4" Grid.Column="2" Grid.Row="2" Content="TouchScreen" IsChecked="{Binding TouchScreen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ChangeHardwareCommand}"></CheckBox>
+                <CheckBox Margin="4" Grid.Column="3" Grid.Row="2" Content="eSATA" IsChecked="{Binding eSATA, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ChangeHardwareCommand}"></CheckBox>
+                
+                <!--Row_3-->
+                <WrapPanel Grid.Column="1" Grid.Row="3"  Margin="4" HorizontalAlignment="Left">
+                    <TextBlock Margin="5 0 5 0" Width="70" Grid.Column="0" Grid.Row="0" Text="Microphone:"></TextBlock>
+                    <ComboBox Margin="5 0 5 0"  MinWidth="87" 
+                              ItemsSource="{Binding HardwareValues}">
+                        <ComboBox.SelectedItem>
+                            <Binding Path="Microphone" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <DataErrorValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </ComboBox.SelectedItem>
+                    </ComboBox>
+                </WrapPanel>
+                <CheckBox Margin="4" Grid.Column="2" Grid.Row="3" Content="DVD-Rom" IsChecked="{Binding DVDRom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ChangeHardwareCommand}"></CheckBox>
+                <CheckBox Margin="4" Grid.Column="3" Grid.Row="3" Content="Card reader" IsChecked="{Binding CardReader, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ChangeHardwareCommand}"></CheckBox>
+
+                <!--Row_4-->
+                <CheckBox Margin="4" Grid.Column="2" Grid.Row="4" Content="VGA" IsChecked="{Binding VGA, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ChangeHardwareCommand}"></CheckBox>
+                <CheckBox Margin="4" Grid.Column="3" Grid.Row="4" Content="Ethernet" IsChecked="{Binding Ethernet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ChangeHardwareCommand}"></CheckBox>
+
+
+                
             </Grid>
         </Border>
     </Grid>

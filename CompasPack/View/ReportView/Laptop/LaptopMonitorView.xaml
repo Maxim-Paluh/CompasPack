@@ -64,12 +64,6 @@
                         </ScrollViewer>
                     </Border>
                 </WrapPanel>
-
-                <!--Row_2-->
-                <WrapPanel  Grid.Column="2" Grid.Row="2" Margin="4" >
-                    <TextBlock Grid.Column="0" Width="80" Grid.Row="0" Text="Monitor Size:"></TextBlock>
-                    <TextBox MinWidth="40"  Text="{Binding LaptopMonitorResolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                </WrapPanel>
             </Grid>
         </Border>
     </Grid>

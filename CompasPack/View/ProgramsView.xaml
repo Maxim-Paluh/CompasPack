@@ -10,119 +10,106 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <DataTemplate x:Key="GroupProgram">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <Border BorderBrush="DarkBlue" Background="AliceBlue" Margin="2" BorderThickness="1" CornerRadius="3">
-                        <Grid Margin="5">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                                <RowDefinition Height="*"></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Button Grid.Row="0" Content="{Binding GroupProgram.Name}" Command="{Binding SetVisibilityCommand}">
-                                <Button.ToolTip>
-                                    <Label Content="{Binding GroupProgram.Description}"></Label>
-                                </Button.ToolTip>
-                            </Button>
-                            <ItemsControl  Grid.Row="1" Visibility="{Binding VisibilityGroup}" ItemsSource="{Binding UserProgramViewModels}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Button Margin="3" 
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Border BorderBrush="DarkBlue" Background="AliceBlue" Margin="2" BorderThickness="1" CornerRadius="3">
+                    <Grid Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Button Grid.Row="0" Content="{Binding GroupProgram.Name}" Command="{Binding SetVisibilityCommand}">
+                            <Button.ToolTip>
+                                <Label Content="{Binding GroupProgram.Description}"></Label>
+                            </Button.ToolTip>
+                        </Button>
+                        <ItemsControl  Grid.Row="1" Visibility="{Binding VisibilityGroup}" ItemsSource="{Binding UserProgramViewModels}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Margin="3" 
                                             IsEnabled="{Binding Path=DataContext.IsEnabled, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"  
                                             Command="{Binding SelectProgramCommand}"
                                             MinWidth="120">
-                                            <Button.Template>
-                                                <ControlTemplate TargetType="Button">
-                                                    <Border Background="{Binding Background}" BorderBrush="Gray" BorderThickness="1" CornerRadius="1">
-                                                        <ContentPresenter RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                            <Grid Margin="1">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="55"></ColumnDefinition>
-                                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                                </Grid.ColumnDefinitions>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="16"></RowDefinition>
-                                                    <RowDefinition Height="16"></RowDefinition>
-                                                    <RowDefinition Height="16"></RowDefinition>
-                                                </Grid.RowDefinitions>
-                                                <Image Grid.Column="0" Width="48" Height="48" Grid.RowSpan="3" Source="{Binding UserProgram.FileImage}"></Image>
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{Binding Background}" BorderBrush="Gray" BorderThickness="1" CornerRadius="1">
+                                                    <ContentPresenter RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                        <Grid Margin="1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="55"></ColumnDefinition>
+                                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="16"></RowDefinition>
+                                                <RowDefinition Height="16"></RowDefinition>
+                                                <RowDefinition Height="16"></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <Image Grid.Column="0" Width="48" Height="48" Grid.RowSpan="3" Source="{Binding UserProgram.FileImage}"></Image>
 
-                                                <TextBlock  Height="16" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding UserProgram.ProgramName}"></TextBlock>
-                                                <TextBlock  Height="16" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Text" Value="Paid" />
-                                                            <Setter Property="Foreground" Value="Red" />
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding UserProgram.IsFree}" Value="True">
-                                                                    <Setter Property="Text" Value="Free" />
-                                                                    <Setter Property="Foreground" Value="Green" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
-                                                <TextBlock Height="16" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding UserProgram.Architecture}"></TextBlock>
-                                                <Ellipse Fill="{Binding IsInstall}" Visibility="{Binding VisibilityIsInstall}" Grid.Column="2" Grid.Row="2" Width="11" Height="11"></Ellipse>
-                                                <Grid.ToolTip>
-                                                    <Grid>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="Auto"></RowDefinition>
-                                                            <RowDefinition Height="Auto"></RowDefinition>
-                                                            <RowDefinition Height="Auto"></RowDefinition>
-                                                            <RowDefinition Height="Auto"></RowDefinition>
-                                                            <RowDefinition Height="Auto"></RowDefinition>
-                                                        </Grid.RowDefinitions>
-                                                        <Grid.ColumnDefinitions>
-                                                        </Grid.ColumnDefinitions>
-                                                        <StackPanel Grid.Row="0" Orientation="Horizontal">
-                                                            <Label Content="Id:"></Label>
-                                                            <Label Content="{Binding UserProgram.Id}"></Label>
-                                                        </StackPanel>
-                                                        <Label Grid.Row="1" Content="{Binding UserProgram.Description}"></Label>
-                                                        <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                                            <Label Content="Path Folder:"></Label>
-                                                            <Label Content="{Binding UserProgram.PathFolder}"></Label>
-                                                        </StackPanel>
-                                                        <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                                            <Label Content="File Name:"></Label>
-                                                            <Label Content="{Binding UserProgram.FileName}"></Label>
-                                                        </StackPanel>
-                                                        <StackPanel Grid.Row="4">
-                                                            <Label Content="Arguments:"></Label>
-                                                            <ItemsControl Margin="10 0 0 0" ItemsSource="{Binding UserProgram.Arguments}"/>
-                                                        </StackPanel>
-                                                    </Grid>
-                                                </Grid.ToolTip>
-                                            </Grid>
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>
-                        </Grid>
-                    </Border>
-                </ScrollViewer>
-            </DataTemplate>
-        <Style x:Key="ChangeColorButton" TargetType="Button">
-            <Style.Triggers>
-                <Trigger Property="IsPressed" Value="True">
-                    <Trigger.EnterActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <ColorAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)" To="CadetBlue"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </Trigger.EnterActions>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+                                            <TextBlock  Height="16" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding UserProgram.ProgramName}"></TextBlock>
+                                            <TextBlock  Height="16" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="Paid" />
+                                                        <Setter Property="Foreground" Value="Red" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding UserProgram.IsFree}" Value="True">
+                                                                <Setter Property="Text" Value="Free" />
+                                                                <Setter Property="Foreground" Value="Green" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBlock Height="16" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding UserProgram.Architecture}"></TextBlock>
+                                            <Ellipse Fill="{Binding IsInstall}" Visibility="{Binding VisibilityIsInstall}" Grid.Column="2" Grid.Row="2" Width="11" Height="11"></Ellipse>
+                                            <Grid.ToolTip>
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"></RowDefinition>
+                                                        <RowDefinition Height="Auto"></RowDefinition>
+                                                        <RowDefinition Height="Auto"></RowDefinition>
+                                                        <RowDefinition Height="Auto"></RowDefinition>
+                                                        <RowDefinition Height="Auto"></RowDefinition>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                                        <Label Content="Id:"></Label>
+                                                        <Label Content="{Binding UserProgram.Id}"></Label>
+                                                    </StackPanel>
+                                                    <Label Grid.Row="1" Content="{Binding UserProgram.Description}"></Label>
+                                                    <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                                        <Label Content="Path Folder:"></Label>
+                                                        <Label Content="{Binding UserProgram.PathFolder}"></Label>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                                        <Label Content="File Name:"></Label>
+                                                        <Label Content="{Binding UserProgram.FileName}"></Label>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Row="4">
+                                                        <Label Content="Arguments:"></Label>
+                                                        <ItemsControl Margin="10 0 0 0" ItemsSource="{Binding UserProgram.Arguments}"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Grid.ToolTip>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </Grid>
+                </Border>
+            </ScrollViewer>
+        </DataTemplate>
     </UserControl.Resources>
     
     
