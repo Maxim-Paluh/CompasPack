@@ -574,8 +574,20 @@ namespace CompasPakc.BL
                     SingleChoice = true,
                      UserPrograms = new List<UserProgram>()
                     {
-                     new UserProgram(){
+                         new UserProgram(){
                             Id = 24,
+                            ProgramName = "Report Comp@s",
+                            Description =   $"Ставив Comp@s",
+                            Arguments = new List<string>() { "\\LogInstall", "Name:Comp@s"},
+                            IsFree = true,
+                            DisableDefender = false,
+                            PathFolder = _install + "Tools\\",
+                            FileName = "LogInstall",
+                            Architecture = "x86",
+                            FileImage = "LogInstall.png",
+                        },
+                     new UserProgram(){
+                            Id = 25,
                             ProgramName = "Report Greg_House_M_D",
                             Description =   $"Ставив Greg_House_M_D",
                             Arguments = new List<string>() { "\\LogInstall", "Name:Greg_House_M_D"},
@@ -587,7 +599,7 @@ namespace CompasPakc.BL
                             FileImage = "LogInstall.png",
                         },
                      new UserProgram(){
-                            Id = 25,
+                            Id = 26,
                             ProgramName = "Report Vadimakus",
                             Description =   $"Ставив Vadimakus",
                             Arguments = new List<string>() { "\\LogInstall", "Name:Vadimakus"},
