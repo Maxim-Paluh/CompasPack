@@ -25,12 +25,15 @@ namespace CompasPack.ViewModel
         private bool _isEnable;
         private string _reportPath;
         private int _indexReport;
-
+        
+        private LaptopMainViewModel _laptopMainViewModel;
+        private LaptopMonitorViewModel _laptopMonitorViewModel;
         private CPUViewModel _CPUViewModel;
         private MemoryViewModel _memoryViewModel;
         private VideoViewModel _videoViewModel;
         private PhysicalDiskViewModel _physicalDiskViewModel;
-        private LaptopMainViewModel _laptopMainViewModel;
+        private LaptopBatteryViewModel _laptopBatteryViewModel;
+        private LaptopOtherViewModel _laptopOtherViewModel;
 
         private IMessageDialogService _messageDialogService;
         public bool IsEnable
@@ -226,8 +229,16 @@ namespace CompasPack.ViewModel
         {
             _ioManager.OpenFolder(ReportPath);
         }
-        
 
+        public LaptopMonitorViewModel LaptopMonitorViewModel
+        {
+            get { return _laptopMonitorViewModel; }
+            set
+            {
+                _laptopMonitorViewModel = value;
+                OnPropertyChanged();
+            }
+        }
         public CPUViewModel CPUViewModel
         {
             get { return _CPUViewModel; }
@@ -273,23 +284,44 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
+        public LaptopBatteryViewModel LaptopBatteryViewModel
+        {
+            get { return _laptopBatteryViewModel; }
+            set { _laptopBatteryViewModel = value; }
+        }
+        public LaptopOtherViewModel LaptopOtherViewModel
+        {
+            get { return _laptopOtherViewModel; }
+            set
+            {
+                _laptopOtherViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+       
+        
 
         public async Task LoadAsync(int? Id)
         {
             LaptopMainViewModel = new LaptopMainViewModel(_settingsReportViewModel);
+            LaptopMonitorViewModel = new LaptopMonitorViewModel(_settingsReportViewModel, _xDocument);
 
             CPUViewModel = new CPUViewModel(_settingsReportViewModel, _xDocument);
             MemoryViewModel = new MemoryViewModel(_settingsReportViewModel, _xDocument);
             VideoViewModel = new VideoViewModel(_settingsReportViewModel);
             PhysicalDiskViewModel = new PhysicalDiskViewModel(_settingsReportViewModel, _xDocument);
+            LaptopOtherViewModel = new LaptopOtherViewModel(_settingsReportViewModel, _xDocument);
+            LaptopBatteryViewModel = new LaptopBatteryViewModel(_settingsReportViewModel, _xDocument);
 
             await Task.Factory.StartNew(() =>
             {
                 CPUViewModel.Load();
+                LaptopMonitorViewModel.Load();
                 MemoryViewModel.Load();
                 VideoViewModel.Load();
                 PhysicalDiskViewModel.Load();
+                LaptopBatteryViewModel.Load();
+                LaptopOtherViewModel.Load();
             });
 
             IndexReport = _ioManager.GetLastReport(ReportPath) + 1;

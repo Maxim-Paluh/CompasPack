@@ -728,11 +728,29 @@ namespace CompasPakc.BL
                 {
                     Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)" }
                 },
+                LaptopMonitor = new LaptopMonitor()
+                { 
+                    LaptopMonitorType = new LaptopMonitorType()
+                    {
+                        XPath = "//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi') , \"тип монiтора\")]/Value",
+                        Regex = new List<string>() { "[^\\d.\"]" }
+                    },
+                    LaptopMonitorSize = new LaptopMonitorSize()
+                    {
+                        XPath = "//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi') , \"видима область екрана\")]/Value",
+                        Regex = new List<string>() { "(.*\\()", "(\\).*)" }
+                    }
+                },
+                LaptopBattery = new LaptopBattery()
+                { 
+                    XPath = "//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi') , \"зносу\")]/Value",
+                    Regex = new List<string>() { "[^\\d]+" }
+                },
+
                 PowerSupply = new List<string>() { "1stPlayer", "2N", "AeroCool", "Antec", "Argus", "ASPower", "ASUS", "Azza", "Be quiet!", "Casecom", "Chenbro", "Chieftec", "Chieftronic", "CoolerMaster",
                     "Corsair", "Cougar", "Deepcool", "Dell", "Delux", "Enermax", "Extradigital", "Fractal Design", "Frime", "FrimeCom", "FSP", "Gamemax", "GIGABYTE", "Golden Field", "GreatWall", "Greenvision",
                     "High Power", "HP", "IBM", "INTEL", "Inter-Tech", "Lenovo", "Logic concept", "LogicPower", "Meraki", "Modecom", "MSI", "Nikon", "NZXT", "Qdion", "QNap", "Qube", "Rezone Case", "Seasonic",
                     "Segotep", "Silver Stone", "Supermicro", "TECNOWARE", "ThermalTake", "Vinga", "Xilence", "Zalman" },
-
                 Laptops = new Dictionary<string, List<string>>() 
                 {
                     {"Dell", new List<string>() { "Alienware", "G Series", "Inspiron", "Latitude", "Precision", "Vostro", "XPS" } },

@@ -29,6 +29,15 @@
         <DataTemplate DataType="{x:Type ViewModel:PhysicalDiskViewModel}">
             <View:PhysicalDiskView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:LaptopOtherViewModel}">
+            <View:LaptopOtherView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:LaptopMonitorViewModel}">
+            <View:LaptopMonitorView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:LaptopBatteryViewModel}">
+            <View:LaptopBatteryView/>
+        </DataTemplate>
     </UserControl.Resources>
     
     <Border  BorderBrush="DarkBlue" Margin="2"  BorderThickness="1" CornerRadius="3">
@@ -51,15 +60,21 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
 
             <ContentControl  Grid.Row="0"  Content="{Binding LaptopMainViewModel}"/>
-            <ContentControl  Grid.Row="1"  Content="{Binding CPUViewModel}"/>
-            <ContentControl  Grid.Row="2"  Content="{Binding MemoryViewModel}"/>
-            <ContentControl  Grid.Row="3"  Content="{Binding VideoViewModel}"/>
-            <ContentControl  Grid.Row="4"  Content="{Binding PhysicalDiskViewModel}"/>
+            <ContentControl  Grid.Row="1"  Content="{Binding LaptopMonitorViewModel}"/>
+            <ContentControl  Grid.Row="2"  Content="{Binding CPUViewModel}"/>
+            <ContentControl  Grid.Row="3"  Content="{Binding MemoryViewModel}"/>
+            <ContentControl  Grid.Row="4"  Content="{Binding VideoViewModel}"/>
+            <ContentControl  Grid.Row="5"  Content="{Binding PhysicalDiskViewModel}"/>
+            <ContentControl  Grid.Row="6"  Content="{Binding LaptopBatteryViewModel}"/>
+            <ContentControl  Grid.Row="7"  Content="{Binding LaptopOtherViewModel}"/>
 
-            <Border Grid.Row="7"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
+            <Border Grid.Row="8"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"></ColumnDefinition>

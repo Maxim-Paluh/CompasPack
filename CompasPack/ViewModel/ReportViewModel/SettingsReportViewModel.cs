@@ -21,6 +21,10 @@ namespace CompasPack.ViewModel
         private VideoController _videoController;
         private List<string> _powersupply;
         private Dictionary<string, List<string>> _laptops;
+        private LaptopMonitor _laptopMonitor;
+        private LaptopBattery _laptopBattery;
+        private LaptopOther _laptopOther;
+
 
         //---------------------------------
         public CPU CPU
@@ -68,6 +72,9 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
+
+
+
         public Dictionary<string, List<string>> Laptops
         {
             get { return _laptops; }
@@ -76,6 +83,21 @@ namespace CompasPack.ViewModel
                 _laptops = value;
                 OnPropertyChanged();
             }
+        }
+        public LaptopMonitor LaptopMonitor
+        {
+            get { return _laptopMonitor; }
+            set { _laptopMonitor = value; }
+        }
+        public LaptopBattery LaptopBattery
+        {
+            get { return _laptopBattery; }
+            set { _laptopBattery = value; }
+        }
+        public LaptopOther LaptopOther
+        {
+            get { return _laptopOther; }
+            set { _laptopOther = value; }
         }
     }
 
@@ -120,6 +142,46 @@ namespace CompasPack.ViewModel
 
     }
 
+    public class LaptopMonitor
+    {
+
+        private LaptopMonitorResolution _laptopMonitorResolution;
+        private LaptopMonitorType _laptopMonitorType;
+        private LaptopMonitorSize _laptopMonitorSize;
+
+        public LaptopMonitorSize LaptopMonitorSize
+        {
+            get { return _laptopMonitorSize; }
+            set { _laptopMonitorSize = value; }
+        }
+        public LaptopMonitorType LaptopMonitorType
+        {
+            get { return _laptopMonitorType; }
+            set { _laptopMonitorType = value; }
+        }
+        public LaptopMonitorResolution LaptopMonitorResolution
+        {
+            get { return _laptopMonitorResolution; }
+            set { _laptopMonitorResolution = value; }
+        }
+
+
+    }
+    public class LaptopMonitorType : ReportBase
+    {
+    }
+    public class LaptopMonitorResolution : ReportBase
+    {
+    }
+    public class LaptopMonitorSize : ReportBase
+    {
+    }
+
+    public class LaptopBattery : ReportBase
+    {
+    }
+    public class LaptopOther : ReportBase
+    { }
 
     public class ReportBase : ViewModelBase
     {

@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CompasPack.ViewModel
 {
-    class LaptopMainViewModel :  ReportViewModelBase, IReportViewModel
+    class LaptopMainViewModel : ReportViewModelBase, IReportViewModel, IDataErrorInfo
     {
         private string _brand;
         private string _model;
@@ -18,6 +20,27 @@ namespace CompasPack.ViewModel
         {
             SettingsReport = settingsReport;
         }
+
+        public string this[string columnName]
+        {
+            get
+            {
+                string error = String.Empty;
+                switch (columnName)
+                {
+                    case "Brand":
+                        if (string.IsNullOrWhiteSpace(Brand))
+                            error = "Введи значення";
+                        break;
+                    case "Model":
+                        if (string.IsNullOrWhiteSpace(Brand))
+                            error = "Введи значення";
+                        break;
+                }
+                return error;
+            }
+        }
+
 
         public KeyValuePair<string, List<string>> Lines
         {
@@ -68,6 +91,8 @@ namespace CompasPack.ViewModel
                     Result = $"{_brand} {_model}";
             }
         }
+
+        public string Error => throw new NotImplementedException();
 
         public void Load()
         {

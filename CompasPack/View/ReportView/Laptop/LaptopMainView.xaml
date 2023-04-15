@@ -26,8 +26,14 @@
                                 ItemsSource="{Binding SettingsReport.Laptops}" 
                                 DisplayMemberPath="Key"
                                 SelectedItem="{Binding Lines, UpdateSourceTrigger=PropertyChanged}"
-                                IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True"
-                                Text="{Binding Brand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True">
+                        <ComboBox.Text>
+                            <Binding Path="Brand" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <DataErrorValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </ComboBox.Text>
                     </ComboBox>
                     <TextBlock Margin="5 0 0 0" Grid.Column="0" Width="40" Grid.Row="0" Text="Line:" FontSize="18"></TextBlock>
                     <ComboBox   Grid.Row="11"  MinWidth="100"
@@ -38,7 +44,15 @@
                 </WrapPanel>
                 <WrapPanel  Grid.Column="2"  Margin="4" Grid.RowSpan="2">
                     <TextBlock Margin="5 0 5 0"  Width="40" Text="Model:"></TextBlock>
-                    <TextBox Margin="5 0 5 0" Height="22"  MinWidth="100" Text="{Binding Model, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox Margin="5 0 5 0" Height="22"  MinWidth="100">
+                        <TextBox.Text>
+                            <Binding Path="Model" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <DataErrorValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                 </WrapPanel>
                 <WrapPanel Grid.Column="3"   Margin="4" HorizontalAlignment="Right">
                     <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>

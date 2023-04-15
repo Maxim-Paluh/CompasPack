@@ -99,9 +99,11 @@ namespace CompasPack.ViewModel
         public async Task LoadAsync(int? Id)
         {
             _ioManager.CheckReportFolders();
+
             _xDocument = await _ioManager.GetXDocument();
+
             _settingsReportViewModel = await _ioManager.GetSettingsReport();
-            if (_settingsReportViewModel!= null)
+            if (_settingsReportViewModel!= null && _xDocument != null)
                 IsEnable = true;
         }
         public void Unsubscribe()
