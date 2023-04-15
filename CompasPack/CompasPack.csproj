@@ -10,10 +10,21 @@
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <ApplicationIcon>CompasPack.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Logo_2016.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="CompasPack.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Logo_2016.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
