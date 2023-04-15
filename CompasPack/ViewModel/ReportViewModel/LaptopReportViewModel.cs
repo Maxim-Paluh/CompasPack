@@ -83,11 +83,11 @@ namespace CompasPack.ViewModel
 
         private async void OnSaveReport()
         {
-            //if (string.IsNullOrWhiteSpace(PCCaseViewModel.Name) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Text) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Power) || !PowerSupplyViewModel.Power.All(char.IsDigit))
-            //{
-            //    _messageDialogService.ShowInfoDialog("Заповни всі поля виділені червоним", "Помилка!");
-            //    return;
-            //}
+            if (string.IsNullOrWhiteSpace(LaptopMainViewModel.Brand) || string.IsNullOrWhiteSpace(LaptopMainViewModel.Model) || LaptopOtherViewModel.Microphone==null || LaptopOtherViewModel.WebCam==null)
+            {
+                _messageDialogService.ShowInfoDialog("Заповни всі поля виділені червоним", "Помилка!");
+                return;
+            }
 
             bool checkHml = File.Exists($"{ReportPath}\\Report_{IndexReport:000}.htm");
             bool checkHtml = File.Exists($"{ReportPath}\\Report_{IndexReport:000}.html");
@@ -219,8 +219,6 @@ namespace CompasPack.ViewModel
                   $"{e.Message}\n\n{e.StackTrace}", "Помилка");
             }
         }
-
-
         private void OnOpenReport()
         {
             if (!File.Exists($"{ReportPath}\\Report_{IndexReport:000}.html"))
