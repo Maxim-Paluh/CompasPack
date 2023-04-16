@@ -247,7 +247,7 @@ namespace CompasPack.ViewModel
             string? arguments = null;
             int countOpen = 0;
             a:
-            if (userProgramViewMode.UserProgram.DisableDefender)
+            if (userProgramViewMode.UserProgram.DisableDefender && !WinInfo.GetProductName().Contains("Windows 7", StringComparison.InvariantCultureIgnoreCase))
             {
                 if (!await WinDefender.CheckDefenderDisable())
                 {
