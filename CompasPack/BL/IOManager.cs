@@ -472,7 +472,7 @@ namespace CompasPakc.BL
                             Description =   $"Microsoft Office 2003 - пакет офісних додатків, який розповсюджується компанією Microsoft для операційних системи Windows.\n" +
                                             $"Випуск розпочався 19 серпня 2003, на ринок був випущений 21 жовтня 2003. Його попередником є ​​Microsoft Office XP, а наступником - Microsoft Office 2007.\n" +
                                             $"Це остання версія Microsoft Office, який використовував формат 97-2003, а також остання версія, в якій інтерфейс додатків був виконаний у вигляді панелей інструментів і меню.",
-                            Arguments = new List<string>() {""},
+                            Arguments = new List<string>() {"/qr", "/noreboot"},
                             IsFree = false,
                             DisableDefender = false,
                             PathFolder = _install + "Office\\Office 2003\\",
@@ -487,7 +487,7 @@ namespace CompasPakc.BL
                             Description =   $"Microsoft Office 2007 - версія пакету додатків Microsoft Office, що послідувала за Microsoft Office 2003 і попередник Microsoft Office 2010.\n" +
                                             $"Надійшла у продаж для організацій 30 листопада 2006, для індивідуальних клієнтів — 30 січня 2007.\n" +
                                             $"Одночасно була випущена операційна система Windows Vista.",
-                            Arguments = new List<string>() {""},
+                            Arguments = new List<string>() {"/config silent.xml"},
                             IsFree = false,
                             DisableDefender = false,
                             PathFolder = _install + "Office\\Office 2007\\",
@@ -503,7 +503,7 @@ namespace CompasPakc.BL
                                             $"Office 2010 є наступником Microsoft Office 2007 та попередником Microsoft Office 2013.\n" +
                                             $"Office 2010 включає в себе підтримку розширених форматів файлів, поліпшення інтерфейсу користувача, а також змінений користувальницький досвід.\n" +
                                             $"У 64-розрядній версії Office 2010 виключена підтримка для Windows XP та для Windows Server 2003.",
-                            Arguments = new List<string>() {""},
+                            Arguments = new List<string>() {"-ais"},
                             IsFree = false,
                             DisableDefender = false,
                             PathFolder = _install + "Office\\Office 2010\\",
@@ -518,7 +518,7 @@ namespace CompasPakc.BL
                             Description =   $"Microsoft Office 2016 — остання версія популярного офісного пакету компанії Microsoft, що розповсюджувався за допомогою MSI-інсталятора.\n" +
                                             $"Пакет був представлений широкій публіці наприкінці 2014 року.\n" +
                                             $"Офіційний реліз відбувся разом із новою операційною системою Windows 10 в один день, 29 липня 2015.",
-                            Arguments = new List<string>() {""},
+                            Arguments = new List<string>() {"-ais"},
                             IsFree = false,
                             DisableDefender = false,
                             PathFolder = _install + "Office\\Office 2016\\",
