@@ -468,6 +468,7 @@ namespace CompasPakc.BL
                         new UserProgram(){
                             Id = 18,
                             ProgramName = "Microsoft Office 2003",
+                            InstallProgramName = "версии 2003",
                             Description =   $"Microsoft Office 2003 - пакет офісних додатків, який розповсюджується компанією Microsoft для операційних системи Windows.\n" +
                                             $"Випуск розпочався 19 серпня 2003, на ринок був випущений 21 жовтня 2003. Його попередником є ​​Microsoft Office XP, а наступником - Microsoft Office 2007.\n" +
                                             $"Це остання версія Microsoft Office, який використовував формат 97-2003, а також остання версія, в якій інтерфейс додатків був виконаний у вигляді панелей інструментів і меню.",
@@ -482,6 +483,7 @@ namespace CompasPakc.BL
                          new UserProgram(){
                             Id = 19,
                             ProgramName = "Microsoft Office 2007",
+                            InstallProgramName = "enterprise 2007",
                             Description =   $"Microsoft Office 2007 - версія пакету додатків Microsoft Office, що послідувала за Microsoft Office 2003 і попередник Microsoft Office 2010.\n" +
                                             $"Надійшла у продаж для організацій 30 листопада 2006, для індивідуальних клієнтів — 30 січня 2007.\n" +
                                             $"Одночасно була випущена операційна система Windows Vista.",
@@ -496,6 +498,7 @@ namespace CompasPakc.BL
                           new UserProgram(){
                             Id = 20,
                             ProgramName = "Microsoft Office 2010",
+                            InstallProgramName = "плюс 2010",
                             Description =   $"Microsoft Office 2010 - версія додатків офісного пакету для операційної системи Microsoft Windows.\n" +
                                             $"Office 2010 є наступником Microsoft Office 2007 та попередником Microsoft Office 2013.\n" +
                                             $"Office 2010 включає в себе підтримку розширених форматів файлів, поліпшення інтерфейсу користувача, а також змінений користувальницький досвід.\n" +
