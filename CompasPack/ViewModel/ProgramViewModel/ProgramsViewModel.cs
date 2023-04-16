@@ -269,14 +269,15 @@ namespace CompasPack.ViewModel
             {
                 ExecutableFile = Directory.GetFiles(userProgram.PathFolder)
                .Where(x => x.Contains(userProgram.OnlineInstaller.FileName, StringComparison.InvariantCultureIgnoreCase))
-               .Where(x => x.Contains("exe") || x.Contains("msi")).FirstOrDefault();
+               .Where(x => x.Contains("exe", StringComparison.InvariantCultureIgnoreCase) || x.Contains("msi", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
 
                 arguments = string.Join(" ", userProgram.OnlineInstaller.Arguments);
             }
             if (ExecutableFile == null)
             {
                 var Files = Directory.GetFiles(userProgram.PathFolder)
-                   .Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase)).Where(x => x.Contains("exe") || x.Contains("msi"));
+                   .Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase))
+                   .Where(x => x.Contains("exe", StringComparison.InvariantCultureIgnoreCase) || x.Contains("msi", StringComparison.InvariantCultureIgnoreCase));
                 if (userProgram.Architecture == "x64")
                 {
                     if (WinInfo.GetIs64BitOperatingSystem())
