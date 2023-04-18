@@ -13,7 +13,7 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class PhysicalDiskViewModel : ReportViewModelBase, IReportViewModel
+    public class PhysicalDiskViewModel : ReportHardWareViewModelBase, IReportViewModel
     {
         private static object _lock = new object();
         public PhysicalDiskViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)

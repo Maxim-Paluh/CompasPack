@@ -29,16 +29,8 @@ using System.IO.Compression;
 
 namespace CompasPack.ViewModel
 {
-    public class ComputerReportViewModel : ViewModelBase, IDetailViewModel
+    public class ComputerReportViewModel : ReportViewModelBase, IDetailViewModel
     {
-        private SettingsReportViewModel _settingsReportViewModel;
-        private XDocument _xDocument;
-        private IIOManager _ioManager;
-
-        private bool _isEnable;
-        private string _reportPath;
-        private int _indexReport;
-
         private PCCaseViewModel _pCCaseViewModel;
         private CPUViewModel _CPUViewModel;
         private MotherboardViewModel _motherboardViewModel;
@@ -46,55 +38,78 @@ namespace CompasPack.ViewModel
         private VideoViewModel _videoViewModel;
         private PhysicalDiskViewModel _physicalDiskViewModel;
         private PowerSupplyViewModel _powerSupplyView;
-        private IMessageDialogService _messageDialogService;
 
-        public bool IsEnable
+        public PCCaseViewModel PCCaseViewModel
         {
-            get { return _isEnable; }
+            get { return _pCCaseViewModel; }
             set
             {
-                _isEnable = value;
+                _pCCaseViewModel = value;
                 OnPropertyChanged();
             }
         }
-        public string ReportPath
+        public CPUViewModel CPUViewModel
         {
-            get { return _reportPath; }
+            get { return _CPUViewModel; }
             set
             {
-                _reportPath = value;
+                _CPUViewModel = value;
                 OnPropertyChanged();
             }
         }
-        public int IndexReport
+        public MotherboardViewModel MotherboardViewModel
         {
-            get { return _indexReport; }
+            get { return _motherboardViewModel; }
             set
             {
-                _indexReport = value;
+                _motherboardViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+        public MemoryViewModel MemoryViewModel
+        {
+            get { return _memoryViewModel; }
+            set
+            {
+                _memoryViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+        public VideoViewModel VideoViewModel
+        {
+            get { return _videoViewModel; }
+            set
+            {
+                _videoViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+        public PhysicalDiskViewModel PhysicalDiskViewModel
+        {
+            get { return _physicalDiskViewModel; }
+            set
+            {
+                _physicalDiskViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+        public PowerSupplyViewModel PowerSupplyViewModel
+        {
+            get { return _powerSupplyView; }
+            set
+            {
+                _powerSupplyView = value;
                 OnPropertyChanged();
             }
         }
 
-        public ComputerReportViewModel(IIOManager iOManager, SettingsReportViewModel settingsReportViewModel, XDocument xDocument, IMessageDialogService messageDialogService)
+        public ComputerReportViewModel(IIOManager iOManager, SettingsReportViewModel settingsReportViewModel, XDocument xDocument, IMessageDialogService messageDialogService) : 
+            base (iOManager, settingsReportViewModel, xDocument, messageDialogService)
         {
-            IsEnable = false;
-            _ioManager = iOManager;
-            _settingsReportViewModel = settingsReportViewModel;
-            _xDocument = xDocument;
-            _messageDialogService = messageDialogService;
-
             ReportPath = _ioManager.ReportPC;
-
-            SaveReportCommand = new DelegateCommand(OnSaveReport);
-
-            OpenReportCommand = new DelegateCommand(OnOpenReport);
-            OpenPriceCommand = new DelegateCommand(OnOpenPrice);
-            OpenFolderCommand = new DelegateCommand(OnOpenFolder);
-
         }
 
-        private async void OnSaveReport()
+        protected override  async void OnSaveReport()
         {
             if (string.IsNullOrWhiteSpace(PCCaseViewModel.Name) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Text) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Power) || !PowerSupplyViewModel.Power.All(char.IsDigit))
             {
@@ -223,88 +238,7 @@ namespace CompasPack.ViewModel
                 _messageDialogService.ShowInfoDialog($"В процесі формування звіту docx відбулася помилка.\n\nФайл: {ReportPath}\\Report_{IndexReport:000}.docx не створено!\n\nЗвернись до розробника і скинь фото:\n\n" +
                   $"{e.Message}\n\n{e.StackTrace}", "Помилка");
             } 
-        }
-      
-        private void OnOpenReport()
-        {
-            if (!File.Exists($"{ReportPath}\\Report_{IndexReport:000}.html"))
-                _messageDialogService.ShowInfoDialog("Такого файлу нема!", "Помилка!");
-            _ioManager.OpenFolderAndSelectFile($"{ReportPath}\\Report_{IndexReport:000}.html");
-        }
-        private void OnOpenPrice()
-        {
-            if (!File.Exists($"{ReportPath}\\Report_{IndexReport:000}.docx"))
-                _messageDialogService.ShowInfoDialog("Такого файлу нема!", "Помилка!");
-            _ioManager.OpenFolderAndSelectFile($"{ReportPath}\\Report_{IndexReport:000}.docx");
-        }
-        private void OnOpenFolder()
-        {
-            _ioManager.OpenFolder(ReportPath);
-        }
-
-        public PCCaseViewModel PCCaseViewModel
-        {
-            get { return _pCCaseViewModel; }
-            set
-            {
-                _pCCaseViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public CPUViewModel CPUViewModel
-        {
-            get { return _CPUViewModel; }
-            set
-            {
-                _CPUViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public MotherboardViewModel MotherboardViewModel
-        {
-            get { return _motherboardViewModel; }
-            set
-            {
-                _motherboardViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public MemoryViewModel MemoryViewModel
-        {
-            get { return _memoryViewModel; }
-            set
-            {
-                _memoryViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public VideoViewModel VideoViewModel
-        {
-            get { return _videoViewModel; }
-            set
-            {
-                _videoViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public PhysicalDiskViewModel PhysicalDiskViewModel
-        {
-            get { return _physicalDiskViewModel; }
-            set
-            {
-                _physicalDiskViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public PowerSupplyViewModel PowerSupplyViewModel
-        {
-            get { return _powerSupplyView; }
-            set
-            {
-                _powerSupplyView = value;
-                OnPropertyChanged();
-            }
-        }
+        }  
 
         public async Task LoadAsync(int? Id)
         {
@@ -338,10 +272,6 @@ namespace CompasPack.ViewModel
 
         }
 
-        public ICommand SaveReportCommand { get; set; }
-        public ICommand OpenReportCommand { get; set; }
-        public ICommand SavePriceCommand { get; set; }
-        public ICommand OpenPriceCommand { get; set; }
-        public ICommand OpenFolderCommand { get; set; }
+
     }
 }

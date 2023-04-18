@@ -12,7 +12,7 @@ namespace CompasPack
     {
         void Load();
     }
-    public class ReportViewModelBase : ViewModelBase
+    public class ReportHardWareViewModelBase : ViewModelBase
     {
         private XDocument? _document;
         private SettingsReportViewModel _settingsReport;

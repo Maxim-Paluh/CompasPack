@@ -9,7 +9,7 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    class LaptopBatteryViewModel : ReportViewModelBase, IReportViewModel
+    class LaptopBatteryViewModel : ReportHardWareViewModelBase, IReportViewModel
     {
         private string _wearLevel;
 

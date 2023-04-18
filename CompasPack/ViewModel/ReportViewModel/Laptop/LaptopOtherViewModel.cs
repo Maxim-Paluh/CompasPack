@@ -18,7 +18,7 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    class LaptopOtherViewModel : ReportViewModelBase, IReportViewModel, IDataErrorInfo
+    class LaptopOtherViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
     {
         private Hardware? _webCam;
         private Hardware? _microphone;

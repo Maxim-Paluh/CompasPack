@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class CPUViewModel : ReportViewModelBase, IReportViewModel
+    public class CPUViewModel : ReportHardWareViewModelBase, IReportViewModel
     {
         private string _name;
         private string _clock;

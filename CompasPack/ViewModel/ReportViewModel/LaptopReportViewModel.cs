@@ -16,16 +16,8 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    internal class LaptopReportViewModel : ViewModelBase, IDetailViewModel
-    {
-        private SettingsReportViewModel _settingsReportViewModel;
-        private XDocument _xDocument;
-        private IIOManager _ioManager;
-
-        private bool _isEnable;
-        private string _reportPath;
-        private int _indexReport;
-        
+    internal class LaptopReportViewModel : ReportViewModelBase, IDetailViewModel
+    {   
         private LaptopMainViewModel _laptopMainViewModel;
         private LaptopMonitorViewModel _laptopMonitorViewModel;
         private CPUViewModel _CPUViewModel;
@@ -35,53 +27,83 @@ namespace CompasPack.ViewModel
         private LaptopBatteryViewModel _laptopBatteryViewModel;
         private LaptopOtherViewModel _laptopOtherViewModel;
 
-        private IMessageDialogService _messageDialogService;
-        public bool IsEnable
+        public LaptopMonitorViewModel LaptopMonitorViewModel
         {
-            get { return _isEnable; }
+            get { return _laptopMonitorViewModel; }
             set
             {
-                _isEnable = value;
+                _laptopMonitorViewModel = value;
                 OnPropertyChanged();
             }
         }
-        public string ReportPath
+        public CPUViewModel CPUViewModel
         {
-            get { return _reportPath; }
+            get { return _CPUViewModel; }
             set
             {
-                _reportPath = value;
+                _CPUViewModel = value;
                 OnPropertyChanged();
             }
         }
-        public int IndexReport
+        public MemoryViewModel MemoryViewModel
         {
-            get { return _indexReport; }
+            get { return _memoryViewModel; }
             set
             {
-                _indexReport = value;
+                _memoryViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+        public VideoViewModel VideoViewModel
+        {
+            get { return _videoViewModel; }
+            set
+            {
+                _videoViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+        public PhysicalDiskViewModel PhysicalDiskViewModel
+        {
+            get { return _physicalDiskViewModel; }
+            set
+            {
+                _physicalDiskViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+        public LaptopMainViewModel LaptopMainViewModel
+        {
+            get { return _laptopMainViewModel; }
+            set
+            {
+                _laptopMainViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+        public LaptopBatteryViewModel LaptopBatteryViewModel
+        {
+            get { return _laptopBatteryViewModel; }
+            set { _laptopBatteryViewModel = value; }
+        }
+        public LaptopOtherViewModel LaptopOtherViewModel
+        {
+            get { return _laptopOtherViewModel; }
+            set
+            {
+                _laptopOtherViewModel = value;
                 OnPropertyChanged();
             }
         }
 
 
-        public LaptopReportViewModel(IIOManager iOManager, SettingsReportViewModel settingsReportViewModel, XDocument xDocument, IMessageDialogService messageDialogService)
+        public LaptopReportViewModel(IIOManager iOManager, SettingsReportViewModel settingsReportViewModel, XDocument xDocument, IMessageDialogService messageDialogService) :
+            base(iOManager, settingsReportViewModel, xDocument, messageDialogService)
         {
-            _ioManager = iOManager;
-            _settingsReportViewModel = settingsReportViewModel;
-            _xDocument = xDocument;
-            _messageDialogService = messageDialogService;
-
             ReportPath = _ioManager.ReportLaptop;
-
-            SaveReportCommand = new DelegateCommand(OnSaveReport);
-
-            OpenReportCommand = new DelegateCommand(OnOpenReport);
-            OpenPriceCommand = new DelegateCommand(OnOpenPrice);
-            OpenFolderCommand = new DelegateCommand(OnOpenFolder);
         }
 
-        private async void OnSaveReport()
+        protected override async void OnSaveReport()
         {
             if (string.IsNullOrWhiteSpace(LaptopMainViewModel.Brand) || string.IsNullOrWhiteSpace(LaptopMainViewModel.Model) || LaptopOtherViewModel.Microphone==null || LaptopOtherViewModel.WebCam==null)
             {
@@ -219,93 +241,6 @@ namespace CompasPack.ViewModel
                   $"{e.Message}\n\n{e.StackTrace}", "Помилка");
             }
         }
-        private void OnOpenReport()
-        {
-            if (!File.Exists($"{ReportPath}\\Report_{IndexReport:000}.html"))
-                _messageDialogService.ShowInfoDialog("Такого файлу нема!", "Помилка!");
-            _ioManager.OpenFolderAndSelectFile($"{ReportPath}\\Report_{IndexReport:000}.html");
-        }
-        private void OnOpenPrice()
-        {
-            if (!File.Exists($"{ReportPath}\\Report_{IndexReport:000}.docx"))
-                _messageDialogService.ShowInfoDialog("Такого файлу нема!", "Помилка!");
-            _ioManager.OpenFolderAndSelectFile($"{ReportPath}\\Report_{IndexReport:000}.docx");
-        }
-        private void OnOpenFolder()
-        {
-            _ioManager.OpenFolder(ReportPath);
-        }
-
-        public LaptopMonitorViewModel LaptopMonitorViewModel
-        {
-            get { return _laptopMonitorViewModel; }
-            set
-            {
-                _laptopMonitorViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public CPUViewModel CPUViewModel
-        {
-            get { return _CPUViewModel; }
-            set
-            {
-                _CPUViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public MemoryViewModel MemoryViewModel
-        {
-            get { return _memoryViewModel; }
-            set
-            {
-                _memoryViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public VideoViewModel VideoViewModel
-        {
-            get { return _videoViewModel; }
-            set
-            {
-                _videoViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public PhysicalDiskViewModel PhysicalDiskViewModel
-        {
-            get { return _physicalDiskViewModel; }
-            set
-            {
-                _physicalDiskViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public LaptopMainViewModel LaptopMainViewModel 
-        {
-            get { return _laptopMainViewModel; }
-            set
-            {
-                _laptopMainViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public LaptopBatteryViewModel LaptopBatteryViewModel
-        {
-            get { return _laptopBatteryViewModel; }
-            set { _laptopBatteryViewModel = value; }
-        }
-        public LaptopOtherViewModel LaptopOtherViewModel
-        {
-            get { return _laptopOtherViewModel; }
-            set
-            {
-                _laptopOtherViewModel = value;
-                OnPropertyChanged();
-            }
-        }
-       
-        
 
         public async Task LoadAsync(int? Id)
         {
@@ -341,11 +276,5 @@ namespace CompasPack.ViewModel
         {
 
         }
-
-        public ICommand SaveReportCommand { get; set; }
-        public ICommand OpenReportCommand { get; set; }
-        public ICommand SavePriceCommand { get; set; }
-        public ICommand OpenPriceCommand { get; set; }
-        public ICommand OpenFolderCommand { get; set; }
     }
 }

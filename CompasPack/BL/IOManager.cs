@@ -744,7 +744,7 @@ namespace CompasPakc.BL
                     Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)" }
                 },
                 LaptopMonitor = new LaptopMonitor()
-                { 
+                {
                     LaptopMonitorType = new LaptopMonitorType()
                     {
                         XPath = "//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi') , \"тип монiтора\")]/Value",
@@ -757,7 +757,7 @@ namespace CompasPakc.BL
                     }
                 },
                 LaptopBattery = new LaptopBattery()
-                { 
+                {
                     XPath = "//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi') , \"зносу\")]/Value",
                     Regex = new List<string>() { "[^\\d]+" }
                 },
@@ -766,19 +766,19 @@ namespace CompasPakc.BL
                     "Corsair", "Cougar", "Deepcool", "Dell", "Delux", "Enermax", "Extradigital", "Fractal Design", "Frime", "FrimeCom", "FSP", "Gamemax", "GIGABYTE", "Golden Field", "GreatWall", "Greenvision",
                     "High Power", "HP", "IBM", "INTEL", "Inter-Tech", "Lenovo", "Logic concept", "LogicPower", "Meraki", "Modecom", "MSI", "Nikon", "NZXT", "Qdion", "QNap", "Qube", "Rezone Case", "Seasonic",
                     "Segotep", "Silver Stone", "Supermicro", "TECNOWARE", "ThermalTake", "Vinga", "Xilence", "Zalman" },
-                Laptops = new Dictionary<string, List<string>>() 
+                Laptops = new Dictionary<string, List<string>>()
                 {
                     {"Dell", new List<string>() { "Alienware", "G Series", "Inspiron", "Latitude", "Precision", "Vostro", "XPS" } },
-                    
+
                     {"HP", new List<string>() { "Eliteboo", "Envy", "Omen", "Pavilion", "ZBook", "Spectre", "Victus", "ProBook", "OmniBook" } },
-                    
+
                     {"Lenovo", new List<string>() { "IdeaPad", "Legion", "ThinkPad", "ThinkBook", "Yoga" } },
-                    
+
                     {"Apple", new List<string>() { "MacBook", "MacBook Air", "MacBook Pro" } },
 
                     {"Acer", new List<string>() { "Aspire", "Enduro", "Extensa", "Ferrari", "Nitro", "Predator", "Swift", "Spin", "Switch", "TravelMate" } },
                     {"Asus", new List<string>() { "Zenbook", "Vivobook", "Chromebook", "ROG", "TUF", "ZEPHYRUS", "EeeBook", "Experbook", "Transformer", "ASUSPRO", "ProArt" } },
-                    
+
                     {"Microsoft", new List<string>() { "Surface Pro", "Surface Studio", "Microsoft Surface", "Surface Go" } },
                     
                     //--------------------------------------------------------------------------
@@ -954,11 +954,17 @@ namespace CompasPakc.BL
             };
             try
             {
+#if DEBUG
                 if (!File.Exists(CompasPackLog + "\\Report.xml"))
                 {
                     Process proc = Process.Start(StartInfo);
                     await proc.WaitForExitAsync();
                 }
+#else
+ Process proc = Process.Start(StartInfo);
+                    await proc.WaitForExitAsync();
+#endif
+
             }
             catch (Exception) { }
 

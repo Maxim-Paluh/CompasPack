@@ -11,7 +11,7 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    public class MotherboardViewModel : ReportViewModelBase, IReportViewModel
+    public class MotherboardViewModel : ReportHardWareViewModelBase, IReportViewModel
     {
         private string _name;
         public MotherboardViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)

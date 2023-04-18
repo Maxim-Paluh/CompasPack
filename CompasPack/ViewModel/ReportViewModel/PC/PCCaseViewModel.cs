@@ -10,7 +10,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace CompasPack.ViewModel
 {
-    public class PCCaseViewModel : ReportViewModelBase, IDataErrorInfo
+    public class PCCaseViewModel : ReportHardWareViewModelBase, IDataErrorInfo
     {
         private string _name;
         public PCCaseViewModel()

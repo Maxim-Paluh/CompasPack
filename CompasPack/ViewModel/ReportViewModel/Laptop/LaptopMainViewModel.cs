@@ -9,7 +9,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace CompasPack.ViewModel
 {
-    class LaptopMainViewModel : ReportViewModelBase, IReportViewModel, IDataErrorInfo
+    class LaptopMainViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
     {
         private string _brand;
         private string _model;

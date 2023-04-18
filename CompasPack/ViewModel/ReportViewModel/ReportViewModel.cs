@@ -53,7 +53,7 @@ namespace CompasPack.ViewModel
                     ReportFormViewModel = new LaptopReportViewModel(_ioManager, _settingsReportViewModel, _xDocument, _messageDialogService);
                     break;
                 case TypeReport.Monitor:
-                    ReportFormViewModel = new MonitorReportViewModel(_ioManager, _settingsReportViewModel, _xDocument);
+                    ReportFormViewModel = new MonitorReportViewModel(_ioManager, _settingsReportViewModel, _xDocument, _messageDialogService);
                     break;
                 default:
                     ReportFormViewModel = null;

@@ -13,7 +13,7 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class VideoViewModel : ReportViewModelBase, IReportViewModel
+    public class VideoViewModel : ReportHardWareViewModelBase, IReportViewModel
     {
         private VideoAdapter _selectedVideoAdapter;
         private static object _lock = new object();

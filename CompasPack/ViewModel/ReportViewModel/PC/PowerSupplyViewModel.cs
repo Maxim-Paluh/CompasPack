@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class PowerSupplyViewModel : ReportViewModelBase, IReportViewModel, IDataErrorInfo
+    public class PowerSupplyViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
     {
         private string _text;
         private string _power;

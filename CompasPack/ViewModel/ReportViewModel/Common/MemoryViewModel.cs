@@ -11,7 +11,7 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    public class MemoryViewModel : ReportViewModelBase, IReportViewModel
+    public class MemoryViewModel : ReportHardWareViewModelBase, IReportViewModel
     {
         private string _type;
         private string _size;
