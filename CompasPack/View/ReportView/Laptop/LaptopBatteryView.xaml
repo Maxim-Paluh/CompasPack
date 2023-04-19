@@ -23,11 +23,11 @@
                 </TextBlock>
                 <WrapPanel Grid.Column="1" Margin="4" HorizontalAlignment="Left">
                     <TextBlock Grid.Column="0" Grid.Row="0" Text="XPath:"></TextBlock>
-                    <TextBox Margin="5 0 0 0" MinWidth="150" MaxWidth="200" Text="{Binding SettingsReport.LaptopBattery.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" MinWidth="150" MaxWidth="200" Text="{Binding SettingsReport.LaptopBattery.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel  Grid.Column="2"  Margin="4" >
                     <TextBlock Grid.Column="0" Width="65" Grid.Row="0" Text="Wear Level:"></TextBlock>
-                    <TextBox MinWidth="40" Text="{Binding WearLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox IsReadOnly="True" Background="LightGray" MinWidth="40" Text="{Binding WearLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel  Grid.Column="3"  Margin="4" >
                     <TextBlock Margin="5 0 5 0"  Width="40" Text="Regex:"></TextBlock>

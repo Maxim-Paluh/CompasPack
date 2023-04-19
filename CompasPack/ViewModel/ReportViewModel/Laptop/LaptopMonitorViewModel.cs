@@ -51,13 +51,13 @@ namespace CompasPack.ViewModel
 
         public void Load()
         {
-            var tempType = Document.XPathSelectElement(SettingsReport.LaptopMonitor.LaptopMonitorType.XPath);
+            var tempType = Document.XPathSelectElement(SettingsReport.Monitor.MonitorType.XPath);
             if (tempType != null)
                 LaptopMonitorType = tempType.Value;
             else
                 LaptopMonitorType = string.Empty;
 
-            var tempSize = Document.XPathSelectElement(SettingsReport.LaptopMonitor.LaptopMonitorSize.XPath);
+            var tempSize = Document.XPathSelectElement(SettingsReport.Monitor.MonitorSize.XPath);
             if (tempSize != null)
                 LaptopMonitorSize = tempSize.Value;
             else
@@ -66,20 +66,24 @@ namespace CompasPack.ViewModel
             if (!string.IsNullOrWhiteSpace(LaptopMonitorType))
             {
                 var tempLaptopMonitorType = LaptopMonitorType;
-                foreach (var item in SettingsReport.LaptopMonitor.LaptopMonitorType.Regex)
+                foreach (var item in SettingsReport.Monitor.MonitorType.Regex)
                     tempLaptopMonitorType = Regex.Replace(tempLaptopMonitorType, item, "");
-                Result = $"{tempLaptopMonitorType}";
+
+                if(!string.IsNullOrWhiteSpace(tempLaptopMonitorType))
+                    Result = $"{tempLaptopMonitorType}";
             }
-            else
+
+            if (string.IsNullOrWhiteSpace(Result))
             {
                 if (!string.IsNullOrWhiteSpace(LaptopMonitorSize))
                 {
                     var tempLaptopMonitorSize = LaptopMonitorSize;
-                    foreach (var item in SettingsReport.LaptopMonitor.LaptopMonitorSize.Regex)
+                    foreach (var item in SettingsReport.Monitor.MonitorSize.Regex)
                         tempLaptopMonitorSize = Regex.Replace(tempLaptopMonitorSize, item, "");
                     Result = $"{tempLaptopMonitorSize}";
                 }
             }
+
         }
 
 

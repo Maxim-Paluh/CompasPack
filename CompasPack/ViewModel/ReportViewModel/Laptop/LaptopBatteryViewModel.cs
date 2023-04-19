@@ -40,7 +40,7 @@ namespace CompasPack.ViewModel
             if (!string.IsNullOrWhiteSpace(WearLevel))
             {
                 var tempLaptopWearLevel = WearLevel;
-                foreach (var item in SettingsReport.LaptopMonitor.LaptopMonitorType.Regex)
+                foreach (var item in SettingsReport.Monitor.MonitorType.Regex)
                     tempLaptopWearLevel = Regex.Replace(tempLaptopWearLevel, item, "");
 
                 if(int.TryParse(tempLaptopWearLevel, out int temp))

@@ -42,7 +42,7 @@ namespace CompasPack.ViewModel
             foreach (var item in SettingsReport.Motherboard.Regex)
                 tempResault = Regex.Replace(tempResault, item, "");
 
-            Result = tempResault;
+            Result = tempResault.Trim();
         }
     }
 }

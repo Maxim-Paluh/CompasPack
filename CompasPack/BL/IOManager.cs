@@ -723,38 +723,28 @@ namespace CompasPakc.BL
                 },
                 Motherboard = new Motherboard()
                 {
-                    XPath = "/Report/Page[5]/Group[1]/Item[2]/Value",
+                    XPath = $"//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"системна плата\")]" +
+                                $"//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"системна плата\")]/Value",
                     Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)" }
                 },
                 Memory = new Memory()
                 {
                     MemoryType = new MemoryType()
                     {
-                        XPath = "/Report/Page[5]/Group[3]/Item[1]/Value",
+                        XPath = $"//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi шини пам'ятi\")]" +
+                                $"//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"тип шини\")]/Value",
                         Regex = new List<string>() { " ??SDRAM" }
                     },
                     MemoryFrequency = new MemoryFrequency()
                     {
-                        XPath = "/Report/Page[5]/Group[3]/Item[5]/Value",
+                        XPath = $"//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi шини пам'ятi\")]" +
+                                $"//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"ефективна частота\")]/Value",
                         Regex = new List<string>() { "\\D" }
                     }
                 },
                 VideoController = new VideoController()
                 {
                     Regex = new List<string>() { "\\((?:[^)(]|\\([^)(]*\\))*\\)" }
-                },
-                LaptopMonitor = new LaptopMonitor()
-                {
-                    LaptopMonitorType = new LaptopMonitorType()
-                    {
-                        XPath = "//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi') , \"тип монiтора\")]/Value",
-                        Regex = new List<string>() { "[^\\d.\"]" }
-                    },
-                    LaptopMonitorSize = new LaptopMonitorSize()
-                    {
-                        XPath = "//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi') , \"видима область екрана\")]/Value",
-                        Regex = new List<string>() { "(.*\\()", "(\\).*)" }
-                    }
                 },
                 LaptopBattery = new LaptopBattery()
                 {
@@ -768,105 +758,134 @@ namespace CompasPakc.BL
                     "Segotep", "Silver Stone", "Supermicro", "TECNOWARE", "ThermalTake", "Vinga", "Xilence", "Zalman" },
                 Laptops = new Dictionary<string, List<string>>()
                 {
-                    {"Dell", new List<string>() { "Alienware", "G Series", "Inspiron", "Latitude", "Precision", "Vostro", "XPS" } },
+                    { "Dell", new List<string>() { "Alienware", "G Series", "Inspiron", "Latitude", "Precision", "Vostro", "XPS" } },
 
-                    {"HP", new List<string>() { "Eliteboo", "Envy", "Omen", "Pavilion", "ZBook", "Spectre", "Victus", "ProBook", "OmniBook" } },
+                    { "HP", new List<string>() { "Eliteboo", "Envy", "Omen", "Pavilion", "ZBook", "Spectre", "Victus", "ProBook", "OmniBook" } },
 
-                    {"Lenovo", new List<string>() { "IdeaPad", "Legion", "ThinkPad", "ThinkBook", "Yoga" } },
+                    { "Lenovo", new List<string>() { "IdeaPad", "Legion", "ThinkPad", "ThinkBook", "Yoga" } },
 
-                    {"Apple", new List<string>() { "MacBook", "MacBook Air", "MacBook Pro" } },
+                    { "Apple", new List<string>() { "MacBook", "MacBook Air", "MacBook Pro" } },
 
-                    {"Acer", new List<string>() { "Aspire", "Enduro", "Extensa", "Ferrari", "Nitro", "Predator", "Swift", "Spin", "Switch", "TravelMate" } },
-                    {"Asus", new List<string>() { "Zenbook", "Vivobook", "Chromebook", "ROG", "TUF", "ZEPHYRUS", "EeeBook", "Experbook", "Transformer", "ASUSPRO", "ProArt" } },
+                    { "Acer", new List<string>() { "Aspire", "Enduro", "Extensa", "Ferrari", "Nitro", "Predator", "Swift", "Spin", "Switch", "TravelMate" } },
+                    { "Asus", new List<string>() { "Zenbook", "Vivobook", "Chromebook", "ROG", "TUF", "ZEPHYRUS", "EeeBook", "Experbook", "Transformer", "ASUSPRO", "ProArt" } },
 
-                    {"Microsoft", new List<string>() { "Surface Pro", "Surface Studio", "Microsoft Surface", "Surface Go" } },
-                    
+                    { "Microsoft", new List<string>() { "Surface Pro", "Surface Studio", "Microsoft Surface", "Surface Go" } },
+
                     //--------------------------------------------------------------------------
-                    {"Fujitsu", new List<string>() {  } },
-                    {"Gigabyte", new List<string>() {  } },
-                    {"Google", new List<string>() {  } },
-                    {"Huawei", new List<string>() {  } },
-                    {"LG", new List<string>() {  } },
-                    {"MSI", new List<string>() {  } },
-                    {"Panasonic", new List<string>() {  } },
-                    {"Philips", new List<string>() {  } },
-                    {"Samsung", new List<string>() {  } },
-                    {"Sony", new List<string>() {  } },
-                    {"Toshiba", new List<string>() {  } },
-                    {"VAIO", new List<string>() {  } },
-                    {"AGB Supreme Technology", new List<string>() {  } },
-                    {"Alienware", new List<string>() {  } },
-                    {"Avell", new List<string>() {  } },
-                    {"Axioo", new List<string>() {  } },
-                    {"BenQ", new List<string>() {  } },
-                    {"Bmax", new List<string>() {  } },
-                    {"BOXX Technologies", new List<string>() {  } },
-                    {"Casper", new List<string>() {  } },
-                    {"CHUWI", new List<string>() {  } },
-                    {"Clevo", new List<string>() {  } },
-                    {"Corsair", new List<string>() {  } },
-                    {"CyberPowerPC", new List<string>() {  } },
-                    {"Digital Storm", new List<string>() {  } },
-                    {"Durabook", new List<string>() {  } },
-                    {"Dynabook", new List<string>() {  } },
-                    {"Eluktronics", new List<string>() {  } },
-                    {"Epson", new List<string>() {  } },
-                    {"Eurocom", new List<string>() {  } },
-                    {"Evoo", new List<string>() {  } },
-                    {"Falcon Northwest", new List<string>() {  } },
-                    {"Framework Computer", new List<string>() {  } },
-                    {"Gateway", new List<string>() {  } },
-                    {"Geo", new List<string>() {  } },
-                    {"Getac", new List<string>() {  } },
-                    {"Grundig", new List<string>() {  } },
-                    {"HCL", new List<string>() {  } },
-                    {"Honor", new List<string>() {  } },
-                    {"HTC", new List<string>() {  } },
-                    {"Hyundai Technology", new List<string>() {  } },
-                    {"IBM", new List<string>() {  } },
-                    {"Illegear", new List<string>() {  } },
-                    {"Lava International", new List<string>() {  } },
-                    {"Machenike", new List<string>() {  } },
-                    {"Maguay", new List<string>() {  } },
-                    {"Medion", new List<string>() {  } },
-                    {"Metabox", new List<string>() {  } },
-                    {"Microtech", new List<string>() {  } },
-                    {"Monster Notebook", new List<string>() {  } },
-                    {"Multilaser", new List<string>() {  } },
-                    {"NEC", new List<string>() {  } },
-                    {"Njoy", new List<string>() {  } },
-                    {"Nokia", new List<string>() {  } },
-                    {"Obsidian-PC", new List<string>() {  } },
-                    {"Olivetti", new List<string>() {  } },
-                    {"Onkyo", new List<string>() {  } },
-                    {"Optima", new List<string>() {  } },
-                    {"Origin PC", new List<string>() {  } },
-                    {"OverPowered", new List<string>() {  } },
-                    {"Packard Bell", new List<string>() {  } },
-                    {"Positivo", new List<string>() {  } },
-                    {"Purism", new List<string>() {  } },
-                    {"Razer", new List<string>() {  } },
-                    {"Realme", new List<string>() {  } },
-                    {"Sager", new List<string>() {  } },
-                    {"Notebook computers", new List<string>() {  } },
-                    {"Shenzhen Jumper Technology", new List<string>() {  } },
-                    {"Slimbook", new List<string>() {  } },
-                    {"Star Labs", new List<string>() {  } },
-                    {"System76", new List<string>() {  } },
-                    {"TUXEDO Computers", new List<string>() {  } },
-                    {"UMAX", new List<string>() {  } },
-                    {"Vastking", new List<string>() {  } },
-                    {"Velocity Micro", new List<string>() {  } },
-                    {"Vestel", new List<string>() {  } },
-                    {"VIT", new List<string>() {  } },
-                    {"Walmart", new List<string>() {  } },
-                    {"Walton", new List<string>() {  } },
-                    {"Wipro", new List<string>() {  } },
-                    {"Xiaomi", new List<string>() {  } },
-                    {"XMG", new List<string>() {  } },
-                    {"Xolo", new List<string>() {  } },
-                    {"Zeuslap", new List<string>() {  } },
-                    {"Zyrex", new List<string>() {  } }
+                    { "Fujitsu", new List<string>() { } },
+                    { "Gigabyte", new List<string>() { } },
+                    { "Google", new List<string>() { } },
+                    { "Huawei", new List<string>() { } },
+                    { "LG", new List<string>() { } },
+                    { "MSI", new List<string>() { } },
+                    { "Panasonic", new List<string>() { } },
+                    { "Philips", new List<string>() { } },
+                    { "Samsung", new List<string>() { } },
+                    { "Sony", new List<string>() { } },
+                    { "Toshiba", new List<string>() { } },
+                    { "VAIO", new List<string>() { } },
+                    { "AGB Supreme Technology", new List<string>() { } },
+                    { "Alienware", new List<string>() { } },
+                    { "Avell", new List<string>() { } },
+                    { "Axioo", new List<string>() { } },
+                    { "BenQ", new List<string>() { } },
+                    { "Bmax", new List<string>() { } },
+                    { "BOXX Technologies", new List<string>() { } },
+                    { "Casper", new List<string>() { } },
+                    { "CHUWI", new List<string>() { } },
+                    { "Clevo", new List<string>() { } },
+                    { "Corsair", new List<string>() { } },
+                    { "CyberPowerPC", new List<string>() { } },
+                    { "Digital Storm", new List<string>() { } },
+                    { "Durabook", new List<string>() { } },
+                    { "Dynabook", new List<string>() { } },
+                    { "Eluktronics", new List<string>() { } },
+                    { "Epson", new List<string>() { } },
+                    { "Eurocom", new List<string>() { } },
+                    { "Evoo", new List<string>() { } },
+                    { "Falcon Northwest", new List<string>() { } },
+                    { "Framework Computer", new List<string>() { } },
+                    { "Gateway", new List<string>() { } },
+                    { "Geo", new List<string>() { } },
+                    { "Getac", new List<string>() { } },
+                    { "Grundig", new List<string>() { } },
+                    { "HCL", new List<string>() { } },
+                    { "Honor", new List<string>() { } },
+                    { "HTC", new List<string>() { } },
+                    { "Hyundai Technology", new List<string>() { } },
+                    { "IBM", new List<string>() { } },
+                    { "Illegear", new List<string>() { } },
+                    { "Lava International", new List<string>() { } },
+                    { "Machenike", new List<string>() { } },
+                    { "Maguay", new List<string>() { } },
+                    { "Medion", new List<string>() { } },
+                    { "Metabox", new List<string>() { } },
+                    { "Microtech", new List<string>() { } },
+                    { "Monster Notebook", new List<string>() { } },
+                    { "Multilaser", new List<string>() { } },
+                    { "NEC", new List<string>() { } },
+                    { "Njoy", new List<string>() { } },
+                    { "Nokia", new List<string>() { } },
+                    { "Obsidian-PC", new List<string>() { } },
+                    { "Olivetti", new List<string>() { } },
+                    { "Onkyo", new List<string>() { } },
+                    { "Optima", new List<string>() { } },
+                    { "Origin PC", new List<string>() { } },
+                    { "OverPowered", new List<string>() { } },
+                    { "Packard Bell", new List<string>() { } },
+                    { "Positivo", new List<string>() { } },
+                    { "Purism", new List<string>() { } },
+                    { "Razer", new List<string>() { } },
+                    { "Realme", new List<string>() { } },
+                    { "Sager", new List<string>() { } },
+                    { "Notebook computers", new List<string>() { } },
+                    { "Shenzhen Jumper Technology", new List<string>() { } },
+                    { "Slimbook", new List<string>() { } },
+                    { "Star Labs", new List<string>() { } },
+                    { "System76", new List<string>() { } },
+                    { "TUXEDO Computers", new List<string>() { } },
+                    { "UMAX", new List<string>() { } },
+                    { "Vastking", new List<string>() { } },
+                    { "Velocity Micro", new List<string>() { } },
+                    { "Vestel", new List<string>() { } },
+                    { "VIT", new List<string>() { } },
+                    { "Walmart", new List<string>() { } },
+                    { "Walton", new List<string>() { } },
+                    { "Wipro", new List<string>() { } },
+                    { "Xiaomi", new List<string>() { } },
+                    { "XMG", new List<string>() { } },
+                    { "Xolo", new List<string>() { } },
+                    { "Zeuslap", new List<string>() { } },
+                    { "Zyrex", new List<string>() { } }
+                },
+                Monitors = new List<string> { "2E", "Acer", "AOC", "ASUS", "BenQ", "Dell", "Eizo", "Elo Touch Solutions", "Evidence", "EvroMedia", "GIGABYTE", "HP", "Huawei", "HyperX", "iiyama", "Lenovo", "LG", "MSI", "NEC", "Neovo", "Philips", "Qube", "Samsung", "ViewSonic", "Xiaomi" },
+                Monitor = new Monitor()
+                {
+                    MonitorName = new MonitorName()
+                    {
+                        XPath = $"//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi монiтора\")]" +
+                                $"//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"iм'я\")]/Value"
+                    },
+                    MonitorModel = new MonitorModel()
+                    {
+                        XPath = $"//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi монiтора\")]" +
+                                $"//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"модель\")]/Value"
+                    },
+
+
+                    MonitorType = new MonitorType()
+                    {
+                        XPath= $"//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi монiтора\")]" +
+                                $"//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"тип\")]/Value",
+                         Regex = new List<string>() { "[^\\d.\"]" }
+                    },
+                    MonitorSize = new MonitorSize()
+                    {
+                        XPath = $"//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi монiтора\")]" +
+                                $"//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"видима область екрана\")]/Value",
+                        Regex = new List<string>() { "(.*\\()", "(\\).*)" }
+                    }
+                    
                 }
             };
         }
@@ -961,7 +980,7 @@ namespace CompasPakc.BL
                     await proc.WaitForExitAsync();
                 }
 #else
- Process proc = Process.Start(StartInfo);
+                    Process proc = Process.Start(StartInfo);
                     await proc.WaitForExitAsync();
 #endif
 

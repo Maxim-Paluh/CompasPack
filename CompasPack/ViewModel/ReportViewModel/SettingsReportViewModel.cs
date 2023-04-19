@@ -19,11 +19,14 @@ namespace CompasPack.ViewModel
         private Motherboard _motherboard;
         private Memory _memory;
         private VideoController _videoController;
-        private List<string> _powersupply;
-        private Dictionary<string, List<string>> _laptops;
-        private LaptopMonitor _laptopMonitor;
         private LaptopBattery _laptopBattery;
         private LaptopOther _laptopOther;
+        private Monitor _monitor;
+
+        
+        private List<string> _powersupply;
+        private Dictionary<string, List<string>> _laptops;
+        private List<string> _monitors;
 
 
         //---------------------------------
@@ -63,32 +66,6 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public List<string> PowerSupply
-        {
-            get { return _powersupply; }
-            set
-            {
-                _powersupply = value;
-                OnPropertyChanged();
-            }
-        }
-
-
-
-        public Dictionary<string, List<string>> Laptops
-        {
-            get { return _laptops; }
-            set
-            {
-                _laptops = value;
-                OnPropertyChanged();
-            }
-        }
-        public LaptopMonitor LaptopMonitor
-        {
-            get { return _laptopMonitor; }
-            set { _laptopMonitor = value; }
-        }
         public LaptopBattery LaptopBattery
         {
             get { return _laptopBattery; }
@@ -98,6 +75,40 @@ namespace CompasPack.ViewModel
         {
             get { return _laptopOther; }
             set { _laptopOther = value; }
+        }
+        public Monitor Monitor
+        {
+            get { return _monitor; }
+            set { _monitor = value; }
+        }
+
+
+        public List<string> PowerSupply
+        {
+            get { return _powersupply; }
+            set
+            {
+                _powersupply = value;
+                OnPropertyChanged();
+            }
+        }
+        public Dictionary<string, List<string>> Laptops
+        {
+            get { return _laptops; }
+            set
+            {
+                _laptops = value;
+                OnPropertyChanged();
+            }
+        }
+        public List<string> Monitors
+        {
+            get { return _monitors; }
+            set
+            {
+                _monitors = value;
+                OnPropertyChanged();
+            }
         }
     }
 
@@ -142,47 +153,80 @@ namespace CompasPack.ViewModel
 
     }
 
-    public class LaptopMonitor
-    {
-
-        private LaptopMonitorResolution _laptopMonitorResolution;
-        private LaptopMonitorType _laptopMonitorType;
-        private LaptopMonitorSize _laptopMonitorSize;
-
-        public LaptopMonitorSize LaptopMonitorSize
-        {
-            get { return _laptopMonitorSize; }
-            set { _laptopMonitorSize = value; }
-        }
-        public LaptopMonitorType LaptopMonitorType
-        {
-            get { return _laptopMonitorType; }
-            set { _laptopMonitorType = value; }
-        }
-        public LaptopMonitorResolution LaptopMonitorResolution
-        {
-            get { return _laptopMonitorResolution; }
-            set { _laptopMonitorResolution = value; }
-        }
-
-
-    }
-    public class LaptopMonitorType : ReportBase
-    {
-    }
-    public class LaptopMonitorResolution : ReportBase
-    {
-    }
-    public class LaptopMonitorSize : ReportBase
-    {
-    }
-
     public class LaptopBattery : ReportBase
     {
     }
     public class LaptopOther : ReportBase
     { }
 
+    public class Monitor
+    {
+        private MonitorName _monitorName;
+        private MonitorModel _monitorModel;
+
+        private MonitorType _monitorType;
+        private MonitorSize _monitorSize;
+
+
+        private MonitorAspectRatio _monitorAspectRatio;
+
+
+        public MonitorName MonitorName
+        {
+            get { return _monitorName; }
+            set
+            {
+                _monitorName = value;
+            }
+        }
+        public MonitorModel MonitorModel
+        {
+            get { return _monitorModel; }
+            set { _monitorModel = value; }
+        }
+
+        public MonitorType MonitorType
+        {
+            get { return _monitorType; }
+            set { _monitorType = value; }
+        }
+        public MonitorSize MonitorSize
+        {
+            get { return _monitorSize; }
+            set { _monitorSize = value; }
+        }
+        public MonitorAspectRatio MonitorAspectRatio
+        {
+            get { return _monitorAspectRatio; }
+            set { _monitorAspectRatio = value; }
+        }
+    }
+    
+    public class MonitorName : ReportBase
+    {
+
+    }
+    public class MonitorModel : ReportBase
+    {
+
+    }
+
+
+    public class MonitorType : ReportBase
+    {
+
+    }
+    public class MonitorSize : ReportBase
+    {
+
+    }
+    public class MonitorAspectRatio : ReportBase
+    {
+
+    }
+   
+    
+    
     public class ReportBase : ViewModelBase
     {
         private List<string> _regex;
@@ -209,3 +253,15 @@ namespace CompasPack.ViewModel
     }
 
 }
+
+
+//LaptopMonitorType = new LaptopMonitorType()
+//{
+//    XPath = "//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi') , \"тип монiтора\")]/Value",
+//    
+//},
+//                    LaptopMonitorSize = new LaptopMonitorSize()
+//                    {
+//                       
+//                        
+//                    }

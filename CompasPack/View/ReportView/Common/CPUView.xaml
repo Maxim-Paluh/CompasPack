@@ -23,11 +23,11 @@
                 </TextBlock>
                 <WrapPanel Grid.Row="0" Grid.Column="1"  Margin="4" HorizontalAlignment="Left">
                     <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Name:"></TextBlock>
-                    <TextBox MinWidth="40" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox IsReadOnly="True" Background="LightGray" MinWidth="40" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel Grid.Row="1" Grid.Column="1" Margin="4" >
                     <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Clock:"></TextBlock>
-                    <TextBox MinWidth="40" Text="{Binding Clock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox IsReadOnly="True" Background="LightGray" MinWidth="40" Text="{Binding Clock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Margin="4" >
                     <TextBlock Margin="5 0 5 0"  Width="40" Grid.RowSpan="2" Text="Regex:"></TextBlock>

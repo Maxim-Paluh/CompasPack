@@ -37,7 +37,7 @@
                 </WrapPanel>
                 <WrapPanel Grid.Column="1" Grid.Row="1" Margin="4" HorizontalAlignment="Left">
                     <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Size:"></TextBlock>
-                    <TextBox MinWidth="40" Text="{Binding SelectedVideoAdapter.Size, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox IsReadOnly="True" Background="LightGray" MinWidth="40" Text="{Binding SelectedVideoAdapter.Size, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel  Grid.Column="2"  Margin="4" Grid.RowSpan="2">
                     <TextBlock Margin="5 0 5 0"  Width="40" Text="Regex:"></TextBlock>

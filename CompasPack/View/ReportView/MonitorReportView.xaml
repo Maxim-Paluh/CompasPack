@@ -5,8 +5,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CompasPack.View"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:ViewModel="clr-namespace:CompasPack.ViewModel"
+             xmlns:View="clr-namespace:CompasPack.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type ViewModel:MonitorMainViewModel}">
+            <View:MonitorMainView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:MonitorOtherViewModel}">
+            <View:MonitorOtherView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:MonitorParameterViewModel}">
+            <View:MonitorParameterView/>
+        </DataTemplate>
+    </UserControl.Resources>
+    
     <Border  BorderBrush="DarkBlue" Margin="2"  BorderThickness="1" CornerRadius="3">
         <Border.Background>
             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
@@ -25,23 +39,13 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <!--<ContentControl  Grid.Row="0"  Content="{Binding LaptopMainViewModel}"/>
-            <ContentControl  Grid.Row="1"  Content="{Binding LaptopMonitorViewModel}"/>
-            <ContentControl  Grid.Row="2"  Content="{Binding CPUViewModel}"/>
-            <ContentControl  Grid.Row="3"  Content="{Binding MemoryViewModel}"/>
-            <ContentControl  Grid.Row="4"  Content="{Binding VideoViewModel}"/>
-            <ContentControl  Grid.Row="5"  Content="{Binding PhysicalDiskViewModel}"/>
-            <ContentControl  Grid.Row="6"  Content="{Binding LaptopBatteryViewModel}"/>
-            <ContentControl  Grid.Row="7"  Content="{Binding LaptopOtherViewModel}"/>-->
+            <ContentControl  Grid.Row="0"  Content="{Binding MonitorMainViewModel}"/>
+            <ContentControl  Grid.Row="1"  Content="{Binding MonitorParameterViewModel}"/>
+            <ContentControl  Grid.Row="2"  Content="{Binding MonitorOtherViewModel}"/>
 
-            <Border Grid.Row="8"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
+            <Border Grid.Row="3"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"></ColumnDefinition>

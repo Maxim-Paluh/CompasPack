@@ -16,6 +16,26 @@ namespace CompasPack.ViewModel
 {
     public class MonitorReportViewModel : ReportViewModelBase, IDetailViewModel
     {
+        private MonitorMainViewModel _monitorMainViewModel;
+        private MonitorOtherViewModel _monitorOtherViewModel;
+        private MonitorParameterViewModel _monitorParameterViewModel;
+
+        public MonitorParameterViewModel MonitorParameterViewModel
+        {
+            get { return _monitorParameterViewModel; }
+            set { _monitorParameterViewModel = value; }
+        }
+        public MonitorOtherViewModel MonitorOtherViewModel
+        {
+            get { return _monitorOtherViewModel; }
+            set { _monitorOtherViewModel = value; }
+        }
+        public MonitorMainViewModel MonitorMainViewModel
+        {
+            get { return _monitorMainViewModel; }
+            set { _monitorMainViewModel = value; }
+        }
+
 
         public MonitorReportViewModel(IIOManager iOManager, SettingsReportViewModel settingsReportViewModel, XDocument xDocument, IMessageDialogService messageDialogService) :
             base(iOManager, settingsReportViewModel, xDocument, messageDialogService)
@@ -167,9 +187,21 @@ namespace CompasPack.ViewModel
             throw new NotImplementedException();
         }
 
-        public Task LoadAsync(int? Id)
+        public async Task LoadAsync(int? Id)
         {
-            throw new NotImplementedException();
+            MonitorMainViewModel = new MonitorMainViewModel(_settingsReportViewModel, _xDocument);
+            MonitorParameterViewModel = new MonitorParameterViewModel(_settingsReportViewModel, _xDocument);
+            MonitorOtherViewModel = new MonitorOtherViewModel(_settingsReportViewModel, _xDocument);
+
+            await Task.Factory.StartNew(() =>
+            {
+                MonitorMainViewModel.Load();
+                MonitorParameterViewModel.Load();
+                MonitorOtherViewModel.Load();
+            });
+
+            IndexReport = _ioManager.GetLastReport(ReportPath) + 1;
+            IsEnable = true;
         }
 
         public void Unsubscribe()

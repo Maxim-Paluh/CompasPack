@@ -33,7 +33,7 @@
                 </WrapPanel>
                 <WrapPanel  Grid.Column="2" Grid.Row="0" Margin="4" >
                     <TextBlock Grid.Column="0" Width="45" Grid.Row="0" Text="Display:"></TextBlock>
-                    <TextBox MinWidth="80"  Text="{Binding LaptopMonitorResolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox IsReadOnly="True" Background="LightGray" MinWidth="80"  Text="{Binding LaptopMonitorResolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <CheckBox Margin="4" Grid.Column="3" Grid.Row="0" Content="HDMI" IsChecked="{Binding HDMI, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ChangeHardwareCommand}"></CheckBox>
                 <CheckBox Margin="4" Grid.Column="4" Grid.Row="0" Content="Keyboard Light" IsChecked="{Binding KeyboardLight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding ChangeHardwareCommand}"></CheckBox>
