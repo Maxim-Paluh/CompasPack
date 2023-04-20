@@ -1,6 +1,7 @@
 ﻿using Prism.Commands;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorOtherViewModel : ReportHardWareViewModelBase, IReportViewModel
+    public class MonitorOtherViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
     {
         private bool _miniVGA;
 
@@ -38,5 +39,23 @@ namespace CompasPack.ViewModel
         }
 
         public ICommand SelectInterfaceCommand { get; set; }
+
+        public string Error => throw new NotImplementedException();
+
+        public string this[string columnName]
+        {
+            get
+            {
+                string error = String.Empty;
+                switch (columnName)
+                {
+                    case "Result":
+                        if (string.IsNullOrWhiteSpace(Result))
+                            error = "Введи значення";
+                        break;
+                }
+                return error;
+            }
+        }
     }
 }
