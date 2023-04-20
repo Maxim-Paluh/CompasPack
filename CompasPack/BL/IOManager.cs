@@ -1028,7 +1028,7 @@ namespace CompasPakc.BL
         public async Task<SettingsReportViewModel> GetSettingsReport()
         {
             FileInfo fileSettingsJson = new FileInfo(SettingsUserReportPath);
-            //if (!fileSettingsJson.Exists)
+            if (!fileSettingsJson.Exists)
             await SetSettingsReport();
 
             try
