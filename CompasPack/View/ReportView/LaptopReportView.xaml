@@ -32,8 +32,8 @@
         <DataTemplate DataType="{x:Type ViewModel:LaptopOtherViewModel}">
             <View:LaptopOtherView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ViewModel:LaptopMonitorViewModel}">
-            <View:LaptopMonitorView/>
+        <DataTemplate DataType="{x:Type ViewModel:MonitorDiagonalViewModel}">
+            <View:MonitorDiagonalView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type ViewModel:LaptopBatteryViewModel}">
             <View:LaptopBatteryView/>
@@ -66,7 +66,7 @@
             </Grid.RowDefinitions>
 
             <ContentControl  Grid.Row="0"  Content="{Binding LaptopMainViewModel}"/>
-            <ContentControl  Grid.Row="1"  Content="{Binding LaptopMonitorViewModel}"/>
+            <ContentControl  Grid.Row="1"  Content="{Binding MonitorDiagonalViewModel}"/>
             <ContentControl  Grid.Row="2"  Content="{Binding CPUViewModel}"/>
             <ContentControl  Grid.Row="3"  Content="{Binding MemoryViewModel}"/>
             <ContentControl  Grid.Row="4"  Content="{Binding VideoViewModel}"/>
@@ -80,31 +80,29 @@
                         <ColumnDefinition Width="auto"></ColumnDefinition>
                         <ColumnDefinition Width="auto"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
-
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="SaveReportAndPrice:">
-                    </TextBlock>
-                    <WrapPanel  Grid.Row="0" Grid.Column="1"   Margin="4" HorizontalAlignment="Left">
-                        <TextBlock Grid.Column="0" MinWidth="40" Grid.Row="0" Text="{Binding ReportPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
-                        <TextBlock Grid.Column="0"  Grid.Row="0" Text="\"></TextBlock>
-                        <TextBlock Grid.Column="0"  Grid.Row="0" Text="Report_"></TextBlock>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="SaveReportAndPrice:"></TextBlock>
+                    <WrapPanel Grid.Row="0" Grid.Column="1"   Margin="4" HorizontalAlignment="Left">
+                        <TextBlock MinWidth="40" Text="{Binding ReportPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+                        <TextBlock Text="\"></TextBlock>
+                        <TextBlock Text="Report_"></TextBlock>
                         <xctk:IntegerUpDown Margin="5 0 5 0" FormatString="000" Minimum="0" Maximum="1000000" MinWidth="40" Value="{Binding IndexReport, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Column="0"  Grid.Row="0" Text=".htm | .html | .docx"></TextBlock>
+                        <TextBlock Text=".htm | .html | .docx"></TextBlock>
                     </WrapPanel>
                     <WrapPanel Grid.Row="0" Grid.Column="2"  Margin="4" HorizontalAlignment="Right">
-                        <TextBlock  Grid.Row="0" FontWeight="Bold" Text="Save report: "></TextBlock>
+                        <TextBlock FontWeight="Bold" Text="Save report: "></TextBlock>
                         <Button Margin="5 0 0 0" Content="Save" Command="{Binding SaveReportCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"></Button>
                         <Button Margin="5 0 0 0" Content="Open Report" Command="{Binding OpenReportCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="75"></Button>
                         <Button Margin="5 0 0 0" Content="Open Price" Command="{Binding OpenPriceCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="70"></Button>
-
-
                     </WrapPanel>
-                    <WrapPanel Grid.Row="1" Grid.Column="4"  Margin="4" HorizontalAlignment="Right">
-                        <TextBlock  Grid.Row="0" FontWeight="Bold" Text="Open Folder: "></TextBlock>
+                    
+                    <WrapPanel Grid.Row="1" Grid.Column="2"  Margin="4" HorizontalAlignment="Right">
+                        <TextBlock FontWeight="Bold" Text="Open Folder: "></TextBlock>
                         <Button Margin="5 0 0 0" Content="Open" Command="{Binding OpenFolderCommand}" Width="50"></Button>
                     </WrapPanel>
                 </Grid>

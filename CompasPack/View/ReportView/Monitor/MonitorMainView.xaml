@@ -20,18 +20,19 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="Main:"></TextBlock>
                 
-                <WrapPanel Grid.Column="1" Grid.Row="0"  Margin="4" HorizontalAlignment="Left">
-                    <TextBlock Grid.Column="0" Grid.Row="0" Text="XPath:"></TextBlock>
+                <!--Row_0-->
+                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="Main:"></TextBlock>
+                <WrapPanel Grid.Row="0" Grid.Column="1"   Margin="4" HorizontalAlignment="Left">
+                    <TextBlock Text="XPath:"></TextBlock>
                     <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" MinWidth="150" MaxWidth="200" Text="{Binding SettingsReport.Monitor.MonitorName.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
-                <WrapPanel  Grid.Column="2"  Margin="4" HorizontalAlignment="Left">
+                <WrapPanel Grid.Row="0" Grid.Column="2"  Margin="4" HorizontalAlignment="Left">
                     <TextBlock Grid.Column="0" Width="40"  Text="Name:"></TextBlock>
                     <TextBox IsReadOnly="True" Background="LightGray" MinWidth="40" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
 
-                <WrapPanel Grid.Column="3" Margin="4" HorizontalAlignment="Left">
+                <WrapPanel Grid.Row="0" Grid.Column="3" Margin="4" HorizontalAlignment="Left">
                     <TextBlock  Width="55"  Text="Brand:" FontSize="18"></TextBlock>
                     <ComboBox     MinWidth="100"
                                 ItemsSource="{Binding SettingsReport.Monitors}" 
@@ -45,7 +46,7 @@
                         </ComboBox.Text>
                     </ComboBox>
                 </WrapPanel>
-                <WrapPanel  Grid.Column="4"  Margin="4">
+                <WrapPanel Grid.Row="0"   Grid.Column="4"  Margin="4">
                     <TextBlock Margin="5 0 5 0"  Width="40" Text="Model:"></TextBlock>
                     <TextBox IsReadOnly="True" Background="LightGray"  Margin="5 0 5 0" Height="22"  MinWidth="100">
                         <TextBox.Text>
@@ -57,8 +58,8 @@
                         </TextBox.Text>
                     </TextBox>
                 </WrapPanel>
-                <WrapPanel Grid.Column="5"   Margin="4" HorizontalAlignment="Right">
-                    <TextBlock Grid.Column="0" FontWeight="Bold" Text="Resault:"></TextBlock>
+                <WrapPanel Grid.Row="0" Grid.Column="5" Margin="4" HorizontalAlignment="Right">
+                    <TextBlock  FontWeight="Bold" Text="Resault:"></TextBlock>
                     <TextBox Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" ></TextBox>
                 </WrapPanel>
             </Grid>

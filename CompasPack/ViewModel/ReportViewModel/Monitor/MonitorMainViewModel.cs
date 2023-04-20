@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorMainViewModel : ReportHardWareViewModelBase, IReportViewModel
+    public class MonitorMainViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
     {
         private string _brand;
         private string _model;
-        private string _selectedMonitor;
         private string _name;
 
         public string Name
@@ -39,6 +40,25 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
+
+        public string Error => throw new NotImplementedException();
+
+        public string this[string columnName]
+        {
+            get
+            {
+                string error = String.Empty;
+                switch (columnName)
+                {
+                    case "Brand":
+                        if (string.IsNullOrWhiteSpace(Brand))
+                            error = "Введи значення";
+                        break;
+                }
+                return error;
+            }
+        }
+
         public MonitorMainViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
         {
             SettingsReport = settingsReport;

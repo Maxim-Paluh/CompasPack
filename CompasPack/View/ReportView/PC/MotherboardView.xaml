@@ -12,8 +12,6 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -21,23 +19,22 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
                 <!--Row_0-->
-                <TextBlock Grid.Column="0" Grid.Row="0" FontSize="14" FontWeight="Bold"  Text="Motherboard:">
-                </TextBlock>
-                <WrapPanel Grid.Column="1" Margin="4" HorizontalAlignment="Left">
-                    <TextBlock Grid.Column="0" Grid.Row="0" Text="XPath:"></TextBlock>
+                <TextBlock Grid.Row="0" Grid.Column="0"  FontSize="14" FontWeight="Bold"  Text="Motherboard:"></TextBlock>
+                <WrapPanel Grid.Row="0" Grid.Column="1" Margin="4" HorizontalAlignment="Left">
+                    <TextBlock Text="XPath:"></TextBlock>
                     <TextBox Margin="5 0 0 0" IsReadOnly="True" Background="LightGray" MinWidth="150" MaxWidth="200" Text="{Binding SettingsReport.Motherboard.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
-                <WrapPanel Grid.Column="4"   Margin="4" HorizontalAlignment="Right">
-                    <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>
+                <WrapPanel Grid.Row="0" Grid.Column="2"   Margin="4" HorizontalAlignment="Right">
+                    <TextBlock FontWeight="Bold" Text="Resault:"></TextBlock>
                     <TextBox Margin="5 0 0 0" MinWidth="300" Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <!--Row_1-->
-                <WrapPanel  Grid.Column="1" Grid.Row="1"  Margin="4" >
-                    <TextBlock Grid.Column="0" Width="40" Grid.Row="0" Text="Name:"></TextBlock>
+                <WrapPanel Grid.Row="1" Grid.Column="1"   Margin="4" >
+                    <TextBlock  Width="40" Text="Name:"></TextBlock>
                     <TextBox MinWidth="40" IsReadOnly="True" Background="LightGray" MaxWidth="600" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                     <TextBlock Margin="5 0 5 0"  Width="40" Text="Regex:"></TextBlock>
                     <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
-                        <ScrollViewer Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
                             <ItemsControl  ItemsSource="{Binding SettingsReport.Motherboard.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
                               ItemTemplate="{StaticResource Regexemplate}"/>
                         </ScrollViewer>

@@ -18,12 +18,28 @@ namespace CompasPack.ViewModel
     {
         private MonitorMainViewModel _monitorMainViewModel;
         private MonitorOtherViewModel _monitorOtherViewModel;
-        private MonitorParameterViewModel _monitorParameterViewModel;
+        private MonitorAspectRatioViewModel _MonitorAspectRatioViewModel;
+        private MonitorDiagonalViewModel _monitorDiagonalViewModel;
+        private MonitorResolutionViewModel _monitorResolutionViewModel;
 
-        public MonitorParameterViewModel MonitorParameterViewModel
+        public MonitorResolutionViewModel MonitorResolutionViewModel
         {
-            get { return _monitorParameterViewModel; }
-            set { _monitorParameterViewModel = value; }
+            get { return _monitorResolutionViewModel; }
+            set { _monitorResolutionViewModel = value; }
+        }
+        public MonitorDiagonalViewModel MonitorDiagonalViewModel
+        {
+            get { return _monitorDiagonalViewModel; }
+            set
+            {
+                _monitorDiagonalViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+        public MonitorAspectRatioViewModel MonitorAspectRatioViewModel
+        {
+            get { return _MonitorAspectRatioViewModel; }
+            set { _MonitorAspectRatioViewModel = value; }
         }
         public MonitorOtherViewModel MonitorOtherViewModel
         {
@@ -190,14 +206,18 @@ namespace CompasPack.ViewModel
         public async Task LoadAsync(int? Id)
         {
             MonitorMainViewModel = new MonitorMainViewModel(_settingsReportViewModel, _xDocument);
-            MonitorParameterViewModel = new MonitorParameterViewModel(_settingsReportViewModel, _xDocument);
+            MonitorAspectRatioViewModel = new MonitorAspectRatioViewModel(_settingsReportViewModel, _xDocument);
             MonitorOtherViewModel = new MonitorOtherViewModel(_settingsReportViewModel, _xDocument);
+            MonitorDiagonalViewModel = new MonitorDiagonalViewModel(_settingsReportViewModel, _xDocument);
+            MonitorResolutionViewModel = new MonitorResolutionViewModel(_settingsReportViewModel, _xDocument);
 
             await Task.Factory.StartNew(() =>
             {
                 MonitorMainViewModel.Load();
-                MonitorParameterViewModel.Load();
+                MonitorAspectRatioViewModel.Load();
                 MonitorOtherViewModel.Load();
+                MonitorDiagonalViewModel.Load();
+                MonitorResolutionViewModel.Load();
             });
 
             IndexReport = _ioManager.GetLastReport(ReportPath) + 1;

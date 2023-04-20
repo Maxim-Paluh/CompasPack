@@ -12,6 +12,7 @@ using CompasPack.ViewModel;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Documents;
+using System.Collections.ObjectModel;
 
 namespace CompasPakc.BL
 {
@@ -858,6 +859,59 @@ namespace CompasPakc.BL
                     { "Zeuslap", new List<string>() { } },
                     { "Zyrex", new List<string>() { } }
                 },
+                LaptopHardWares = new ObservableCollection<LaptopHardWare> 
+                { 
+                    new LaptopHardWare()
+                    {
+                        Name = "Wi-Fi",
+                        IsSelect = true,
+                    },
+                    new LaptopHardWare()
+                    {
+                        Name = "TouchScreen",
+                        IsSelect = false,
+                    },
+                    new LaptopHardWare()
+                    {
+                        Name = "HDMI",
+                        IsSelect = false,
+                    },
+                    new LaptopHardWare()
+                    {
+                        Name = "DisplayPort",
+                        IsSelect = false,
+                    },
+                    new LaptopHardWare()
+                    {
+                        Name = "VGA",
+                        IsSelect = false,
+                    },
+                    new LaptopHardWare()
+                    {
+                        Name = "DVD-Rom",
+                        IsSelect = false,
+                    },
+                    new LaptopHardWare()
+                    {
+                        Name = "Card reader",
+                        IsSelect = true,
+                    },
+                    new LaptopHardWare()
+                    {
+                        Name = "eSATA",
+                        IsSelect = false,
+                    },
+                    new LaptopHardWare()
+                    {
+                        Name = "Keyboard Light",
+                        IsSelect = false,
+                    },
+                    new LaptopHardWare()
+                    {
+                        Name = "Ethernet",
+                        IsSelect = true,
+                    }
+                },
                 Monitors = new List<string> { "2E", "Acer", "AOC", "ASUS", "BenQ", "Dell", "Eizo", "Elo Touch Solutions", "Evidence", "EvroMedia", "GIGABYTE", "HP", "Huawei", "HyperX", "iiyama", "Lenovo", "LG", "MSI", "NEC", "Neovo", "Philips", "Qube", "Samsung", "ViewSonic", "Xiaomi" },
                 Monitor = new Monitor()
                 {
@@ -875,17 +929,94 @@ namespace CompasPakc.BL
 
                     MonitorType = new MonitorType()
                     {
-                        XPath= $"//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi монiтора\")]" +
+                        XPath = $"//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi монiтора\")]" +
                                 $"//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"тип\")]/Value",
-                         Regex = new List<string>() { "[^\\d.\"]" }
+                        Regex = new List<string>() { "[^\\d.\"]" }
                     },
                     MonitorSize = new MonitorSize()
                     {
                         XPath = $"//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi монiтора\")]" +
                                 $"//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"видима область екрана\")]/Value",
                         Regex = new List<string>() { "(.*\\()", "(\\).*)" }
+                    },
+                    AspectRatio = new AspectRatio()
+                    {
+                        XPath = $"//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi монiтора\")]" +
+                                $"//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"спiввiдношення сторiн\")]/Value",
+                    },
+                    MonitorInterfaces = new ObservableCollection<MonitorInterface>()
+                    {
+                        new MonitorInterface()
+                        {
+                            Name = "Mini VGA",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "VGA",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "HDMI",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "Mini HDMI",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "Micro HDMI",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "DisplayPort",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "Mini DisplayPort",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "Thunderbolt",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "USB Type-C",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "DVI-D",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "DVI-I",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "DVI-A",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "Mini DVI",
+                            IsSelect = false
+                        },
+                        new MonitorInterface()
+                        {
+                            Name = "Micro DVI",
+                            IsSelect = false
+                        }
                     }
-                    
                 }
             };
         }

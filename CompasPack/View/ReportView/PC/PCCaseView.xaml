@@ -17,8 +17,9 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="PCCase:"/>
-                <WrapPanel  Grid.Column="1"  Margin="4" Grid.RowSpan="2">
+                <!--Row_0-->
+                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="PCCase:"/>
+                <WrapPanel Grid.Row="0" Grid.Column="1"  Margin="4" Grid.RowSpan="2">
                     <TextBlock Margin="5 0 5 0"  Width="40" Text="Name:"></TextBlock>
                     <TextBox Margin="5 0 5 0"  Width="80">
                         <TextBox.Text>
@@ -30,8 +31,8 @@
                         </TextBox.Text>
                     </TextBox>
                 </WrapPanel>
-                <WrapPanel Grid.Column="2"   Margin="4" HorizontalAlignment="Right">
-                    <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="Bold" Text="Resault:"></TextBlock>
+                <WrapPanel Grid.Row="0" Grid.Column="2" Margin="4" HorizontalAlignment="Right">
+                    <TextBlock  FontWeight="Bold" Text="Resault:"></TextBlock>
                     <TextBox Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" ></TextBox>
                 </WrapPanel>
             </Grid>

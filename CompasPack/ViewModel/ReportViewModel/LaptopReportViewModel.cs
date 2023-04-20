@@ -19,7 +19,7 @@ namespace CompasPack.ViewModel
     internal class LaptopReportViewModel : ReportViewModelBase, IDetailViewModel
     {   
         private LaptopMainViewModel _laptopMainViewModel;
-        private LaptopMonitorViewModel _laptopMonitorViewModel;
+        private MonitorDiagonalViewModel _monitorDiagonalViewModel;
         private CPUViewModel _CPUViewModel;
         private MemoryViewModel _memoryViewModel;
         private VideoViewModel _videoViewModel;
@@ -27,12 +27,12 @@ namespace CompasPack.ViewModel
         private LaptopBatteryViewModel _laptopBatteryViewModel;
         private LaptopOtherViewModel _laptopOtherViewModel;
 
-        public LaptopMonitorViewModel LaptopMonitorViewModel
+        public MonitorDiagonalViewModel MonitorDiagonalViewModel
         {
-            get { return _laptopMonitorViewModel; }
+            get { return _monitorDiagonalViewModel; }
             set
             {
-                _laptopMonitorViewModel = value;
+                _monitorDiagonalViewModel = value;
                 OnPropertyChanged();
             }
         }
@@ -216,7 +216,7 @@ namespace CompasPack.ViewModel
                 else
                     text = text.Replace("model", $"{LaptopMainViewModel.Model}");
 
-                text = text.Replace("diag", LaptopMonitorViewModel.Result);
+                text = text.Replace("diag", MonitorDiagonalViewModel.Result);
                 text = text.Replace("compascpu", CPUViewModel.Result);
                 text = text.Replace("compasmemory", MemoryViewModel.Result);
                 text = text.Replace("compasgpu", VideoViewModel.Result);
@@ -245,7 +245,7 @@ namespace CompasPack.ViewModel
         public async Task LoadAsync(int? Id)
         {
             LaptopMainViewModel = new LaptopMainViewModel(_settingsReportViewModel);
-            LaptopMonitorViewModel = new LaptopMonitorViewModel(_settingsReportViewModel, _xDocument);
+            MonitorDiagonalViewModel = new MonitorDiagonalViewModel(_settingsReportViewModel, _xDocument);
 
             CPUViewModel = new CPUViewModel(_settingsReportViewModel, _xDocument);
             MemoryViewModel = new MemoryViewModel(_settingsReportViewModel, _xDocument);
@@ -257,7 +257,7 @@ namespace CompasPack.ViewModel
             await Task.Factory.StartNew(() =>
             {
                 CPUViewModel.Load();
-                LaptopMonitorViewModel.Load();
+                MonitorDiagonalViewModel.Load();
                 MemoryViewModel.Load();
                 VideoViewModel.Load();
                 PhysicalDiskViewModel.Load();

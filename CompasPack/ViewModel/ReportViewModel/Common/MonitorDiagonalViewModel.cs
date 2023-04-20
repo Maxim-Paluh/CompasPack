@@ -13,7 +13,7 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    class LaptopMonitorViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
+    public class MonitorDiagonalViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
     {
         private string _laptopMonitorType;
         private string _laptopMonitorSize;
@@ -39,7 +39,7 @@ namespace CompasPack.ViewModel
             }
         }
 
-        public LaptopMonitorViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
+        public MonitorDiagonalViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
         {
             SettingsReport = settingsReport;
             Document = xDocument;

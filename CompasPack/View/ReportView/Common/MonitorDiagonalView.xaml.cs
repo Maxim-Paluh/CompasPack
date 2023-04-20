@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace CompasPack.View
 {
     /// <summary>
-    /// Логика взаимодействия для MonitorParameterView.xaml
+    /// Логика взаимодействия для LaptopMonitorView.xaml
     /// </summary>
-    public partial class MonitorParameterView : UserControl
+    public partial class MonitorDiagonalView : UserControl
     {
-        public MonitorParameterView()
+        public MonitorDiagonalView()
         {
             InitializeComponent();
         }

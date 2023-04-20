@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using static System.Net.WebRequestMethods;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Collections.ObjectModel;
 
 namespace CompasPack.ViewModel
 {
@@ -20,7 +21,6 @@ namespace CompasPack.ViewModel
         private Memory _memory;
         private VideoController _videoController;
         private LaptopBattery _laptopBattery;
-        private LaptopOther _laptopOther;
         private Monitor _monitor;
 
         
@@ -71,17 +71,13 @@ namespace CompasPack.ViewModel
             get { return _laptopBattery; }
             set { _laptopBattery = value; }
         }
-        public LaptopOther LaptopOther
-        {
-            get { return _laptopOther; }
-            set { _laptopOther = value; }
-        }
         public Monitor Monitor
         {
             get { return _monitor; }
             set { _monitor = value; }
         }
 
+        public ObservableCollection<LaptopHardWare> LaptopHardWares { get; set; }
 
         public List<string> PowerSupply
         {
@@ -156,8 +152,6 @@ namespace CompasPack.ViewModel
     public class LaptopBattery : ReportBase
     {
     }
-    public class LaptopOther : ReportBase
-    { }
 
     public class Monitor
     {
@@ -166,9 +160,7 @@ namespace CompasPack.ViewModel
 
         private MonitorType _monitorType;
         private MonitorSize _monitorSize;
-
-
-        private MonitorAspectRatio _monitorAspectRatio;
+        private AspectRatio _aspectRatio;
 
 
         public MonitorName MonitorName
@@ -195,11 +187,13 @@ namespace CompasPack.ViewModel
             get { return _monitorSize; }
             set { _monitorSize = value; }
         }
-        public MonitorAspectRatio MonitorAspectRatio
+        public AspectRatio AspectRatio
         {
-            get { return _monitorAspectRatio; }
-            set { _monitorAspectRatio = value; }
+            get { return _aspectRatio; }
+            set { _aspectRatio = value; }
         }
+
+        public ObservableCollection<MonitorInterface> MonitorInterfaces { get; set; }
     }
     
     public class MonitorName : ReportBase
@@ -220,13 +214,31 @@ namespace CompasPack.ViewModel
     {
 
     }
-    public class MonitorAspectRatio : ReportBase
+    public class AspectRatio : ReportBase
     {
 
     }
-   
-    
-    
+
+    public class MonitorInterface : ViewModelBase
+    {
+        private bool _isSelect;
+        public string Name { get; set; }
+        public bool IsSelect
+        {
+            get { return _isSelect; }
+            set
+            {
+                _isSelect = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public class LaptopHardWare : MonitorInterface
+    {
+
+    }
+
     public class ReportBase : ViewModelBase
     {
         private List<string> _regex;
@@ -253,15 +265,3 @@ namespace CompasPack.ViewModel
     }
 
 }
-
-
-//LaptopMonitorType = new LaptopMonitorType()
-//{
-//    XPath = "//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi') , \"тип монiтора\")]/Value",
-//    
-//},
-//                    LaptopMonitorSize = new LaptopMonitorSize()
-//                    {
-//                       
-//                        
-//                    }

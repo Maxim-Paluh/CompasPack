@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace CompasPack.View
 {
     /// <summary>
-    /// Логика взаимодействия для LaptopMonitorView.xaml
+    /// Логика взаимодействия для MonitorResolutionView.xaml
     /// </summary>
-    public partial class LaptopMonitorView : UserControl
+    public partial class MonitorResolutionView : UserControl
     {
-        public LaptopMonitorView()
+        public MonitorResolutionView()
         {
             InitializeComponent();
         }
