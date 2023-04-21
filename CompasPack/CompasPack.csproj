@@ -38,4 +38,16 @@
     <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="SourcePriceLaptop.rar">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="SourcePriceMonitor.rar">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="SourcePricePC.rar">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
