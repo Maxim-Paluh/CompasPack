@@ -49,6 +49,7 @@
             <MenuItem Header="Налаштування">
                 <MenuItem Header="Скинути шаблон програм" Command="{Binding SetDefaultGroupProgramCommand}"></MenuItem>
                 <MenuItem Header="Скинути шаблон набору програм" Command="{Binding SetDefaultUserPresetProgramCommand}"></MenuItem>
+                <MenuItem Header="Скинути шаблони Docx" Command="{Binding SetDefaultUserDocxCommand}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Справка">
                 <MenuItem Header="Перевірити оновлення" Command="{Binding CheckUpdateProgramCommand}"></MenuItem>

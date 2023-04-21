@@ -33,6 +33,7 @@ namespace CompasPakc.BL
 
         public Task SetDefaultGroupProgram();
         public Task SetDefaultUserPresetProgram();
+        public void ReInstallPatternDocx();
         public Task SetSettingsReport();
 
         public string CompasPackLog { get; set; }
@@ -1074,6 +1075,49 @@ namespace CompasPakc.BL
             if (!Directory.Exists(ReportMonitor))
                 Directory.CreateDirectory(ReportMonitor);
         }
+
+        public void ReInstallPatternDocx()
+        {
+            CheckReportFolders();
+            ReInstallPatternDocxInFolder(Path.Combine(CurrentDirectoryPath, "SourcePricePC.rar"), ReportPC);
+            ReInstallPatternDocxInFolder(Path.Combine(CurrentDirectoryPath, "SourcePriceLaptop.rar"), ReportLaptop);
+            ReInstallPatternDocxInFolder(Path.Combine(CurrentDirectoryPath, "SourcePriceMonitor.rar"), ReportMonitor);
+        }
+
+        private void ReInstallPatternDocxInFolder(string pathRar, string pathFolder)
+        {
+            if (Directory.Exists($"{pathFolder}\\SourcePrice"))
+                Directory.Delete($"{pathFolder}\\SourcePrice", true);
+
+            if (File.Exists(WinRar))
+            {
+                if (File.Exists(pathRar))
+                {
+                    try
+                    {
+                        ProcessStartInfo ps = new ProcessStartInfo();
+                        ps.FileName = WinRar;
+                        ps.Arguments = $@"x -p1234 -o- {pathRar} {pathFolder}";
+                        var proc = Process.Start(ps);
+                        if (!proc.WaitForExit(20000))
+                        {
+                            try { proc.Kill(); } catch (Exception) { }
+                            try { proc.Close(); } catch (Exception) { }
+
+                            _messageDialogService.ShowInfoDialog($"Не вдалося розпакувати архів:\n{pathRar}\nСпробуйте ще ра!", "Помилка!");
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        _messageDialogService.ShowInfoDialog($"Не вдалося розпакувати архів:\n{pathRar}\nСпробуйте ще ра!", "Помилка!");
+                    }
+                }
+                else
+                    _messageDialogService.ShowInfoDialog($"Не знайдено архів:\n{pathRar}\nПоверни шаблон в корінь програми!", "Помилка!");
+            }
+            else
+                _messageDialogService.ShowInfoDialog("Не знайдено Rar.exe!\nНеможливо розпакувати архіви!", "Помилка!");
+        }
         public int GetLastReport(string paht)
         {
             var lastString = Directory.GetFiles(paht).Select(x => x = Regex.Match(x, "\\d+").Value).OrderBy(x => x).LastOrDefault();
@@ -1136,10 +1180,5 @@ namespace CompasPakc.BL
                 return null;
             }
         }
-
-
-
-
-
     }
 }

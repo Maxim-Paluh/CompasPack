@@ -45,11 +45,13 @@ namespace CompasPack.ViewModel
             ClosedAppCommand = new DelegateCommand(OnClosedApp);
             SetDefaultGroupProgramCommand = new DelegateCommand(OnSetDefaultGroupProgram);
             SetDefaultUserPresetProgramCommand = new DelegateCommand(OnSetDefaultUserPresetProgram);
+            SetDefaultUserDocxCommand = new DelegateCommand(OnSetDefaultUserDocx);
             CheckUpdateProgramCommand = new DelegateCommand(OnCheckUpdateProgram);
             AboutProgramCommand = new DelegateCommand(OnAboutProgram);
 
             CreateFormCommand = new DelegateCommand<Type>(OnCreateNewFormExecute);
         }
+
         //******************************************************
         public void LoadAsync()
         {
@@ -133,6 +135,14 @@ namespace CompasPack.ViewModel
                         await _formViewModel.LoadAsync(null);
             }
         }
+        private void OnSetDefaultUserDocx()
+        {
+            var resultDialog = _messageDialogService.ShowYesNoDialog($"Очистити шаблони Docx?\nЦю дію не можна відмінити!!!", "Очистка шаблону!");
+            if (resultDialog == MessageDialogResult.Yes)
+            {
+                 _iOManager.ReInstallPatternDocx();
+            }
+        }
         private void OnCheckUpdateProgram()
         {
             _messageDialogService.ShowInfoDialog("Охх горе, нажаль ця функція нереалізована, зверніться до розробника!", "Помилка!");
@@ -173,6 +183,7 @@ namespace CompasPack.ViewModel
         public ICommand ClosedAppCommand { get; }
         public ICommand SetDefaultGroupProgramCommand { get; }
         public ICommand SetDefaultUserPresetProgramCommand { get; }
+        public ICommand SetDefaultUserDocxCommand { get; }
         public ICommand CheckUpdateProgramCommand { get; }
         public ICommand AboutProgramCommand { get; }
 
