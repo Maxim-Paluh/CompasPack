@@ -49,5 +49,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+	<PropertyGroup>
+		<SatelliteResourceLanguages>uk_UA</SatelliteResourceLanguages>
+	</PropertyGroup>
 
 </Project>
