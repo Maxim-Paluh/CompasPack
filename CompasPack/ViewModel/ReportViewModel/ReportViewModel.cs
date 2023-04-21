@@ -101,10 +101,16 @@ namespace CompasPack.ViewModel
             _ioManager.CheckReportFolders();
 
             _xDocument = await _ioManager.GetXDocument();
-
             _settingsReportViewModel = await _ioManager.GetSettingsReport();
-            if (_settingsReportViewModel!= null && _xDocument != null)
+
+            if (_settingsReportViewModel != null && _xDocument != null)
                 IsEnable = true;
+            else
+            {
+                IsEnable = false;
+                _messageDialogService.ShowInfoDialog("Через наявність помилок, заборонено формувати звіти!","Помилка!");
+            }
+
         }
         public void Unsubscribe()
         {

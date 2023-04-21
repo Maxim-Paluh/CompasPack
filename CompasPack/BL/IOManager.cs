@@ -1043,7 +1043,7 @@ namespace CompasPakc.BL
             {
                 _messageDialogService.ShowInfoDialog($"Шаблон для звіту має помилку, для вирішення проблеми:\n\n" +
                     $"1. Виправіть помилку:\n{exp.Message}\n\n" +
-                    $"2. Видаліть файл SettingsUserReport.json і перезавантажте програму, буде згенеровано файл по замовчуванню!", "Error");
+                    $"2. Видаліть файл SettingsUserReport.json і перезавантажте програму, буде згенеровано файл по замовчуванню!", "Помилка!");
                 return null;
             }
         }
@@ -1093,43 +1093,48 @@ namespace CompasPakc.BL
         }
         public async Task<XDocument> GetXDocument()
         {
-
-            if (!Directory.Exists(CompasPackLog))
-                Directory.CreateDirectory(CompasPackLog);
-            ProcessStartInfo? StartInfo = new ProcessStartInfo
-            {
-                FileName = Aida,
-                Arguments = "/R " + CompasPackLog + "\\Report. " + "/XML " + "/CUSTOM " + Path.GetDirectoryName(Aida) + "\\ForReport.rpf",
-                UseShellExecute = false
-            };
             try
             {
-#if DEBUG
+                if (!Directory.Exists(CompasPackLog))
+                    Directory.CreateDirectory(CompasPackLog);
+                
+                #if DEBUG
                 if (!File.Exists(CompasPackLog + "\\Report.xml"))
                 {
-                    Process proc = Process.Start(StartInfo);
+                    Process proc = Process.Start(new ProcessStartInfo()
+                    {
+                        FileName = Aida,
+                        Arguments = "/R " + CompasPackLog + "\\Report. " + "/XML " + "/CUSTOM " + Path.GetDirectoryName(Aida) + "\\ForReport.rpf",
+                        UseShellExecute = false
+                    });
                     await proc.WaitForExitAsync();
                 }
-#else
-                    Process proc = Process.Start(StartInfo);
+                #else
+                    Process proc = Process.Start(new ProcessStartInfo()
+                    {
+                        FileName = Aida,
+                        Arguments = "/R " + CompasPackLog + "\\Report. " + "/XML " + "/CUSTOM " + Path.GetDirectoryName(Aida) + "\\ForReport.rpf",
+                        UseShellExecute = false
+                    });
                     await proc.WaitForExitAsync();
-#endif
+                #endif
 
+                if (!File.Exists(CompasPackLog + "\\Report.xml"))
+                    return null;
+                
+                XDocument? document;
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                using (var stream = new StreamReader(CompasPackLog + "\\Report.xml", Encoding.GetEncoding("windows-1251")))
+                {
+                    document = await XDocument.LoadAsync(stream, LoadOptions.PreserveWhitespace, new System.Threading.CancellationToken());
+                }
+                return document;
             }
-            catch (Exception) { }
-
-            if (!File.Exists(CompasPackLog + "\\Report.xml"))
-                return null;
-            //-------------------------------------------------------------------------------------------------------------------
-            XDocument? document;
-
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            using (var stream = new StreamReader(CompasPackLog + "\\Report.xml", Encoding.GetEncoding("windows-1251")))
+            catch (Exception) 
             {
-                document = await XDocument.LoadAsync(stream, LoadOptions.PreserveWhitespace, new System.Threading.CancellationToken());
+                _messageDialogService.ShowInfoDialog($"Звіт AIDA64 не сформовано!", "Помилка!");
+                return null;
             }
-            return document;
-            //-------------------------------------------------------------------------------------------------------------------
         }
 
 
