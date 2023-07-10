@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using CompasPack.Startup;
+using CompasPack.View;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -23,8 +24,16 @@ namespace CompasPack
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            var textError = "Виникло непередбачувана помилка.\n" + e.Exception.Message + "\n" + e.Exception.StackTrace;
-            MessageBox.Show(textError);
+            List<Exception> exceptions = new List<Exception>();
+            Exception exception = e.Exception;
+            do
+            {
+                exceptions.Add(exception);
+                exception = exception.InnerException;
+            } while (exception != null);
+
+            var Error = new ErrorsView(exceptions);
+            Error.ShowDialog();
             e.Handled = true;
         }
     }
