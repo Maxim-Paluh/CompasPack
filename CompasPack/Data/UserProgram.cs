@@ -28,7 +28,6 @@ namespace CompasPack.Data
         public List<string> Arguments { get; set; }
 
         public OnlineInstaller? OnlineInstaller { get; set; }
-
     }
 
     public class OnlineInstaller

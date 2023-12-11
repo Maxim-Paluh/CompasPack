@@ -111,7 +111,7 @@ namespace CompasPack.ViewModel
             {
                 var temp = from x in groupProgram.UserPrograms select new UserProgramViewModel(x, groupProgram, _eventAggregator);
                 GroupProgramViewModel
-                    .Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<UserProgramViewModel>(temp), _eventAggregator));
+                    .Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<UserProgramViewModel>(temp)));
             }
 
             var temoListPrograms = WinInfo.ListInstallPrograms();

@@ -10,37 +10,40 @@ namespace CompasPack.ViewModel
 {
     public class GroupProgramViewModel : ViewModelBase
     {
-        private Visibility _visibility;
-        private IEventAggregator _eventAggregator;
-        
-        public GroupProgramViewModel(GroupProgram groupProgram, ObservableCollection<UserProgramViewModel> userProgramViewModels, IEventAggregator eventAggregator)
+        #region Properties
+        private bool _isVisibility;
+        public GroupProgram GroupProgram { get; set; }
+        public ObservableCollection<UserProgramViewModel> UserProgramViewModels { get; set; }
+        public bool IsVisibility
         {
-            _eventAggregator = eventAggregator;
-            SetVisibilityCommand = new DelegateCommand(OnSetVisibility);
-            GroupProgram = groupProgram;
-            UserProgramViewModels = userProgramViewModels;
-        }
-
-        public Visibility VisibilityGroup
-        {
-            get { return _visibility; }
+            get { return _isVisibility; }
             set
             {
-                _visibility = value;
+                _isVisibility = value;
                 OnPropertyChanged();
             }
         }
-        public GroupProgram GroupProgram { get; set; }
-        public ObservableCollection<UserProgramViewModel> UserProgramViewModels { get; set; }
+        #endregion
         
+        #region Constructors
+        public GroupProgramViewModel(GroupProgram groupProgram, ObservableCollection<UserProgramViewModel> userProgramViewModels)
+        {
+            SetVisibilityCommand = new DelegateCommand(OnSetVisibility);
+            GroupProgram = groupProgram;
+            UserProgramViewModels = userProgramViewModels;
+            _isVisibility = true;
+        }
+        #endregion
+
+        #region Motods
         private void OnSetVisibility()
         {
-            if (VisibilityGroup == Visibility.Collapsed)
-                VisibilityGroup = Visibility.Visible;
-            else if (VisibilityGroup == Visibility.Visible)
-                VisibilityGroup = Visibility.Collapsed;
+            IsVisibility = !IsVisibility;
         }
+        #endregion
 
+        #region Commands
         public ICommand SetVisibilityCommand { get; }
+        #endregion
     }
 }
