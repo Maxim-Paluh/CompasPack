@@ -9,6 +9,10 @@
              xmlns:Src="clr-namespace:CompasPack.View.Service"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
+        <Src:InstallConverter x:Key="InstallConvertor"/>
+        <Src:IsInstallConverter x:Key="IsInstallConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
         <DataTemplate x:Key="GroupProgram">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <Border BorderBrush="DarkBlue" Background="AliceBlue" Margin="2" BorderThickness="1" CornerRadius="3">
@@ -31,7 +35,7 @@
                                             MinWidth="120">
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
-                                                <Border Background="{Binding Background}" BorderBrush="Gray" BorderThickness="1" CornerRadius="1">
+                                                <Border Background="{Binding Install, Converter={StaticResource InstallConvertor}}" BorderBrush="Gray" BorderThickness="1" CornerRadius="1">
                                                     <ContentPresenter RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"/>
                                                 </Border>
                                             </ControlTemplate>
@@ -65,7 +69,7 @@
                                                 </TextBlock.Style>
                                             </TextBlock>
                                             <TextBlock Height="16" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding UserProgram.Architecture}"></TextBlock>
-                                            <Ellipse Fill="{Binding IsInstall}" Visibility="{Binding VisibilityIsInstall}" Grid.Column="2" Grid.Row="2" Width="11" Height="11"></Ellipse>
+                                            <Ellipse Fill="{Binding IsInstall, Converter={StaticResource IsInstallConverter}}" Visibility="{Binding VisibilityIsInstall, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="2" Grid.Row="2" Width="11" Height="11"></Ellipse>
                                             <Grid.ToolTip>
                                                 <Grid>
                                                     <Grid.RowDefinitions>

@@ -16,61 +16,60 @@ namespace CompasPack.ViewModel
 {
     public class UserProgramViewModel : ViewModelBase
     {
-        private Visibility _visibility;
-        private Brush _background;
-        private Brush _isinstallBackground;
+        #region Properties
+        private bool _visibilityIsInstall;
+        private bool _install;
+        private bool _isInstall;
         private IEventAggregator _eventAggregator;
 
+        public GroupProgram GroupProgram { get; set; }
+        public UserProgram UserProgram { get; set; }
+        public bool Install
+        {
+            get{ return _install; }
+            set 
+            { 
+                _install = value;
+                OnPropertyChanged();
+            }
+
+        }
+        public bool IsInstall
+        {
+            get { return _isInstall; }
+            set
+            {
+                _isInstall = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool VisibilityIsInstall
+        {
+            get { return _visibilityIsInstall; }
+            set
+            {
+                _visibilityIsInstall = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region Constructors
         public UserProgramViewModel(UserProgram userProgram, GroupProgram groupProgram, IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
             UserProgram = userProgram;
             GroupProgram = groupProgram;
             SelectProgramCommand = new DelegateCommand(OnSelectProgram);
-            Background = new SolidColorBrush(Colors.LightGray);
-            IsInstall = new SolidColorBrush(Colors.Red);
-            VisibilityIsInstall = Visibility.Hidden;
+            IsInstall = false;
+            VisibilityIsInstall = false;
         }
+        #endregion
 
-        public GroupProgram GroupProgram { get; set; }
-        public UserProgram UserProgram { get; set; }
-        public Brush Background
-        {
-            get { return _background; }
-            set
-            {
-                _background = value;
-                OnPropertyChanged();
-            }
-
-        }
-        public Brush IsInstall
-        {
-            get { return _isinstallBackground; }
-            set
-            {
-                _isinstallBackground = value;
-                OnPropertyChanged();
-            }
-        }
-        public Visibility VisibilityIsInstall
-        {
-            get { return _visibility; }
-            set
-            {
-                _visibility = value;
-                OnPropertyChanged();
-            }
-        }
-        public bool Install { get; set; }
+        #region Motods
         private void OnSelectProgram()
         {
             Install = !Install;
-            if (Install)
-                Background = new SolidColorBrush(Colors.Khaki);
-            else
-                Background = new SolidColorBrush(Colors.LightGray);
-
             if (GroupProgram.SingleChoice)
             {
                 _eventAggregator.GetEvent<SelectSingleProgramEvent>().Publish(new SelectSingleProgramEventArgs()
@@ -82,40 +81,33 @@ namespace CompasPack.ViewModel
         }
         public void SelectProgram()
         {
-            Install = true;
-            Background = new SolidColorBrush(Colors.Khaki);
-            if (GroupProgram.SingleChoice)
-            {
-                _eventAggregator.GetEvent<SelectSingleProgramEvent>().Publish(new SelectSingleProgramEventArgs()
-                {
-                    IdProgram = UserProgram.Id,
-                    IdGroup = GroupProgram.Id,
-                });
-            }
+            if (!Install)
+                OnSelectProgram();
         }
         public void NotSelectProgram()
         {
             Install = false;
-            Background = new SolidColorBrush(Colors.LightGray);
         }
-
         public void CheckInstall(List<string> listPrograms)
         {
             if (UserProgram.InstallProgramName != null)
             {
                 if (WinInfo.IsInstallPrograms(listPrograms, UserProgram.InstallProgramName))
-                    IsInstall = new SolidColorBrush(Colors.Green);
+                    IsInstall = true;
                 else
-                    IsInstall = new SolidColorBrush(Colors.Red);
-                VisibilityIsInstall = Visibility.Visible;
+                    IsInstall = false;
+                VisibilityIsInstall = true;
             }
             else
             {
-                IsInstall = new SolidColorBrush(Colors.Yellow);
-                VisibilityIsInstall = Visibility.Hidden;
+                IsInstall = false;
+                VisibilityIsInstall = false;
             }
         }
+        #endregion
 
+        #region Commands
         public ICommand SelectProgramCommand { get; }
+        #endregion
     }
 }
