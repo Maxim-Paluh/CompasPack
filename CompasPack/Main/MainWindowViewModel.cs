@@ -16,6 +16,7 @@ using System.Data;
 using CompasPack;
 using Autofac.Features.Indexed;
 using CompasPakc.BL;
+using CompasPack.Main;
 
 namespace CompasPack.ViewModel
 {
@@ -53,9 +54,10 @@ namespace CompasPack.ViewModel
         }
 
         //******************************************************
-        public void LoadAsync()
+        public async Task LoadAsync()
         {
-            OnCreateNewFormExecute(typeof(ProgramsViewModel));
+            OnCreateNewFormExecute(typeof(LoadViewModel));
+            //OnCreateNewFormExecute(typeof(ProgramsViewModel));
         }
         //******************************************************
         //--------------------------------------

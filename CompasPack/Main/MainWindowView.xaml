@@ -17,6 +17,10 @@
             <View:ReportsView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type ViewModel:LoadViewModel}">
+            <View:LoadView/>
+        </DataTemplate>
+
     </Window.Resources>
     
     <Grid>

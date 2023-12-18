@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CompasPakc.BL;
+using CompasPack.Main;
 
 namespace CompasPack.Startup
 {
@@ -23,10 +24,11 @@ namespace CompasPack.Startup
             builder.RegisterType<MainWindowView>().AsSelf();
             builder.RegisterType<MainWindowViewModel>().AsSelf();
 
-
+            builder.RegisterType<LoadViewModel>().Keyed<IDetailViewModel>(nameof(LoadViewModel));
 
             builder.RegisterType<ProgramsViewModel>().Keyed<IDetailViewModel>(nameof(ProgramsViewModel));
             builder.RegisterType<ReportViewModel>().Keyed<IDetailViewModel>(nameof(ReportViewModel));
+
 
             /////////////////////////////////////////////////////////////////////////////////
             // Register Event Aggregator
