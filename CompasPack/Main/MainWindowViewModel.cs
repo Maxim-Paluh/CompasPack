@@ -17,6 +17,9 @@ using CompasPack;
 using Autofac.Features.Indexed;
 using CompasPakc.BL;
 using CompasPack.Main;
+using CompasPack.Settings.Common;
+using CompasPack.Settings;
+using CompasPack.Settings.Programs;
 
 namespace CompasPack.ViewModel
 {
@@ -27,13 +30,17 @@ namespace CompasPack.ViewModel
         private IDetailViewModel? _formViewModel;
 
         private readonly IIndex<string, IDetailViewModel> _formViewModelCreator;
+        private readonly UserPathSettingsHelper _userPathSettingsHelper;
+        private readonly UserProgramsSettingsHelper _userProgramsSettingsHelper;
 
-        public MainWindowViewModel(IMessageDialogService messageDialogService, IIOManager iOManager, IEventAggregator eventAggregator, IIndex<string, IDetailViewModel> formViewModelCreator)
+        public MainWindowViewModel(IMessageDialogService messageDialogService, IIOManager iOManager, IEventAggregator eventAggregator, IIndex<string, IDetailViewModel> formViewModelCreator,
+            UserPathSettingsHelper userPathSettingsHelper, UserProgramsSettingsHelper userProgramsSettingsHelper)
         {
             _messageDialogService = messageDialogService;
             _iOManager = iOManager;
             _formViewModelCreator = formViewModelCreator;
-
+            _userPathSettingsHelper = userPathSettingsHelper;
+            _userProgramsSettingsHelper = userProgramsSettingsHelper;
             OpenAidaCommand = new DelegateCommand(OnOpenAida);
             OpenCpuZCommand = new DelegateCommand(OnOpenCpuZ);
             OpenGpuZCommand = new DelegateCommand(OnOpenGpuZ);
@@ -56,8 +63,13 @@ namespace CompasPack.ViewModel
         //******************************************************
         public async Task LoadAsync()
         {
-            OnCreateNewFormExecute(typeof(LoadViewModel));
-            //OnCreateNewFormExecute(typeof(ProgramsViewModel));
+            FormViewModel = _formViewModelCreator[typeof(LoadViewModel).Name];
+            var tempPrograms = _formViewModelCreator[typeof(ProgramsViewModel).Name];
+            await _userPathSettingsHelper.LoadFromFile();
+            await _userProgramsSettingsHelper.LoadFromFile();
+            await tempPrograms.LoadAsync(null);
+            await Task.Delay(500);
+            FormViewModel = tempPrograms;
         }
         //******************************************************
         //--------------------------------------

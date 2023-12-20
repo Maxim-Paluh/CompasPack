@@ -8,14 +8,13 @@ using System.Windows.Media;
 using Newtonsoft.Json;
 using Prism.Commands;
 
-namespace CompasPack.Data
+namespace CompasPack.Settings
 {
-    public class UserProgram
+    public class UserProgram : ICloneable
     {
         public string ProgramName { get; set; }
         public string? InstallProgramName { get; set; }
 
-        public int Id { get; set; }
         public bool IsFree { get; set; }
         public bool DisableDefender { get; set; }
         public string Description { get; set; }
@@ -28,11 +27,24 @@ namespace CompasPack.Data
         public List<string> Arguments { get; set; }
 
         public OnlineInstaller? OnlineInstaller { get; set; }
+
+        public object Clone()
+        {
+            var UserProgram = (UserProgram)this.MemberwiseClone();
+            if (OnlineInstaller != null)
+                UserProgram.OnlineInstaller = (OnlineInstaller?)OnlineInstaller.Clone();
+            return UserProgram;
+        }
     }
 
-    public class OnlineInstaller
+    public class OnlineInstaller : ICloneable
     {
         public string FileName { get; set; }
         public List<string> Arguments { get; set; }
+
+        public object Clone()
+        {
+            return (OnlineInstaller)this.MemberwiseClone();
+        }
     }
 }

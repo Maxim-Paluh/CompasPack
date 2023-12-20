@@ -1,0 +1,523 @@
+{
+"GroupsPrograms": [
+  {
+    "Id": 0,
+    "Name": "Браузери",
+    "Description": "Браузер - це програмне забезпечення для комп'ютера або іншого електронного пристрою, як правило, під'єднаного до Інтернету,\nщо дає можливість користувачеві взаємодіяти з текстом, малюнками або іншою інформацією на гіпертекстовій вебсторінці.\nТексти та малюнки можуть містити посилання на інші вебсторінки, розташовані на тому ж вебсайті або на інших вебсайтах.\nВебпереглядач з допомогою гіперпосилань дозволяє користувачеві швидко та просто отримувати інформацію, розміщену на багатьох вебсторінках.",
+    "SingleChoice": false,
+    "UserPrograms": [
+      {
+        "ProgramName": "Google Chrome",
+        "InstallProgramName": "Chrome",
+        "Id": 0,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "Google Chrome - це безкоштовний веббраузер, розроблений компанією Google на основі браузера\nз відкритим кодом Chromium та іншого відкритого програмного забезпечення.",
+        "PathFolder": "!Install\\Browser\\",
+        "FileImage": "Chrome.png",
+        "Architecture": "x64",
+        "FileName": "Chrome",
+        "Arguments": [
+          "/silent",
+          "/install"
+        ],
+        "OnlineInstaller": {
+          "FileName": "ChromeSetup",
+          "Arguments": [
+            "/silent",
+            "/install"
+          ]
+        }
+      },
+      {
+        "ProgramName": "Mozilla Firefox",
+        "InstallProgramName": "Mozilla",
+        "Id": 1,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "Mozilla Firefox - це вільний безкоштовний браузер з відкритим кодом, використовує ядро Quantum (вдосконалений Gecko).",
+        "PathFolder": "!Install\\Browser\\",
+        "FileImage": "Firefox.png",
+        "Architecture": "x64",
+        "FileName": "Firefox",
+        "Arguments": [
+          "/S"
+        ],
+        "OnlineInstaller": {
+          "FileName": "FirefoxInstaller",
+          "Arguments": [
+            "-ms"
+          ]
+        }
+      },
+      {
+        "ProgramName": "Opera",
+        "InstallProgramName": "Opera",
+        "Id": 2,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "Opera — веббраузер розробки норвезької компанії Opera Software. Вперше випущений у 1994 році групою дослідників з норвезької компанії Telenor.",
+        "PathFolder": "!Install\\Browser\\",
+        "FileImage": "Opera.png",
+        "Architecture": "x64",
+        "FileName": "opera",
+        "Arguments": [
+          "/silent",
+          "/allusers=1",
+          "/launchbrowser=0",
+          "/setdefaultbrowser=0"
+        ],
+        "OnlineInstaller": {
+          "FileName": "OperaSetup",
+          "Arguments": [
+            "/silent",
+            "/allusers=1",
+            "/launchbrowser=0",
+            "/setdefaultbrowser=0"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "Id": 1,
+    "Name": "Аудіовізуальні медіа",
+    "Description": "Різноманітні програми для перегляду медіа файлів",
+    "SingleChoice": false,
+    "UserPrograms": [
+      {
+        "ProgramName": "Adobe Acrobat Reader",
+        "InstallProgramName": "Adobe",
+        "Id": 3,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "Adobe Acrobat Reader — це програмний продукт виробництва Adobe для роботи з PDF-файлами.",
+        "PathFolder": "!Install\\Media\\",
+        "FileImage": "Adobe.png",
+        "Architecture": "x86",
+        "FileName": "Adobe",
+        "Arguments": [
+          "/sAll"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "FastStone",
+        "InstallProgramName": "FastStone",
+        "Id": 4,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "FastStone Image Viewer - це програма для перегляду, сканування, редагування та пакетної обробки зображень під виконанням операційної системи Microsoft Window.\nВона включає вбудований ескізний файловий менеджер і базу даних, тому також може використовуватись як менеджер зображень.\nВважається однією з найбільш функціональної безкоштовною програмою в своєму класі.",
+        "PathFolder": "!Install\\Media\\",
+        "FileImage": "FastStone.png",
+        "Architecture": "x86",
+        "FileName": "FastStone",
+        "Arguments": [
+          "/S",
+          "/I"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "K-Lite Codec Pack",
+        "InstallProgramName": "K-Lite",
+        "Id": 5,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "K-Lite Codec Pack - це колекція аудіо та відео кодеків для Microsoft Windows DirectShow,\nяка дозволяє операційній системі та її програмному забезпеченню відтворювати різні аудіо та відео формати,\nяк правило, не підтримуються самою операційною системою.",
+        "PathFolder": "!Install\\Media\\",
+        "FileImage": "K-Lite_Codec_Pack_1550_Mega.png",
+        "Architecture": "x86",
+        "FileName": "K-Lite_Codec_Pack_1550_Mega",
+        "Arguments": [
+          "/SP-",
+          "/verysilent"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "Notepad++",
+        "InstallProgramName": "Notepad++",
+        "Id": 6,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "Notepad++ - це текстовий редактор, призначений для програмістів і тих, кого не влаштовує скромна функціональність програми «блокнот», що входить до складу Windows.\nNotepad++ базується на компоненті Scintilla (потужному компоненті для редагування), написаному на C++ з використанням тільки Windows API і STL,\nщо забезпечує максимальну швидкість роботи при мінімальному розмірі програми.",
+        "PathFolder": "!Install\\Media\\",
+        "FileImage": "npp.png",
+        "Architecture": "x64",
+        "FileName": "npp",
+        "Arguments": [
+          "/S"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "7-Zip",
+        "InstallProgramName": "7-Zip",
+        "Id": 7,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "7-Zip — файловий архіватор з високим ступенем стиснення.\nВелика частина вихідного коду є відкритою і поширюється за ліцензією GNU LGPL,\nкод unRAR поширюється під змішаною ліцензією (GNU LGPL + обмеження unRAR).\nЗа умовами ліцензії 7-Zip можна використовувати безкоштовно на будь-якому комп'ютері,\nвключаючи комп'ютери комерційних організацій, без необхідності реєстрації.",
+        "PathFolder": "!Install\\Media\\",
+        "FileImage": "7-Zip.png",
+        "Architecture": "x64",
+        "FileName": "7z",
+        "Arguments": [
+          "/S"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "WinRAR 4.00",
+        "InstallProgramName": "WinRAR",
+        "Id": 8,
+        "IsFree": false,
+        "DisableDefender": false,
+        "Description": "WinRAR — це файловий архіватор для Windows з високим ступенем стиснення,\nє одним із найкращих архіваторів за співвідношенням ступеня стиснення до швидкості роботи.\nРозповсюджується як умовно-безкоштовне програмне забезпечення.",
+        "PathFolder": "!Install\\Media\\",
+        "FileImage": "WinRAR.png",
+        "Architecture": "x86",
+        "FileName": "WinRAR40",
+        "Arguments": [
+          "-y"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "WinRAR 5.40",
+        "InstallProgramName": "WinRAR",
+        "Id": 9,
+        "IsFree": false,
+        "DisableDefender": false,
+        "Description": "WinRAR — це файловий архіватор для Windows з високим ступенем стиснення,\nє одним із найкращих архіваторів за співвідношенням ступеня стиснення до швидкості роботи.\nРозповсюджується як умовно-безкоштовне програмне забезпечення.",
+        "PathFolder": "!Install\\Media\\WinRar540\\",
+        "FileImage": "WinRAR.png",
+        "Architecture": "x64",
+        "FileName": "WinRAR540",
+        "Arguments": [
+          "/s"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "STDU Viewer",
+        "InstallProgramName": "STDU",
+        "Id": 10,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "STDU Viewer - це невеликий за розміром переглядач PDF, DjVu, Comic Book Archive (CBR або CBZ), XPS, TCR, TIFF, TXT, EMF, WMF, BMP, GIF, JPG, JPEG, PNG, PSD\nдля Microsoft Windows безкоштовний для некомерційного використання.",
+        "PathFolder": "!Install\\Media\\",
+        "FileImage": "stduviewer.png",
+        "Architecture": "x86",
+        "FileName": "stduviewer",
+        "Arguments": [
+          "/VERYSILENT"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "AIMP",
+        "InstallProgramName": "AIMP",
+        "Id": 11,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "AIMP — безкоштовний аудіопрогравач з закритим початковим кодом, написаний на Delphi російським програмістом Артемом Ізмайловим.",
+        "PathFolder": "!Install\\Media\\",
+        "FileImage": "AIMP.ico",
+        "Architecture": "x86",
+        "FileName": "AIMP",
+        "Arguments": [
+          "/SILENT",
+          "/AUTO"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "ACDSeePro3",
+        "InstallProgramName": "ACDSee",
+        "Id": 12,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "ACDSeePro3 - умовно-безкоштовна програма для перегляду і організації зображень для Microsoft Windows, а так само для Mac OS X, що випускається ACD Systems.\nМістить численні інструменти для обробки зображень, у тому числі і пакетної. В останніх версіях має два режими перегляду:\nшвидкий, в якому доступні тільки інструменти повороту зображення і зміна масштабу, і повний, з завантаженням всіх інструментів обробки.",
+        "PathFolder": "!Install\\Media\\",
+        "FileImage": "ACDSeePro3.ico",
+        "Architecture": "x86",
+        "FileName": "ACDSee",
+        "Arguments": [
+          "/quiet"
+        ],
+        "OnlineInstaller": null
+      }
+    ]
+  },
+  {
+    "Id": 2,
+    "Name": "Утиліти",
+    "Description": "Сервісні програми, що допомагають керувати файлами, отримувати інформацію про комп'ютер, діагностувати й усувати проблеми, забезпечувати ефективну роботу системи. Утиліти розширюють можливості ОС.",
+    "SingleChoice": false,
+    "UserPrograms": [
+      {
+        "ProgramName": "Unlocker",
+        "InstallProgramName": "Unlocker",
+        "Id": 13,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "Unlocker — це безкоштовна утиліта, яка дозволяє розблокувати файли, що використовуються системним процесом або перебувають у закритому доступі.",
+        "PathFolder": "!Install\\Tools\\",
+        "FileImage": "Unlocker.png",
+        "Architecture": "x86",
+        "FileName": "Unlocker",
+        "Arguments": [
+          "-y",
+          "-fm0"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "AIDA64",
+        "InstallProgramName": "AIDA64",
+        "Id": 14,
+        "IsFree": false,
+        "DisableDefender": false,
+        "Description": "AIDA64 — це утиліта FinalWire Ltd. для тестування та ідентифікації компонентів персонального комп'ютера під керуванням операційних систем Windows,\nщо надає детальні відомості про апаратне та програмне забезпечення.",
+        "PathFolder": "!Install\\Tools\\AIDA\\",
+        "FileImage": "AIDA64.png",
+        "Architecture": "x86",
+        "FileName": "AIDA64",
+        "Arguments": [
+          "/silent",
+          "/IE"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "AnyDesk",
+        "InstallProgramName": "AnyDesk",
+        "Id": 15,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "AnyDesk — це програма віддаленого робочого столу із закритим кодом, що поширюється компанією AnyDesk Software GmbH\nЗабезпечує незалежний від платформи віддалений доступ до персональних комп’ютерів та інших пристроїв, на яких запущена основна програма.",
+        "PathFolder": "!Install\\Tools\\",
+        "FileImage": "AnyDesk.png",
+        "Architecture": "x86",
+        "FileName": "AnyDesk",
+        "Arguments": [
+          "--install \"C:\\Program Files (x86)\\AnyDesk\"",
+          "--start-with-win",
+          "--create-shortcuts",
+          "--create-desktop-icon",
+          "--silent"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "Total Commander 7.0",
+        "InstallProgramName": "Total Commander",
+        "Id": 16,
+        "IsFree": false,
+        "DisableDefender": true,
+        "Description": "Total Commander — популярний двопанельний файловий менеджер із закритим початковим кодом для операційних систем Windows, Windows CE, Windows Mobile і Android.",
+        "PathFolder": "!Install\\Tools\\",
+        "FileImage": "TotalCommander.png",
+        "Architecture": "x86",
+        "FileName": "TotalCommander700",
+        "Arguments": [
+          "/S",
+          "/IE"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "Total Commander 9.51",
+        "InstallProgramName": "Total Commander",
+        "Id": 17,
+        "IsFree": false,
+        "DisableDefender": true,
+        "Description": "Total Commander — популярний двопанельний файловий менеджер із закритим початковим кодом для операційних систем Windows, Windows CE, Windows Mobile і Android.",
+        "PathFolder": "!Install\\Tools\\TotalCommander951\\",
+        "FileImage": "TotalCommander.png",
+        "Architecture": "x86",
+        "FileName": "TotalCommander",
+        "Arguments": [
+          "/S",
+          "/IE"
+        ],
+        "OnlineInstaller": null
+      }
+    ]
+  },
+  {
+    "Id": 3,
+    "Name": "Office",
+    "Description": "Microsoft Office — офісний пакет, створений корпорацією Microsoft для операційних систем Windows, macOS, iOS та Android.\nДо складу цього пакету входить програмне забезпечення для роботи з різними типами документів: текстами, електронними таблицями, презентаціями, базами даних тощо.\nMicrosoft Office також є сервером OLE об'єктів і його функції можуть використовуватися іншими застосунками, а також самими застосунками Microsoft Office.\nПідтримує скрипти та макроси, написані на VBA.",
+    "SingleChoice": true,
+    "UserPrograms": [
+      {
+        "ProgramName": "Microsoft Office 2003",
+        "InstallProgramName": "версии 2003",
+        "Id": 18,
+        "IsFree": false,
+        "DisableDefender": false,
+        "Description": "Microsoft Office 2003 - пакет офісних додатків, який розповсюджується компанією Microsoft для операційних системи Windows.\nВипуск розпочався 19 серпня 2003, на ринок був випущений 21 жовтня 2003. Його попередником є ​​Microsoft Office XP, а наступником - Microsoft Office 2007.\nЦе остання версія Microsoft Office, який використовував формат 97-2003, а також остання версія, в якій інтерфейс додатків був виконаний у вигляді панелей інструментів і меню.",
+        "PathFolder": "!Install\\Office\\Office 2003\\",
+        "FileImage": "Office2003.png",
+        "Architecture": "x86",
+        "FileName": "SETUP",
+        "Arguments": [
+          "/qr",
+          "/noreboot"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "Microsoft Office 2007",
+        "InstallProgramName": "enterprise 2007",
+        "Id": 19,
+        "IsFree": false,
+        "DisableDefender": false,
+        "Description": "Microsoft Office 2007 - версія пакету додатків Microsoft Office, що послідувала за Microsoft Office 2003 і попередник Microsoft Office 2010.\nНадійшла у продаж для організацій 30 листопада 2006, для індивідуальних клієнтів — 30 січня 2007.\nОдночасно була випущена операційна система Windows Vista.",
+        "PathFolder": "!Install\\Office\\Office 2007\\",
+        "FileImage": "Office2007.png",
+        "Architecture": "x86",
+        "FileName": "setup",
+        "Arguments": [
+          "/config silent.xml"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "Microsoft Office 2010",
+        "InstallProgramName": "плюс 2010",
+        "Id": 20,
+        "IsFree": false,
+        "DisableDefender": false,
+        "Description": "Microsoft Office 2010 - версія додатків офісного пакету для операційної системи Microsoft Windows.\nOffice 2010 є наступником Microsoft Office 2007 та попередником Microsoft Office 2013.\nOffice 2010 включає в себе підтримку розширених форматів файлів, поліпшення інтерфейсу користувача, а також змінений користувальницький досвід.\nУ 64-розрядній версії Office 2010 виключена підтримка для Windows XP та для Windows Server 2003.",
+        "PathFolder": "!Install\\Office\\Office 2010\\",
+        "FileImage": "Office2010.png",
+        "Architecture": "x86",
+        "FileName": "Office_ProPlus_2010_RePack",
+        "Arguments": [
+          "-ais"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "Microsoft Office 2016",
+        "InstallProgramName": "плюс 2016",
+        "Id": 21,
+        "IsFree": false,
+        "DisableDefender": false,
+        "Description": "Microsoft Office 2016 — остання версія популярного офісного пакету компанії Microsoft, що розповсюджувався за допомогою MSI-інсталятора.\nПакет був представлений широкій публіці наприкінці 2014 року.\nОфіційний реліз відбувся разом із новою операційною системою Windows 10 в один день, 29 липня 2015.",
+        "PathFolder": "!Install\\Office\\Office 2016\\",
+        "FileImage": "Office2016.png",
+        "Architecture": "x86",
+        "FileName": "Office_ProPlus_2016_RePack",
+        "Arguments": [
+          "-ais"
+        ],
+        "OnlineInstaller": null
+      }
+    ]
+  },
+  {
+    "Id": 4,
+    "Name": "Антивірусне програмне забезпечення",
+    "Description": "Антивірус - це спеціалізована програма для знаходження комп'ютерних вірусів,\nа також небажаних (шкідливих) програм загалом, та відновлення заражених (модифікованих) такими програмами файлів,\nа також для профілактики — запобігання зараженню (модифікації) файлів чи операційної системи шкідливим кодом.",
+    "SingleChoice": true,
+    "UserPrograms": [
+      {
+        "ProgramName": "360 Total Security",
+        "InstallProgramName": "360 Total Security",
+        "Id": 22,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "360 Total Security — це програма, розроблена китайською компанією Qihoo 360,\n яка займається інтернет-безпекою.",
+        "PathFolder": "!Install\\Antivirus\\",
+        "FileImage": "360TS.png",
+        "Architecture": "x86",
+        "FileName": "360TS",
+        "Arguments": [
+          "/S"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "Microsoft Security Essentials",
+        "InstallProgramName": "Security Essentials",
+        "Id": 23,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "Microsoft Security Essentials (MSE) — безкоштовний пакет антивірусних програм від компанії Microsoft.",
+        "PathFolder": "!Install\\Antivirus\\",
+        "FileImage": "MSEInstall.png",
+        "Architecture": "x64",
+        "FileName": "MSEInstall",
+        "Arguments": [
+          "/s",
+          "/runwgacheck"
+        ],
+        "OnlineInstaller": null
+      }
+    ]
+  },
+  {
+    "Id": 5,
+    "Name": "Report CompasPack",
+    "Description": "Звіти про встановлення",
+    "SingleChoice": true,
+    "UserPrograms": [
+      {
+        "ProgramName": "Report Comp@s",
+        "InstallProgramName": null,
+        "Id": 24,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "Ставив Comp@s",
+        "PathFolder": "!Install\\Tools\\",
+        "FileImage": "LogInstall.png",
+        "Architecture": "x86",
+        "FileName": "LogInstall",
+        "Arguments": [
+          "\\LogInstall",
+          "Name:Comp@s"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "Report Greg_House_M_D",
+        "InstallProgramName": null,
+        "Id": 25,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "Ставив Greg_House_M_D",
+        "PathFolder": "!Install\\Tools\\",
+        "FileImage": "LogInstall.png",
+        "Architecture": "x86",
+        "FileName": "LogInstall",
+        "Arguments": [
+          "\\LogInstall",
+          "Name:Greg_House_M_D"
+        ],
+        "OnlineInstaller": null
+      },
+      {
+        "ProgramName": "Report Vadimakus",
+        "InstallProgramName": null,
+        "Id": 26,
+        "IsFree": true,
+        "DisableDefender": false,
+        "Description": "Ставив Vadimakus",
+        "PathFolder": "!Install\\Tools\\",
+        "FileImage": "LogInstall.png",
+        "Architecture": "x86",
+        "FileName": "LogInstall",
+        "Arguments": [
+          "\\LogInstall",
+          "Name:Vadimakus"
+        ],
+        "OnlineInstaller": null
+      }
+    ]
+  }
+]
+}

@@ -50,12 +50,13 @@
                 <MenuItem Header="FurMark" Command="{Binding OpenFurMarkCommand}"></MenuItem>
 
             </MenuItem>
-            <MenuItem Header="Налаштування">
-                <MenuItem Header="Скинути шаблон програм" Command="{Binding SetDefaultGroupProgramCommand}"></MenuItem>
-                <MenuItem Header="Скинути шаблон набору програм" Command="{Binding SetDefaultUserPresetProgramCommand}"></MenuItem>
-                <MenuItem Header="Скинути шаблони Docx" Command="{Binding SetDefaultUserDocxCommand}"></MenuItem>
-            </MenuItem>
-            <MenuItem Header="Справка">
+            <MenuItem Header="Засоби">
+                <MenuItem Header="Тема">
+                    <MenuItem Header="Світла"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Налаштування"></MenuItem>
+                </MenuItem>
+            <MenuItem Header=" Довідка">
                 <MenuItem Header="Перевірити оновлення" Command="{Binding CheckUpdateProgramCommand}"></MenuItem>
                 <MenuItem Header="Про програму" Command="{Binding AboutProgramCommand}"></MenuItem>
             </MenuItem>

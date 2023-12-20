@@ -13,7 +13,7 @@ namespace CompasPack.Event
 
     public class SelectSingleProgramEventArgs
     {
-        public int IdProgram { get; set; }
-        public int IdGroup { get; set; }
+        public string NameProgram { get; set; }
+        public string NameGroup { get; set; }
     }
 }

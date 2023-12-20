@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using CompasPakc.BL;
 using CompasPack.Main;
+using CompasPack.Settings;
+using CompasPack.Settings.Programs;
 
 namespace CompasPack.Startup
 {
@@ -46,8 +48,12 @@ namespace CompasPack.Startup
             // Register API
 
             /////////////////////////////////////////////////////////////////////////////////
-            // Register Service
+            // Register Service and Helper
             builder.RegisterType<MessageDialogService>().As<IMessageDialogService>();
+            
+            
+            builder.RegisterType<UserPathSettingsHelper>().AsSelf().SingleInstance();
+            builder.RegisterType<UserProgramsSettingsHelper>().AsSelf().SingleInstance();
 
             return builder.Build();
             //.ExternallyOwned()

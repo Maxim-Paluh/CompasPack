@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using CompasPack.Settings;
 
 namespace CompasPack.ViewModel
 {
@@ -22,7 +23,7 @@ namespace CompasPack.ViewModel
         private bool _isInstall;
         private IEventAggregator _eventAggregator;
 
-        public GroupProgram GroupProgram { get; set; }
+        public GroupPrograms GroupProgram { get; set; }
         public UserProgram UserProgram { get; set; }
         public bool Install
         {
@@ -55,7 +56,7 @@ namespace CompasPack.ViewModel
         #endregion
 
         #region Constructors
-        public UserProgramViewModel(UserProgram userProgram, GroupProgram groupProgram, IEventAggregator eventAggregator)
+        public UserProgramViewModel(UserProgram userProgram, GroupPrograms groupProgram, IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
             UserProgram = userProgram;
@@ -74,8 +75,8 @@ namespace CompasPack.ViewModel
             {
                 _eventAggregator.GetEvent<SelectSingleProgramEvent>().Publish(new SelectSingleProgramEventArgs()
                 {
-                    IdProgram = UserProgram.Id,
-                    IdGroup = GroupProgram.Id,
+                    NameProgram = UserProgram.ProgramName,
+                    NameGroup = GroupProgram.Name,
                 });
             }
         }

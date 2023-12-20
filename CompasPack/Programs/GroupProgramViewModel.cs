@@ -3,8 +3,9 @@ using Prism.Commands;
 using Prism.Events;
 
 using System.Collections.ObjectModel;
-using System.Windows;
+
 using System.Windows.Input;
+using CompasPack.Settings;
 
 namespace CompasPack.ViewModel
 {
@@ -12,7 +13,7 @@ namespace CompasPack.ViewModel
     {
         #region Properties
         private bool _isVisibility;
-        public GroupProgram GroupProgram { get; set; }
+        public GroupPrograms GroupProgram { get; set; }
         public ObservableCollection<UserProgramViewModel> UserProgramViewModels { get; set; }
         public bool IsVisibility
         {
@@ -26,7 +27,7 @@ namespace CompasPack.ViewModel
         #endregion
         
         #region Constructors
-        public GroupProgramViewModel(GroupProgram groupProgram, ObservableCollection<UserProgramViewModel> userProgramViewModels)
+        public GroupProgramViewModel(GroupPrograms groupProgram, ObservableCollection<UserProgramViewModel> userProgramViewModels)
         {
             SetVisibilityCommand = new DelegateCommand(OnSetVisibility);
             GroupProgram = groupProgram;

@@ -13,15 +13,17 @@ using System.Xml.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Documents;
 using System.Collections.ObjectModel;
+using CompasPack.Settings;
 
 namespace CompasPakc.BL
 {
     public interface IIOManager
     {
+        public Task<string> ReadAllTextAsync(string path);
         public Task WriteAllTextAsync(string path, string text);
 
         public Task<List<UserPresetProgram>> GetUserPresetProgram();
-        public Task<List<GroupProgram>> GetGroupPrograms();
+        public Task<List<GroupPrograms>> GetGroupPrograms();
 
         public Task<SettingsReportViewModel> GetSettingsReport();
         public Task<XDocument> GetXDocument();
@@ -38,6 +40,7 @@ namespace CompasPakc.BL
 
         public string CompasPackLog { get; set; }
         public string CompasExampleFile { get; set; }
+        public string PathRoot { get; set; }
 
         public string CpuZ { get; set; }
         public string GpuZ { get; set; }
@@ -127,14 +130,25 @@ namespace CompasPakc.BL
             ReportMonitor = Path.Combine(Report, "monitor");
         }
 
-        private List<GroupProgram> GetDefaultGroupProgram()
+        public async Task<string> ReadAllTextAsync(string path)
+        {
+            return await File.ReadAllTextAsync(path).ConfigureAwait(false);
+        }
+
+        public async Task WriteAllTextAsync(string pathFile, string text)
+        {
+            if (!Directory.Exists(Path.GetDirectoryName(pathFile)))
+                Directory.CreateDirectory(Path.GetDirectoryName(pathFile));
+            await File.WriteAllTextAsync(pathFile, text).ConfigureAwait(false);
+        }
+
+        private List<GroupPrograms> GetDefaultGroupProgram()
         {
 
-            List<GroupProgram> groupPrograms = new List<GroupProgram>()
+            List<GroupPrograms> groupPrograms = new List<GroupPrograms>()
             {
-                new GroupProgram()
+                new GroupPrograms()
                 {
-                    Id = 0,
                     Name = "Браузери",
                     Description = $"Браузер - це програмне забезпечення для комп'ютера або іншого електронного пристрою, як правило, під'єднаного до Інтернету,\n" +
                     $"що дає можливість користувачеві взаємодіяти з текстом, малюнками або іншою інформацією на гіпертекстовій вебсторінці.\n" +
@@ -145,7 +159,6 @@ namespace CompasPakc.BL
                     {
                         new UserProgram()
                         {
-                            Id = 0,
                             ProgramName = "Google Chrome",
                             InstallProgramName = "Chrome",
                             Description =   $"Google Chrome - це безкоштовний веббраузер, розроблений компанією Google на основі браузера\n" +
@@ -166,7 +179,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 1,
                             ProgramName = "Mozilla Firefox",
                             InstallProgramName = "Mozilla",
                             Description = "Mozilla Firefox - це вільний безкоштовний браузер з відкритим кодом, використовує ядро Quantum (вдосконалений Gecko).",
@@ -186,7 +198,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 2,
                             ProgramName = "Opera",
                             InstallProgramName = "Opera",
                             Description = "Opera — веббраузер розробки норвезької компанії Opera Software. Вперше випущений у 1994 році групою дослідників з норвезької компанії Telenor.",
@@ -207,9 +218,8 @@ namespace CompasPakc.BL
                     }
 
                 },
-                new GroupProgram()
+                new GroupPrograms()
                 {
-                    Id = 1,
                     Name = "Аудіовізуальні медіа",
                     Description = $"Різноманітні програми для перегляду медіа файлів",
                     SingleChoice = false,
@@ -217,7 +227,6 @@ namespace CompasPakc.BL
                     {
                         new UserProgram()
                         {
-                            Id = 3,
                             ProgramName = "Adobe Acrobat Reader",
                             InstallProgramName = "Adobe",
                             Description =   $"Adobe Acrobat Reader — це програмний продукт виробництва Adobe для роботи з PDF-файлами.",
@@ -231,7 +240,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 4,
                             ProgramName = "FastStone",
                             InstallProgramName = "FastStone",
                             Description =   $"FastStone Image Viewer - це програма для перегляду, сканування, редагування та пакетної обробки зображень під виконанням операційної системи Microsoft Window.\n" +
@@ -247,7 +255,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 5,
                             ProgramName = "K-Lite Codec Pack",
                             InstallProgramName = "K-Lite",
                             Description =   $"K-Lite Codec Pack - це колекція аудіо та відео кодеків для Microsoft Windows DirectShow,\n" +
@@ -263,7 +270,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 6,
                             ProgramName = "Notepad++",
                             InstallProgramName = "Notepad++",
                             Description =   $"Notepad++ - це текстовий редактор, призначений для програмістів і тих, кого не влаштовує скромна функціональність програми «блокнот», що входить до складу Windows.\n" +
@@ -279,7 +285,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 7,
                             ProgramName = "7-Zip",
                             InstallProgramName = "7-Zip",
                             Description =   $"7-Zip — файловий архіватор з високим ступенем стиснення.\n" +
@@ -297,7 +302,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 8,
                             ProgramName = "WinRAR 4.00",
                             InstallProgramName = "WinRAR",
                             Description =   $"WinRAR — це файловий архіватор для Windows з високим ступенем стиснення,\n" +
@@ -313,7 +317,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 9,
                             ProgramName = "WinRAR 5.40",
                             InstallProgramName = "WinRAR",
                             Description =   $"WinRAR — це файловий архіватор для Windows з високим ступенем стиснення,\n" +
@@ -329,7 +332,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id =10,
                             ProgramName = "STDU Viewer",
                             InstallProgramName = "STDU",
                             Description =   $"STDU Viewer - це невеликий за розміром переглядач PDF, DjVu, Comic Book Archive (CBR або CBZ), XPS, TCR, TIFF, TXT, EMF, WMF, BMP, GIF, JPG, JPEG, PNG, PSD\n" +
@@ -344,7 +346,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id =11,
                             ProgramName = "AIMP",
                             InstallProgramName = "AIMP",
                             Description =   $"AIMP — безкоштовний аудіопрогравач з закритим початковим кодом, написаний на Delphi російським програмістом Артемом Ізмайловим.",
@@ -358,7 +359,6 @@ namespace CompasPakc.BL
                         },
                           new UserProgram()
                         {
-                            Id = 12,
                             ProgramName = "ACDSeePro3",
                             InstallProgramName = "ACDSee",
                             Description =   $"ACDSeePro3 - умовно-безкоштовна програма для перегляду і організації зображень для Microsoft Windows, а так само для Mac OS X, що випускається ACD Systems.\n" +
@@ -374,9 +374,8 @@ namespace CompasPakc.BL
                         }
                     }
                 },
-                new GroupProgram()
+                new GroupPrograms()
                 {
-                    Id = 2,
                     Name = "Утиліти",
                     Description = $"Сервісні програми, що допомагають керувати файлами, отримувати інформацію про комп'ютер, діагностувати й усувати проблеми, забезпечувати ефективну роботу системи. Утиліти розширюють можливості ОС.",
                     SingleChoice = false,
@@ -384,7 +383,6 @@ namespace CompasPakc.BL
                     {
                         new UserProgram()
                         {
-                            Id = 13,
                             ProgramName = "Unlocker",
                             InstallProgramName = "Unlocker",
                             Description =   $"Unlocker — це безкоштовна утиліта, яка дозволяє розблокувати файли, що використовуються системним процесом або перебувають у закритому доступі.",
@@ -398,7 +396,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 14,
                             ProgramName = "AIDA64",
                             InstallProgramName = "AIDA64",
                             Description =   $"AIDA64 — це утиліта FinalWire Ltd. для тестування та ідентифікації компонентів персонального комп'ютера під керуванням операційних систем Windows,\n" +
@@ -413,7 +410,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 15,
                             ProgramName = "AnyDesk",
                             InstallProgramName = "AnyDesk",
                             Description =   $"AnyDesk — це програма віддаленого робочого столу із закритим кодом, що поширюється компанією AnyDesk Software GmbH\n" +
@@ -428,7 +424,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 16,
                             ProgramName = "Total Commander 7.0",
                             InstallProgramName = "Total Commander",
                             Description =   $"Total Commander — популярний двопанельний файловий менеджер із закритим початковим кодом для операційних систем Windows, Windows CE, Windows Mobile і Android.",
@@ -442,7 +437,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 17,
                             ProgramName = "Total Commander 9.51",
                             InstallProgramName = "Total Commander",
                             Description =   $"Total Commander — популярний двопанельний файловий менеджер із закритим початковим кодом для операційних систем Windows, Windows CE, Windows Mobile і Android.",
@@ -456,9 +450,8 @@ namespace CompasPakc.BL
                         }
                     }
                 },
-                new GroupProgram()
+                new GroupPrograms()
                 {
-                    Id = 3,
                     Name = "Office",
                     Description =   $"Microsoft Office — офісний пакет, створений корпорацією Microsoft для операційних систем Windows, macOS, iOS та Android.\n" +
                                     $"До складу цього пакету входить програмне забезпечення для роботи з різними типами документів: текстами, електронними таблицями, презентаціями, базами даних тощо.\n" +
@@ -468,7 +461,6 @@ namespace CompasPakc.BL
                     UserPrograms = new List<UserProgram>()
                     {
                         new UserProgram(){
-                            Id = 18,
                             ProgramName = "Microsoft Office 2003",
                             InstallProgramName = "версии 2003",
                             Description =   $"Microsoft Office 2003 - пакет офісних додатків, який розповсюджується компанією Microsoft для операційних системи Windows.\n" +
@@ -483,7 +475,6 @@ namespace CompasPakc.BL
                             FileImage = "Office2003.png",
                         },
                          new UserProgram(){
-                            Id = 19,
                             ProgramName = "Microsoft Office 2007",
                             InstallProgramName = "enterprise 2007",
                             Description =   $"Microsoft Office 2007 - версія пакету додатків Microsoft Office, що послідувала за Microsoft Office 2003 і попередник Microsoft Office 2010.\n" +
@@ -498,7 +489,6 @@ namespace CompasPakc.BL
                             FileImage = "Office2007.png",
                         },
                           new UserProgram(){
-                            Id = 20,
                             ProgramName = "Microsoft Office 2010",
                             InstallProgramName = "плюс 2010",
                             Description =   $"Microsoft Office 2010 - версія додатків офісного пакету для операційної системи Microsoft Windows.\n" +
@@ -514,7 +504,6 @@ namespace CompasPakc.BL
                             FileImage = "Office2010.png",
                         },
                            new UserProgram(){
-                            Id = 21,
                             ProgramName = "Microsoft Office 2016",
                             InstallProgramName = "плюс 2016",
                             Description =   $"Microsoft Office 2016 — остання версія популярного офісного пакету компанії Microsoft, що розповсюджувався за допомогою MSI-інсталятора.\n" +
@@ -530,9 +519,8 @@ namespace CompasPakc.BL
                         }
                     }
                 },
-                new GroupProgram()
+                new GroupPrograms()
                 {
-                    Id = 4,
                     Name = "Антивірусне програмне забезпечення",
                     Description = $"Антивірус - це спеціалізована програма для знаходження комп'ютерних вірусів,\n" +
                     $"а також небажаних (шкідливих) програм загалом, та відновлення заражених (модифікованих) такими програмами файлів,\n" +
@@ -542,7 +530,6 @@ namespace CompasPakc.BL
                     {
                         new UserProgram()
                         {
-                            Id = 22,
                             ProgramName = "360 Total Security",
                             InstallProgramName = "360 Total Security",
                             Description = $"360 Total Security — це програма, розроблена китайською компанією Qihoo 360,\n" +
@@ -557,7 +544,6 @@ namespace CompasPakc.BL
                         },
                         new UserProgram()
                         {
-                            Id = 23,
                             ProgramName = "Microsoft Security Essentials",
                             InstallProgramName = "Security Essentials",
                             Description = "Microsoft Security Essentials (MSE) — безкоштовний пакет антивірусних програм від компанії Microsoft.",
@@ -571,16 +557,14 @@ namespace CompasPakc.BL
                         }
                     }
                 },
-                new GroupProgram()
+                new GroupPrograms()
                 {
-                    Id = 5,
                     Name = "Report CompasPack",
                     Description = "Звіти про встановлення",
                     SingleChoice = true,
                      UserPrograms = new List<UserProgram>()
                     {
                          new UserProgram(){
-                            Id = 24,
                             ProgramName = "Report Comp@s",
                             Description =   $"Ставив Comp@s",
                             Arguments = new List<string>() { "\\LogInstall", "Name:Comp@s"},
@@ -592,7 +576,6 @@ namespace CompasPakc.BL
                             FileImage = "LogInstall.png",
                         },
                      new UserProgram(){
-                            Id = 25,
                             ProgramName = "Report Greg_House_M_D",
                             Description =   $"Ставив Greg_House_M_D",
                             Arguments = new List<string>() { "\\LogInstall", "Name:Greg_House_M_D"},
@@ -604,7 +587,6 @@ namespace CompasPakc.BL
                             FileImage = "LogInstall.png",
                         },
                      new UserProgram(){
-                            Id = 26,
                             ProgramName = "Report Vadimakus",
                             Description =   $"Ставив Vadimakus",
                             Arguments = new List<string>() { "\\LogInstall", "Name:Vadimakus"},
@@ -629,7 +611,7 @@ namespace CompasPakc.BL
             var SettingsJsonExample = JsonConvert.SerializeObject(GetDefaultGroupProgram(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
             await File.WriteAllTextAsync(SettingsGroupProgramFileNamePath, SettingsJsonExample).ConfigureAwait(false);
         }
-        public async Task<List<GroupProgram>> GetGroupPrograms()
+        public async Task<List<GroupPrograms>> GetGroupPrograms()
         {
             FileInfo fileSettingsJson = new FileInfo(SettingsGroupProgramFileNamePath);
 
@@ -638,7 +620,7 @@ namespace CompasPakc.BL
 
             try
             {
-                var temp = JsonConvert.DeserializeObject<List<GroupProgram>>(await
+                var temp = JsonConvert.DeserializeObject<List<GroupPrograms>>(await
                 File.ReadAllTextAsync(SettingsGroupProgramFileNamePath),
                 new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error, });
 
@@ -654,7 +636,7 @@ namespace CompasPakc.BL
                 _messageDialogService.ShowInfoDialog($"Шаблон для списку програм має помилку, для вирішення проблеми:\n\n" +
                     $"1. Виправіть помилку:\n{exp.Message}\n\n" +
                     $"2. Згенеруйте файл по замовчуванню в меню налаштувань програми!", "Error");
-                return new List<GroupProgram>();
+                return new List<GroupPrograms>();
             }
         }
 
@@ -1130,10 +1112,6 @@ namespace CompasPakc.BL
             }
             else
                 return -1;
-        }
-        public async Task WriteAllTextAsync(string path, string text)
-        {
-            await File.WriteAllTextAsync(path, text).ConfigureAwait(false);
         }
         public async Task<XDocument> GetXDocument()
         {

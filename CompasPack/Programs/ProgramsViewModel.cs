@@ -16,6 +16,9 @@ using CompasPakc.BL;
 using System.IO;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using CompasPack.Settings.Programs;
+using CompasPack.Service;
+using CompasPack.Settings;
 
 namespace CompasPack.ViewModel
 {
@@ -23,18 +26,21 @@ namespace CompasPack.ViewModel
     {
         private IMessageDialogService _messageDialogService;
         private IEventAggregator _eventAggregator;
+        private readonly UserProgramsSettingsHelper _userProgramsSettingsHelper;
         private readonly IIOManager _iOManager;
         private int _selectedUserPreset;
         private string _textConsole;
         private bool _isEnabled;
         SubscriptionToken _token;
-        public ProgramsViewModel(IMessageDialogService messageDialogService, IIOManager iOManager, IEventAggregator eventAggregator)
+        public ProgramsViewModel(IMessageDialogService messageDialogService, IIOManager iOManager, IEventAggregator eventAggregator,
+            UserProgramsSettingsHelper userProgramsSettingsHelper)
         {
             UserPresetPrograms = new ObservableCollection<UserPresetProgram>();
             GroupProgramViewModel = new ObservableCollection<GroupProgramViewModel>();
 
             _messageDialogService = messageDialogService;
             _eventAggregator = eventAggregator;
+            _userProgramsSettingsHelper = userProgramsSettingsHelper;
             _selectedUserPreset = -1;
             _iOManager = iOManager;
             IsEnabled = true;
@@ -104,10 +110,10 @@ namespace CompasPack.ViewModel
             GroupProgramViewModel.Clear();
             UserPresetPrograms.Clear();
 
-            var lookupProgramGroups = await _iOManager.GetGroupPrograms();
             var lookupPresetProgram = await _iOManager.GetUserPresetProgram();
 
-            foreach (var groupProgram in lookupProgramGroups)
+
+            foreach (var groupProgram in (List<GroupPrograms>)_userProgramsSettingsHelper.Settings.GroupsPrograms.Clone())
             {
                 var temp = from x in groupProgram.UserPrograms select new UserProgramViewModel(x, groupProgram, _eventAggregator);
                 GroupProgramViewModel
@@ -142,9 +148,9 @@ namespace CompasPack.ViewModel
         }
         private void SelectSingleProgram(SelectSingleProgramEventArgs obj)
         {
-            foreach (var userProgramViewModel in GroupProgramViewModel.Single(x => x.GroupProgram.Id == obj.IdGroup).UserProgramViewModels)
+            foreach (var userProgramViewModel in GroupProgramViewModel.Single(x => x.GroupProgram.Name == obj.NameGroup).UserProgramViewModels)
             {
-                if (userProgramViewModel.UserProgram.Id != obj.IdProgram)
+                if (userProgramViewModel.UserProgram.ProgramName != obj.NameProgram)
                 {
                     userProgramViewModel.NotSelectProgram();
                 }
@@ -166,27 +172,27 @@ namespace CompasPack.ViewModel
         //--------------------------------------
         private void OnSelectUserPreset()
         {
-            if (UserPresetPrograms.Count != 0)
-            {
-                var Preset = UserPresetPrograms.Single(x => x.Id == SelectedUserPreset);
-                foreach (var program in GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels))
-                {
-                    if (Preset.IdPrograms.Contains(program.UserProgram.Id))
-                    {
-                        if (OnlyFree == false)
-                            program.SelectProgram();
-                        else
-                        {
-                            if (program.UserProgram.IsFree == true)
-                                program.SelectProgram();
-                            else
-                                program.NotSelectProgram();
-                        }
-                    }
-                    else
-                        program.NotSelectProgram();
-                }
-            }
+            //if (UserPresetPrograms.Count != 0)
+            //{
+            //    var Preset = UserPresetPrograms.Single(x => x.Id == SelectedUserPreset);
+            //    foreach (var program in GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels))
+            //    {
+            //        if (Preset.IdPrograms.Contains(program.UserProgram.Id))
+            //        {
+            //            if (OnlyFree == false)
+            //                program.SelectProgram();
+            //            else
+            //            {
+            //                if (program.UserProgram.IsFree == true)
+            //                    program.SelectProgram();
+            //                else
+            //                    program.NotSelectProgram();
+            //            }
+            //        }
+            //        else
+            //            program.NotSelectProgram();
+            //    }
+            //}
 
         }
         private void OnOnlyFree()
@@ -410,6 +416,7 @@ namespace CompasPack.ViewModel
         //--------------------------------------
         private void OnAUC()
         {
+            throw new Exception("123");
             WinSettings.OpenAUC();
         }
         private void OnIcon()
