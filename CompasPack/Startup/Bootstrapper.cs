@@ -54,6 +54,7 @@ namespace CompasPack.Startup
             
             builder.RegisterType<UserPathSettingsHelper>().AsSelf().SingleInstance();
             builder.RegisterType<UserProgramsSettingsHelper>().AsSelf().SingleInstance();
+            builder.RegisterType<UserPresetSettingsHelper>().AsSelf().SingleInstance();
 
             return builder.Build();
             //.ExternallyOwned()

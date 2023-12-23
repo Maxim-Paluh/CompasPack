@@ -1,5 +1,4 @@
-﻿using CompasPack.Data;
-using CompasPack.View.Service;
+﻿using CompasPack.View.Service;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,7 @@ namespace CompasPakc.BL
         public Task<string> ReadAllTextAsync(string path);
         public Task WriteAllTextAsync(string path, string text);
 
-        public Task<List<UserPresetProgram>> GetUserPresetProgram();
+        public Task<List<UserPreset>> GetUserPresetProgram();
         public Task<List<GroupPrograms>> GetGroupPrograms();
 
         public Task<SettingsReportViewModel> GetSettingsReport();
@@ -640,31 +639,20 @@ namespace CompasPakc.BL
             }
         }
 
-        private List<UserPresetProgram> GetDefaultUserPresetProgram()
+        private List<UserPreset> GetDefaultUserPresetProgram()
         {
-            return new List<UserPresetProgram>()
+            return new List<UserPreset>()
             {
-                new UserPresetProgram()
+                new UserPreset()
                 {
-                    Id = -1,
                     Name = "Nothing",
-                    Description = "",
-                    IdPrograms = new List<int>() {}
+                    InstallProgramName = new List<string>() {}
                 },
-                new UserPresetProgram()
+                new UserPreset()
                 {
-                    Id=0,
                     Name = "User Windows 10",
-                    Description="Для Windows 10",
-                    IdPrograms = new List<int>() {0, 1, 2, 3, 4, 5, 6, 7, 9, 13, 24 }
+                    InstallProgramName = new List<string>() {"Google Chrome", "Mozilla Firefox", "Opera", "Adobe Acrobat Reader","FastStone", "K-Lite Codec Pack", "Notepad++", "7-Zip", "WinRAR 4.00", "Unlocker", "Microsoft Security Essentials", "Report CompasPack"}
                 },
-                new UserPresetProgram()
-                {
-                    Id=1,
-                    Name = "User Windows 7",
-                    Description="Для Windows 7",
-                    IdPrograms = new List<int>() {0, 1, 2, 3, 4, 5, 6, 7, 8, 13, 23, 24 }
-                }
             };
         }
         public async Task SetDefaultUserPresetProgram()
@@ -672,7 +660,7 @@ namespace CompasPakc.BL
             var SettingsJsonExample = JsonConvert.SerializeObject(GetDefaultUserPresetProgram(), Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
             await File.WriteAllTextAsync(SettingUserPresetProgramFileNamePath, SettingsJsonExample).ConfigureAwait(false);
         }
-        public async Task<List<UserPresetProgram>> GetUserPresetProgram()
+        public async Task<List<UserPreset>> GetUserPresetProgram()
         {
             FileInfo fileSettingsJson = new FileInfo(SettingUserPresetProgramFileNamePath);
 
@@ -681,7 +669,7 @@ namespace CompasPakc.BL
 
             try
             {
-                return JsonConvert.DeserializeObject<List<UserPresetProgram>>(await
+                return JsonConvert.DeserializeObject<List<UserPreset>>(await
             File.ReadAllTextAsync(SettingUserPresetProgramFileNamePath),
             new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error, });
             }
@@ -690,7 +678,7 @@ namespace CompasPakc.BL
                 _messageDialogService.ShowInfoDialog($"Шаблон набору програм має помилку, для вирішення проблеми:\n\n" +
                     $"1. Виправіть помилку:\n{exp.Message}\n\n" +
                     $"2. Згенеруйте файл по замовчуванню в меню налаштувань програми!", "Error");
-                return new List<UserPresetProgram>();
+                return new List<UserPreset>();
             }
 
 

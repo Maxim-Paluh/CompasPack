@@ -1,5 +1,4 @@
-﻿using CompasPack.Data;
-using Prism.Commands;
+﻿using Prism.Commands;
 using Prism.Events;
 
 using System.Collections.ObjectModel;

@@ -1,5 +1,4 @@
-﻿using CompasPack.Data;
-using CompasPakc.BL;
+﻿using CompasPakc.BL;
 using System;
 using System.Collections.Generic;
 using System.IO;

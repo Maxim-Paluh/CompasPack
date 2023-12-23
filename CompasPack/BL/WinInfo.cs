@@ -140,15 +140,5 @@ namespace CompasPack.BL
             }
             return programs;
         }
-
-        public static bool IsInstallPrograms(List<string> programs, string? Name)
-        {
-            if (string.IsNullOrWhiteSpace(Name))
-                return false;
-
-            if (programs.Where(x => x.Contains(Name, StringComparison.InvariantCultureIgnoreCase)).Count() >= 1)
-                return true;
-            return false;
-        }
     }
 }

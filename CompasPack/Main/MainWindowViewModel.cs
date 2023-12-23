@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Prism.Commands;
-using CompasPack.Data;
 using Prism.Events;
 using CompasPack.Event;
 using System.Diagnostics;
@@ -32,15 +31,17 @@ namespace CompasPack.ViewModel
         private readonly IIndex<string, IDetailViewModel> _formViewModelCreator;
         private readonly UserPathSettingsHelper _userPathSettingsHelper;
         private readonly UserProgramsSettingsHelper _userProgramsSettingsHelper;
+        private readonly UserPresetSettingsHelper _userPresetSettingsHelper;
 
         public MainWindowViewModel(IMessageDialogService messageDialogService, IIOManager iOManager, IEventAggregator eventAggregator, IIndex<string, IDetailViewModel> formViewModelCreator,
-            UserPathSettingsHelper userPathSettingsHelper, UserProgramsSettingsHelper userProgramsSettingsHelper)
+            UserPathSettingsHelper userPathSettingsHelper, UserProgramsSettingsHelper userProgramsSettingsHelper, UserPresetSettingsHelper userPresetSettingsHelper)
         {
             _messageDialogService = messageDialogService;
             _iOManager = iOManager;
             _formViewModelCreator = formViewModelCreator;
             _userPathSettingsHelper = userPathSettingsHelper;
             _userProgramsSettingsHelper = userProgramsSettingsHelper;
+            _userPresetSettingsHelper = userPresetSettingsHelper;
             OpenAidaCommand = new DelegateCommand(OnOpenAida);
             OpenCpuZCommand = new DelegateCommand(OnOpenCpuZ);
             OpenGpuZCommand = new DelegateCommand(OnOpenGpuZ);
@@ -67,6 +68,7 @@ namespace CompasPack.ViewModel
             var tempPrograms = _formViewModelCreator[typeof(ProgramsViewModel).Name];
             await _userPathSettingsHelper.LoadFromFile();
             await _userProgramsSettingsHelper.LoadFromFile();
+            await _userPresetSettingsHelper.LoadFromFile();
             await tempPrograms.LoadAsync(null);
             await Task.Delay(500);
             FormViewModel = tempPrograms;

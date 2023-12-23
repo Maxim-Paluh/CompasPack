@@ -1,5 +1,4 @@
 ﻿using CompasPack.BL;
-using CompasPack.Data;
 using CompasPack.View;
 using CompasPakc.BL;
 using Newtonsoft.Json.Linq;

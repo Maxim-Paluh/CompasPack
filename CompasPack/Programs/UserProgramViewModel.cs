@@ -1,5 +1,4 @@
 ﻿using CompasPack.BL;
-using CompasPack.Data;
 using CompasPack.Event;
 using Prism.Commands;
 using Prism.Events;
@@ -12,6 +11,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using CompasPack.Settings;
+using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
@@ -93,16 +93,9 @@ namespace CompasPack.ViewModel
         {
             if (UserProgram.InstallProgramName != null)
             {
-                if (WinInfo.IsInstallPrograms(listPrograms, UserProgram.InstallProgramName))
+                if(listPrograms.Where(x => x.Contains(UserProgram.InstallProgramName, StringComparison.InvariantCultureIgnoreCase)).Count() >= 1)
                     IsInstall = true;
-                else
-                    IsInstall = false;
                 VisibilityIsInstall = true;
-            }
-            else
-            {
-                IsInstall = false;
-                VisibilityIsInstall = false;
             }
         }
         #endregion

@@ -81,10 +81,6 @@
                                                     </Grid.RowDefinitions>
                                                     <Grid.ColumnDefinitions>
                                                     </Grid.ColumnDefinitions>
-                                                    <StackPanel Grid.Row="0" Orientation="Horizontal">
-                                                        <Label Content="Id:"></Label>
-                                                        <Label Content="{Binding UserProgram.Id}"></Label>
-                                                    </StackPanel>
                                                     <Label Grid.Row="1" Content="{Binding UserProgram.Description}"></Label>
                                                     <StackPanel Grid.Row="2" Orientation="Horizontal">
                                                         <Label Content="Path Folder:"></Label>
@@ -143,7 +139,7 @@
                 <ComboBox IsEnabled="{Binding IsEnabled}" Grid.Column="0" Width="auto"
                 ItemsSource="{Binding UserPresetPrograms}"
                 DisplayMemberPath="Name"
-                SelectedValuePath="Id"
+                SelectedValuePath="Name"
                 SelectedValue="{Binding SelectedUserPreset, Mode=TwoWay}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">

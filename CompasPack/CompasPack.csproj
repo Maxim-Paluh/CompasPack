@@ -51,6 +51,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\" />
     <Folder Include="ISON\" />
   </ItemGroup>
 	<PropertyGroup>

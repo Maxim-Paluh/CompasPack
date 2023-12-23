@@ -11,10 +11,8 @@ using System.Threading.Tasks;
 
 namespace CompasPack.Settings
 {
-    internal class UserProgramsTabViewModel : BaseSettingsViewModel<GroupsProgramsCommon, GroupsProgramsWrapper, UserProgramsSettingsHelper>
+    internal class UserProgramsTabViewModel
     {
-        public UserProgramsTabViewModel(IMessageDialogService messageDialogService, UserProgramsSettingsHelper settingsHelper) : base(messageDialogService, settingsHelper)
-        {
-        }
+       
     }
 }

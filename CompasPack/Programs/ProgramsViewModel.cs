@@ -1,6 +1,5 @@
 ﻿using CompasPack;
 using CompasPack.BL;
-using CompasPack.Data;
 using CompasPack.Event;
 using CompasPack.View.Service;
 using Prism.Commands;
@@ -19,6 +18,7 @@ using System.Diagnostics.Metrics;
 using CompasPack.Settings.Programs;
 using CompasPack.Service;
 using CompasPack.Settings;
+using System.Text.RegularExpressions;
 
 namespace CompasPack.ViewModel
 {
@@ -27,21 +27,22 @@ namespace CompasPack.ViewModel
         private IMessageDialogService _messageDialogService;
         private IEventAggregator _eventAggregator;
         private readonly UserProgramsSettingsHelper _userProgramsSettingsHelper;
+        private readonly UserPresetSettingsHelper _userPresetSettingsHelper;
         private readonly IIOManager _iOManager;
-        private int _selectedUserPreset;
+        private string _selectedUserPreset;
         private string _textConsole;
         private bool _isEnabled;
-        SubscriptionToken _token;
         public ProgramsViewModel(IMessageDialogService messageDialogService, IIOManager iOManager, IEventAggregator eventAggregator,
-            UserProgramsSettingsHelper userProgramsSettingsHelper)
+            UserProgramsSettingsHelper userProgramsSettingsHelper,
+            UserPresetSettingsHelper userPresetSettingsHelper)
         {
-            UserPresetPrograms = new ObservableCollection<UserPresetProgram>();
+            UserPresetPrograms = new ObservableCollection<UserPreset>();
             GroupProgramViewModel = new ObservableCollection<GroupProgramViewModel>();
 
             _messageDialogService = messageDialogService;
             _eventAggregator = eventAggregator;
             _userProgramsSettingsHelper = userProgramsSettingsHelper;
-            _selectedUserPreset = -1;
+            _userPresetSettingsHelper = userPresetSettingsHelper;
             _iOManager = iOManager;
             IsEnabled = true;
 
@@ -64,10 +65,10 @@ namespace CompasPack.ViewModel
             OffDefenderCommand = new DelegateCommand(OnOffDefender);
             OnDefenderCommand = new DelegateCommand(OnOnDefender);
 
-            _token = _eventAggregator.GetEvent<SelectSingleProgramEvent>().Subscribe(SelectSingleProgram);
+            _eventAggregator.GetEvent<SelectSingleProgramEvent>().Subscribe(SelectSingleProgram);
         }
 
-        public ObservableCollection<UserPresetProgram> UserPresetPrograms { get; }
+        public ObservableCollection<UserPreset> UserPresetPrograms { get; }
         public ObservableCollection<GroupProgramViewModel> GroupProgramViewModel { get; }
         public string TextConsole
         {
@@ -78,7 +79,7 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public int SelectedUserPreset
+        public string SelectedUserPreset
         {
             get { return _selectedUserPreset; }
             set
@@ -110,41 +111,17 @@ namespace CompasPack.ViewModel
             GroupProgramViewModel.Clear();
             UserPresetPrograms.Clear();
 
-            var lookupPresetProgram = await _iOManager.GetUserPresetProgram();
-
-
-            foreach (var groupProgram in (List<GroupPrograms>)_userProgramsSettingsHelper.Settings.GroupsPrograms.Clone())
-            {
-                var temp = from x in groupProgram.UserPrograms select new UserProgramViewModel(x, groupProgram, _eventAggregator);
-                GroupProgramViewModel
-                    .Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<UserProgramViewModel>(temp)));
-            }
-
-            var temoListPrograms = WinInfo.ListInstallPrograms();
-            foreach (var item in GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels))
-                item.CheckInstall(temoListPrograms);
-
-
-
-            foreach (var preset in lookupPresetProgram)
-                UserPresetPrograms.Add(preset);
-
-
-            var TempProduscName = WinInfo.GetProductName();
-            if (TempProduscName.Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
-            {
-                var tempUserPrest = UserPresetPrograms.FirstOrDefault(x => x.Name.Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase));
-                if (tempUserPrest != null)
-                    SelectedUserPreset = tempUserPrest.Id;
-            }
-            else if (TempProduscName.Contains("Windows 7", StringComparison.InvariantCultureIgnoreCase))
-            {
-                var tempUserPrest = UserPresetPrograms.FirstOrDefault(x => x.Name.Contains("Windows 7", StringComparison.InvariantCultureIgnoreCase));
-                if (tempUserPrest != null)
-                    SelectedUserPreset = tempUserPrest.Id;
-            }
-
-
+            var GroupsPrograms = (List<GroupPrograms>)_userProgramsSettingsHelper.Settings.GroupsPrograms.Clone();
+            foreach (var groupProgram in GroupsPrograms)
+                GroupProgramViewModel.Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<UserProgramViewModel>(groupProgram.UserPrograms.Select(x => new UserProgramViewModel(x, groupProgram, _eventAggregator)))));
+            
+            ProgramsHelper.CheckInstallPrograms(GroupProgramViewModel); // CheckInstall
+            
+            _userPresetSettingsHelper.Settings.UserPresets.ForEach(x => UserPresetPrograms.Add(x)); // Add UserPresetPrograms     
+            var tempUserPrest = UserPresetPrograms.FirstOrDefault(x => x.Name.Contains(Regex.Match(WinInfo.GetProductName(), @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // heck UserPresetPrograms
+            if (tempUserPrest != null)
+                SelectedUserPreset = tempUserPrest.Name;
+            OnSelectUserPreset();
         }
         private void SelectSingleProgram(SelectSingleProgramEventArgs obj)
         {
@@ -159,7 +136,6 @@ namespace CompasPack.ViewModel
 
         public void Unsubscribe()
         {
-            //_eventAggregator.GetEvent<SelectSingleProgramEvent>().Unsubscribe(_token);
             UserPresetPrograms.Clear();
         }
 
@@ -172,27 +148,27 @@ namespace CompasPack.ViewModel
         //--------------------------------------
         private void OnSelectUserPreset()
         {
-            //if (UserPresetPrograms.Count != 0)
-            //{
-            //    var Preset = UserPresetPrograms.Single(x => x.Id == SelectedUserPreset);
-            //    foreach (var program in GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels))
-            //    {
-            //        if (Preset.IdPrograms.Contains(program.UserProgram.Id))
-            //        {
-            //            if (OnlyFree == false)
-            //                program.SelectProgram();
-            //            else
-            //            {
-            //                if (program.UserProgram.IsFree == true)
-            //                    program.SelectProgram();
-            //                else
-            //                    program.NotSelectProgram();
-            //            }
-            //        }
-            //        else
-            //            program.NotSelectProgram();
-            //    }
-            //}
+            if (UserPresetPrograms.Count != 0)
+            {
+                var Preset = UserPresetPrograms.Single(x => x.Name == SelectedUserPreset);
+                foreach (var program in GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels))
+                {
+                    if (Preset.InstallProgramName.Contains(program.UserProgram.ProgramName))
+                    {
+                        if (OnlyFree == false)
+                            program.SelectProgram();
+                        else
+                        {
+                            if (program.UserProgram.IsFree == true)
+                                program.SelectProgram();
+                            else
+                                program.NotSelectProgram();
+                        }
+                    }
+                    else
+                        program.NotSelectProgram();
+                }
+            }
 
         }
         private void OnOnlyFree()
@@ -216,7 +192,7 @@ namespace CompasPack.ViewModel
             TextConsole += "<--------------------Start Install----------------------->\n";
             foreach (var userProgramViewModel in userPrograms)
             {
-                if (WinInfo.IsInstallPrograms(WinInfo.ListInstallPrograms(), userProgramViewModel.UserProgram.InstallProgramName))
+                if (userProgramViewModel.IsInstall)
                 {
                     TextConsole += $"Programs: {userProgramViewModel.UserProgram.ProgramName}, Already Installed!!!\n";
                     TextConsole += "<-------------------------------------------------------->\n";
@@ -232,13 +208,16 @@ namespace CompasPack.ViewModel
                         TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
 
                         if (speed >= 0.5)
-                            await InstallProgram(userProgramViewModel, true);
+                        {
+                            //await InstallProgram(userProgramViewModel, true);
+                        }
                         else
-                            await InstallProgram(userProgramViewModel, false);
+                        { }
+                            //await InstallProgram(userProgramViewModel, false);
                     }
                     else
                     {
-                         await InstallProgram(userProgramViewModel, false);
+                         //await InstallProgram(userProgramViewModel, false);
                     }
                     TextConsole += "<-------------------------------------------------------->\n";
                 }
