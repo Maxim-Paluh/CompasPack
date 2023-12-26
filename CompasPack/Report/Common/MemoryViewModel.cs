@@ -1,12 +1,7 @@
 ﻿using CompasPack.Settings;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
@@ -17,12 +12,6 @@ namespace CompasPack.ViewModel
         private string _type;
         private string _size;
         private string _frequency;
-
-        public MemoryViewModel(MemoryReportSettings memoryReportSettings, XDocument xDocument)
-        {
-            Settings= memoryReportSettings;
-            Document = xDocument;
-        }
         public string Type
         {
             get { return _type; }
@@ -50,8 +39,11 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
-        
+        public MemoryViewModel(MemoryReportSettings memoryReportSettings, XDocument xDocument)
+        {
+            Settings= memoryReportSettings;
+            Document = xDocument;
+        }
         public void Load()
         {
             var tempType = Document.XPathSelectElement(Settings.MemoryType.XPath);

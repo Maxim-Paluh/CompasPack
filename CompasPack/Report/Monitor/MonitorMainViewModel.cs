@@ -16,7 +16,6 @@ namespace CompasPack.ViewModel
         private string _brand;
         private string _model;
         private string _name;
-
         public string Name
         {
             get { return _name; }
@@ -41,9 +40,6 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
-        public string Error => throw new NotImplementedException();
-
         public string this[string columnName]
         {
             get
@@ -59,7 +55,7 @@ namespace CompasPack.ViewModel
                 return error;
             }
         }
-
+        public string Error => throw new NotImplementedException();
         public MonitorMainViewModel(MonitorReportSettings monitorReportSettings, XDocument xDocument)
         {
             Settings = monitorReportSettings;

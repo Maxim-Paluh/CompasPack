@@ -1,26 +1,34 @@
-﻿using Prism.Commands;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
     public class PowerSupplyViewModel : ReportHardWareViewModelBase<List<string>>, IReportViewModel, IDataErrorInfo
     {
-        private string _text;
+        private string _name;
         private string _power;
-
-        public PowerSupplyViewModel(List<string> PCPowerSupply)
+        public string Name
         {
-            Settings = PCPowerSupply;
-
+            get { return _name; }
+            set
+            {
+                _name = value;
+                OnPropertyChanged();
+                Result = $"{_name}-{_power}W";
+            }
         }
-
+        public string Power
+        {
+            get { return _power; }
+            set
+            {
+                _power = value;
+                OnPropertyChanged();
+                Result = $"{_name}-{_power}W";
+            }
+        }
         public string this[string columnName]
         {
             get
@@ -29,47 +37,27 @@ namespace CompasPack.ViewModel
                 switch (columnName)
                 {
                     case "Text":
-                        if (string.IsNullOrWhiteSpace(Text))
+                        if (string.IsNullOrWhiteSpace(Name))
                             error = "Введи значення";
                         break;
                     case "Power":
                         if (string.IsNullOrWhiteSpace(Power))
                             error = "Введи значення";
-                        else if(!Power.All(char.IsDigit))
+                        else if (!Power.All(char.IsDigit))
                             error = "Введи числове значення";
                         break;
                 }
                 return error;
             }
         }
-
-        public string Text
-        {
-            get { return _text; }
-            set
-            {
-                _text = value;
-                OnPropertyChanged();
-                Result = $"{_text}-{_power}W";
-            }
-        }
-
-        public string Power
-        {
-            get { return _power; }
-            set
-            {
-                _power = value;
-                OnPropertyChanged();
-                Result = $"{_text}-{_power}W";
-            }
-        }
-
         public string Error => throw new NotImplementedException();
+        public PowerSupplyViewModel(List<string> PCPowerSupply)
+        {
+            Settings = PCPowerSupply;
 
+        }
         public void Load()
         {
-            //throw new NotImplementedException();
         }
     }
 }

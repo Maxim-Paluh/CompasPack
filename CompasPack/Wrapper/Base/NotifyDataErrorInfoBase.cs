@@ -3,10 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-
 
 namespace CompasPack.Wrapper
 {
@@ -14,9 +10,7 @@ namespace CompasPack.Wrapper
     {
         private Dictionary<string, List<string>> _errorsByPropertyName = new Dictionary<string, List<string>>();
         public bool HasErrors => _errorsByPropertyName.Any();
-        
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
-        
         public IEnumerable GetErrors(string? propertyName)
         {
             return _errorsByPropertyName.ContainsKey(propertyName)

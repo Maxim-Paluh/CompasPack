@@ -1,19 +1,14 @@
 ﻿using CompasPack.Settings;
 using CompasPack.ViewModel;
-using CompasPakc.BL;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CompasPack.BL
+namespace CompasPack.Helper
 {
     public class ProgramsHelper
     {
-        public static void CombinePathFolderAndImage(IList<GroupProgramViewModel> groupPrograms, UserPath userPath, IIOManager iOManager)
+        public static void CombinePathFolderAndImage(IList<GroupProgramViewModel> groupPrograms, UserPath userPath, IIOHelper iOManager)
         {
             foreach (var item in groupPrograms.SelectMany(group => group.UserProgramViewModels))
             {
@@ -24,7 +19,7 @@ namespace CompasPack.BL
 
         public static void CheckInstallPrograms(IList<GroupProgramViewModel> groupProgramViewModels)
         {
-            var tempListPrograms = WinInfo.ListInstallPrograms();
+            var tempListPrograms = WinInfoHelper.ListInstallPrograms();
             foreach (var program in groupProgramViewModels.SelectMany(group => group.UserProgramViewModels))
                 program.CheckInstall(tempListPrograms);
         }

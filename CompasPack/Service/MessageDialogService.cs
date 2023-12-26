@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace CompasPack.View.Service
 {
@@ -13,7 +8,6 @@ namespace CompasPack.View.Service
         MessageDialogResult ShowYesNoDialog(string text, string title);
         void ShowInfoDialog(string text, string header);
     }
-
     public class MessageDialogService : IMessageDialogService
     {
         public MessageDialogResult ShowOkCancelDialog(string text, string title)
@@ -37,7 +31,6 @@ namespace CompasPack.View.Service
             MessageBox.Show(text, header);
         }
     }
-
     public enum MessageDialogResult
     {
         OK,

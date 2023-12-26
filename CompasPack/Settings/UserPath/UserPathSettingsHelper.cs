@@ -1,14 +1,5 @@
-﻿using CompasPack.View.Service;
-using CompasPakc.BL;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Xml.Linq;
+﻿using CompasPack.Helper;
+using CompasPack.View.Service;
 
 
 namespace CompasPack.Settings
@@ -19,7 +10,7 @@ namespace CompasPack.Settings
         #endregion
 
         #region Constructor
-        public UserPathSettingsHelper(IIOManager iIOManager, IMessageDialogService messageDialogService) : base(iIOManager, messageDialogService, "UserPathSettings")
+        public UserPathSettingsHelper(IIOHelper iOHelper, IMessageDialogService messageDialogService) : base(iOHelper, messageDialogService, "UserPathSettings")
         {   
         }
         #endregion

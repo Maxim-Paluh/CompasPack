@@ -1,6 +1,4 @@
-﻿using CompasPack;
-using CompasPack.BL;
-using CompasPack.Event;
+﻿using CompasPack.Event;
 using CompasPack.View.Service;
 using Prism.Commands;
 using Prism.Events;
@@ -8,14 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using CompasPakc.BL;
+using CompasPack.Helper;
 using System.IO;
 using System.Diagnostics;
-using System.Diagnostics.Metrics;
-using CompasPack.Settings.Programs;
 using CompasPack.Service;
 using CompasPack.Settings;
 using System.Text.RegularExpressions;
@@ -33,11 +28,11 @@ namespace CompasPack.ViewModel
         private readonly UserProgramsSettingsHelper _userProgramsSettingsHelper;
         private readonly UserPresetSettingsHelper _userPresetSettingsHelper;
         private readonly UserPathSettingsHelper _userPathSettingsHelper;
-        private readonly IIOManager _iOManager;
+        private readonly IIOHelper _iOHelper;
         private string _selectedUserPreset;
         private string _textConsole;
         private bool _isEnabled;
-        public ProgramsViewModel(IMessageDialogService messageDialogService, IIOManager iOManager, IEventAggregator eventAggregator,
+        public ProgramsViewModel(IMessageDialogService messageDialogService, IIOHelper iOHelper, IEventAggregator eventAggregator,
             UserProgramsSettingsHelper userProgramsSettingsHelper,
             UserPresetSettingsHelper userPresetSettingsHelper,
             UserPathSettingsHelper userPathSettingsHelper)
@@ -50,7 +45,7 @@ namespace CompasPack.ViewModel
             _userProgramsSettingsHelper = userProgramsSettingsHelper;
             _userPresetSettingsHelper = userPresetSettingsHelper;
             _userPathSettingsHelper = userPathSettingsHelper;
-            _iOManager = iOManager;
+            _iOHelper = iOHelper;
             IsEnabled = true;
 
 
@@ -111,9 +106,9 @@ namespace CompasPack.ViewModel
         }
 
         //*****************************************************************************************
-        public async Task LoadAsync(int? Id)
+        public Task LoadAsync(int? Id)
         {
-            TextConsole = WinInfo.GetSystemInfo();
+            TextConsole = WinInfoHelper.GetSystemInfo();
 
             GroupProgramViewModel.Clear();
             UserPresetPrograms.Clear();
@@ -122,15 +117,17 @@ namespace CompasPack.ViewModel
             foreach (var groupProgram in GroupsPrograms)
                 GroupProgramViewModel.Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<UserProgramViewModel>(groupProgram.UserPrograms.Select(x => new UserProgramViewModel(x, groupProgram, _eventAggregator)))));
 
-            ProgramsHelper.CombinePathFolderAndImage(GroupProgramViewModel, _userPathSettingsHelper.Settings, _iOManager);
+            ProgramsHelper.CombinePathFolderAndImage(GroupProgramViewModel, _userPathSettingsHelper.Settings, _iOHelper);
             ProgramsHelper.CheckInstallPrograms(GroupProgramViewModel); // CheckInstall
             
             _userPresetSettingsHelper.Settings.UserPresets.ForEach(x => UserPresetPrograms.Add(x)); // Add UserPresetPrograms     
-            var tempUserPrest = UserPresetPrograms.FirstOrDefault(x => x.Name.Contains(Regex.Match(WinInfo.GetProductName(), @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // heck UserPresetPrograms
+            var tempUserPrest = UserPresetPrograms.FirstOrDefault(x => x.Name.Contains(Regex.Match(WinInfoHelper.GetProductName(), @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // heck UserPresetPrograms
             if (tempUserPrest != null)
                 SelectedUserPreset = tempUserPrest.Name;
             OnSelectUserPreset();
+            return Task.CompletedTask;
         }
+
         private void SelectSingleProgram(SelectSingleProgramEventArgs obj)
         {
             foreach (var userProgramViewModel in GroupProgramViewModel.Single(x => x.GroupProgram.Name == obj.NameGroup).UserProgramViewModels)
@@ -189,7 +186,7 @@ namespace CompasPack.ViewModel
             var t = userPrograms.FirstOrDefault().IsInstall.ToString();
             if (userPrograms.Any(x => x.UserProgram.DisableDefender == true && x.IsInstall.ToString() == "#FFFF0000"))
             {
-                if (!WinDefender.CheckTamperProtectionDisable())
+                if (!WinDefenderHelper.CheckTamperProtectionDisable())
                 {
                     _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!\n" +
                         $"Оскільки встановлення одної з програм потребує автоматичного відключення ативірусного ПЗ!!!", "Помилка!");
@@ -211,7 +208,7 @@ namespace CompasPack.ViewModel
                     if (userProgramViewModel.UserProgram.OnlineInstaller != null)
                     {
                         TextConsole += $"Start speed test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                        var speed = await Network.SpeedTest();
+                        var speed = await NetworkHelper.SpeedTest();
                         TextConsole += $"End speed test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
                         TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
 
@@ -240,17 +237,17 @@ namespace CompasPack.ViewModel
             string? arguments = null;
             int countOpen = 0;
             a:
-            if (userProgramViewMode.UserProgram.DisableDefender && !WinInfo.GetProductName().Contains("Windows 7", StringComparison.InvariantCultureIgnoreCase))
+            if (userProgramViewMode.UserProgram.DisableDefender && !WinInfoHelper.GetProductName().Contains("Windows 7", StringComparison.InvariantCultureIgnoreCase))
             {
-                if (!await WinDefender.CheckDefenderDisable())
+                if (!await WinDefenderHelper.CheckDefenderDisable())
                 {
                     TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                    var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
+                    var ResponseDefender = (await WinDefenderHelper.DisableRealtimeMonitoring()).Trim();
                     if (!string.IsNullOrWhiteSpace(ResponseDefender))
                         TextConsole += $"Response defender: {ResponseDefender}\n";
                     TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
                 }
-                var Defender = await WinDefender.CheckDefenderDisable();
+                var Defender = await WinDefenderHelper.CheckDefenderDisable();
                 TextConsole += $"Defender is disable: {Defender}\n";
                 if (!Defender)
                 {
@@ -273,7 +270,7 @@ namespace CompasPack.ViewModel
                    .Where(x => x.Contains("exe", StringComparison.InvariantCultureIgnoreCase) || x.Contains("msi", StringComparison.InvariantCultureIgnoreCase));
                 if (userProgram.Architecture == "x64")
                 {
-                    if (WinInfo.GetIs64BitOperatingSystem())
+                    if (WinInfoHelper.GetIs64BitOperatingSystem())
                         ExecutableFile = Files.Where(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
                     else
                         ExecutableFile = Files.Where(x => x.Contains("x86", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
@@ -320,7 +317,7 @@ namespace CompasPack.ViewModel
                     await proc.WaitForExitAsync();
                     TextConsole += $"Programs: {userProgram.ProgramName}, Installed!!!\n";
                     await Task.Delay(1000);
-                    userProgramViewMode.CheckInstall(WinInfo.ListInstallPrograms());
+                    userProgramViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms());
                 }
                 catch (Exception exp)
                 {
@@ -334,9 +331,9 @@ namespace CompasPack.ViewModel
                     TextConsole += $"Error, Not Find {userProgram.FileName}\n";
                     TextConsole += $"Find Rar.exe, Resault:\n";
                     
-                    if (File.Exists(_iOManager.WinRar))
+                    if (File.Exists(_iOHelper.WinRar))
                     {
-                        TextConsole += $"OK!!!, Path: {_iOManager.WinRar}\n";
+                        TextConsole += $"OK!!!, Path: {_iOHelper.WinRar}\n";
                         var pathRar = Directory.GetFiles(userProgram.PathFolder).Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault();
                         int countUnrar = 0;
                         TextConsole += $"Find arkhive {userProgram.FileName}, Resault:\n";
@@ -347,7 +344,7 @@ namespace CompasPack.ViewModel
                             try
                             {
                                 ProcessStartInfo ps = new ProcessStartInfo();
-                                ps.FileName = _iOManager.WinRar;
+                                ps.FileName = _iOHelper.WinRar;
                                 ps.Arguments = $@"x -p1234 -o- {pathRar} {userProgram.PathFolder}";
                                 TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
                                 var proc = Process.Start(ps);
@@ -396,36 +393,35 @@ namespace CompasPack.ViewModel
         }
         private void OnClearConsole()
         {
-            TextConsole = WinInfo.GetSystemInfo();
+            TextConsole = WinInfoHelper.GetSystemInfo();
         }
         //-------------------------------------
 
         //--------------------------------------
         private void OnAUC()
         {
-            throw new Exception("123");
-            WinSettings.OpenAUC();
+            WinSettingsHelper.OpenAUC();
         }
         private void OnIcon()
         {
-            WinSettings.OpenIcon();
+            WinSettingsHelper.OpenIcon();
         }
         private void OnOpenDesktopIconSettings()
         {
-            WinSettings.OpenDesktopIconSettings();
+            WinSettingsHelper.OpenDesktopIconSettings();
         }
         //**************************************************
         private void OnDefault()
         {
-            WinSettings.OpenDefaultPrograms();
+            WinSettingsHelper.OpenDefaultPrograms();
         }
         private void OnOpenExampleFile()
         {
-            _iOManager.OpenFolder(Path.Combine(_iOManager.PathRoot, _userPathSettingsHelper.Settings.PathExampleFile));
+            _iOHelper.OpenFolder(Path.Combine(_iOHelper.PathRoot, _userPathSettingsHelper.Settings.PathExampleFile));
         }
         private async void OpenKMSAuto()
         {
-            if (!WinDefender.CheckTamperProtectionDisable())
+            if (!WinDefenderHelper.CheckTamperProtectionDisable())
             {
                 _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
                 return;
@@ -435,15 +431,15 @@ namespace CompasPack.ViewModel
 
             int countOpenKMSAuto = 0;
             a:
-            if (!await WinDefender.CheckDefenderDisable())
+            if (!await WinDefenderHelper.CheckDefenderDisable())
             {
                 TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
+                var ResponseDefender = (await WinDefenderHelper.DisableRealtimeMonitoring()).Trim();
                 if (!string.IsNullOrWhiteSpace(ResponseDefender))
                     TextConsole += $"Response defender: {ResponseDefender}\n";
                 TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
             }
-            var Defender = await WinDefender.CheckDefenderDisable();
+            var Defender = await WinDefenderHelper.CheckDefenderDisable();
             TextConsole += $"Defender is disable: {Defender}\n";
             if (!Defender)
             {
@@ -451,7 +447,7 @@ namespace CompasPack.ViewModel
                 return;
             }
             //------------------------------------------------------------------------------------------------------
-            var pathKMS = KMSAuto.FindKMSAutoExe(_iOManager);
+            var pathKMS = KMSAutoHelper.FindKMSAutoExe(_iOHelper.Crack);
             TextConsole += $"Find KMSAuto (Try {countOpenKMSAuto + 1} with 3), Resault:\n";
             if (!string.IsNullOrWhiteSpace(pathKMS))
             {
@@ -470,10 +466,10 @@ namespace CompasPack.ViewModel
             {
                 TextConsole += $"Error, Not Find KMSAuto\n";
                 TextConsole += $"Find Rar.exe, Resault:\n";
-                if (File.Exists(_iOManager.WinRar))
+                if (File.Exists(_iOHelper.WinRar))
                 {
-                    TextConsole += $"OK!!!, Path: {_iOManager.WinRar}\n";
-                    var pathRar = KMSAuto.FindKMSAutoRar(_iOManager);
+                    TextConsole += $"OK!!!, Path: {_iOHelper.WinRar}\n";
+                    var pathRar = KMSAutoHelper.FindKMSAutoRar(_iOHelper.Crack);
                     int countUnrar = 0;
                     TextConsole += $"Find arkhive KMSAuto, Resault:\n";
                     if (!string.IsNullOrWhiteSpace(pathRar))
@@ -483,8 +479,8 @@ namespace CompasPack.ViewModel
                         try
                         {
                             ProcessStartInfo ps = new ProcessStartInfo();
-                            ps.FileName = _iOManager.WinRar;
-                            ps.Arguments = $@"x -p1234 -o- {pathRar} {_iOManager.Crack}";
+                            ps.FileName = _iOHelper.WinRar;
+                            ps.Arguments = $@"x -p1234 -o- {pathRar} {_iOHelper.Crack}";
                             TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
                             var proc = Process.Start(ps);
                             if (!proc.WaitForExit(20000))
@@ -530,7 +526,7 @@ namespace CompasPack.ViewModel
         }
         private void OnOpenAppLog()
         {
-            _iOManager.OpenFolder(_iOManager.CompasPackLog);
+            _iOHelper.OpenFolder(_iOHelper.CompasPackLog);
         }
         //***************************************************
         private async void OnSpeedTest()
@@ -538,7 +534,7 @@ namespace CompasPack.ViewModel
             TextConsole += "<-----------------Start test speed--------------------->\n";
             TextConsole += $"Start test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
             IsEnabled = false;
-            var speed = await Network.SpeedTest();
+            var speed = await NetworkHelper.SpeedTest();
             TextConsole += $"End test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
             TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
             TextConsole += "<------------------End test speed---------------------->\n";
@@ -546,16 +542,16 @@ namespace CompasPack.ViewModel
         }
         private async void OnOffDefender()
         {
-            if (WinDefender.CheckTamperProtectionDisable())
+            if (WinDefenderHelper.CheckTamperProtectionDisable())
             {
                 IsEnabled = false;
                 TextConsole += "<----------------Start off defender-------------------->\n";
                 TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                var ResponseDefender = (await WinDefender.DisableRealtimeMonitoring()).Trim();
+                var ResponseDefender = (await WinDefenderHelper.DisableRealtimeMonitoring()).Trim();
                 if (!string.IsNullOrWhiteSpace(ResponseDefender))
                     TextConsole += $"Response defender: {ResponseDefender}\n";
                 TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                TextConsole += $"Defender is disable: {await WinDefender.CheckDefenderDisable()}\n";
+                TextConsole += $"Defender is disable: {await WinDefenderHelper.CheckDefenderDisable()}\n";
                 TextConsole += "<-----------------End off defender--------------------->\n";
                 IsEnabled = true;
             }
@@ -566,16 +562,16 @@ namespace CompasPack.ViewModel
         }
         private async void OnOnDefender()
         {
-            if (WinDefender.CheckTamperProtectionDisable())
+            if (WinDefenderHelper.CheckTamperProtectionDisable())
             {
                 IsEnabled = false;
                 TextConsole += "<-----------------Start on defender-------------------->\n";
                 TextConsole += $"Start on defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                var ResponseDefender = (await WinDefender.EnableRealtimeMonitoring()).Trim();
+                var ResponseDefender = (await WinDefenderHelper.EnableRealtimeMonitoring()).Trim();
                 if (!string.IsNullOrWhiteSpace(ResponseDefender))
                     TextConsole += $"Response defender: {ResponseDefender}\n";
                 TextConsole += $"End on defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                TextConsole += $"Defender is disable: {await WinDefender.CheckDefenderDisable()}\n";
+                TextConsole += $"Defender is disable: {await WinDefenderHelper.CheckDefenderDisable()}\n";
                 TextConsole += "<------------------End on defender--------------------->\n";
                 IsEnabled = true;
             }

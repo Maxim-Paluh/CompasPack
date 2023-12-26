@@ -1,23 +1,16 @@
 ﻿using CompasPack.View.Service;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CompasPack.ViewModel;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Documents;
-using System.Collections.ObjectModel;
-using CompasPack.Settings;
-using System.Windows.Shell;
 
-namespace CompasPakc.BL
+namespace CompasPack.Helper
 {
-    public interface IIOManager
+    public interface IIOHelper
     {
         public Task<string> ReadAllTextAsync(string path);
         public Task WriteAllTextAsync(string path, string text);
@@ -43,7 +36,7 @@ namespace CompasPakc.BL
         public string ReportMonitor { get; set; }
     }
 
-    public class IOManager : IIOManager
+    public class IOHelper : IIOHelper
     {
         private IMessageDialogService _messageDialogService;
 
@@ -70,7 +63,7 @@ namespace CompasPakc.BL
         public string ReportLaptop { get; set; }
         public string ReportMonitor { get; set; }
 
-        public IOManager(IMessageDialogService messageDialogService)
+        public IOHelper(IMessageDialogService messageDialogService)
         {
             _messageDialogService = messageDialogService;
             CompasPackLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CompasPackLog");

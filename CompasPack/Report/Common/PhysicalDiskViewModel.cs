@@ -5,9 +5,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml.Linq;
@@ -16,27 +13,44 @@ namespace CompasPack.ViewModel
 {
     public class PhysicalDiskViewModel : ReportHardWareViewModelBase<ReportSettings>, IReportViewModel
     {
+        private static readonly Dictionary<ushort, string> busTypeMap = new Dictionary<ushort, string>()
+        {
+            {0, "Unknown"},
+            {1, "SCSI"},
+            {2, "ATAPI"},
+            {3, "ATA"},
+            {4, "IEEE 1394"},
+            {5, "SSA"},
+            {6, "Fibre Channel"},
+            {7, "USB"},
+            {8, "RAID"},
+            {9, "iSCSI"},
+            {10, "SAS"},
+            {11, "SATA"},
+            {12, "SD"},
+            {13, "MMC"},
+            {14, "reserved"},
+            {15, "File-Backed Virtual"},
+            {16, "Storage Spaces"},
+            {17, "NVMe"},
+            {18, "Reserved"},
+        };
+        private static readonly Dictionary<ushort, string> mediaTypeMap = new Dictionary<ushort, string>()
+        {
+            {0, "Unspecified"},
+            {3, "HDD"},
+            {4, "SSD"},
+            {5, "SCM"},
+        };
         private static object _lock = new object();
+        public ObservableCollection<Disk> Disks { get; set; }
         public PhysicalDiskViewModel(XDocument xDocument)
         {
             Document = xDocument;
             Disks = new ObservableCollection<Disk>();
             SelectDiskCommand = new DelegateCommand(OnSelectDisk);
-
             BindingOperations.EnableCollectionSynchronization(Disks, _lock);
         }
-
-        private void OnSelectDisk()
-        {
-            Result = string.Empty;
-            foreach (var item in Disks.Where(x => x.IsSelect))
-                Result += $"{item.Type}-{item.Size} | ";
-
-            Result = Result.TrimEnd(new char[] { ' ', '|' });
-        }
-
-        public ObservableCollection<Disk> Disks { get; set; }
-
         public void Load()
         {
             var scope = new ManagementScope(@"\\.\root\microsoft\windows\storage");
@@ -92,52 +106,19 @@ namespace CompasPack.ViewModel
                 Disks.Add(disk);
             OnSelectDisk();
         }
-
-
-        private static readonly Dictionary<ushort, string> busTypeMap =
-        new Dictionary<ushort, string>()
+        private void OnSelectDisk()
         {
-            {0, "Unknown"},
-            {1, "SCSI"},
-            {2, "ATAPI"},
-            {3, "ATA"},
-            {4, "IEEE 1394"},
-            {5, "SSA"},
-            {6, "Fibre Channel"},
-            {7, "USB"},
-            {8, "RAID"},
-            {9, "iSCSI"},
-            {10, "SAS"},
-            {11, "SATA"},
-            {12, "SD"},
-            {13, "MMC"},
-            {14, "reserved"},
-            {15, "File-Backed Virtual"},
-            {16, "Storage Spaces"},
-            {17, "NVMe"},
-            {18, "Reserved"},
-        };
-
-        private static readonly Dictionary<ushort, string> mediaTypeMap =
-         new Dictionary<ushort, string>()
-         {
-            {0, "Unspecified"},
-            {3, "HDD"},
-            {4, "SSD"},
-            {5, "SCM"},
-         };
-
+            Result = string.Empty;
+            foreach (var item in Disks.Where(x => x.IsSelect))
+                Result += $"{item.Type}-{item.Size} | ";
+            Result = Result.TrimEnd(new char[] { ' ', '|' });
+        }
         public ICommand SelectDiskCommand { get; }
     }
 
     public class Disk : ViewModelBase
     {
         private bool _isSelect;
-        public int Order { get; set; }
-        public string Name { get; set; }
-        public string Size { get; set; }
-
-
         public bool IsSelect
         {
             get { return _isSelect; }
@@ -147,8 +128,10 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
-        public string Type { get; set; }
+        public int Order { get; set; }
+        public string Name { get; set; }
+        public string Size { get; set; }
+        public string Type { get; set; }    
     }
 }
 

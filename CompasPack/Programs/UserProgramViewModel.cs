@@ -1,17 +1,11 @@
-﻿using CompasPack.BL;
-using CompasPack.Event;
+﻿using CompasPack.Event;
 using Prism.Commands;
 using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using CompasPack.Settings;
-using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {

@@ -1,12 +1,7 @@
 ﻿using CompasPack.Settings;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Management;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
@@ -15,12 +10,6 @@ namespace CompasPack.ViewModel
     {
         private string _name;
         private string _clock;
-        
-        public CPUViewModel(CPUReportSettings CPUReportSettings, XDocument xDocument)
-        {
-            Settings = CPUReportSettings;
-            Document = xDocument;
-        }
         public string Name
         {
             get { return _name; }
@@ -38,6 +27,11 @@ namespace CompasPack.ViewModel
                 _clock = value;
                 OnPropertyChanged();
             }
+        }   
+        public CPUViewModel(CPUReportSettings CPUReportSettings, XDocument xDocument)
+        {
+            Settings = CPUReportSettings;
+            Document = xDocument;
         }
         public void Load()
         {
@@ -54,7 +48,5 @@ namespace CompasPack.ViewModel
 
             Result = tempName + " " + Clock;
         }
-
-
     }
 }

@@ -20,13 +20,13 @@
                 <!--Row_0-->
 
                 <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="Other:"></TextBlock>
-                <ItemsControl Grid.Row="0" Grid.Column="1" MaxWidth="800" HorizontalAlignment="Left"  ItemsSource="{Binding SettingsReport.Monitor.MonitorInterfaces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl Grid.Row="0" Grid.Column="1" MaxWidth="800" HorizontalAlignment="Left"  ItemsSource="{Binding Settings.MonitorInterfaces, UpdateSourceTrigger=PropertyChanged}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <CheckBox  Margin="5"
                                            Content="{Binding Name}"
                                            Command="{Binding Path=DataContext.SelectInterfaceCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
-                                           IsChecked="{Binding IsSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                           IsChecked="{Binding IsSelect, UpdateSourceTrigger=PropertyChanged}">
 
                             </CheckBox>
                         </DataTemplate>

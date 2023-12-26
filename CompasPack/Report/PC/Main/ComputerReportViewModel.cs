@@ -1,30 +1,13 @@
-﻿using CompasPack.BL;
-using CompasPack.View;
-using CompasPakc.BL;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Management;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Xml.XPath;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using Prism.Commands;
-using CompasPack.ViewModel;
-using System.Windows.Input;
-using System.Security.Principal;
-using System.Windows.Controls;
-using System.Windows.Media;
 using CompasPack.View.Service;
-using System.Windows.Shapes;
 using System.IO.Compression;
 using CompasPack.Settings;
+using CompasPack.Helper;
 
 
 namespace CompasPack.ViewModel
@@ -38,7 +21,6 @@ namespace CompasPack.ViewModel
         private VideoControllerViewModel _videoControllerViewModel;
         private PhysicalDiskViewModel _physicalDiskViewModel;
         private PowerSupplyViewModel _powerSupplyView;
-
         public PCCaseViewModel PCCaseViewModel
         {
             get { return _pCCaseViewModel; }
@@ -102,16 +84,37 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
-        public ComputerReportViewModel(IIOManager iOManager, ReportSettings reportSettings, XDocument xDocument, IMessageDialogService messageDialogService) : 
-            base (iOManager, reportSettings, xDocument, messageDialogService)
+        public ComputerReportViewModel(IIOHelper iOHelper, ReportSettings reportSettings, XDocument xDocument, IMessageDialogService messageDialogService) : 
+            base (iOHelper, reportSettings, xDocument, messageDialogService)
         {
-            ReportPath = _ioManager.ReportPC;
+            ReportPath = _iOHelper.ReportPC;
         }
+        public async Task LoadAsync(int? Id)
+        {
+            PCCaseViewModel = new PCCaseViewModel();
+            CPUViewModel = new CPUViewModel(_reportSettings.CPUReportSettings, _xDocument);
+            MotherboardViewModel = new MotherboardViewModel(_reportSettings.MotherboardReportSettings, _xDocument);
+            MemoryViewModel = new MemoryViewModel(_reportSettings.MemoryReportSettings, _xDocument);
+            VideoControllerViewModel = new VideoControllerViewModel(_reportSettings.VideoControllerReportSettings);
+            PhysicalDiskViewModel = new PhysicalDiskViewModel(_xDocument);
+            PowerSupplyViewModel = new PowerSupplyViewModel(_reportSettings.PCPowerSupply);
 
+            await Task.Factory.StartNew(() =>
+            {
+                CPUViewModel.Load();
+                MotherboardViewModel.Load();
+                MemoryViewModel.Load();
+                VideoControllerViewModel.Load();
+                PhysicalDiskViewModel.Load();
+                PowerSupplyViewModel.Load();
+            });
+            IndexReport = _iOHelper.GetLastReport(ReportPath) + 1;
+
+            IsEnable = true;
+        }
         protected override  async void OnSaveReport()
         {
-            if (string.IsNullOrWhiteSpace(PCCaseViewModel.Name) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Text) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Power) || !PowerSupplyViewModel.Power.All(char.IsDigit))
+            if (string.IsNullOrWhiteSpace(PCCaseViewModel.Name) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Name) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Power) || !PowerSupplyViewModel.Power.All(char.IsDigit))
             {
                 _messageDialogService.ShowInfoDialog("Заповни всі поля виділені червоним", "Помилка!");
                 return;
@@ -151,8 +154,8 @@ namespace CompasPack.ViewModel
         {
             ProcessStartInfo? StartInfo = new ProcessStartInfo
             {
-                FileName = _ioManager.Aida,
-                Arguments = "/R " + ReportPath + $"\\Report_{IndexReport:000}. " + "/HML " + "/CUSTOM " + System.IO.Path.GetDirectoryName(_ioManager.Aida) + "\\ForReport.rpf",
+                FileName = _iOHelper.Aida,
+                Arguments = "/R " + ReportPath + $"\\Report_{IndexReport:000}. " + "/HML " + "/CUSTOM " + System.IO.Path.GetDirectoryName(_iOHelper.Aida) + "\\ForReport.rpf",
                 UseShellExecute = false
             };
             try
@@ -181,7 +184,7 @@ namespace CompasPack.ViewModel
                $"<tr><td>{PowerSupplyViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
                $"<tr><td><b>ID: {IndexReport:000} (Прийшов {DateTime.Now:dd.MM.yyyy})</b></td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
                $"<tr><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"> </td></tr></tbody></table></body></html>";
-               await _ioManager.WriteAllTextAsync($"{ReportPath}\\Report_{IndexReport:000}.html", html);
+               await _iOHelper.WriteAllTextAsync($"{ReportPath}\\Report_{IndexReport:000}.html", html);
             }
             catch (Exception e)
             {
@@ -239,30 +242,6 @@ namespace CompasPack.ViewModel
                   $"{e.Message}\n\n{e.StackTrace}", "Помилка");
             } 
         }  
-
-        public async Task LoadAsync(int? Id)
-        {
-            PCCaseViewModel = new PCCaseViewModel();
-            CPUViewModel = new CPUViewModel(_reportSettings.CPUReportSettings, _xDocument);
-            MotherboardViewModel = new MotherboardViewModel(_reportSettings.MotherboardReportSettings, _xDocument);
-            MemoryViewModel = new MemoryViewModel(_reportSettings.MemoryReportSettings, _xDocument);
-            VideoControllerViewModel = new VideoControllerViewModel(_reportSettings.VideoControllerReportSettings);
-            PhysicalDiskViewModel = new PhysicalDiskViewModel(_xDocument);
-            PowerSupplyViewModel = new PowerSupplyViewModel(_reportSettings.PCPowerSupply);
-
-            await Task.Factory.StartNew(() =>
-            {
-                CPUViewModel.Load();
-                MotherboardViewModel.Load();
-                MemoryViewModel.Load();
-                VideoControllerViewModel.Load();
-                PhysicalDiskViewModel.Load();
-                PowerSupplyViewModel.Load();
-            });
-            IndexReport = _ioManager.GetLastReport(ReportPath) + 1;
-
-            IsEnable = true;
-        }
         public bool HasChanges()
         {
             return false;
@@ -271,7 +250,5 @@ namespace CompasPack.ViewModel
         {
 
         }
-
-
     }
 }

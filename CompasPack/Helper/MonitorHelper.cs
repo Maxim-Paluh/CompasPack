@@ -1,32 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Management;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
-namespace CompasPack.BL
+namespace CompasPack.Helper
 {
-   public static  class MonitorHelper
+    public static  class MonitorHelper
     {
         public static Size GetOptimalScreenResolution()
         {
 
-            UInt32 maxHResolution = 0;
-            UInt32 maxVResolution = 0;
-            UInt32 maxHForMaxVResolution = 0;
-            var searcher = new System.Management.ManagementObjectSearcher("SELECT * FROM CIM_VideoControllerResolution");
+            uint maxHResolution = 0;
+            uint maxVResolution = 0;
+            uint maxHForMaxVResolution = 0;
+            var searcher = new ManagementObjectSearcher("SELECT * FROM CIM_VideoControllerResolution");
 
             foreach (ManagementObject item in searcher.Get())
             {
-                if ((UInt32)item["HorizontalResolution"] >= maxHResolution)
+                if ((uint)item["HorizontalResolution"] >= maxHResolution)
                 {
-                    maxHResolution = (UInt32)item["HorizontalResolution"];
-                    if ((UInt32)item["VerticalResolution"] > maxVResolution || maxHForMaxVResolution != maxHResolution)
+                    maxHResolution = (uint)item["HorizontalResolution"];
+                    if ((uint)item["VerticalResolution"] > maxVResolution || maxHForMaxVResolution != maxHResolution)
                     {
-                        maxVResolution = (UInt32)item["VerticalResolution"];
-                        maxHForMaxVResolution = (UInt32)item["HorizontalResolution"];
+                        maxVResolution = (uint)item["VerticalResolution"];
+                        maxHForMaxVResolution = (uint)item["HorizontalResolution"];
                     }
                 }
             }

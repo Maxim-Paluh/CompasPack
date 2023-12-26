@@ -1,5 +1,5 @@
-﻿using CompasPack.BL;
-using CompasPack.Enum;
+﻿using CompasPack.Enum;
+using CompasPack.Helper;
 using CompasPack.Settings;
 using Prism.Commands;
 using System;
@@ -17,7 +17,6 @@ namespace CompasPack.ViewModel
     {
         private Hardware? _webCam;
         private Hardware? _microphone;
-
         private string _laptopMonitorResolution; 
         public string LaptopMonitorResolution
         {
@@ -28,7 +27,6 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
         public Hardware? WebCam
         {
             get { return _webCam; }
@@ -54,6 +52,26 @@ namespace CompasPack.ViewModel
                 return System.Enum.GetValues(typeof(Hardware)).Cast<Hardware>();
             }
         }
+        public string this[string columnName]
+        {
+            get
+            {
+                string error = String.Empty;
+                switch (columnName)
+                {
+                    case "WebCam":
+                        if (WebCam == null)
+                            error = "Введи значення";
+                        break;
+                    case "Microphone":
+                        if (Microphone == null)
+                            error = "Введи значення";
+                        break;
+                }
+                return error;
+            }
+        }
+        public string Error => throw new NotImplementedException();
         public LaptopOtherViewModel(List<LaptopHardWare> laptopHardWares, XDocument xDocument)
         {
             Settings = laptopHardWares;
@@ -63,7 +81,21 @@ namespace CompasPack.ViewModel
             TestMicrophoneCommand = new DelegateCommand(OnTestMicrophone);
             ChangeHardwareCommand = new DelegateCommand(OnChangeHardware);
         }
+        public void Load()
+        {
+            var resolution = MonitorHelper.GetOptimalScreenResolution();
 
+            LaptopMonitorResolution = $"{resolution.Width}x{resolution.Height}";
+
+            var nameResolution = string.Join(", ", MonitorHelper.GetNameResolution(resolution));
+            if (!string.IsNullOrWhiteSpace(nameResolution))
+                LaptopMonitorResolution += $" {nameResolution}";
+
+            if (!string.IsNullOrWhiteSpace(LaptopMonitorResolution))
+                Result = $"{LaptopMonitorResolution}, {string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name))}";
+            else
+                Result = string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name));
+        }
         private void OnChangeHardware()
         {
             if (!string.IsNullOrWhiteSpace(LaptopMonitorResolution))
@@ -71,7 +103,6 @@ namespace CompasPack.ViewModel
             else
                 Result = string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name));
         }
-
         private void OnTestMicrophone()
         {
             OpenUrl("https://webcammictest.com/check-mic.html");
@@ -107,43 +138,6 @@ namespace CompasPack.ViewModel
                 }
             }
         }
-        public void Load()
-        {
-            var resolution = MonitorHelper.GetOptimalScreenResolution();
-
-            LaptopMonitorResolution = $"{resolution.Width}x{resolution.Height}";
-
-            var nameResolution = string.Join(", ", MonitorHelper.GetNameResolution(resolution));
-            if (!string.IsNullOrWhiteSpace(nameResolution))
-                LaptopMonitorResolution += $" {nameResolution}";
-
-            if (!string.IsNullOrWhiteSpace(LaptopMonitorResolution))
-                Result = $"{LaptopMonitorResolution}, {string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name))}";
-            else
-                Result = string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name));
-        }
-       
-        public string Error => throw new NotImplementedException();
-        public string this[string columnName]
-        {
-            get
-            {
-                string error = String.Empty;
-                switch (columnName)
-                {
-                    case "WebCam":
-                        if (WebCam == null)
-                            error = "Введи значення";
-                        break;
-                    case "Microphone":
-                        if (Microphone == null)
-                            error = "Введи значення";
-                        break;
-                }
-                return error;
-            }
-        }
-
         public ICommand TestWebCamCommand { get; set; }
         public ICommand TestMicrophoneCommand { get; set; }
         public ICommand ChangeHardwareCommand { get; set; }

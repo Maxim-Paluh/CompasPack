@@ -1,26 +1,17 @@
-﻿using CompasPack.BL;
-using CompasPack.Settings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CompasPack.Settings;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
     public class MonitorAspectRatioViewModel : ReportHardWareViewModelBase<MonitorReportSettings>, IReportViewModel
-    {
-       
+    {     
         private string _monitorAspectRatio;
-
         public string MonitorAspectRatio
         {
             get { return _monitorAspectRatio; }
             set { _monitorAspectRatio = value; }
         }
-
         public MonitorAspectRatioViewModel(MonitorReportSettings monitorReportSettings, XDocument xDocument)
         {
             Settings = monitorReportSettings;

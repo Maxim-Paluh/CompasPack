@@ -1,22 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Xml.Linq;
 
-namespace CompasPack.BL
+namespace CompasPack.Helper
 {
-    public static class WinSettings
+    public static class WinSettingsHelper
     {
         public static void OpenDefaultPrograms()
         {
             string? argument = null;
             string? fileName = null;
-            if (WinInfo.GetProductName().Contains("Windows 7", StringComparison.InvariantCultureIgnoreCase))
+            if (WinInfoHelper.GetProductName().Contains("Windows 7", StringComparison.InvariantCultureIgnoreCase))
             {
                 argument = "/name Microsoft.DefaultPrograms /page pageDefaultProgram";
                 fileName = "control.exe";

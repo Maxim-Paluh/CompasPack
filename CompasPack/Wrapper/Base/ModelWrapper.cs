@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-
 
 namespace CompasPack.Wrapper
 {
-
-    public class ModelWrapper<T> : NotifyDataErrorInfoBase
-        where T : class
+    public class ModelWrapper<T> : NotifyDataErrorInfoBase where T : class
     {
         public T Model { get; set; }
         public ModelWrapper(T model)
@@ -36,7 +28,6 @@ namespace CompasPack.Wrapper
                 ValidatePropertyInternal(propertyName, value);
             }
         }
-
         protected virtual TValue? GetValue<TValue>([CallerMemberName]string? propertyName = null)
         {
             if (propertyName != null)
@@ -75,11 +66,9 @@ namespace CompasPack.Wrapper
                 }
             }
         }
-
         protected virtual IEnumerable<string>? ValidateProperty(string propertyName)
         {
             return null;
         }
     }
 }
-#pragma warning restore CS8602 // Разыменование вероятной пустой ссылки.

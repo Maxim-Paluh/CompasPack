@@ -13,7 +13,6 @@ namespace CompasPack.ViewModel
     class LaptopBatteryViewModel : ReportHardWareViewModelBase<LaptopBatteryReportSettings>, IReportViewModel
     {
         private string _wearLevel;
-
         public string WearLevel
         {
             get { return _wearLevel; }
@@ -23,13 +22,11 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
         public LaptopBatteryViewModel(LaptopBatteryReportSettings laptopBatteryReportSettings, XDocument xDocument)
         {
             Settings = laptopBatteryReportSettings;
             Document = xDocument;
         }
-
         public void Load()
         {
             var tempWear = Document.XPathSelectElement(Settings.XPath);
@@ -48,8 +45,6 @@ namespace CompasPack.ViewModel
                     Result = $"{100-temp}%";
                 else
                     Result = "0%";
-
-
             }
             else
             {

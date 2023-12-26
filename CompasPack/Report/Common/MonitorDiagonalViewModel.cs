@@ -1,24 +1,16 @@
 ﻿using CompasPack.Settings;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Management;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorDiagonalViewModel : ReportHardWareViewModelBase<MonitorReportSettings>, IReportViewModel, IDataErrorInfo
+    public class MonitorDiagonalViewModel : ReportHardWareViewModelBase<MonitorReportSettings>, IReportViewModel
     {
         private string _laptopMonitorType;
         private string _laptopMonitorSize;
-
         public string LaptopMonitorSize
         {
             get { return _laptopMonitorSize; }
@@ -28,7 +20,6 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
         public string LaptopMonitorType
         {
             get { return _laptopMonitorType; }
@@ -39,17 +30,11 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
         public MonitorDiagonalViewModel(MonitorReportSettings monitorReportSettings, XDocument xDocument)
         {
             Settings = monitorReportSettings;
             Document = xDocument;
         }
-
-        public string this[string columnName] => throw new NotImplementedException();
-
-        public string Error => throw new NotImplementedException();
-
         public void Load()
         {
             var tempType = Document.XPathSelectElement(Settings.MonitorType.XPath);
@@ -86,7 +71,5 @@ namespace CompasPack.ViewModel
             }
 
         }
-
-
     }
 }

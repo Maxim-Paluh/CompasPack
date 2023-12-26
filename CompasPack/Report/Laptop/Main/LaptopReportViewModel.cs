@@ -1,18 +1,11 @@
-﻿using CompasPack.Settings;
-using CompasPack.View;
+﻿using CompasPack.Helper;
+using CompasPack.Settings;
 using CompasPack.View.Service;
-using CompasPakc.BL;
-using Prism.Commands;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
@@ -27,7 +20,6 @@ namespace CompasPack.ViewModel
         private PhysicalDiskViewModel _physicalDiskViewModel;
         private LaptopBatteryViewModel _laptopBatteryViewModel;
         private LaptopOtherViewModel _laptopOtherViewModel;
-
         public MonitorDiagonalViewModel MonitorDiagonalViewModel
         {
             get { return _monitorDiagonalViewModel; }
@@ -96,14 +88,36 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-
-
-        public LaptopReportViewModel(IIOManager iOManager, ReportSettings reportSettings, XDocument xDocument, IMessageDialogService messageDialogService) :
-            base(iOManager, reportSettings, xDocument, messageDialogService)
+        public LaptopReportViewModel(IIOHelper iOHelper, ReportSettings reportSettings, XDocument xDocument, IMessageDialogService messageDialogService) :
+            base(iOHelper, reportSettings, xDocument, messageDialogService)
         {
-            ReportPath = _ioManager.ReportLaptop;
+            ReportPath = iOHelper.ReportLaptop;
         }
+        public async Task LoadAsync(int? Id)
+        {
+            LaptopMainViewModel = new LaptopMainViewModel(_reportSettings.LaptopsBrandAndModel);
+            MonitorDiagonalViewModel = new MonitorDiagonalViewModel(_reportSettings.MonitorReportSettings, _xDocument);
+            CPUViewModel = new CPUViewModel(_reportSettings.CPUReportSettings, _xDocument);
+            MemoryViewModel = new MemoryViewModel(_reportSettings.MemoryReportSettings, _xDocument);
+            VideoControllerViewModel = new VideoControllerViewModel(_reportSettings.VideoControllerReportSettings);
+            PhysicalDiskViewModel = new PhysicalDiskViewModel(_xDocument);
+            LaptopOtherViewModel = new LaptopOtherViewModel(_reportSettings.LaptopHardWares, _xDocument);
+            LaptopBatteryViewModel = new LaptopBatteryViewModel(_reportSettings.LaptopBatteryReportSettings, _xDocument);
 
+            await Task.Factory.StartNew(() =>
+            {
+                CPUViewModel.Load();
+                MonitorDiagonalViewModel.Load();
+                MemoryViewModel.Load();
+                VideoControllerViewModel.Load();
+                PhysicalDiskViewModel.Load();
+                LaptopBatteryViewModel.Load();
+                LaptopOtherViewModel.Load();
+            });
+
+            IndexReport = _iOHelper.GetLastReport(ReportPath) + 1;
+            IsEnable = true;
+        }
         protected override async void OnSaveReport()
         {
             if (string.IsNullOrWhiteSpace(LaptopMainViewModel.Brand) || string.IsNullOrWhiteSpace(LaptopMainViewModel.Model) || LaptopOtherViewModel.Microphone==null || LaptopOtherViewModel.WebCam==null)
@@ -146,8 +160,8 @@ namespace CompasPack.ViewModel
         {
             ProcessStartInfo? StartInfo = new ProcessStartInfo
             {
-                FileName = _ioManager.Aida,
-                Arguments = "/R " + ReportPath + $"\\Report_{IndexReport:000}. " + "/HML " + "/CUSTOM " + System.IO.Path.GetDirectoryName(_ioManager.Aida) + "\\ForReport.rpf",
+                FileName = _iOHelper.Aida,
+                Arguments = "/R " + ReportPath + $"\\Report_{IndexReport:000}. " + "/HML " + "/CUSTOM " + System.IO.Path.GetDirectoryName(_iOHelper.Aida) + "\\ForReport.rpf",
                 UseShellExecute = false
             };
             try
@@ -176,7 +190,7 @@ namespace CompasPack.ViewModel
                     $"<tr> <td></td> <td style=\"text-align:left;\">{LaptopBatteryViewModel.Result}</td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> </tr>" +
                     $"<tr> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> </tr>" +
                     $"</tbody> </table> </body> </html>";
-                await _ioManager.WriteAllTextAsync($"{ReportPath}\\Report_{IndexReport:000}.html", html);
+                await _iOHelper.WriteAllTextAsync($"{ReportPath}\\Report_{IndexReport:000}.html", html);
             }
             catch (Exception e)
             {
@@ -241,32 +255,6 @@ namespace CompasPack.ViewModel
                 _messageDialogService.ShowInfoDialog($"В процесі формування звіту docx відбулася помилка.\n\nФайл: {ReportPath}\\Report_{IndexReport:000}.docx не створено!\n\nЗвернись до розробника і скинь фото:\n\n" +
                   $"{e.Message}\n\n{e.StackTrace}", "Помилка");
             }
-        }
-
-        public async Task LoadAsync(int? Id)
-        {
-            LaptopMainViewModel = new LaptopMainViewModel(_reportSettings.LaptopsBrandAndModel);
-            MonitorDiagonalViewModel = new MonitorDiagonalViewModel(_reportSettings.MonitorReportSettings, _xDocument);
-            CPUViewModel = new CPUViewModel(_reportSettings.CPUReportSettings, _xDocument);
-            MemoryViewModel = new MemoryViewModel(_reportSettings.MemoryReportSettings, _xDocument);
-            VideoControllerViewModel = new VideoControllerViewModel(_reportSettings.VideoControllerReportSettings);
-            PhysicalDiskViewModel = new PhysicalDiskViewModel(_xDocument);
-            LaptopOtherViewModel = new LaptopOtherViewModel(_reportSettings.LaptopHardWares, _xDocument);
-            LaptopBatteryViewModel = new LaptopBatteryViewModel(_reportSettings.LaptopBatteryReportSettings, _xDocument);
-
-            await Task.Factory.StartNew(() =>
-            {
-                CPUViewModel.Load();
-                MonitorDiagonalViewModel.Load();
-                MemoryViewModel.Load();
-                VideoControllerViewModel.Load();
-                PhysicalDiskViewModel.Load();
-                LaptopBatteryViewModel.Load();
-                LaptopOtherViewModel.Load();
-            });
-
-            IndexReport = _ioManager.GetLastReport(ReportPath) + 1;
-            IsEnable = true;
         }
         public bool HasChanges()
         {

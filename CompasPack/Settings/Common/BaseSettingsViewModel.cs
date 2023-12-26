@@ -2,14 +2,11 @@
 using CompasPack.Wrapper;
 using Prism.Commands;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace CompasPack.Settings.Common
+namespace CompasPack.Settings
 {
     public interface ISettingsViewModel
     {
@@ -21,8 +18,7 @@ namespace CompasPack.Settings.Common
     public class BaseSettingsViewModel<TSettings, TWrapper, TSettingsHelper> : ViewModelBase, ISettingsViewModel
         where TSettings : class, ICloneable, new()
         where TWrapper : ModelWrapper<TSettings>, new()
-        where TSettingsHelper : SettringsHelperBase<TSettings>
-        
+        where TSettingsHelper : SettringsHelperBase<TSettings>      
     {
         #region Properties
         protected IMessageDialogService _messageDialogService;

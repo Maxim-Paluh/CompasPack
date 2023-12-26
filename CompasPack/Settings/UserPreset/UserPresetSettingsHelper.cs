@@ -1,10 +1,5 @@
-﻿using CompasPack.View.Service;
-using CompasPakc.BL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CompasPack.Helper;
+using CompasPack.View.Service;
 
 namespace CompasPack.Settings
 {
@@ -15,7 +10,7 @@ namespace CompasPack.Settings
         #endregion
 
         #region Constructor
-        public UserPresetSettingsHelper(IIOManager iIOManager, IMessageDialogService messageDialogService) : base(iIOManager, messageDialogService, "UserPresetSettings")
+        public UserPresetSettingsHelper(IIOHelper iOHelper, IMessageDialogService messageDialogService) : base(iOHelper, messageDialogService, "UserPresetSettings")
         {
         }
         #endregion

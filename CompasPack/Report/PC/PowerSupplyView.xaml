@@ -25,7 +25,7 @@
                     <ComboBox   MinWidth="150"
                                 ItemsSource="{Binding Settings}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True">
                         <ComboBox.Text>
-                            <Binding Path="Text" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding Path="Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <DataErrorValidationRule />
                                 </Binding.ValidationRules>

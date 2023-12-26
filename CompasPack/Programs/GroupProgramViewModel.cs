@@ -1,8 +1,5 @@
 ﻿using Prism.Commands;
-using Prism.Events;
-
 using System.Collections.ObjectModel;
-
 using System.Windows.Input;
 using CompasPack.Settings;
 

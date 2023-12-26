@@ -25,7 +25,7 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="Main:"></TextBlock>
                 <WrapPanel Grid.Row="0" Grid.Column="1"   Margin="4" HorizontalAlignment="Left">
                     <TextBlock Text="XPath:"></TextBlock>
-                    <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" MinWidth="150" MaxWidth="200" Text="{Binding SettingsReport.Monitor.MonitorName.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" MinWidth="150" MaxWidth="200" Text="{Binding Settings.MonitorName.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel Grid.Row="0" Grid.Column="2"  Margin="4" HorizontalAlignment="Left">
                     <TextBlock Grid.Column="0" Width="40"  Text="Name:"></TextBlock>
@@ -35,7 +35,7 @@
                 <WrapPanel Grid.Row="0" Grid.Column="3" Margin="4" HorizontalAlignment="Left">
                     <TextBlock  Width="55"  Text="Brand:" FontSize="18"></TextBlock>
                     <ComboBox     MinWidth="100"
-                                ItemsSource="{Binding SettingsReport.Monitors}" 
+                                ItemsSource="{Binding Settings.MonitorsBrand}" 
                                 IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True">
                         <ComboBox.Text>
                             <Binding Path="Brand" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">

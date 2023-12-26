@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CompasPack.ViewModel
@@ -13,9 +10,9 @@ namespace CompasPack.ViewModel
             throw new NotImplementedException();
         }
 
-        public async Task LoadAsync(int? Id)
+        public Task LoadAsync(int? Id)
         {
-            
+            return Task.CompletedTask;
         }
 
         public void Unsubscribe()

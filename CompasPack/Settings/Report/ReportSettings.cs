@@ -1,38 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Security.Policy;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
-using System.Windows.Controls;
-using System.Windows.Interop;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 
 namespace CompasPack.Settings
 {
     public class ReportSettings
     {
-        public CPUReportSettings CPUReportSettings { get; set; }//+
-        public MemoryReportSettings MemoryReportSettings { get; set; } // +
+        public CPUReportSettings CPUReportSettings { get; set; }                            // Common
+        public MemoryReportSettings MemoryReportSettings { get; set; }                      // Common
         public VideoControllerReportSettings VideoControllerReportSettings { get; set; }    // Common
-
-
-
-        public LaptopBatteryReportSettings LaptopBatteryReportSettings { get; set; }
-        public Dictionary<string, List<string>> LaptopsBrandAndModel { get; set; }
+        public LaptopBatteryReportSettings LaptopBatteryReportSettings { get; set; }        // Laptops
+        public Dictionary<string, List<string>> LaptopsBrandAndModel { get; set; }          // Laptops
         public List<LaptopHardWare> LaptopHardWares { get; set; }                           // Laptops
-
-        public MotherboardReportSettings MotherboardReportSettings { get; set; }
+        public MotherboardReportSettings MotherboardReportSettings { get; set; }            //PC
         public List<string> PCPowerSupply { get; set; }                                     //PC
-        
-        
         public MonitorReportSettings MonitorReportSettings { get; set; }                    //Monitor
     }
-
     public class CPUReportSettings : ReportBase { }
     public class MotherboardReportSettings : ReportBase { }
     public class MemoryReportSettings
@@ -44,7 +25,6 @@ namespace CompasPack.Settings
     public class MemoryFrequency : ReportBase { }
     public class VideoControllerReportSettings : ReportBase { }
     public class LaptopBatteryReportSettings : ReportBase { }
-
     public class MonitorReportSettings
     {
         public MonitorName MonitorName { get; set; }
@@ -60,7 +40,6 @@ namespace CompasPack.Settings
     public class MonitorType : ReportBase { }
     public class MonitorSize : ReportBase { }
     public class AspectRatio : ReportBase { }
-
     public class MonitorInterface : HardWare{ }
     public class LaptopHardWare : HardWare { }
     public class HardWare()
@@ -68,7 +47,6 @@ namespace CompasPack.Settings
         public string Name { get; set; }
         public bool IsSelect { get; set; }
     }
-
     public class ReportBase
     {
         public string XPath { get; set; }

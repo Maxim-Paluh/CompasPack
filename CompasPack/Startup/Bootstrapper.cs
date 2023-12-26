@@ -1,18 +1,9 @@
 ﻿using Autofac;
-using CompasPack.BL;
 using CompasPack.View.Service;
 using CompasPack.ViewModel;
-using CompasPack;
 using Prism.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CompasPakc.BL;
-using CompasPack.Main;
 using CompasPack.Settings;
-using CompasPack.Settings.Programs;
+using CompasPack.Helper;
 
 namespace CompasPack.Startup
 {
@@ -43,7 +34,7 @@ namespace CompasPack.Startup
 
             /////////////////////////////////////////////////////////////////////////////////
             // Register Controller
-            builder.RegisterType<IOManager>().As<IIOManager>().SingleInstance();
+            builder.RegisterType<IOHelper>().As<IIOHelper>().SingleInstance();
             /////////////////////////////////////////////////////////////////////////////////
             // Register API
 

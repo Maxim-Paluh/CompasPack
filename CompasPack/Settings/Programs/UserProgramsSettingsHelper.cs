@@ -1,16 +1,11 @@
-﻿using CompasPack.View.Service;
-using CompasPakc.BL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CompasPack.Helper;
+using CompasPack.View.Service;
 
-namespace CompasPack.Settings.Programs
+namespace CompasPack.Settings
 {
     public class UserProgramsSettingsHelper : SettringsHelperBase<GroupsProgramsCommon>
     {
-        public UserProgramsSettingsHelper(IIOManager iIOManager, IMessageDialogService messageDialogService) : base(iIOManager, messageDialogService, "UserProgramsSettings")
+        public UserProgramsSettingsHelper(IIOHelper iOHelper, IMessageDialogService messageDialogService) : base(iOHelper, messageDialogService, "UserProgramsSettings")
         {
         }
     }

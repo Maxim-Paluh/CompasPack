@@ -1,16 +1,12 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace CompasPack.BL
+namespace CompasPack.Helper
 {
-    public static class Network
+    public static class NetworkHelper
     {
         public static async Task<double> SpeedTest()
         {

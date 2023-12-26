@@ -1,31 +1,22 @@
-﻿using CompasPack.BL;
-using System;
-using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Prism.Commands;
 using Prism.Events;
-using CompasPack.Event;
 using System.Diagnostics;
 using System.IO;
 using CompasPack.View.Service;
 using CompasPack.View;
-using System.Data;
-using CompasPack;
 using Autofac.Features.Indexed;
-using CompasPakc.BL;
-using CompasPack.Main;
-using CompasPack.Settings.Common;
 using CompasPack.Settings;
-using CompasPack.Settings.Programs;
+using CompasPack.Helper;
 
 namespace CompasPack.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
         private IMessageDialogService _messageDialogService;
-        private readonly IIOManager _iOManager;
+        private readonly IIOHelper _iOHelper;
         private IDetailViewModel? _formViewModel;
 
         private readonly IIndex<string, IDetailViewModel> _formViewModelCreator;
@@ -34,14 +25,14 @@ namespace CompasPack.ViewModel
         private readonly UserPresetSettingsHelper _userPresetSettingsHelper;
         private readonly ReportSettingsSettingsHelper _reportSettingsSettingsHelper;
 
-        public MainWindowViewModel(IMessageDialogService messageDialogService, IIOManager iOManager, IEventAggregator eventAggregator, IIndex<string, IDetailViewModel> formViewModelCreator,
+        public MainWindowViewModel(IMessageDialogService messageDialogService, IIOHelper iOHelper, IEventAggregator eventAggregator, IIndex<string, IDetailViewModel> formViewModelCreator,
             UserPathSettingsHelper userPathSettingsHelper,
             UserProgramsSettingsHelper userProgramsSettingsHelper,
             UserPresetSettingsHelper userPresetSettingsHelper,
             ReportSettingsSettingsHelper reportSettingsSettingsHelper)
         {
             _messageDialogService = messageDialogService;
-            _iOManager = iOManager;
+            _iOHelper = iOHelper;
             _formViewModelCreator = formViewModelCreator;
             _userPathSettingsHelper = userPathSettingsHelper;
             _userProgramsSettingsHelper = userProgramsSettingsHelper;
@@ -69,10 +60,6 @@ namespace CompasPack.ViewModel
         }
         //******************************************************
         //--------------------------------------
-        private void OnOpenWinRar()
-        {
-            OpenProgram(_iOManager.WinRar);
-        }
         private void OpenProgram(string path)
         {
             if (File.Exists(path))

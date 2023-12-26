@@ -1,19 +1,15 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace CompasPack.BL
+namespace CompasPack.Helper
 {
-    public static class WinDefender
+    public static class WinDefenderHelper
     {
         public static async Task<string> DisableRealtimeMonitoring()
         {
-            if (!WinInfo.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
+            if (!WinInfoHelper.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
                 return "This Command work onli Windows 10";
             var procinfo = new ProcessStartInfo()
             {
@@ -30,7 +26,7 @@ namespace CompasPack.BL
         
         public static async Task<string> EnableRealtimeMonitoring()
         {
-            if (!WinInfo.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
+            if (!WinInfoHelper.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
                 return "This Command work onli Windows 10";
             var procinfo = new ProcessStartInfo()
             {
@@ -46,7 +42,7 @@ namespace CompasPack.BL
         }
         public static async Task<bool> CheckDefenderDisable()
         {
-            if (!WinInfo.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
+            if (!WinInfoHelper.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
                 return false;
             Process proc = new Process
             {
@@ -74,14 +70,14 @@ namespace CompasPack.BL
 
         public static bool CheckTamperProtectionDisable()
         {
-            if (!WinInfo.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
+            if (!WinInfoHelper.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
                 return true;
             
             var path = "SOFTWARE\\Microsoft\\Windows Defender\\Features";
             var key = "TamperProtection";
             try
             {
-                if (WinInfo.GetIs64BitOperatingSystem())
+                if (WinInfoHelper.GetIs64BitOperatingSystem())
                 {
                     RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(path);
                     if (rk == null) return false;

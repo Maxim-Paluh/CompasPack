@@ -1,11 +1,8 @@
-﻿using CompasPack.View.Service;
-using CompasPakc.BL;
+﻿using CompasPack.Helper;
+using CompasPack.View.Service;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CompasPack.Settings
@@ -18,22 +15,28 @@ namespace CompasPack.Settings
     }
     public class SettringsHelperBase<T> : ISettings<T> where T : class, new()
     {
-        private readonly IIOManager _ioManager;
+        #region Properties
+        private readonly IIOHelper _iOHelper;
         private IMessageDialogService _messageDialogService;
         public T? Settings { get; set; }
         public string SettingsPathFolder { get; private set; }
         public string SettingsPathFile { get; private set; }
         public string SettingsPathDefaultFile { get; set; }
         public bool IsLoad { get; set; }
-        public SettringsHelperBase(IIOManager iIOManager, IMessageDialogService messageDialogService, string fileName)
+        #endregion
+
+        #region Constructors
+        public SettringsHelperBase(IIOHelper iOHelper, IMessageDialogService messageDialogService, string fileName)
         {
-            _ioManager = iIOManager;
+            _iOHelper = iOHelper;
             _messageDialogService = messageDialogService;
             SettingsPathFolder = Path.Combine(Directory.GetCurrentDirectory(), "Settings");
             SettingsPathFile = Path.Combine(SettingsPathFolder, $"{fileName}.json");
             SettingsPathDefaultFile = string.Empty;
             IsLoad = false;
         }
+        #endregion
+
         #region Motods
         public virtual async Task LoadFromFile()
         {
@@ -43,7 +46,7 @@ namespace CompasPack.Settings
             {
                 try
                 {
-                    Settings = JsonConvert.DeserializeObject<T>(await _ioManager.ReadAllTextAsync(SettingsPathFile), new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error });
+                    Settings = JsonConvert.DeserializeObject<T>(await _iOHelper.ReadAllTextAsync(SettingsPathFile), new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error });
                 }
                 catch (Exception exp)
                 {
@@ -58,22 +61,19 @@ namespace CompasPack.Settings
             }
             IsLoad = true;
         }
-
         public virtual async Task<T?> LoadDefault()
         {
             if (!string.IsNullOrWhiteSpace(SettingsPathDefaultFile) && File.Exists(SettingsPathDefaultFile))    // якщо вказано файл налаштувань за замовчуванням і він існує тоді завантажуємо його
-                return JsonConvert.DeserializeObject<T>(await _ioManager.ReadAllTextAsync(SettingsPathDefaultFile), new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error });
+                return JsonConvert.DeserializeObject<T>(await _iOHelper.ReadAllTextAsync(SettingsPathDefaultFile), new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error });
             else                                                                                                // інакше створуємо новий з конструтором по замовчуванню
                 return new T();
         }
-
-
         public async Task<bool> Save()
         {
             if (Settings != null)
             {
                 var settingsJson = JsonConvert.SerializeObject(Settings, Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include });
-                await _ioManager.WriteAllTextAsync(SettingsPathFile, settingsJson);
+                await _iOHelper.WriteAllTextAsync(SettingsPathFile, settingsJson);
                 return true;
             }
             else

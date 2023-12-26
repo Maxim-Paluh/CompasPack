@@ -1,18 +1,14 @@
-﻿using CompasPakc.BL;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CompasPack.BL
+namespace CompasPack.Helper
 {
-    public static class KMSAuto
+    public static class KMSAutoHelper
     {
-        public static string? FindKMSAutoExe(IIOManager iOManager)
+        public static string? FindKMSAutoExe(string path)
         {
-            var directori = Directory.GetDirectories(iOManager.Crack)
+            var directori = Directory.GetDirectories(path)
                    .Where(x => x.Contains("KMSAuto", StringComparison.InvariantCultureIgnoreCase)).LastOrDefault();
 
             if (!string.IsNullOrWhiteSpace(directori))
@@ -24,9 +20,9 @@ namespace CompasPack.BL
             else
             { return null; }
         }
-        public static string? FindKMSAutoRar(IIOManager iOManager)
+        public static string? FindKMSAutoRar(string path)
         {
-            var File = Directory.GetFiles(iOManager.Crack)
+            var File = Directory.GetFiles(path)
                .Where(x => x.Contains("KMSAuto", StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).LastOrDefault();
             return File;
         }
