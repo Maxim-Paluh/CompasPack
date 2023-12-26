@@ -113,7 +113,7 @@ namespace CompasPack.ViewModel
             GroupProgramViewModel.Clear();
             UserPresetPrograms.Clear();
 
-            var GroupsPrograms = (List<GroupPrograms>)_userProgramsSettingsHelper.Settings.GroupsPrograms.Clone();
+            var GroupsPrograms = (List<GroupPrograms>)_userProgramsSettingsHelper.Settings.GroupsPrograms?.Clone();
             foreach (var groupProgram in GroupsPrograms)
                 GroupProgramViewModel.Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<UserProgramViewModel>(groupProgram.UserPrograms.Select(x => new UserProgramViewModel(x, groupProgram, _eventAggregator)))));
 

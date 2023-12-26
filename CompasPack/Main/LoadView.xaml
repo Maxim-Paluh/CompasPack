@@ -7,7 +7,14 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <local:ProgressRing  Foreground="DarkSlateBlue" />
-        <!--IsActive="True"-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*"></RowDefinition>
+            <RowDefinition Height="0.3*"></RowDefinition>
+            <RowDefinition Height="0.2*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Image  Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"  Height="150" Width="492"  Source="/Logo_2016.png"></Image>
+        <local:ProgressRing Grid.Row="1"  Foreground="DarkSlateBlue" />
+        <TextBlock Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" Text="{Binding Message}"></TextBlock>
     </Grid>
 </UserControl>

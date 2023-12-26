@@ -7,6 +7,10 @@ namespace CompasPack.Settings
     public class GroupsProgramsCommon : ICloneable
     {
         public List<GroupPrograms> GroupsPrograms { get; set; }
+        public GroupsProgramsCommon()
+        {
+            GroupsPrograms = new List<GroupPrograms>();
+        }
         public object Clone()
         {
             return new GroupsProgramsCommon()
@@ -24,7 +28,8 @@ namespace CompasPack.Settings
         public object Clone()
         {
             var GroupPrograms = (GroupPrograms)MemberwiseClone();
-            GroupPrograms.UserPrograms = (List<UserProgram>)UserPrograms.Clone();
+            if(UserPrograms!=null)
+                GroupPrograms.UserPrograms = (List<UserProgram>)UserPrograms.Clone();
             return GroupPrograms;
         }
     }

@@ -10,6 +10,8 @@ using CompasPack.View;
 using Autofac.Features.Indexed;
 using CompasPack.Settings;
 using CompasPack.Helper;
+using CompasPack.Settings.Portable;
+using System.Collections.ObjectModel;
 
 namespace CompasPack.ViewModel
 {
@@ -18,18 +20,51 @@ namespace CompasPack.ViewModel
         private IMessageDialogService _messageDialogService;
         private readonly IIOHelper _iOHelper;
         private IDetailViewModel? _formViewModel;
-
         private readonly IIndex<string, IDetailViewModel> _formViewModelCreator;
+        private bool _programsIsEnabled;
+        private bool _reportIsEnabled;
+        private bool _portableIsEnabled;
+        public bool ProgramsIsEnabled
+        {
+            get { return _programsIsEnabled; }
+            set 
+            { 
+                _programsIsEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool ReportIsEnabled
+        {
+            get { return _reportIsEnabled; }
+            set 
+            { 
+                _reportIsEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool PortableIsEnabled
+        {
+            get { return _portableIsEnabled; }
+            set { 
+                _portableIsEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+        public ObservableCollection<PortableProgram> PortablePrograms { get; private set; }
+
+        //-------------------------------------------------------------------------
         private readonly UserPathSettingsHelper _userPathSettingsHelper;
         private readonly UserProgramsSettingsHelper _userProgramsSettingsHelper;
         private readonly UserPresetSettingsHelper _userPresetSettingsHelper;
         private readonly ReportSettingsSettingsHelper _reportSettingsSettingsHelper;
+        private readonly PortableProgramsSettingsHelper _portableProgramsSettingsHelper;
 
         public MainWindowViewModel(IMessageDialogService messageDialogService, IIOHelper iOHelper, IEventAggregator eventAggregator, IIndex<string, IDetailViewModel> formViewModelCreator,
             UserPathSettingsHelper userPathSettingsHelper,
             UserProgramsSettingsHelper userProgramsSettingsHelper,
             UserPresetSettingsHelper userPresetSettingsHelper,
-            ReportSettingsSettingsHelper reportSettingsSettingsHelper)
+            ReportSettingsSettingsHelper reportSettingsSettingsHelper,
+            PortableProgramsSettingsHelper portableProgramsSettingsHelper)
         {
             _messageDialogService = messageDialogService;
             _iOHelper = iOHelper;
@@ -38,25 +73,51 @@ namespace CompasPack.ViewModel
             _userProgramsSettingsHelper = userProgramsSettingsHelper;
             _userPresetSettingsHelper = userPresetSettingsHelper;
             _reportSettingsSettingsHelper = reportSettingsSettingsHelper;
+            _portableProgramsSettingsHelper = portableProgramsSettingsHelper;
+            //--------------------------------------------------------------------
+            ProgramsIsEnabled = true;
+            ReportIsEnabled = true;
+            PortableIsEnabled = true;
+            PortablePrograms = new ObservableCollection<PortableProgram>();
+            //--------------------------------------------------------------------
             ClosedAppCommand = new DelegateCommand(OnClosedApp);
             CheckUpdateProgramCommand = new DelegateCommand(OnCheckUpdateProgram);
             AboutProgramCommand = new DelegateCommand(OnAboutProgram);
-
             CreateFormCommand = new DelegateCommand<Type>(OnCreateNewFormExecute);
         }
 
         //******************************************************
         public async Task LoadAsync()
         {
-            FormViewModel = _formViewModelCreator[typeof(LoadViewModel).Name];
-            var tempPrograms = _formViewModelCreator[typeof(ProgramsViewModel).Name];
+            var tempLoad = (LoadViewModel)_formViewModelCreator[typeof(LoadViewModel).Name];
+            tempLoad.Message = "Завантаження налаштувань...";
+            FormViewModel = tempLoad;
+            await _portableProgramsSettingsHelper.LoadFromFile();
+            PortableIsEnabled = _portableProgramsSettingsHelper.IsLoad;
+            if(PortableIsEnabled)
+            {
+                foreach (var portableProgram in _portableProgramsSettingsHelper.Settings.portablePrograms)
+                    PortablePrograms.Add(portableProgram);
+                //if (PortablePrograms.Count == 0)
+                //    PortableIsEnabled = false;
+            }
             await _userPathSettingsHelper.LoadFromFile();
             await _userProgramsSettingsHelper.LoadFromFile();
+            ProgramsIsEnabled = _userProgramsSettingsHelper.IsLoad;
             await _userPresetSettingsHelper.LoadFromFile();
             await _reportSettingsSettingsHelper.LoadFromFile();
-            await tempPrograms.LoadAsync(null);
-            await Task.Delay(1000);
-            FormViewModel = tempPrograms;
+            ReportIsEnabled = _reportSettingsSettingsHelper.IsLoad;
+            if (ProgramsIsEnabled)
+            {
+                await Task.Delay(1000);
+                var tempPrograms = _formViewModelCreator[typeof(ProgramsViewModel).Name];
+                await tempPrograms.LoadAsync(null);
+                FormViewModel = tempPrograms;
+            }
+            else
+            {
+                FormViewModel = null;
+            }
         }
         //******************************************************
         //--------------------------------------
@@ -84,7 +145,7 @@ namespace CompasPack.ViewModel
         }
         private void OnCheckUpdateProgram()
         {
-            _messageDialogService.ShowInfoDialog("Охх горе, нажаль ця функція нереалізована, зверніться до розробника!", "Помилка!");
+            _messageDialogService.ShowInfoDialog("В даний момент ця функція відсутня, зверніться до розробника!", "Помилка!");
         }
         private void OnAboutProgram()
         {

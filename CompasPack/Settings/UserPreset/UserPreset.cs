@@ -1,11 +1,23 @@
-﻿using System;
+﻿using CompasPack.Service;
+using System;
 using System.Collections.Generic;
 
 namespace CompasPack.Settings
 {
-    public class UserPresetsCommon
+    public class UserPresetsCommon : ICloneable
     {
         public List<UserPreset> UserPresets { get; set; }
+        public UserPresetsCommon() 
+        {
+            UserPresets = new List<UserPreset>();
+        }
+        public object Clone()
+        {
+            return new UserPresetsCommon()
+            {
+                UserPresets = (List<UserPreset>)UserPresets.Clone()
+            };
+        }
     }
     public class UserPreset : ICloneable
     {

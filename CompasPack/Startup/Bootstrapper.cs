@@ -4,6 +4,7 @@ using CompasPack.ViewModel;
 using Prism.Events;
 using CompasPack.Settings;
 using CompasPack.Helper;
+using CompasPack.Settings.Portable;
 
 namespace CompasPack.Startup
 {
@@ -47,7 +48,7 @@ namespace CompasPack.Startup
             builder.RegisterType<UserProgramsSettingsHelper>().AsSelf().SingleInstance();
             builder.RegisterType<UserPresetSettingsHelper>().AsSelf().SingleInstance();
             builder.RegisterType<ReportSettingsSettingsHelper>().AsSelf().SingleInstance();
-
+            builder.RegisterType<PortableProgramsSettingsHelper>().AsSelf().SingleInstance();
             return builder.Build();
             //.ExternallyOwned()
         }

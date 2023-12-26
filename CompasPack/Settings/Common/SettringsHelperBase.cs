@@ -47,19 +47,21 @@ namespace CompasPack.Settings
                 try
                 {
                     Settings = JsonConvert.DeserializeObject<T>(await _iOHelper.ReadAllTextAsync(SettingsPathFile), new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error });
+                    IsLoad = true;
                 }
                 catch (Exception exp)
                 {
-                    _messageDialogService.ShowInfoDialog($"Помилка в завантаженні файлу налаштувань {SettingsPathFile}\n\n" + $"Помилка:\n{exp.Message}", "Помилка!");
+                    IsLoad = false;
                     Settings = null;
+                    _messageDialogService.ShowInfoDialog($"Помилка в завантаженні файлу налаштувань {SettingsPathFile}\n\n" + $"Помилка:\n{exp.Message}", "Помилка!");
                 }
             }
             else // якщо файла налаштувань нема
             {
                 Settings = await LoadDefault(); // створюємо новий файл за замовчуванням
+                IsLoad = true;
                 await Save();                   // зберігаємо його, щоб в наступний раз він був навіть якщо користувач нічого не вносив в нього
             }
-            IsLoad = true;
         }
         public virtual async Task<T?> LoadDefault()
         {

@@ -31,14 +31,36 @@
 
         <Menu Grid.Row="0">
             <MenuItem Header="Файл">
-                <MenuItem Header="Встановлення програм" Command="{Binding CreateFormCommand}"
-                          CommandParameter="{x:Type ViewModel:ProgramsViewModel}"/>
-                <MenuItem Header="Формування звіту" Command="{Binding CreateFormCommand}"
-                          CommandParameter="{x:Type ViewModel:ReportViewModel}"/>
+                <MenuItem Header="Встановлення програм" IsEnabled="{Binding ProgramsIsEnabled, Mode=OneWay}" Command="{Binding CreateFormCommand}" CommandParameter="{x:Type ViewModel:ProgramsViewModel}"/>
+                <MenuItem Header="Формування звіту" IsEnabled="{Binding ReportIsEnabled, Mode=OneWay}" Command="{Binding CreateFormCommand}" CommandParameter="{x:Type ViewModel:ReportViewModel}"/>
                 <MenuItem Header="Вихід" Command="{Binding ClosedAppCommand}"></MenuItem>
             </MenuItem>
+
+            <MenuItem Header="Портативне ПЗ"  ItemsSource="{Binding PortablePrograms}" IsEnabled="{Binding PortableIsEnabled, Mode=OneWay}">
+                <MenuItem.ItemContainerStyle>
+                    <Style TargetType="MenuItem">
+                        <Setter Property="Header" Value="{Binding ProgramName}"/>
+                        <Setter Property="Command" Value="{Binding Command}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding }" Value="{x:Null}">
+                                <Setter Property="Template" >
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <Separator Style="{StaticResource {x:Static MenuItem.SeparatorStyleKey}}" />
+                                            <!-- THIS SEPARATOR IS NOT SHOWN AS COMMON MENUITEM-SEPARATORS ARE -->
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </MenuItem.ItemContainerStyle>
+            </MenuItem>
+
+
+
             <!--<MenuItem Header="Портативне ПЗ">
-                <MenuItem Header="Crystal" Command="{Binding OpenCrystalCommand}"></MenuItem>
+                <MenuItem Header="CrystalDisk" Command="{Binding OpenCrystalCommand}"></MenuItem>
                 <MenuItem Header="AIDA64" Command="{Binding OpenAidaCommand}"></MenuItem>
                 <MenuItem Header="TotalCMD 7.00" Command="{Binding OpenTotalCommander700Command}"></MenuItem>
                 <MenuItem Header="TotalCMD 9.51" Command="{Binding OpenTotalCommander951Command}"></MenuItem>

@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.4.0" />
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.0" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Prism.Core" Version="8.1.97" />
@@ -51,12 +51,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="JSON\" />
     <Folder Include="Data\" />
-    <Folder Include="ISON\" />
-    <Folder Include="Settings\Portable\" />
   </ItemGroup>
-	<PropertyGroup>
-		<SatelliteResourceLanguages>uk_UA</SatelliteResourceLanguages>
-	</PropertyGroup>
 
 </Project>
