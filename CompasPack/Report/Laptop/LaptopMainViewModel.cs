@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CompasPack.Settings;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,18 +10,12 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace CompasPack.ViewModel
 {
-    class LaptopMainViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
+    class LaptopMainViewModel : ReportHardWareViewModelBase<Dictionary<string, List<string>>>, IReportViewModel, IDataErrorInfo
     {
         private string _brand;
         private string _model;
         private string _line;
         private KeyValuePair<string, List<string>> _lines;
-
-        public LaptopMainViewModel(SettingsReportViewModel settingsReport)
-        {
-            SettingsReport = settingsReport;
-        }
-
         public string this[string columnName]
         {
             get
@@ -40,7 +35,10 @@ namespace CompasPack.ViewModel
                 return error;
             }
         }
-
+        public LaptopMainViewModel(Dictionary<string, List<string>> laptopsBrandAndModel)
+        {
+            Settings = laptopsBrandAndModel;
+        }
 
         public KeyValuePair<string, List<string>> Lines
         {

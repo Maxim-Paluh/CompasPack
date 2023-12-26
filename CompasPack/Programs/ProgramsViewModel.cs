@@ -22,19 +22,25 @@ using System.Text.RegularExpressions;
 
 namespace CompasPack.ViewModel
 {
-    public class ProgramsViewModel : ViewModelBase, IDetailViewModel
+    public interface ITextConsole
+    {
+        public string TextConsole { get; set; }
+    }
+    public class ProgramsViewModel : ViewModelBase, IDetailViewModel, ITextConsole
     {
         private IMessageDialogService _messageDialogService;
         private IEventAggregator _eventAggregator;
         private readonly UserProgramsSettingsHelper _userProgramsSettingsHelper;
         private readonly UserPresetSettingsHelper _userPresetSettingsHelper;
+        private readonly UserPathSettingsHelper _userPathSettingsHelper;
         private readonly IIOManager _iOManager;
         private string _selectedUserPreset;
         private string _textConsole;
         private bool _isEnabled;
         public ProgramsViewModel(IMessageDialogService messageDialogService, IIOManager iOManager, IEventAggregator eventAggregator,
             UserProgramsSettingsHelper userProgramsSettingsHelper,
-            UserPresetSettingsHelper userPresetSettingsHelper)
+            UserPresetSettingsHelper userPresetSettingsHelper,
+            UserPathSettingsHelper userPathSettingsHelper)
         {
             UserPresetPrograms = new ObservableCollection<UserPreset>();
             GroupProgramViewModel = new ObservableCollection<GroupProgramViewModel>();
@@ -43,6 +49,7 @@ namespace CompasPack.ViewModel
             _eventAggregator = eventAggregator;
             _userProgramsSettingsHelper = userProgramsSettingsHelper;
             _userPresetSettingsHelper = userPresetSettingsHelper;
+            _userPathSettingsHelper = userPathSettingsHelper;
             _iOManager = iOManager;
             IsEnabled = true;
 
@@ -114,7 +121,8 @@ namespace CompasPack.ViewModel
             var GroupsPrograms = (List<GroupPrograms>)_userProgramsSettingsHelper.Settings.GroupsPrograms.Clone();
             foreach (var groupProgram in GroupsPrograms)
                 GroupProgramViewModel.Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<UserProgramViewModel>(groupProgram.UserPrograms.Select(x => new UserProgramViewModel(x, groupProgram, _eventAggregator)))));
-            
+
+            ProgramsHelper.CombinePathFolderAndImage(GroupProgramViewModel, _userPathSettingsHelper.Settings, _iOManager);
             ProgramsHelper.CheckInstallPrograms(GroupProgramViewModel); // CheckInstall
             
             _userPresetSettingsHelper.Settings.UserPresets.ForEach(x => UserPresetPrograms.Add(x)); // Add UserPresetPrograms     
@@ -413,7 +421,7 @@ namespace CompasPack.ViewModel
         }
         private void OnOpenExampleFile()
         {
-            _iOManager.OpenFolder(_iOManager.CompasExampleFile);
+            _iOManager.OpenFolder(Path.Combine(_iOManager.PathRoot, _userPathSettingsHelper.Settings.PathExampleFile));
         }
         private async void OpenKMSAuto()
         {

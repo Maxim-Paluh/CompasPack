@@ -1,5 +1,6 @@
 ﻿using CompasPack.BL;
 using CompasPack.Enum;
+using CompasPack.Settings;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    class LaptopOtherViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
+    class LaptopOtherViewModel : ReportHardWareViewModelBase<List<LaptopHardWare>>, IReportViewModel, IDataErrorInfo
     {
         private Hardware? _webCam;
         private Hardware? _microphone;
@@ -53,9 +54,9 @@ namespace CompasPack.ViewModel
                 return System.Enum.GetValues(typeof(Hardware)).Cast<Hardware>();
             }
         }
-        public LaptopOtherViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
+        public LaptopOtherViewModel(List<LaptopHardWare> laptopHardWares, XDocument xDocument)
         {
-            SettingsReport = settingsReport;
+            Settings = laptopHardWares;
             Document = xDocument;
 
             TestWebCamCommand = new DelegateCommand(OnTestWebCam);
@@ -66,9 +67,9 @@ namespace CompasPack.ViewModel
         private void OnChangeHardware()
         {
             if (!string.IsNullOrWhiteSpace(LaptopMonitorResolution))
-                Result = $"{LaptopMonitorResolution}, {string.Join(", ", SettingsReport.LaptopHardWares.Where(x => x.IsSelect).Select(c => c.Name))}";
+                Result = $"{LaptopMonitorResolution}, {string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name))}";
             else
-                Result = string.Join(", ", SettingsReport.LaptopHardWares.Where(x => x.IsSelect).Select(c => c.Name));
+                Result = string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name));
         }
 
         private void OnTestMicrophone()
@@ -117,9 +118,9 @@ namespace CompasPack.ViewModel
                 LaptopMonitorResolution += $" {nameResolution}";
 
             if (!string.IsNullOrWhiteSpace(LaptopMonitorResolution))
-                Result = $"{LaptopMonitorResolution}, {string.Join(", ", SettingsReport.LaptopHardWares.Where(x => x.IsSelect).Select(c => c.Name))}";
+                Result = $"{LaptopMonitorResolution}, {string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name))}";
             else
-                Result = string.Join(", ", SettingsReport.LaptopHardWares.Where(x => x.IsSelect).Select(c => c.Name));
+                Result = string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name));
         }
        
         public string Error => throw new NotImplementedException();

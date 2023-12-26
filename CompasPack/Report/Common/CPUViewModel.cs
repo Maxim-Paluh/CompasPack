@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CompasPack.Settings;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,14 +11,14 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class CPUViewModel : ReportHardWareViewModelBase, IReportViewModel
+    public class CPUViewModel : ReportHardWareViewModelBase<CPUReportSettings>, IReportViewModel
     {
         private string _name;
         private string _clock;
         
-        public CPUViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
+        public CPUViewModel(CPUReportSettings CPUReportSettings, XDocument xDocument)
         {
-            SettingsReport = settingsReport;
+            Settings = CPUReportSettings;
             Document = xDocument;
         }
         public string Name
@@ -48,7 +49,7 @@ namespace CompasPack.ViewModel
                 Clock += $"{(double.Parse(temp.ToString()) / 1000).ToString().Replace(',', '.')}GHz";
 
             var tempName = Name;
-            foreach (var item in SettingsReport.CPU.Regex)
+            foreach (var item in Settings.Regex)
                 tempName = Regex.Replace(tempName, item, "");
 
             Result = tempName + " " + Clock;

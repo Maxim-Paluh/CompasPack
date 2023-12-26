@@ -25,7 +25,7 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="MonitorDiagonal:"></TextBlock>
                 <WrapPanel Grid.Row="0" Grid.Column="1" Margin="4" HorizontalAlignment="Left">
                     <TextBlock Text="XPath:"></TextBlock>
-                    <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" MinWidth="150" MaxWidth="200" Text="{Binding SettingsReport.Monitor.MonitorType.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" MinWidth="150" MaxWidth="200" Text="{Binding Settings.MonitorType.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel Grid.Row="0" Grid.Column="2"   Margin="4" >
                     <TextBlock  Width="80" Text="Monitor Type:"></TextBlock>
@@ -35,7 +35,7 @@
                     <TextBlock Margin="5 0 5 0"  Width="40" Grid.RowSpan="2" Text="Regex:"></TextBlock>
                     <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer  HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
-                            <ItemsControl  ItemsSource="{Binding SettingsReport.Monitor.MonitorType.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
+                            <ItemsControl  ItemsSource="{Binding Settings.MonitorType.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
                               ItemTemplate="{StaticResource Regexemplate}"/>
                         </ScrollViewer>
                     </Border>
@@ -49,7 +49,7 @@
                 <!--Row_1-->
                 <WrapPanel Grid.Row="1" Grid.Column="1"  Margin="4" HorizontalAlignment="Left">
                     <TextBlock Text="XPath:"></TextBlock>
-                    <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" MinWidth="150"  MaxWidth="200" Text="{Binding SettingsReport.Monitor.MonitorSize.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" MinWidth="150"  MaxWidth="200" Text="{Binding Settings.MonitorSize.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel Grid.Row="1" Grid.Column="2" Margin="4" >
                     <TextBlock Width="80"  Text="Monitor Size:"></TextBlock>
@@ -59,7 +59,7 @@
                     <TextBlock Margin="5 0 5 0"  Width="40" Grid.RowSpan="2" Text="Regex:"></TextBlock>
                     <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
-                            <ItemsControl  ItemsSource="{Binding SettingsReport.Monitor.MonitorSize.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  MinWidth="40"
+                            <ItemsControl  ItemsSource="{Binding Settings.MonitorSize.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  MinWidth="40"
                               ItemTemplate="{StaticResource Regexemplate}"/>
                         </ScrollViewer>
                     </Border>

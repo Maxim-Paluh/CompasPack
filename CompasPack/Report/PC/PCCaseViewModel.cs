@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CompasPack.Settings;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,7 +11,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace CompasPack.ViewModel
 {
-    public class PCCaseViewModel : ReportHardWareViewModelBase, IDataErrorInfo
+    public class PCCaseViewModel : ReportHardWareViewModelBase<ReportSettings>, IDataErrorInfo
     {
         private string _name;
         public PCCaseViewModel()

@@ -10,14 +10,14 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class PowerSupplyViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
+    public class PowerSupplyViewModel : ReportHardWareViewModelBase<List<string>>, IReportViewModel, IDataErrorInfo
     {
         private string _text;
         private string _power;
 
-        public PowerSupplyViewModel(SettingsReportViewModel settingsReport)
+        public PowerSupplyViewModel(List<string> PCPowerSupply)
         {
-            SettingsReport = settingsReport;
+            Settings = PCPowerSupply;
 
         }
 

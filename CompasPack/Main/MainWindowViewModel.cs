@@ -32,9 +32,13 @@ namespace CompasPack.ViewModel
         private readonly UserPathSettingsHelper _userPathSettingsHelper;
         private readonly UserProgramsSettingsHelper _userProgramsSettingsHelper;
         private readonly UserPresetSettingsHelper _userPresetSettingsHelper;
+        private readonly ReportSettingsSettingsHelper _reportSettingsSettingsHelper;
 
         public MainWindowViewModel(IMessageDialogService messageDialogService, IIOManager iOManager, IEventAggregator eventAggregator, IIndex<string, IDetailViewModel> formViewModelCreator,
-            UserPathSettingsHelper userPathSettingsHelper, UserProgramsSettingsHelper userProgramsSettingsHelper, UserPresetSettingsHelper userPresetSettingsHelper)
+            UserPathSettingsHelper userPathSettingsHelper,
+            UserProgramsSettingsHelper userProgramsSettingsHelper,
+            UserPresetSettingsHelper userPresetSettingsHelper,
+            ReportSettingsSettingsHelper reportSettingsSettingsHelper)
         {
             _messageDialogService = messageDialogService;
             _iOManager = iOManager;
@@ -42,19 +46,8 @@ namespace CompasPack.ViewModel
             _userPathSettingsHelper = userPathSettingsHelper;
             _userProgramsSettingsHelper = userProgramsSettingsHelper;
             _userPresetSettingsHelper = userPresetSettingsHelper;
-            OpenAidaCommand = new DelegateCommand(OnOpenAida);
-            OpenCpuZCommand = new DelegateCommand(OnOpenCpuZ);
-            OpenGpuZCommand = new DelegateCommand(OnOpenGpuZ);
-            OpenCrystalCommand = new DelegateCommand(OnOpenCrystal);
-            OpenFurMarkCommand = new DelegateCommand(OnOpenFurMark);
-            OpenTotalCommander951Command = new DelegateCommand(OnOpenTotalCommander951);
-            OpenTotalCommander700Command = new DelegateCommand(OnOpenTotalCommander700);
-            OpenWinRarCommand = new DelegateCommand(OnOpenWinRar);
-
+            _reportSettingsSettingsHelper = reportSettingsSettingsHelper;
             ClosedAppCommand = new DelegateCommand(OnClosedApp);
-            SetDefaultGroupProgramCommand = new DelegateCommand(OnSetDefaultGroupProgram);
-            SetDefaultUserPresetProgramCommand = new DelegateCommand(OnSetDefaultUserPresetProgram);
-            SetDefaultUserDocxCommand = new DelegateCommand(OnSetDefaultUserDocx);
             CheckUpdateProgramCommand = new DelegateCommand(OnCheckUpdateProgram);
             AboutProgramCommand = new DelegateCommand(OnAboutProgram);
 
@@ -69,40 +62,13 @@ namespace CompasPack.ViewModel
             await _userPathSettingsHelper.LoadFromFile();
             await _userProgramsSettingsHelper.LoadFromFile();
             await _userPresetSettingsHelper.LoadFromFile();
+            await _reportSettingsSettingsHelper.LoadFromFile();
             await tempPrograms.LoadAsync(null);
-            await Task.Delay(500);
+            await Task.Delay(1000);
             FormViewModel = tempPrograms;
         }
         //******************************************************
         //--------------------------------------
-        private void OnOpenFurMark()
-        {
-            OpenProgram(_iOManager.FurMark);
-        }
-        private void OnOpenCrystal()
-        {
-            OpenProgram(_iOManager.CrystalDisk);
-        }
-        private void OnOpenCpuZ()
-        {
-            OpenProgram(_iOManager.CpuZ);
-        }
-        private void OnOpenGpuZ()
-        {
-            OpenProgram(_iOManager.GpuZ);
-        }
-        private void OnOpenAida()
-        {
-            OpenProgram(_iOManager.Aida);
-        }
-        private void OnOpenTotalCommander951()
-        {
-            OpenProgram(_iOManager.TotalCommander951);
-        }
-        private void OnOpenTotalCommander700()
-        {
-            OpenProgram(_iOManager.TotalCommander700);
-        }
         private void OnOpenWinRar()
         {
             OpenProgram(_iOManager.WinRar);
@@ -129,36 +95,6 @@ namespace CompasPack.ViewModel
         {
             System.Windows.Application.Current.Shutdown();
         }
-        private async void OnSetDefaultGroupProgram()
-        {
-            var resultDialog = _messageDialogService.ShowYesNoDialog($"Очистити шаблон програм до стандартного?\nЦю дію не можна відмінити!!!", "Очистка шаблону!");
-            if (resultDialog == MessageDialogResult.Yes)
-            {
-                await _iOManager.SetDefaultGroupProgram();
-                if (_formViewModel != null)
-                    if (_formViewModel.GetType().Name == nameof(ProgramsViewModel))
-                        await _formViewModel.LoadAsync(null);
-            }
-        }
-        private async void OnSetDefaultUserPresetProgram()
-        {
-            var resultDialog = _messageDialogService.ShowYesNoDialog($"Очистити шаблон набору програм до стандартного?\nЦю дію не можна відмінити!!!", "Очистка шаблону!");
-            if (resultDialog == MessageDialogResult.Yes)
-            {
-                await _iOManager.SetDefaultUserPresetProgram();
-                if(_formViewModel!=null)
-                    if (_formViewModel.GetType().Name == nameof(ProgramsViewModel))
-                        await _formViewModel.LoadAsync(null);
-            }
-        }
-        private void OnSetDefaultUserDocx()
-        {
-            var resultDialog = _messageDialogService.ShowYesNoDialog($"Очистити шаблони Docx?\nЦю дію не можна відмінити!!!", "Очистка шаблону!");
-            if (resultDialog == MessageDialogResult.Yes)
-            {
-                 _iOManager.ReInstallPatternDocx();
-            }
-        }
         private void OnCheckUpdateProgram()
         {
             _messageDialogService.ShowInfoDialog("Охх горе, нажаль ця функція нереалізована, зверніться до розробника!", "Помилка!");
@@ -182,24 +118,7 @@ namespace CompasPack.ViewModel
             }
         }
         //--------------------------------------
-
-
-
-
-        public ICommand OpenAidaCommand { get; }
-        public ICommand OpenCpuZCommand { get; }
-        public ICommand OpenGpuZCommand { get; }
-        public ICommand OpenCrystalCommand { get; }
-        public ICommand OpenFurMarkCommand { get; }
-        public ICommand OpenTotalCommander951Command { get; }
-        public ICommand OpenTotalCommander700Command { get; }
-        public ICommand OpenWinRarCommand { get; }
-
-
         public ICommand ClosedAppCommand { get; }
-        public ICommand SetDefaultGroupProgramCommand { get; }
-        public ICommand SetDefaultUserPresetProgramCommand { get; }
-        public ICommand SetDefaultUserDocxCommand { get; }
         public ICommand CheckUpdateProgramCommand { get; }
         public ICommand AboutProgramCommand { get; }
 

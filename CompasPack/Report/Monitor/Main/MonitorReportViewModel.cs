@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml.Linq;
+using CompasPack.Settings;
 
 namespace CompasPack.ViewModel
 {
@@ -53,8 +54,8 @@ namespace CompasPack.ViewModel
         }
 
 
-        public MonitorReportViewModel(IIOManager iOManager, SettingsReportViewModel settingsReportViewModel, XDocument xDocument, IMessageDialogService messageDialogService) :
-            base(iOManager, settingsReportViewModel, xDocument, messageDialogService)
+        public MonitorReportViewModel(IIOManager iOManager, ReportSettings reportSettings, XDocument xDocument, IMessageDialogService messageDialogService) :
+            base(iOManager, reportSettings, xDocument, messageDialogService)
         {
             ReportPath = _ioManager.ReportMonitor;
         }
@@ -190,11 +191,11 @@ namespace CompasPack.ViewModel
 
         public async Task LoadAsync(int? Id)
         {
-            MonitorMainViewModel = new MonitorMainViewModel(_settingsReportViewModel, _xDocument);
-            MonitorAspectRatioViewModel = new MonitorAspectRatioViewModel(_settingsReportViewModel, _xDocument);
-            MonitorOtherViewModel = new MonitorOtherViewModel(_settingsReportViewModel, _xDocument);
-            MonitorDiagonalViewModel = new MonitorDiagonalViewModel(_settingsReportViewModel, _xDocument);
-            MonitorResolutionViewModel = new MonitorResolutionViewModel(_settingsReportViewModel, _xDocument);
+            MonitorMainViewModel = new MonitorMainViewModel(_reportSettings.MonitorReportSettings, _xDocument);
+            MonitorAspectRatioViewModel = new MonitorAspectRatioViewModel(_reportSettings.MonitorReportSettings, _xDocument);
+            MonitorOtherViewModel = new MonitorOtherViewModel(_reportSettings.MonitorReportSettings, _xDocument);
+            MonitorDiagonalViewModel = new MonitorDiagonalViewModel(_reportSettings.MonitorReportSettings, _xDocument);
+            MonitorResolutionViewModel = new MonitorResolutionViewModel(_reportSettings.MonitorReportSettings, _xDocument);
 
             await Task.Factory.StartNew(() =>
             {

@@ -39,7 +39,7 @@
                 
                 <!--Row_1-->
                 <TextBlock Grid.Row="1" Grid.Column="1"  Margin="9 0 5 0" Text="Result:"></TextBlock>
-                <ItemsControl Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" MaxWidth="350" HorizontalAlignment="Left"  ItemsSource="{Binding SettingsReport.LaptopHardWares, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" MaxWidth="350" HorizontalAlignment="Left"  ItemsSource="{Binding Settings, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <CheckBox  Margin="5"

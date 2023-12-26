@@ -26,7 +26,7 @@
                 <TextBlock Grid.Row="0" Grid.Column="0"  FontSize="14" FontWeight="Bold"  Text="Memory:"></TextBlock>
                 <WrapPanel Grid.Row="0" Grid.Column="1"   Margin="4" HorizontalAlignment="Left">
                     <TextBlock Text="XPath:"></TextBlock>
-                    <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" MinWidth="150" MaxWidth="200" Text="{Binding SettingsReport.Memory.MemoryType.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" MinWidth="150" MaxWidth="200" Text="{Binding Settings.MemoryType.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel Grid.Row="0" Grid.Column="2"  Margin="4" >
                     <TextBlock Width="60"  Text="Type:"></TextBlock>
@@ -36,7 +36,7 @@
                     <TextBlock Margin="5 0 5 0"  Width="40" Grid.RowSpan="2" Text="Regex:"></TextBlock>
                     <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
-                            <ItemsControl  ItemsSource="{Binding SettingsReport.Memory.MemoryType.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
+                            <ItemsControl  ItemsSource="{Binding Settings.MemoryType.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
                               ItemTemplate="{StaticResource Regexemplate}"/>
                         </ScrollViewer>
                     </Border>
@@ -55,7 +55,7 @@
                 <!--Row_2-->
                 <WrapPanel  Grid.Row="2" Grid.Column="1" Margin="4" HorizontalAlignment="Left">
                     <TextBlock Grid.Column="0" Grid.Row="0"  Text="XPath:"></TextBlock>
-                    <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" MinWidth="150" MaxWidth="200" Text="{Binding SettingsReport.Memory.MemoryFrequency.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" MinWidth="150" MaxWidth="200" Text="{Binding Settings.MemoryFrequency.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel Grid.Row="2" Grid.Column="2" Margin="4" >
                     <TextBlock Width="60" Text="Frequency:"></TextBlock>
@@ -65,7 +65,7 @@
                     <TextBlock Margin="5 0 5 0"  Width="40" Grid.RowSpan="2" Text="Regex:"></TextBlock>
                     <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer  HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
-                            <ItemsControl  ItemsSource="{Binding SettingsReport.Memory.MemoryFrequency.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  MinWidth="40"
+                            <ItemsControl  ItemsSource="{Binding Settings.MemoryFrequency.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  MinWidth="40"
                               ItemTemplate="{StaticResource Regexemplate}"/>
                         </ScrollViewer>
                     </Border>

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml.Linq;
 using CompasPack.Enum;
+using CompasPack.Settings;
 using CompasPack.View.Service;
 using CompasPakc.BL;
 using Prism.Commands;
@@ -19,8 +20,7 @@ namespace CompasPack.ViewModel
         private IDetailViewModel? _reportformViewModel;
         private readonly IIOManager _ioManager;
         private IMessageDialogService _messageDialogService;
-
-        private SettingsReportViewModel _settingsReportViewModel;
+        private readonly ReportSettingsSettingsHelper _reportSettingsSettingsHelper;
         private XDocument _xDocument;
 
         private bool _isEnable;
@@ -34,12 +34,13 @@ namespace CompasPack.ViewModel
         }
 
 
-        public ReportViewModel(IIOManager iOManager, IMessageDialogService messageDialogService)
+        public ReportViewModel(IIOManager iOManager, IMessageDialogService messageDialogService, ReportSettingsSettingsHelper reportSettingsSettingsHelper)
         {
             IsEnable = false;
             _ioManager = iOManager;
             GenerateReportCommand = new DelegateCommand(OnGenerateReport);
             _messageDialogService = messageDialogService;
+            _reportSettingsSettingsHelper = reportSettingsSettingsHelper;
         }
 
         private async void OnGenerateReport()
@@ -47,13 +48,13 @@ namespace CompasPack.ViewModel
             switch (ReportType)
             {
                 case TypeReport.Computer:
-                    ReportFormViewModel = new ComputerReportViewModel(_ioManager, _settingsReportViewModel, _xDocument, _messageDialogService);
+                    ReportFormViewModel = new ComputerReportViewModel(_ioManager, _reportSettingsSettingsHelper.Settings, _xDocument, _messageDialogService);
                     break;
                 case TypeReport.Laptop:
-                    ReportFormViewModel = new LaptopReportViewModel(_ioManager, _settingsReportViewModel, _xDocument, _messageDialogService);
+                    ReportFormViewModel = new LaptopReportViewModel(_ioManager, _reportSettingsSettingsHelper.Settings, _xDocument, _messageDialogService);
                     break;
                 case TypeReport.Monitor:
-                    ReportFormViewModel = new MonitorReportViewModel(_ioManager, _settingsReportViewModel, _xDocument, _messageDialogService);
+                    ReportFormViewModel = new MonitorReportViewModel(_ioManager, _reportSettingsSettingsHelper.Settings, _xDocument, _messageDialogService);
                     break;
                 default:
                     ReportFormViewModel = null;
@@ -99,11 +100,9 @@ namespace CompasPack.ViewModel
         public async Task LoadAsync(int? Id)
         {
             _ioManager.CheckReportFolders();
-
             _xDocument = await _ioManager.GetXDocument();
-            _settingsReportViewModel = await _ioManager.GetSettingsReport();
 
-            if (_settingsReportViewModel != null && _xDocument != null)
+            if (_reportSettingsSettingsHelper.Settings != null && _xDocument != null)
                 IsEnable = true;
             else
             {

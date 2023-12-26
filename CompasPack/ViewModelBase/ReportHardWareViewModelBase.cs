@@ -12,17 +12,17 @@ namespace CompasPack
     {
         void Load();
     }
-    public class ReportHardWareViewModelBase : ViewModelBase
+    public class ReportHardWareViewModelBase<T> : ViewModelBase
     {
         private XDocument? _document;
-        private SettingsReportViewModel _settingsReport;
+        private T _settings;
         private string _result;
-        public SettingsReportViewModel SettingsReport
+        public T Settings
         {
-            get { return _settingsReport; }
+            get { return _settings; }
             set
             {
-                _settingsReport = value;
+                _settings = value;
                 OnPropertyChanged();
             }
         }

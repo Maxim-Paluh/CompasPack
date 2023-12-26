@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using CompasPack.Settings;
+using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +12,7 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorOtherViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
+    public class MonitorOtherViewModel : ReportHardWareViewModelBase<MonitorReportSettings>, IReportViewModel, IDataErrorInfo
     {
         private bool _miniVGA;
 
@@ -21,16 +22,16 @@ namespace CompasPack.ViewModel
             set { _miniVGA = value; }
         }
 
-        public MonitorOtherViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
+        public MonitorOtherViewModel(MonitorReportSettings monitorReportSettings, XDocument xDocument)
         {
-            SettingsReport = settingsReport;
+            Settings = monitorReportSettings;
             Document = xDocument;
             SelectInterfaceCommand = new DelegateCommand(OnSelectInterface);
         }
 
         private void OnSelectInterface()
         {
-            Result = string.Join(", ", SettingsReport.Monitor.MonitorInterfaces.Where(x => x.IsSelect).Select(c => c.Name));
+            Result = string.Join(", ", Settings.MonitorInterfaces.Where(x => x.IsSelect).Select(c => c.Name));
         }
 
         public void Load()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CompasPack.Settings;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,7 +11,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorMainViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
+    public class MonitorMainViewModel : ReportHardWareViewModelBase<MonitorReportSettings>, IReportViewModel, IDataErrorInfo
     {
         private string _brand;
         private string _model;
@@ -59,20 +60,20 @@ namespace CompasPack.ViewModel
             }
         }
 
-        public MonitorMainViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
+        public MonitorMainViewModel(MonitorReportSettings monitorReportSettings, XDocument xDocument)
         {
-            SettingsReport = settingsReport;
+            Settings = monitorReportSettings;
             Document = xDocument;
         }
         public void Load()
         {
-            var tempName = Document.XPathSelectElement(SettingsReport.Monitor.MonitorName.XPath);
+            var tempName = Document.XPathSelectElement(Settings.MonitorName.XPath);
             if (tempName != null)
                 Name = tempName.Value;
             else
                 Name = string.Empty;
             
-            var tempModel = Document.XPathSelectElement(SettingsReport.Monitor.MonitorModel.XPath);
+            var tempModel = Document.XPathSelectElement(Settings.MonitorModel.XPath);
             if (tempModel != null)
                 Model = tempModel.Value;
             else
@@ -80,11 +81,11 @@ namespace CompasPack.ViewModel
 
 
             if (!string.IsNullOrWhiteSpace(Name))
-                Brand = SettingsReport.Monitors.FirstOrDefault(x => Name.Contains(x, StringComparison.InvariantCultureIgnoreCase));
+                Brand = Settings.MonitorsBrand.FirstOrDefault(x => Name.Contains(x, StringComparison.InvariantCultureIgnoreCase));
 
             if(string.IsNullOrWhiteSpace(Brand))
                 if(!string.IsNullOrWhiteSpace(Model))
-                    Brand = SettingsReport.Monitors.FirstOrDefault(x => Model.Contains(x, StringComparison.InvariantCultureIgnoreCase));
+                    Brand = Settings.MonitorsBrand.FirstOrDefault(x => Model.Contains(x, StringComparison.InvariantCultureIgnoreCase));
 
             if(!string.IsNullOrWhiteSpace(Brand))
             if (Model.Contains(Brand))

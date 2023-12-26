@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CompasPack.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
@@ -11,15 +12,15 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    public class MemoryViewModel : ReportHardWareViewModelBase, IReportViewModel
+    public class MemoryViewModel : ReportHardWareViewModelBase<MemoryReportSettings>, IReportViewModel
     {
         private string _type;
         private string _size;
         private string _frequency;
 
-        public MemoryViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
+        public MemoryViewModel(MemoryReportSettings memoryReportSettings, XDocument xDocument)
         {
-            SettingsReport = settingsReport;
+            Settings= memoryReportSettings;
             Document = xDocument;
         }
         public string Type
@@ -53,7 +54,7 @@ namespace CompasPack.ViewModel
         
         public void Load()
         {
-            var tempType = Document.XPathSelectElement(SettingsReport.Memory.MemoryType.XPath);
+            var tempType = Document.XPathSelectElement(Settings.MemoryType.XPath);
             if (tempType != null)
                 Type = tempType.Value;
             else
@@ -66,18 +67,18 @@ namespace CompasPack.ViewModel
 
             Size = total / 1073741824 + "Gb";
 
-            var tempFrequency = Document.XPathSelectElement(SettingsReport.Memory.MemoryFrequency.XPath);
+            var tempFrequency = Document.XPathSelectElement(Settings.MemoryFrequency.XPath);
             if (tempFrequency != null)
                 Frequency= tempFrequency.Value;
             else
                 Frequency = "Not found";
 
             var tempMemoryType = Type;
-            foreach (var item in SettingsReport.Memory.MemoryType.Regex)
+            foreach (var item in Settings.MemoryType.Regex)
                 tempMemoryType = Regex.Replace(tempMemoryType, item, "");
 
             var tempMemoryFrequency = Frequency;
-            foreach (var item in SettingsReport.Memory.MemoryFrequency.Regex)
+            foreach (var item in Settings.MemoryFrequency.Regex)
                 tempMemoryFrequency = Regex.Replace(tempMemoryFrequency, item, "");
 
             Result = $"{tempMemoryType}-{Size} ({tempMemoryFrequency}MHz)";

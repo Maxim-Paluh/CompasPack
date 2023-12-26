@@ -1,4 +1,5 @@
 ﻿using CompasPack.BL;
+using CompasPack.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorResolutionViewModel : ReportHardWareViewModelBase, IReportViewModel
+    public class MonitorResolutionViewModel : ReportHardWareViewModelBase<MonitorReportSettings>, IReportViewModel
     {
         private string _monitorResolution;
 
@@ -21,9 +22,9 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public MonitorResolutionViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
+        public MonitorResolutionViewModel(MonitorReportSettings monitorReportSettings, XDocument xDocument)
         {
-            SettingsReport = settingsReport;
+            Settings = monitorReportSettings;
             Document = xDocument;
         }
         public void Load()

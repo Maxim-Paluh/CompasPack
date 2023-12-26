@@ -13,20 +13,20 @@ namespace CompasPack.BL
 {
     public class ProgramsHelper
     {
-        public static void CombinePathFolderAndImage(List<GroupPrograms> groupPrograms, UserPath userPath, IIOManager iOManager)
+        public static void CombinePathFolderAndImage(IList<GroupProgramViewModel> groupPrograms, UserPath userPath, IIOManager iOManager)
         {
-            foreach (var program in groupPrograms.SelectMany(group => group.UserPrograms))
+            foreach (var item in groupPrograms.SelectMany(group => group.UserProgramViewModels))
             {
-                program.PathFolder = Path.Combine(userPath.PathFolder, program.PathFolder);
-                program.FileImage = Path.Combine(userPath.FileImage, program.FileImage);
+                item.UserProgram.PathFolder = Path.Combine(iOManager.PathRoot, userPath.PathFolderPrograms, item.UserProgram.PathFolder);
+                item.UserProgram.FileImage = Path.Combine(iOManager.PathRoot, userPath.PathFolderImageProgram, item.UserProgram.FileImage);
             }
         }
 
         public static void CheckInstallPrograms(IList<GroupProgramViewModel> groupProgramViewModels)
         {
             var tempListPrograms = WinInfo.ListInstallPrograms();
-            foreach (var item in groupProgramViewModels.SelectMany(group => group.UserProgramViewModels))
-                item.CheckInstall(tempListPrograms);
+            foreach (var program in groupProgramViewModels.SelectMany(group => group.UserProgramViewModels))
+                program.CheckInstall(tempListPrograms);
         }
 
     }

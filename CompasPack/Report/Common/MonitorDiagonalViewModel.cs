@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CompasPack.Settings;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,7 +14,7 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorDiagonalViewModel : ReportHardWareViewModelBase, IReportViewModel, IDataErrorInfo
+    public class MonitorDiagonalViewModel : ReportHardWareViewModelBase<MonitorReportSettings>, IReportViewModel, IDataErrorInfo
     {
         private string _laptopMonitorType;
         private string _laptopMonitorSize;
@@ -39,9 +40,9 @@ namespace CompasPack.ViewModel
             }
         }
 
-        public MonitorDiagonalViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
+        public MonitorDiagonalViewModel(MonitorReportSettings monitorReportSettings, XDocument xDocument)
         {
-            SettingsReport = settingsReport;
+            Settings = monitorReportSettings;
             Document = xDocument;
         }
 
@@ -51,13 +52,13 @@ namespace CompasPack.ViewModel
 
         public void Load()
         {
-            var tempType = Document.XPathSelectElement(SettingsReport.Monitor.MonitorType.XPath);
+            var tempType = Document.XPathSelectElement(Settings.MonitorType.XPath);
             if (tempType != null)
                 LaptopMonitorType = tempType.Value;
             else
                 LaptopMonitorType = string.Empty;
 
-            var tempSize = Document.XPathSelectElement(SettingsReport.Monitor.MonitorSize.XPath);
+            var tempSize = Document.XPathSelectElement(Settings.MonitorSize.XPath);
             if (tempSize != null)
                 LaptopMonitorSize = tempSize.Value;
             else
@@ -66,7 +67,7 @@ namespace CompasPack.ViewModel
             if (!string.IsNullOrWhiteSpace(LaptopMonitorType))
             {
                 var tempLaptopMonitorType = LaptopMonitorType;
-                foreach (var item in SettingsReport.Monitor.MonitorType.Regex)
+                foreach (var item in Settings.MonitorType.Regex)
                     tempLaptopMonitorType = Regex.Replace(tempLaptopMonitorType, item, "");
 
                 if(!string.IsNullOrWhiteSpace(tempLaptopMonitorType))
@@ -78,7 +79,7 @@ namespace CompasPack.ViewModel
                 if (!string.IsNullOrWhiteSpace(LaptopMonitorSize))
                 {
                     var tempLaptopMonitorSize = LaptopMonitorSize;
-                    foreach (var item in SettingsReport.Monitor.MonitorSize.Regex)
+                    foreach (var item in Settings.MonitorSize.Regex)
                         tempLaptopMonitorSize = Regex.Replace(tempLaptopMonitorSize, item, "");
                     Result = $"{tempLaptopMonitorSize}";
                 }

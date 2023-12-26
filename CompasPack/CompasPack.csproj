@@ -53,6 +53,7 @@
   <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="ISON\" />
+    <Folder Include="Settings\Portable\" />
   </ItemGroup>
 	<PropertyGroup>
 		<SatelliteResourceLanguages>uk_UA</SatelliteResourceLanguages>

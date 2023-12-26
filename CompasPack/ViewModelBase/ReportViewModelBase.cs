@@ -1,4 +1,5 @@
-﻿using CompasPack.View.Service;
+﻿using CompasPack.Settings;
+using CompasPack.View.Service;
 using CompasPakc.BL;
 using Prism.Commands;
 using System;
@@ -14,7 +15,7 @@ namespace CompasPack.ViewModel
 {
     public abstract class ReportViewModelBase : ViewModelBase
     {
-        protected SettingsReportViewModel _settingsReportViewModel;
+        protected ReportSettings _reportSettings;
         protected XDocument _xDocument;
         protected IIOManager _ioManager;
         protected IMessageDialogService _messageDialogService;
@@ -23,11 +24,11 @@ namespace CompasPack.ViewModel
         private string _reportPath;
         private int _indexReport;
 
-        public ReportViewModelBase(IIOManager iOManager, SettingsReportViewModel settingsReportViewModel, XDocument xDocument, IMessageDialogService messageDialogService)
+        public ReportViewModelBase(IIOManager iOManager, ReportSettings reportSettings, XDocument xDocument, IMessageDialogService messageDialogService)
         {
             IsEnable = false;
             _ioManager = iOManager;
-            _settingsReportViewModel = settingsReportViewModel;
+            _reportSettings = reportSettings;
             _xDocument = xDocument;
             _messageDialogService = messageDialogService;
             SaveReportCommand = new DelegateCommand(OnSaveReport);
@@ -90,7 +91,7 @@ namespace CompasPack.ViewModel
         }
         protected void OnOpenFolder()
         {
-            _ioManager.OpenFolder(ReportPath);
+            _ioManager.OpenCreateFolder(ReportPath);
         }
 
         public ICommand SaveReportCommand { get; set; }

@@ -1,49 +1,39 @@
-﻿using CompasPack.BL;
+﻿using CompasPack.Settings;
 using CompasPack.View;
+using CompasPack.View.Service;
 using CompasPakc.BL;
-using Newtonsoft.Json.Linq;
+using Prism.Commands;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
-using System.Management;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using System.Xml.XPath;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using Prism.Commands;
-using CompasPack.ViewModel;
 using System.Windows.Input;
-using System.Security.Principal;
-using System.Windows.Controls;
-using System.Windows.Media;
-using CompasPack.View.Service;
-using System.Windows.Shapes;
-using System.IO.Compression;
-
+using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class ComputerReportViewModel : ReportViewModelBase, IDetailViewModel
-    {
-        private PCCaseViewModel _pCCaseViewModel;
+    internal class LaptopReportViewModel : ReportViewModelBase, IDetailViewModel
+    {   
+        private LaptopMainViewModel _laptopMainViewModel;
+        private MonitorDiagonalViewModel _monitorDiagonalViewModel;
         private CPUViewModel _CPUViewModel;
-        private MotherboardViewModel _motherboardViewModel;
         private MemoryViewModel _memoryViewModel;
-        private VideoViewModel _videoViewModel;
+        private VideoControllerViewModel _videoControllerViewModel;
         private PhysicalDiskViewModel _physicalDiskViewModel;
-        private PowerSupplyViewModel _powerSupplyView;
+        private LaptopBatteryViewModel _laptopBatteryViewModel;
+        private LaptopOtherViewModel _laptopOtherViewModel;
 
-        public PCCaseViewModel PCCaseViewModel
+        public MonitorDiagonalViewModel MonitorDiagonalViewModel
         {
-            get { return _pCCaseViewModel; }
+            get { return _monitorDiagonalViewModel; }
             set
             {
-                _pCCaseViewModel = value;
+                _monitorDiagonalViewModel = value;
                 OnPropertyChanged();
             }
         }
@@ -56,15 +46,6 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public MotherboardViewModel MotherboardViewModel
-        {
-            get { return _motherboardViewModel; }
-            set
-            {
-                _motherboardViewModel = value;
-                OnPropertyChanged();
-            }
-        }
         public MemoryViewModel MemoryViewModel
         {
             get { return _memoryViewModel; }
@@ -74,12 +55,12 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public VideoViewModel VideoViewModel
+        public VideoControllerViewModel VideoControllerViewModel
         {
-            get { return _videoViewModel; }
+            get { return _videoControllerViewModel; }
             set
             {
-                _videoViewModel = value;
+                _videoControllerViewModel = value;
                 OnPropertyChanged();
             }
         }
@@ -92,25 +73,40 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public PowerSupplyViewModel PowerSupplyViewModel
+        public LaptopMainViewModel LaptopMainViewModel
         {
-            get { return _powerSupplyView; }
+            get { return _laptopMainViewModel; }
             set
             {
-                _powerSupplyView = value;
+                _laptopMainViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+        public LaptopBatteryViewModel LaptopBatteryViewModel
+        {
+            get { return _laptopBatteryViewModel; }
+            set { _laptopBatteryViewModel = value; }
+        }
+        public LaptopOtherViewModel LaptopOtherViewModel
+        {
+            get { return _laptopOtherViewModel; }
+            set
+            {
+                _laptopOtherViewModel = value;
                 OnPropertyChanged();
             }
         }
 
-        public ComputerReportViewModel(IIOManager iOManager, SettingsReportViewModel settingsReportViewModel, XDocument xDocument, IMessageDialogService messageDialogService) : 
-            base (iOManager, settingsReportViewModel, xDocument, messageDialogService)
+
+        public LaptopReportViewModel(IIOManager iOManager, ReportSettings reportSettings, XDocument xDocument, IMessageDialogService messageDialogService) :
+            base(iOManager, reportSettings, xDocument, messageDialogService)
         {
-            ReportPath = _ioManager.ReportPC;
+            ReportPath = _ioManager.ReportLaptop;
         }
 
-        protected override  async void OnSaveReport()
+        protected override async void OnSaveReport()
         {
-            if (string.IsNullOrWhiteSpace(PCCaseViewModel.Name) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Text) || string.IsNullOrWhiteSpace(PowerSupplyViewModel.Power) || !PowerSupplyViewModel.Power.All(char.IsDigit))
+            if (string.IsNullOrWhiteSpace(LaptopMainViewModel.Brand) || string.IsNullOrWhiteSpace(LaptopMainViewModel.Model) || LaptopOtherViewModel.Microphone==null || LaptopOtherViewModel.WebCam==null)
             {
                 _messageDialogService.ShowInfoDialog("Заповни всі поля виділені червоним", "Помилка!");
                 return;
@@ -125,7 +121,7 @@ namespace CompasPack.ViewModel
                 string listFile = string.Empty;
                 if (checkHml)
                     listFile += $"{ReportPath}\\Report_{IndexReport:000}.htm\n";
-                if(checkHtml)
+                if (checkHtml)
                     listFile += $"{ReportPath}\\Report_{IndexReport:000}.html\n";
                 if (checkDocx)
                     listFile += $"{ReportPath}\\Report_{IndexReport:000}.docx\n";
@@ -156,7 +152,7 @@ namespace CompasPack.ViewModel
             };
             try
             {
-                Process proc = Process.Start(StartInfo); 
+                Process proc = Process.Start(StartInfo);
                 await proc.WaitForExitAsync();
             }
             catch (Exception e)
@@ -169,25 +165,25 @@ namespace CompasPack.ViewModel
         {
             try
             {
-                string html = $"<html><head><style>table{{font-family: Arial;font-size: 13px;}}</style>" +
-               $"</head><body><table><tbody>" +
-               $"<tr><th>{PCCaseViewModel.Result}</th><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-               $"<tr><td>{CPUViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-               $"<tr><td>{MotherboardViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-               $"<tr><td>{MemoryViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-               $"<tr><td>{VideoViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-               $"<tr><td>{PhysicalDiskViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-               $"<tr><td>{PowerSupplyViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-               $"<tr><td><b>ID: {IndexReport:000} (Прийшов {DateTime.Now:dd.MM.yyyy})</b></td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-               $"<tr><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"> </td></tr></tbody></table></body></html>";
-               await _ioManager.WriteAllTextAsync($"{ReportPath}\\Report_{IndexReport:000}.html", html);
+                string html = $"<html> <head> <style> table {{ font-family: Arial; font-size: 13px; }} </style> </head> <body> <table> <tbody> " +
+                    $"<tr> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> </tr>" +
+                    $" <tr> <td style=\"text-align:right;\">{IndexReport:000}</td> <td style=\"text-align:left;\"><b>{LaptopMainViewModel.Result}</b></td> <td style=\"background-color: red; text-align:center;\"><b>0</b></td> <td style=\"background-color: red; text-align:center;\"><b>0</b></td> <td style=\"text-align:center;\">{DateTime.Now:dd.MM.yyyy}</td> <td></td> <td></td> <td></td> </tr>" +
+                    $"<tr> <td style=\"text-align:right;\">Cam {LaptopOtherViewModel.WebCam}</td> <td style=\"text-align:left;\">{CPUViewModel.Result}</td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> </tr>" +
+                    $"<tr> <td style=\"text-align:right;\">Mic {LaptopOtherViewModel.Microphone}</td> <td style=\"text-align:left;\">{MemoryViewModel.Result}</td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> </tr>" +
+                    $"<tr> <td></td> <td style=\"text-align:left;\">{VideoControllerViewModel.Result}</td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> </tr>" +
+                    $"<tr> <td></td> <td style=\"text-align:left;\">{PhysicalDiskViewModel.Result}</td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> </tr>" +
+                    $"<tr> <td></td> <td style=\"text-align:left;\">{LaptopOtherViewModel.Result}</td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> </tr>" +
+                    $"<tr> <td></td> <td style=\"text-align:left;\">{LaptopBatteryViewModel.Result}</td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> </tr>" +
+                    $"<tr> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> <td style=\"background-color: #808080;\" /> </tr>" +
+                    $"</tbody> </table> </body> </html>";
+                await _ioManager.WriteAllTextAsync($"{ReportPath}\\Report_{IndexReport:000}.html", html);
             }
             catch (Exception e)
             {
                 _messageDialogService.ShowInfoDialog($"В процесі формування звіту HTML відбулася помилка.\n\nФайл: {ReportPath}\\Report_{IndexReport:000}.html не створено!\n\nЗвернись до розробника і скинь фото:\n\n" +
                    $"{e.Message}\n\n{e.StackTrace}", "Помилка");
             }
-           
+
         }
         private async Task GetDOCX()
         {
@@ -199,14 +195,14 @@ namespace CompasPack.ViewModel
                     _messageDialogService.ShowInfoDialog($"Не знайдено файл: {documentPath}", "Помилка!");
                     return;
                 }
-                
+
                 var unzipPath = $"{ReportPath}\\SourcePrice\\unzip\\word";
                 if (!Directory.Exists(unzipPath))
                 {
                     _messageDialogService.ShowInfoDialog($"Не знайдено папку: {documentPath}", "Помилка!");
                     return;
                 }
-                
+
                 File.Copy(documentPath, $"{unzipPath}\\document.xml", true);
                 string text = string.Empty;
                 using (StreamReader reader = new StreamReader($"{unzipPath}\\document.xml"))
@@ -214,63 +210,71 @@ namespace CompasPack.ViewModel
                     text = await reader.ReadToEndAsync();
                 }
 
+                text = text.Replace("brand", LaptopMainViewModel.Brand);
+                
+                if(!string.IsNullOrWhiteSpace(LaptopMainViewModel.Line))
+                    text = text.Replace("model", $"{LaptopMainViewModel.Line} {LaptopMainViewModel.Model}");
+                else
+                    text = text.Replace("model", $"{LaptopMainViewModel.Model}");
+
+                text = text.Replace("diag", MonitorDiagonalViewModel.Result);
                 text = text.Replace("compascpu", CPUViewModel.Result);
-                text = text.Replace("compasmotherboard", MotherboardViewModel.Result);
                 text = text.Replace("compasmemory", MemoryViewModel.Result);
-                text = text.Replace("compasgpu", VideoViewModel.Result);
+                text = text.Replace("compasgpu", VideoControllerViewModel.Result);
                 text = text.Replace("compashdd", PhysicalDiskViewModel.Result);
-                text = text.Replace("compaspower", PowerSupplyViewModel.Result);
+                text = text.Replace("compasother", LaptopOtherViewModel.Result);
+                text = text.Replace("compasbettery", LaptopBatteryViewModel.Result);
                 text = text.Replace("compasid", $"{IndexReport:000}");
 
                 using (StreamWriter writer = new StreamWriter($"{unzipPath}\\document.xml", false))
                 {
                     await writer.WriteLineAsync(text);
                 }
-                
+
                 if (File.Exists($"{ReportPath}\\Report_{IndexReport:000}.docx"))
                     File.Delete($"{ReportPath}\\Report_{IndexReport:000}.docx");
-                
+
                 ZipFile.CreateFromDirectory($"{ReportPath}\\SourcePrice\\unzip", $"{ReportPath}\\Report_{IndexReport:000}.docx", CompressionLevel.SmallestSize, false);
             }
             catch (Exception e)
             {
                 _messageDialogService.ShowInfoDialog($"В процесі формування звіту docx відбулася помилка.\n\nФайл: {ReportPath}\\Report_{IndexReport:000}.docx не створено!\n\nЗвернись до розробника і скинь фото:\n\n" +
                   $"{e.Message}\n\n{e.StackTrace}", "Помилка");
-            } 
-        }  
+            }
+        }
 
         public async Task LoadAsync(int? Id)
         {
-            PCCaseViewModel = new PCCaseViewModel();
-            CPUViewModel = new CPUViewModel(_settingsReportViewModel, _xDocument);
-            MotherboardViewModel = new MotherboardViewModel(_settingsReportViewModel, _xDocument);
-            MemoryViewModel = new MemoryViewModel(_settingsReportViewModel, _xDocument);
-            VideoViewModel = new VideoViewModel(_settingsReportViewModel);
-            PhysicalDiskViewModel = new PhysicalDiskViewModel(_settingsReportViewModel, _xDocument);
-            PowerSupplyViewModel = new PowerSupplyViewModel(_settingsReportViewModel);
+            LaptopMainViewModel = new LaptopMainViewModel(_reportSettings.LaptopsBrandAndModel);
+            MonitorDiagonalViewModel = new MonitorDiagonalViewModel(_reportSettings.MonitorReportSettings, _xDocument);
+            CPUViewModel = new CPUViewModel(_reportSettings.CPUReportSettings, _xDocument);
+            MemoryViewModel = new MemoryViewModel(_reportSettings.MemoryReportSettings, _xDocument);
+            VideoControllerViewModel = new VideoControllerViewModel(_reportSettings.VideoControllerReportSettings);
+            PhysicalDiskViewModel = new PhysicalDiskViewModel(_xDocument);
+            LaptopOtherViewModel = new LaptopOtherViewModel(_reportSettings.LaptopHardWares, _xDocument);
+            LaptopBatteryViewModel = new LaptopBatteryViewModel(_reportSettings.LaptopBatteryReportSettings, _xDocument);
 
             await Task.Factory.StartNew(() =>
             {
                 CPUViewModel.Load();
-                MotherboardViewModel.Load();
+                MonitorDiagonalViewModel.Load();
                 MemoryViewModel.Load();
-                VideoViewModel.Load();
+                VideoControllerViewModel.Load();
                 PhysicalDiskViewModel.Load();
-                PowerSupplyViewModel.Load();
+                LaptopBatteryViewModel.Load();
+                LaptopOtherViewModel.Load();
             });
-            IndexReport = _ioManager.GetLastReport(ReportPath) + 1;
 
+            IndexReport = _ioManager.GetLastReport(ReportPath) + 1;
             IsEnable = true;
         }
         public bool HasChanges()
         {
-            return false;
+            return !IsEnable;
         }
         public void Unsubscribe()
         {
 
         }
-
-
     }
 }

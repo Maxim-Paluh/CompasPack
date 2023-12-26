@@ -8,8 +8,9 @@ namespace CompasPack.Settings
 {
     public class UserPath : ICloneable
     {
-        public string PathFolder { get; set; }
-        public string FileImage { get; set; }
+        public string PathFolderPrograms { get; set; }
+        public string PathFolderImageProgram { get; set; }
+        public string PathExampleFile { get; set; }
 
         public object Clone()
         {
@@ -18,7 +19,7 @@ namespace CompasPack.Settings
         public override bool Equals(object? obj)
         {
             if (obj is UserPath userPath)
-                return PathFolder == userPath.PathFolder && FileImage == userPath.FileImage;
+                return PathFolderPrograms == userPath.PathFolderPrograms && PathFolderImageProgram == userPath.PathFolderImageProgram;
             else
                 return false;
         }

@@ -1,4 +1,5 @@
 ﻿using CompasPack.BL;
+using CompasPack.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorAspectRatioViewModel : ReportHardWareViewModelBase, IReportViewModel
+    public class MonitorAspectRatioViewModel : ReportHardWareViewModelBase<MonitorReportSettings>, IReportViewModel
     {
        
         private string _monitorAspectRatio;
@@ -20,14 +21,14 @@ namespace CompasPack.ViewModel
             set { _monitorAspectRatio = value; }
         }
 
-        public MonitorAspectRatioViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
+        public MonitorAspectRatioViewModel(MonitorReportSettings monitorReportSettings, XDocument xDocument)
         {
-            SettingsReport = settingsReport;
+            Settings = monitorReportSettings;
             Document = xDocument;
         }
         public void Load()
         {
-            var tempMonitorAspectRatio = Document.XPathSelectElement(SettingsReport.Monitor.AspectRatio.XPath);
+            var tempMonitorAspectRatio = Document.XPathSelectElement(Settings.AspectRatio.XPath);
             if (tempMonitorAspectRatio != null)
                 MonitorAspectRatio = tempMonitorAspectRatio.Value;
             else

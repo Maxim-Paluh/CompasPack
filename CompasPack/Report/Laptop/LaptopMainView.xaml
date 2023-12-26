@@ -23,7 +23,7 @@
                 <WrapPanel Grid.Row="0"  Grid.Column="1"  Margin="4" HorizontalAlignment="Left">
                     <TextBlock Width="55" Text="Brand:" FontSize="18"></TextBlock>
                     <ComboBox   MinWidth="100"
-                                ItemsSource="{Binding SettingsReport.Laptops}" 
+                                ItemsSource="{Binding Settings}" 
                                 DisplayMemberPath="Key"
                                 SelectedItem="{Binding Lines, UpdateSourceTrigger=PropertyChanged}"
                                 IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True">

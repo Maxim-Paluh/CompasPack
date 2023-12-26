@@ -37,7 +37,7 @@
                           CommandParameter="{x:Type ViewModel:ReportViewModel}"/>
                 <MenuItem Header="Вихід" Command="{Binding ClosedAppCommand}"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Портативне ПЗ">
+            <!--<MenuItem Header="Портативне ПЗ">
                 <MenuItem Header="Crystal" Command="{Binding OpenCrystalCommand}"></MenuItem>
                 <MenuItem Header="AIDA64" Command="{Binding OpenAidaCommand}"></MenuItem>
                 <MenuItem Header="TotalCMD 7.00" Command="{Binding OpenTotalCommander700Command}"></MenuItem>
@@ -48,8 +48,7 @@
                 <MenuItem Header="CPU-Z" Command="{Binding OpenCpuZCommand}"></MenuItem>
                 <MenuItem Header="GPU-Z" Command="{Binding OpenGpuZCommand}"></MenuItem>
                 <MenuItem Header="FurMark" Command="{Binding OpenFurMarkCommand}"></MenuItem>
-
-            </MenuItem>
+            </MenuItem>-->
             <MenuItem Header="Засоби">
                 <MenuItem Header="Тема">
                     <MenuItem Header="Світла"></MenuItem>

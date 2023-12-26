@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CompasPack.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -11,12 +12,12 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    public class MotherboardViewModel : ReportHardWareViewModelBase, IReportViewModel
+    public class MotherboardViewModel : ReportHardWareViewModelBase<MotherboardReportSettings>, IReportViewModel
     {
         private string _name;
-        public MotherboardViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
+        public MotherboardViewModel(MotherboardReportSettings motherboardReportSettings, XDocument xDocument)
         {
-            SettingsReport = settingsReport;
+            Settings = motherboardReportSettings;
             Document = xDocument;
         }
 
@@ -32,14 +33,14 @@ namespace CompasPack.ViewModel
 
         public void Load()
         {
-            var tempName = Document.XPathSelectElement(SettingsReport.Motherboard.XPath);
+            var tempName = Document.XPathSelectElement(Settings.XPath);
             if (tempName != null)
                 Name = tempName.Value;
             else
                 Name = "Not found";
 
             var tempResault = Name;
-            foreach (var item in SettingsReport.Motherboard.Regex)
+            foreach (var item in Settings.Regex)
                 tempResault = Regex.Replace(tempResault, item, "");
 
             Result = tempResault.Trim();

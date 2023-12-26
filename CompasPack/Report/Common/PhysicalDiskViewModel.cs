@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using CompasPack.Settings;
+using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,12 +14,11 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class PhysicalDiskViewModel : ReportHardWareViewModelBase, IReportViewModel
+    public class PhysicalDiskViewModel : ReportHardWareViewModelBase<ReportSettings>, IReportViewModel
     {
         private static object _lock = new object();
-        public PhysicalDiskViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
+        public PhysicalDiskViewModel(XDocument xDocument)
         {
-            SettingsReport = settingsReport;
             Document = xDocument;
             Disks = new ObservableCollection<Disk>();
             SelectDiskCommand = new DelegateCommand(OnSelectDisk);
@@ -28,7 +28,7 @@ namespace CompasPack.ViewModel
 
         private void OnSelectDisk()
         {
-            Result = String.Empty;
+            Result = string.Empty;
             foreach (var item in Disks.Where(x => x.IsSelect))
                 Result += $"{item.Type}-{item.Size} | ";
 

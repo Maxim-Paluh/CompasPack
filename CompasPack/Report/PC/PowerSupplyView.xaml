@@ -23,7 +23,7 @@
                 <WrapPanel Grid.Row="0" Grid.Column="1" Margin="4" HorizontalAlignment="Left">
                     <TextBlock Width="40" Text="Name:"></TextBlock>
                     <ComboBox   MinWidth="150"
-                                ItemsSource="{Binding SettingsReport.PowerSupply}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True">
+                                ItemsSource="{Binding Settings}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True">
                         <ComboBox.Text>
                             <Binding Path="Text" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>

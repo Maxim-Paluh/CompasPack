@@ -22,7 +22,7 @@
                 <TextBlock Grid.Row="0" Grid.Column="0"  FontSize="14" FontWeight="Bold"  Text="Motherboard:"></TextBlock>
                 <WrapPanel Grid.Row="0" Grid.Column="1" Margin="4" HorizontalAlignment="Left">
                     <TextBlock Text="XPath:"></TextBlock>
-                    <TextBox Margin="5 0 0 0" IsReadOnly="True" Background="LightGray" MinWidth="150" MaxWidth="200" Text="{Binding SettingsReport.Motherboard.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox Margin="5 0 0 0" IsReadOnly="True" Background="LightGray" MinWidth="150" MaxWidth="200" Text="{Binding Settings.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel Grid.Row="0" Grid.Column="2"   Margin="4" HorizontalAlignment="Right">
                     <TextBlock FontWeight="Bold" Text="Resault:"></TextBlock>
@@ -35,7 +35,7 @@
                     <TextBlock Margin="5 0 5 0"  Width="40" Text="Regex:"></TextBlock>
                     <Border  BorderBrush="DarkBlue" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
-                            <ItemsControl  ItemsSource="{Binding SettingsReport.Motherboard.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
+                            <ItemsControl  ItemsSource="{Binding Settings.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="40"
                               ItemTemplate="{StaticResource Regexemplate}"/>
                         </ScrollViewer>
                     </Border>

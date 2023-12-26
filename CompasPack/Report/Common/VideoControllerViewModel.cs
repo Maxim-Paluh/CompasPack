@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using CompasPack.Settings;
+using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,13 +14,13 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class VideoViewModel : ReportHardWareViewModelBase, IReportViewModel
+    public class VideoControllerViewModel : ReportHardWareViewModelBase<VideoControllerReportSettings>, IReportViewModel
     {
         private VideoAdapter _selectedVideoAdapter;
         private static object _lock = new object();
-        public VideoViewModel(SettingsReportViewModel settingsReport)
+        public VideoControllerViewModel(VideoControllerReportSettings videoControllerReportSettings)
         {
-            SettingsReport = settingsReport;
+            Settings = videoControllerReportSettings;
             VideoAdapters = new ObservableCollection<VideoAdapter>();
             SelectVideoAdapterCommand = new DelegateCommand(OnSelectVideoAdapter);
 
@@ -29,7 +30,7 @@ namespace CompasPack.ViewModel
         private void OnSelectVideoAdapter()
         {
             var tempVideoAdapter = SelectedVideoAdapter.Name;
-            foreach (var item in SettingsReport.VideoController.Regex)
+            foreach (var item in Settings.Regex)
                 tempVideoAdapter = Regex.Replace(tempVideoAdapter, item, "");
             Result = $"{tempVideoAdapter} {SelectedVideoAdapter.Size}"; 
         }

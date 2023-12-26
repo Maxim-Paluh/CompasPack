@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CompasPack.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    class LaptopBatteryViewModel : ReportHardWareViewModelBase, IReportViewModel
+    class LaptopBatteryViewModel : ReportHardWareViewModelBase<LaptopBatteryReportSettings>, IReportViewModel
     {
         private string _wearLevel;
 
@@ -23,15 +24,15 @@ namespace CompasPack.ViewModel
             }
         }
 
-        public LaptopBatteryViewModel(SettingsReportViewModel settingsReport, XDocument xDocument)
+        public LaptopBatteryViewModel(LaptopBatteryReportSettings laptopBatteryReportSettings, XDocument xDocument)
         {
-            SettingsReport = settingsReport;
+            Settings = laptopBatteryReportSettings;
             Document = xDocument;
         }
 
         public void Load()
         {
-            var tempWear = Document.XPathSelectElement(SettingsReport.LaptopBattery.XPath);
+            var tempWear = Document.XPathSelectElement(Settings.XPath);
             if (tempWear != null)
                 WearLevel = tempWear.Value;
             else
@@ -40,7 +41,7 @@ namespace CompasPack.ViewModel
             if (!string.IsNullOrWhiteSpace(WearLevel))
             {
                 var tempLaptopWearLevel = WearLevel;
-                foreach (var item in SettingsReport.Monitor.MonitorType.Regex)
+                foreach (var item in Settings.Regex)
                     tempLaptopWearLevel = Regex.Replace(tempLaptopWearLevel, item, "");
 
                 if(int.TryParse(tempLaptopWearLevel, out int temp))

@@ -18,9 +18,9 @@ namespace CompasPack.View
     /// <summary>
     /// Логика взаимодействия для VideoView.xaml
     /// </summary>
-    public partial class VideoView : UserControl
+    public partial class VideoControllerView : UserControl
     {
-        public VideoView()
+        public VideoControllerView()
         {
             InitializeComponent();
         }
