@@ -28,6 +28,7 @@ namespace CompasPack
             var Error = new ErrorsView(exceptions);
             Error.ShowDialog();
             e.Handled = true;
+            Current.Shutdown();
         }
     }
 }

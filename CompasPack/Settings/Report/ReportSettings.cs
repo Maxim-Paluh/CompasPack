@@ -12,7 +12,8 @@ namespace CompasPack.Settings
         public List<LaptopHardWare> LaptopHardWares { get; set; }                           // Laptops
         public MotherboardReportSettings MotherboardReportSettings { get; set; }            //PC
         public List<string> PCPowerSupply { get; set; }                                     //PC
-        public MonitorReportSettings MonitorReportSettings { get; set; }                    //Monitor
+        public MonitorReportSettings MonitorReportSettings { get; set; }                    //Monitor            
+        public Dictionary<DocxReplaceTextEnum, string> ReportViewModelDictionary { get; set; }
     }
     public class CPUReportSettings : ReportBase { }
     public class MotherboardReportSettings : ReportBase { }
@@ -54,4 +55,24 @@ namespace CompasPack.Settings
 
     }
 
+    public enum DocxReplaceTextEnum 
+    {
+        CPU,
+        Memory,
+        MonitorDiagonal,
+        PhysicalDisk,
+        VideoController,
+        LaptopBattery,
+        Laptop_Brand,
+        Laptop_Line_Model,
+        LaptopOther,
+        MonitorAspectRatio,
+        Monitor_Brand,
+        MonitorOther,
+        MonitorResolution,
+        Motherboard,
+        PCCase,
+        PowerSupply,
+        ReportId
+    }
 }

@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml.Linq;
@@ -18,15 +21,11 @@ namespace CompasPack.ViewModel
         private readonly IIOHelper _iOHelper;
         private IMessageDialogService _messageDialogService;
         private readonly ReportSettingsSettingsHelper _reportSettingsSettingsHelper;
+        private readonly UserPathSettingsHelper _userPathSettingsHelper;
+        private UserPath _userPath;
         private XDocument _xDocument;
-        private bool _isEnable;
-        public bool IsEnable
-        {
-            get { return _isEnable; }
-            set { _isEnable = value;
-                OnPropertyChanged();
-            }
-        }
+        private bool _isEnabled;
+
         public TypeReport ReportType
         {
             get { return _reportType; }
@@ -52,48 +51,111 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public ReportViewModel(IIOHelper iOHelper, IMessageDialogService messageDialogService, ReportSettingsSettingsHelper reportSettingsSettingsHelper)
+        public bool IsEnabled
         {
-            IsEnable = false;
+            get { return _isEnabled; }
+            set
+            {
+                _isEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+        public ReportViewModel(IIOHelper iOHelper, IMessageDialogService messageDialogService, ReportSettingsSettingsHelper reportSettingsSettingsHelper, UserPathSettingsHelper userPathSettingsHelper)
+        {
             _iOHelper = iOHelper;
             GenerateReportCommand = new DelegateCommand(OnGenerateReport);
             _messageDialogService = messageDialogService;
             _reportSettingsSettingsHelper = reportSettingsSettingsHelper;
+            _userPathSettingsHelper = userPathSettingsHelper;
+            IsEnabled = true;
         }
-        public async Task LoadAsync(int? Id)
+        public Task LoadAsync(int? Id)
         {
-            _iOHelper.CheckReportFolders();
-            _xDocument = await _iOHelper.GetXDocument();
-
-            if (_reportSettingsSettingsHelper.Settings != null && _xDocument != null)
-                IsEnable = true;
-            else
-            {
-                IsEnable = false;
-                _messageDialogService.ShowInfoDialog("Через наявність помилок, заборонено формувати звіти!", "Помилка!");
-            }
-
+            _userPath = (UserPath)_userPathSettingsHelper.Settings.Clone();
+            PathHelper.SetRootPath(_iOHelper.PathRoot, _userPath);
+            return Task.CompletedTask;
         }
+
         private async void OnGenerateReport()
         {
-            switch (ReportType)
+            var tempLoad = new LoadViewModel();
+            tempLoad.Message = "Генерування та завантаження звіту Aida...";
+            ReportFormViewModel = tempLoad;
+
+            IsEnabled = false;
+            bool tempAidaReport = false;
+            if (_xDocument == null)
             {
-                case TypeReport.Computer:
-                    ReportFormViewModel = new ComputerReportViewModel(_iOHelper, _reportSettingsSettingsHelper.Settings, _xDocument, _messageDialogService);
-                    break;
-                case TypeReport.Laptop:
-                    ReportFormViewModel = new LaptopReportViewModel(_iOHelper, _reportSettingsSettingsHelper.Settings, _xDocument, _messageDialogService);
-                    break;
-                case TypeReport.Monitor:
-                    ReportFormViewModel = new MonitorReportViewModel(_iOHelper, _reportSettingsSettingsHelper.Settings, _xDocument, _messageDialogService);
-                    break;
-                default:
-                    ReportFormViewModel = null;
-                    break;
+               
+#if DEBUG
+                if (!File.Exists(Path.Combine(_iOHelper.CompasPackLog, "Report.xml")))
+                {
+                    try
+                    {
+                        await AidaReportHelper.GetAidaReport(_userPath.ReportPathSettings.AidaExeFilePath, Path.Combine(_iOHelper.CompasPackLog, "Report."),
+                                                                           "/XML", _userPath.ReportPathSettings.ReportRPF);
+                        tempAidaReport = true;
+                    }
+                    catch (Exception)
+                    {
+                        tempAidaReport = false;
+                    }   
+                }
+                else
+                    tempAidaReport = true;
+#else
+                    try
+                    {
+                        await AidaReportHelper.GetAidaReport(_userPath.ReportPathSettings.AidaExeFilePath, Path.Combine(_iOHelper.CompasPackLog, "Report."),
+                                                                           "/XML", _userPath.ReportPathSettings.ReportRPF);
+                        tempAidaReport = true;
+                    }
+                    catch (Exception)
+                    {
+                        tempAidaReport = false;
+                    }         
+#endif
+            }
+            
+            if (tempAidaReport)
+            {
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                using (var stream = new StreamReader($"{Path.Combine(_iOHelper.CompasPackLog, "Report.xml")}", Encoding.GetEncoding("windows-1251")))
+                {
+                    _xDocument = await XDocument.LoadAsync(stream, LoadOptions.PreserveWhitespace, new System.Threading.CancellationToken());
+                }
             }
 
-            if (ReportFormViewModel != null)
-                await ReportFormViewModel.LoadAsync(null);
+            if (_xDocument != null)
+            {
+                IDetailViewModel tempReportFormViewModel;
+                tempLoad.Message = "Побудова звіту...";
+                switch (ReportType)
+                {
+                    case TypeReport.Computer:
+                        tempReportFormViewModel = new ComputerReportViewModel(_iOHelper, _reportSettingsSettingsHelper.Settings, _userPath, _xDocument, _messageDialogService);
+                        break;
+                    case TypeReport.Laptop:
+                        tempReportFormViewModel = new LaptopReportViewModel(_iOHelper, _reportSettingsSettingsHelper.Settings, _userPath, _xDocument, _messageDialogService);
+                        break;
+                    case TypeReport.Monitor:
+                        tempReportFormViewModel = new MonitorReportViewModel(_iOHelper, _reportSettingsSettingsHelper.Settings, _userPath, _xDocument, _messageDialogService);
+                        break;
+                    default:
+                        tempReportFormViewModel = null;
+                        break;
+                }
+                if (ReportFormViewModel != null)
+                    await tempReportFormViewModel.LoadAsync(null);
+
+                ReportFormViewModel = tempReportFormViewModel;
+                IsEnabled = true;
+            }
+            else
+            {
+                tempLoad.Message = "Неможливо сформувати звіт, оскільки не вдалося створити звіт Aida... Перевірте налаштування шляхів і шаблонів для звіту!";
+                tempLoad.IsActive = false;
+            }
         }
         public bool HasChanges()
         {
@@ -101,7 +163,7 @@ namespace CompasPack.ViewModel
         }
         public void Unsubscribe()
         {
-           
+
         }
         public ICommand GenerateReportCommand { get; }
     }

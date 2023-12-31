@@ -92,24 +92,38 @@ namespace CompasPack.ViewModel
             var tempLoad = (LoadViewModel)_formViewModelCreator[typeof(LoadViewModel).Name];
             tempLoad.Message = "Завантаження налаштувань...";
             FormViewModel = tempLoad;
+            
+            await _userPresetSettingsHelper.LoadFromFile();
+            
             await _portableProgramsSettingsHelper.LoadFromFile();
             PortableIsEnabled = _portableProgramsSettingsHelper.IsLoad;
             if(PortableIsEnabled)
             {
                 foreach (var portableProgram in _portableProgramsSettingsHelper.Settings.portablePrograms)
                     PortablePrograms.Add(portableProgram);
-                //if (PortablePrograms.Count == 0)
-                //    PortableIsEnabled = false;
             }
-            await _userPathSettingsHelper.LoadFromFile();
+
             await _userProgramsSettingsHelper.LoadFromFile();
             ProgramsIsEnabled = _userProgramsSettingsHelper.IsLoad;
-            await _userPresetSettingsHelper.LoadFromFile();
+
             await _reportSettingsSettingsHelper.LoadFromFile();
             ReportIsEnabled = _reportSettingsSettingsHelper.IsLoad;
+
+            await _userPathSettingsHelper.LoadFromFile();
+            if (!_userPathSettingsHelper.IsLoad)
+            {
+                PortableIsEnabled = false;
+                ProgramsIsEnabled = false;
+                ReportIsEnabled = false;
+            }
+            
             if (ProgramsIsEnabled)
             {
-                await Task.Delay(1000);
+#if DEBUG
+
+#else
+                await Task.Delay(1000);         
+#endif
                 var tempPrograms = _formViewModelCreator[typeof(ProgramsViewModel).Name];
                 await tempPrograms.LoadAsync(null);
                 FormViewModel = tempPrograms;

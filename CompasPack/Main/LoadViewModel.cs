@@ -16,7 +16,21 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
+        private bool _isActive;
 
+        public bool IsActive
+        {
+            get { return _isActive; }
+            set {
+                _isActive = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public LoadViewModel()
+        {
+            IsActive = true;
+        }
         public bool HasChanges()
         {
             throw new NotImplementedException();

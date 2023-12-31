@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows;
 using System.Diagnostics.CodeAnalysis;
 
-namespace CompasPack.Main
+namespace CompasPack.View
 {
     [TemplateVisualState(Name = "Large", GroupName = "SizeStates")]
     [TemplateVisualState(Name = "Small", GroupName = "SizeStates")]

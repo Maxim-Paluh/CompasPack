@@ -22,6 +22,10 @@
             <View:MonitorReportView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type ViewModel:LoadViewModel}">
+            <View:LoadView/>
+        </DataTemplate>
+
     </UserControl.Resources>
 
     <ScrollViewer HorizontalScrollBarVisibility="Auto">
@@ -37,7 +41,7 @@
         <WrapPanel Grid.Column="0" Grid.Row="0">
             <TextBlock Margin="0 0 10 0" Text="Тип звіту:"></TextBlock>
             <ComboBox Margin="0 0 10 0" Width="90" SelectedItem="{Binding ReportType,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ReportTypeValues}"></ComboBox>
-            <Button  Content="Генерувати" IsEnabled="{Binding IsEnable,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding GenerateReportCommand}"></Button>
+                <Button  Content="Генерувати" IsEnabled="{Binding IsEnabled,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding GenerateReportCommand}"></Button>
         </WrapPanel>
         <ContentControl Grid.ColumnSpan="2" Grid.Row="1"  Content="{Binding ReportFormViewModel}"/>
     </Grid>

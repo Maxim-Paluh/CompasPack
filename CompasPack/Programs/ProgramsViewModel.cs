@@ -28,10 +28,45 @@ namespace CompasPack.ViewModel
         private readonly UserProgramsSettingsHelper _userProgramsSettingsHelper;
         private readonly UserPresetSettingsHelper _userPresetSettingsHelper;
         private readonly UserPathSettingsHelper _userPathSettingsHelper;
+        private UserPath _userPath;
         private readonly IIOHelper _iOHelper;
         private string _selectedUserPreset;
         private string _textConsole;
         private bool _isEnabled;
+        public ObservableCollection<UserPreset> UserPresetPrograms { get; }
+        public ObservableCollection<GroupProgramViewModel> GroupProgramViewModel { get; }
+        public string TextConsole
+        {
+            get { return _textConsole; }
+            set
+            {
+                _textConsole = value;
+                OnPropertyChanged();
+            }
+        }
+        public string SelectedUserPreset
+        {
+            get { return _selectedUserPreset; }
+            set
+            {
+                _selectedUserPreset = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool OnlyFree
+        {
+            get;
+            set;
+        }
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set
+            {
+                _isEnabled = value;
+                OnPropertyChanged();
+            }
+        }
         public ProgramsViewModel(IMessageDialogService messageDialogService, IIOHelper iOHelper, IEventAggregator eventAggregator,
             UserProgramsSettingsHelper userProgramsSettingsHelper,
             UserPresetSettingsHelper userPresetSettingsHelper,
@@ -69,42 +104,6 @@ namespace CompasPack.ViewModel
 
             _eventAggregator.GetEvent<SelectSingleProgramEvent>().Subscribe(SelectSingleProgram);
         }
-
-        public ObservableCollection<UserPreset> UserPresetPrograms { get; }
-        public ObservableCollection<GroupProgramViewModel> GroupProgramViewModel { get; }
-        public string TextConsole
-        {
-            get { return _textConsole; }
-            set
-            {
-                _textConsole = value;
-                OnPropertyChanged();
-            }
-        }
-        public string SelectedUserPreset
-        {
-            get { return _selectedUserPreset; }
-            set
-            {
-                _selectedUserPreset = value;
-                OnPropertyChanged();
-            }
-        }
-        public bool OnlyFree
-        {
-            get;
-            set;
-        }
-        public bool IsEnabled
-        {
-            get { return _isEnabled; }
-            set
-            {
-                _isEnabled = value;
-                OnPropertyChanged();
-            }
-        }
-
         //*****************************************************************************************
         public Task LoadAsync(int? Id)
         {
@@ -112,12 +111,15 @@ namespace CompasPack.ViewModel
 
             GroupProgramViewModel.Clear();
             UserPresetPrograms.Clear();
+            
+            _userPath = (UserPath)_userPathSettingsHelper.Settings.Clone();
+            PathHelper.SetRootPath(_iOHelper.PathRoot, _userPath);
 
             var GroupsPrograms = (List<GroupPrograms>)_userProgramsSettingsHelper.Settings.GroupsPrograms?.Clone();
             foreach (var groupProgram in GroupsPrograms)
                 GroupProgramViewModel.Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<UserProgramViewModel>(groupProgram.UserPrograms.Select(x => new UserProgramViewModel(x, groupProgram, _eventAggregator)))));
 
-            ProgramsHelper.CombinePathFolderAndImage(GroupProgramViewModel, _userPathSettingsHelper.Settings, _iOHelper);
+            ProgramsHelper.CombinePathFolderAndImage(GroupProgramViewModel, _userPath);
             ProgramsHelper.CheckInstallPrograms(GroupProgramViewModel); // CheckInstall
             
             _userPresetSettingsHelper.Settings.UserPresets.ForEach(x => UserPresetPrograms.Add(x)); // Add UserPresetPrograms     
@@ -138,12 +140,10 @@ namespace CompasPack.ViewModel
                 }
             }
         }
-
         public void Unsubscribe()
         {
             UserPresetPrograms.Clear();
         }
-
         public bool HasChanges()
         {
             throw new NotImplementedException();
@@ -330,10 +330,10 @@ namespace CompasPack.ViewModel
                 {
                     TextConsole += $"Error, Not Find {userProgram.FileName}\n";
                     TextConsole += $"Find Rar.exe, Resault:\n";
-                    
-                    if (File.Exists(_iOHelper.WinRar))
+                    var RarPath = _userPathSettingsHelper.Settings.PortablePathSettings.RarPath;
+                    if (File.Exists(RarPath))
                     {
-                        TextConsole += $"OK!!!, Path: {_iOHelper.WinRar}\n";
+                        TextConsole += $"OK!!!, Path: {RarPath}\n";
                         var pathRar = Directory.GetFiles(userProgram.PathFolder).Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault();
                         int countUnrar = 0;
                         TextConsole += $"Find arkhive {userProgram.FileName}, Resault:\n";
@@ -344,7 +344,7 @@ namespace CompasPack.ViewModel
                             try
                             {
                                 ProcessStartInfo ps = new ProcessStartInfo();
-                                ps.FileName = _iOHelper.WinRar;
+                                ps.FileName = pathRar;
                                 ps.Arguments = $@"x -p1234 -o- {pathRar} {userProgram.PathFolder}";
                                 TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
                                 var proc = Process.Start(ps);
@@ -447,7 +447,7 @@ namespace CompasPack.ViewModel
                 return;
             }
             //------------------------------------------------------------------------------------------------------
-            var pathKMS = KMSAutoHelper.FindKMSAutoExe(_iOHelper.Crack);
+            var pathKMS = _userPathSettingsHelper.Settings.PortablePathSettings.KMSAutoPath;
             TextConsole += $"Find KMSAuto (Try {countOpenKMSAuto + 1} with 3), Resault:\n";
             if (!string.IsNullOrWhiteSpace(pathKMS))
             {
@@ -466,21 +466,23 @@ namespace CompasPack.ViewModel
             {
                 TextConsole += $"Error, Not Find KMSAuto\n";
                 TextConsole += $"Find Rar.exe, Resault:\n";
-                if (File.Exists(_iOHelper.WinRar))
+                var RarPath = _userPathSettingsHelper.Settings.PortablePathSettings.RarPath;
+                if (File.Exists(RarPath))
                 {
-                    TextConsole += $"OK!!!, Path: {_iOHelper.WinRar}\n";
-                    var pathRar = KMSAutoHelper.FindKMSAutoRar(_iOHelper.Crack);
+                    TextConsole += $"OK!!!, Path: {_userPathSettingsHelper.Settings.PortablePathSettings.RarPath}\n";
+                    var KMSAutoRarPath = _userPathSettingsHelper.Settings.PortablePathSettings.KMSAutoRarPath;
                     int countUnrar = 0;
                     TextConsole += $"Find arkhive KMSAuto, Resault:\n";
-                    if (!string.IsNullOrWhiteSpace(pathRar))
+                    if (!string.IsNullOrWhiteSpace(KMSAutoRarPath))
                     {
-                        TextConsole += $"OK!!!, Path: {pathRar}\n";
+                        TextConsole += $"OK!!!, Path: {KMSAutoRarPath}\n";
                     b:
                         try
                         {
                             ProcessStartInfo ps = new ProcessStartInfo();
-                            ps.FileName = _iOHelper.WinRar;
-                            ps.Arguments = $@"x -p1234 -o- {pathRar} {_iOHelper.Crack}";
+                            ps.FileName = RarPath;
+                            //ps.Arguments = $@"x -p1234 -o- {KMSAutoRarPath} {_iOHelper.Crack}";
+                            //TODO FIX!!!!!!!!!!!!
                             TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
                             var proc = Process.Start(ps);
                             if (!proc.WaitForExit(20000))

@@ -8,12 +8,15 @@ namespace CompasPack.Helper
 {
     public class ProgramsHelper
     {
-        public static void CombinePathFolderAndImage(IList<GroupProgramViewModel> groupPrograms, UserPath userPath, IIOHelper iOManager)
+        public static void CombinePathFolderAndImage(IList<GroupProgramViewModel> groupPrograms, UserPath userPath)
         {
-            foreach (var item in groupPrograms.SelectMany(group => group.UserProgramViewModels))
+            if (userPath.PathFolderPrograms != null && userPath.PathFolderImageProgram != null)
             {
-                item.UserProgram.PathFolder = Path.Combine(iOManager.PathRoot, userPath.PathFolderPrograms, item.UserProgram.PathFolder);
-                item.UserProgram.FileImage = Path.Combine(iOManager.PathRoot, userPath.PathFolderImageProgram, item.UserProgram.FileImage);
+                foreach (var item in groupPrograms.SelectMany(group => group.UserProgramViewModels))
+                {
+                    item.UserProgram.PathFolder = Path.Combine(userPath.PathFolderPrograms, item.UserProgram.PathFolder);
+                    item.UserProgram.FileImage = Path.Combine(userPath.PathFolderImageProgram, item.UserProgram.FileImage);
+                }
             }
         }
 

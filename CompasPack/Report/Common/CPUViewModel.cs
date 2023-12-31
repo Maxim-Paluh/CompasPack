@@ -28,10 +28,9 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }   
-        public CPUViewModel(CPUReportSettings CPUReportSettings, XDocument xDocument)
+        public CPUViewModel(CPUReportSettings CPUReportSettings)
         {
             Settings = CPUReportSettings;
-            Document = xDocument;
         }
         public void Load()
         {

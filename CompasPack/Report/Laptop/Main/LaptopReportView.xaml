@@ -105,6 +105,8 @@
                         <TextBlock FontWeight="Bold" Text="Open Folder: "></TextBlock>
                         <Button Margin="5 0 0 0" Content="Open" Command="{Binding OpenFolderCommand}" Width="50"></Button>
                     </WrapPanel>
+
+                    <View:ProgressRing Grid.RowSpan="2" Grid.Column="2" Foreground="DarkSlateBlue" IsActive="{Binding IsActive, Mode=TwoWay}"/>
                 </Grid>
             </Border>
 

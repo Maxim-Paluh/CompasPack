@@ -1,9 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:CompasPack.Main">
+                    xmlns:View="clr-namespace:CompasPack.View">
 
 
-    <Style TargetType="local:ProgressRing">
+    <Style TargetType="View:ProgressRing">
         <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Accent}" />
         <Setter Property="Height" Value="60" />
         <Setter Property="HorizontalAlignment" Value="Center" />
@@ -12,7 +12,7 @@
         <Setter Property="MinWidth" Value="20" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:ProgressRing">
+                <ControlTemplate TargetType="View:ProgressRing">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
