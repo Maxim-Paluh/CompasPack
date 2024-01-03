@@ -65,11 +65,10 @@ namespace CompasPack.ViewModel
             OpenFolderCommand = new DelegateCommand(OnOpenFolder);
         }
         protected virtual async void OnSaveReport()
-        {
-            IsEnable = false;
+        {  
             if (IsError())
                 return;
-
+            IsEnable = false;
             string reportHmlPath = System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}.htm");
             string reportHtmlPath = System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}.html");
             string reportPricePath = System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}.docx");
