@@ -68,7 +68,7 @@ namespace CompasPack.ViewModel
         {  
             if (IsError())
                 return;
-            IsEnable = false;
+            
             string reportHmlPath = System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}.htm");
             string reportHtmlPath = System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}.html");
             string reportPricePath = System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}.docx");
@@ -91,6 +91,7 @@ namespace CompasPack.ViewModel
                 if (res == MessageDialogResult.No || res == MessageDialogResult.Cancel)
                 { return; }
             }
+            IsEnable = false;
             try
             {
                 await WriteHTML(reportHtmlPath);
