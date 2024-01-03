@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:CompasPack.View"
              xmlns:ViewModel="clr-namespace:CompasPack.ViewModel"
              xmlns:View="clr-namespace:CompasPack.View"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -40,7 +41,13 @@
         </Grid.RowDefinitions>
         <WrapPanel Grid.Column="0" Grid.Row="0">
             <TextBlock Margin="0 0 10 0" Text="Тип звіту:"></TextBlock>
-            <ComboBox Margin="0 0 10 0" Width="90" SelectedItem="{Binding ReportType,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ReportTypeValues}"></ComboBox>
+            <ComboBox Margin="0 0 10 0" Width="90" SelectedItem="{Binding ReportType,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ReportTypeValues}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding SelectReportTypeCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
                 <Button  Content="Генерувати" IsEnabled="{Binding IsEnabled,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding GenerateReportCommand}"></Button>
         </WrapPanel>
         <ContentControl Grid.ColumnSpan="2" Grid.Row="1"  Content="{Binding ReportFormViewModel}"/>

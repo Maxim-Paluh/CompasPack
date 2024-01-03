@@ -7,9 +7,16 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:ViewModel="clr-namespace:CompasPack.ViewModel"
              xmlns:View="clr-namespace:CompasPack.View"
+             xmlns:Src="clr-namespace:CompasPack.View.Service"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
+        <Src:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+        <Src:BooleanToVisibilityConverter 
+        x:Key="BooleanToVisibilityConverter" 
+        True="Collapsed" 
+        False="Visible" />
+
         <DataTemplate DataType="{x:Type ViewModel:LaptopMainViewModel}">
             <View:LaptopMainView/>
         </DataTemplate>
@@ -74,42 +81,7 @@
             <ContentControl  Grid.Row="6"  Content="{Binding LaptopBatteryViewModel}"/>
             <ContentControl  Grid.Row="7"  Content="{Binding LaptopOtherViewModel}"/>
 
-            <Border Grid.Row="8"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="SaveReportAndPrice:"></TextBlock>
-                    <WrapPanel Grid.Row="0" Grid.Column="1"   Margin="4" HorizontalAlignment="Left">
-                        <TextBlock MinWidth="40" Text="{Binding ReportPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
-                        <TextBlock Text="\"></TextBlock>
-                        <TextBlock Text="Report_"></TextBlock>
-                        <xctk:IntegerUpDown Margin="5 0 5 0" FormatString="000" Minimum="0" Maximum="1000000" MinWidth="40" Value="{Binding IndexReport, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Text=".htm | .html | .docx"></TextBlock>
-                    </WrapPanel>
-                    <WrapPanel Grid.Row="0" Grid.Column="2"  Margin="4" HorizontalAlignment="Right">
-                        <TextBlock FontWeight="Bold" Text="Save report: "></TextBlock>
-                        <Button Margin="5 0 0 0" Content="Save" Command="{Binding SaveReportCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"></Button>
-                        <Button Margin="5 0 0 0" Content="Open Report" Command="{Binding OpenReportCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="75"></Button>
-                        <Button Margin="5 0 0 0" Content="Open Price" Command="{Binding OpenPriceCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="70"></Button>
-                    </WrapPanel>
-                    
-                    <WrapPanel Grid.Row="1" Grid.Column="2"  Margin="4" HorizontalAlignment="Right">
-                        <TextBlock FontWeight="Bold" Text="Open Folder: "></TextBlock>
-                        <Button Margin="5 0 0 0" Content="Open" Command="{Binding OpenFolderCommand}" Width="50"></Button>
-                    </WrapPanel>
-
-                    <View:ProgressRing Grid.RowSpan="2" Grid.Column="2" Foreground="DarkSlateBlue" IsActive="{Binding IsActive, Mode=TwoWay}"/>
-                </Grid>
-            </Border>
-
+            <ContentControl Grid.Row="8"  Template="{StaticResource ReportSave}"/>
         </Grid>
     </Border>
 </UserControl>

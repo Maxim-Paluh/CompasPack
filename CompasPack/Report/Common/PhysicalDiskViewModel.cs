@@ -1,10 +1,12 @@
-﻿using CompasPack.Settings;
+﻿using CompasPack.Helper;
+using CompasPack.Settings;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management;
+using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml.Linq;
@@ -53,6 +55,12 @@ namespace CompasPack.ViewModel
         }
         public void Load()
         {
+            if (Regex.Match(WinInfoHelper.GetProductName(), @"\d+").Value.Contains("10"))
+            {
+                Result = "Не доступно в Windows 7, заповніть поле вручну!!!";
+                return;
+            }
+
             var scope = new ManagementScope(@"\\.\root\microsoft\windows\storage");
             scope.Connect();
 

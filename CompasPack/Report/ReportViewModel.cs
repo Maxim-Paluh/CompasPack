@@ -32,6 +32,7 @@ namespace CompasPack.ViewModel
             set
             {
                 _reportType = value;
+                IsEnabled = true;
                 OnPropertyChanged();
             }
         }
@@ -60,15 +61,19 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
+        public bool IsChanges { get; set; } 
         public ReportViewModel(IIOHelper iOHelper, IMessageDialogService messageDialogService, ReportSettingsSettingsHelper reportSettingsSettingsHelper, UserPathSettingsHelper userPathSettingsHelper)
         {
             _iOHelper = iOHelper;
             GenerateReportCommand = new DelegateCommand(OnGenerateReport);
+            SelectReportTypeCommand = new DelegateCommand(OnSelectReportType);
             _messageDialogService = messageDialogService;
             _reportSettingsSettingsHelper = reportSettingsSettingsHelper;
             _userPathSettingsHelper = userPathSettingsHelper;
             IsEnabled = true;
+            IsChanges = false;
         }
+
         public Task LoadAsync(int? Id)
         {
             _userPath = (UserPath)_userPathSettingsHelper.Settings.Clone();
@@ -76,13 +81,35 @@ namespace CompasPack.ViewModel
             return Task.CompletedTask;
         }
 
+
+        private void OnSelectReportType()
+        {
+            switch (ReportType)
+            {
+                case TypeReport.Computer:
+                    if (ReportFormViewModel is ComputerReportViewModel)
+                        IsEnabled = false;
+                    break;
+                case TypeReport.Laptop:
+                    if (ReportFormViewModel is LaptopReportViewModel)
+                        IsEnabled = false;
+                    break;
+                case TypeReport.Monitor:
+                    if (ReportFormViewModel is MonitorReportViewModel)
+                        IsEnabled = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private async void OnGenerateReport()
         {
-            var tempLoad = new LoadViewModel();
-            tempLoad.Message = "Генерування та завантаження звіту Aida...";
+            IsEnabled = false;
+            IsChanges = true;
+            var tempLoad = new LoadViewModel { Message = "Генерування та завантаження звіту Aida..." };
             ReportFormViewModel = tempLoad;
 
-            IsEnabled = false;
             bool tempAidaReport = false;
             if (_xDocument == null)
             {
@@ -145,26 +172,29 @@ namespace CompasPack.ViewModel
                         tempReportFormViewModel = null;
                         break;
                 }
-                if (ReportFormViewModel != null)
+                if(tempReportFormViewModel != null)
                     await tempReportFormViewModel.LoadAsync(null);
 
                 ReportFormViewModel = tempReportFormViewModel;
-                IsEnabled = true;
             }
             else
             {
                 tempLoad.Message = "Неможливо сформувати звіт, оскільки не вдалося створити звіт Aida... Перевірте налаштування шляхів і шаблонів для звіту!";
                 tempLoad.IsActive = false;
             }
+            IsChanges = false;
         }
         public bool HasChanges()
         {
-            return false;
+            if (ReportFormViewModel != null)
+                return IsChanges || ReportFormViewModel.HasChanges();
+            else return IsChanges;
         }
         public void Unsubscribe()
         {
 
         }
         public ICommand GenerateReportCommand { get; }
+        public ICommand SelectReportTypeCommand { get; }
     }
 }

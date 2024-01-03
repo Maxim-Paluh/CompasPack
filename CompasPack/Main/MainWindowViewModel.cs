@@ -12,6 +12,7 @@ using CompasPack.Settings;
 using CompasPack.Helper;
 using CompasPack.Settings.Portable;
 using System.Collections.ObjectModel;
+using CompasPack.Service;
 
 namespace CompasPack.ViewModel
 {
@@ -51,6 +52,15 @@ namespace CompasPack.ViewModel
             }
         }
         public ObservableCollection<PortableProgram> PortablePrograms { get; private set; }
+        public IDetailViewModel? FormViewModel
+        {
+            get { return _formViewModel; }
+            private set
+            {
+                _formViewModel = value;
+                OnPropertyChanged();
+            }
+        }
 
         //-------------------------------------------------------------------------
         private readonly UserPathSettingsHelper _userPathSettingsHelper;
@@ -84,6 +94,7 @@ namespace CompasPack.ViewModel
             CheckUpdateProgramCommand = new DelegateCommand(OnCheckUpdateProgram);
             AboutProgramCommand = new DelegateCommand(OnAboutProgram);
             CreateFormCommand = new DelegateCommand<Type>(OnCreateNewFormExecute);
+            OpenProgramCommand = new DelegateCommand<PortableProgram>(OpenProgram);
         }
 
         //******************************************************
@@ -99,8 +110,14 @@ namespace CompasPack.ViewModel
             PortableIsEnabled = _portableProgramsSettingsHelper.IsLoad;
             if(PortableIsEnabled)
             {
-                foreach (var portableProgram in _portableProgramsSettingsHelper.Settings.portablePrograms)
+                var portablePrograms = _portableProgramsSettingsHelper.Settings.portablePrograms.Clone();
+                foreach (var portableProgram in portablePrograms)
+                {
+                    if (portableProgram != null && !string.IsNullOrWhiteSpace(portableProgram.Path))
+                        portableProgram.Path = Path.Combine(_iOHelper.PathRoot, portableProgram.Path);
+                    
                     PortablePrograms.Add(portableProgram);
+                }
             }
 
             await _userProgramsSettingsHelper.LoadFromFile();
@@ -122,7 +139,7 @@ namespace CompasPack.ViewModel
 #if DEBUG
 
 #else
-                await Task.Delay(1000);         
+                await Task.Delay(1000);// show logo comp@s   
 #endif
                 var tempPrograms = _formViewModelCreator[typeof(ProgramsViewModel).Name];
                 await tempPrograms.LoadAsync(null);
@@ -135,22 +152,26 @@ namespace CompasPack.ViewModel
         }
         //******************************************************
         //--------------------------------------
-        private void OpenProgram(string path)
+        private void OpenProgram(PortableProgram  portableProgram)
         {
-            if (File.Exists(path))
+            if (FormViewModel != null && FormViewModel.HasChanges())
+            {
+                _messageDialogService.ShowInfoDialog("Краще дочекатись виконання поточного завдання!", "Попередження");
+                return;
+            }
+
+            if (File.Exists(portableProgram.Path))
             {
                 new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = path,
+                        FileName = portableProgram.Path
                     }
                 }.Start();
             }
             else
-            {
-                _messageDialogService.ShowInfoDialog($"Виконуваний файл не знайдено: {path}", "Помилка!");
-            }
+                _messageDialogService.ShowInfoDialog($"Виконуваний файл не знайдено: {portableProgram.Path}", "Помилка!");   
         }
         //--------------------------------------
         private void OnClosedApp()
@@ -168,6 +189,13 @@ namespace CompasPack.ViewModel
         }
         private void OnCreateNewFormExecute(Type viewModelType)
         {
+            if (FormViewModel != null && FormViewModel.HasChanges())
+            {
+                _messageDialogService.ShowInfoDialog("Зачекай завершення роботи в поточному вікні!", "Попередження");
+                return;
+            }
+
+
             if (FormViewModel != null)
                 FormViewModel.Unsubscribe();
 
@@ -183,16 +211,7 @@ namespace CompasPack.ViewModel
         public ICommand ClosedAppCommand { get; }
         public ICommand CheckUpdateProgramCommand { get; }
         public ICommand AboutProgramCommand { get; }
-
-        public IDetailViewModel? FormViewModel
-        {
-            get { return _formViewModel; }
-            private set
-            {
-                _formViewModel = value;
-                OnPropertyChanged();
-            }
-        }
         public ICommand CreateFormCommand { get; set; }
+        public ICommand OpenProgramCommand { get; set; }
     }
 }

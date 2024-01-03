@@ -146,7 +146,7 @@ namespace CompasPack.ViewModel
         }
         public bool HasChanges()
         {
-            throw new NotImplementedException();
+            return false;
         }
         //*****************************************************************************************
 

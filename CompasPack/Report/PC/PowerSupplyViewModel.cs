@@ -33,10 +33,10 @@ namespace CompasPack.ViewModel
         {
             get
             {
-                string error = String.Empty;
+                string error = string.Empty;
                 switch (columnName)
                 {
-                    case "Text":
+                    case "Name":
                         if (string.IsNullOrWhiteSpace(Name))
                             error = "Введи значення";
                         break;

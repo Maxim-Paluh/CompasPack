@@ -40,7 +40,8 @@
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="MenuItem">
                         <Setter Property="Header" Value="{Binding ProgramName}"/>
-                        <Setter Property="Command" Value="{Binding Command}"/>
+                        <Setter Property="Command" Value="{Binding Path=DataContext.OpenProgramCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                        <Setter Property="CommandParameter" Value="{Binding}"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding }" Value="{x:Null}">
                                 <Setter Property="Template" >

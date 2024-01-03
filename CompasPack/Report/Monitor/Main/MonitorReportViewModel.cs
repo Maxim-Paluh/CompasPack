@@ -87,25 +87,24 @@ namespace CompasPack.ViewModel
 
         }
 
-        protected override async Task WriteHTML(string path)
+        protected override string GetHTML()
         {
-            string html = $"<html> <head> <style> table {{ font-family: Arial; font-size: 13px; }} </style> " +
-                $"</head> <body> <table> <tbody>" +
-                $" <tr> <th>{IndexReport:000}</th> <td style=\"text-align:left;\"><b>{MonitorMainViewModel.Result}</b></td> <td style=\"background-color: red; text-align:center;\"><b>0</b></td> <td style=\"background-color: red; text-align:center;\"><b>0</b></td> <td style=\"text-align:center;\">{MonitorDiagonalViewModel.Result}</td> <td style=\"text-align:center;\">{MonitorAspectRatioViewModel.Result}</td> <td style=\"text-align:center;\">{MonitorResolutionViewModel.Result}</td> <td style=\"text-align:center;\">{DateTime.Now:dd.MM.yyyy}</td> </tr> " +
-                $"</tbody> </table> </body> </html>";
-            await _iOHelper.WriteAllTextAsync(path, html);
+            return $"<html> <head> <style> table {{ font-family: Arial; font-size: 13px; }} </style> " +
+            $"</head> <body> <table> <tbody>" +
+            $" <tr> <th>{IndexReport:000}</th> <td style=\"text-align:left;\"><b>{MonitorMainViewModel.Result}</b></td> <td style=\"background-color: red; text-align:center;\"><b>0</b></td> <td style=\"background-color: red; text-align:center;\"><b>0</b></td> <td style=\"text-align:center;\">{MonitorDiagonalViewModel.Result}</td> <td style=\"text-align:center;\">{MonitorAspectRatioViewModel.Result}</td> <td style=\"text-align:center;\">{MonitorResolutionViewModel.Result}</td> <td style=\"text-align:center;\">{DateTime.Now:dd.MM.yyyy}</td> </tr> " +
+            $"</tbody> </table> </body> </html>";
         }
 
         protected override string GetReplaceText(DocxReplaceTextEnum reportViewModelEnum)
         {
             switch (reportViewModelEnum)
             {
-                case DocxReplaceTextEnum.Monitor_Brand:         return MonitorMainViewModel.Result;
-                case DocxReplaceTextEnum.MonitorDiagonal:       return MonitorDiagonalViewModel.Result;
-                case DocxReplaceTextEnum.MonitorAspectRatio:    return MonitorAspectRatioViewModel.Result;
-                case DocxReplaceTextEnum.MonitorResolution:     return MonitorResolutionViewModel.Result;
-                case DocxReplaceTextEnum.MonitorOther:          return MonitorOtherViewModel.Result;
-                case DocxReplaceTextEnum.ReportId:              return $"{IndexReport:000}";
+                case DocxReplaceTextEnum.Monitor_Brand: return MonitorMainViewModel.Result;
+                case DocxReplaceTextEnum.MonitorDiagonal: return MonitorDiagonalViewModel.Result;
+                case DocxReplaceTextEnum.MonitorAspectRatio: return MonitorAspectRatioViewModel.Result;
+                case DocxReplaceTextEnum.MonitorResolution: return MonitorResolutionViewModel.Result;
+                case DocxReplaceTextEnum.MonitorOther: return MonitorOtherViewModel.Result;
+                case DocxReplaceTextEnum.ReportId: return $"{IndexReport:000}";
 
                 default:
                     return null;
@@ -113,7 +112,7 @@ namespace CompasPack.ViewModel
         }
         public bool HasChanges()
         {
-            return false;
+            return !IsEnable;
         }
         public void Unsubscribe()
         {

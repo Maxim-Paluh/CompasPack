@@ -18,7 +18,7 @@ namespace CompasPack.View
                 Name = $"Comp@sPack (32 розрядна версія) {DateTime.Now:yyyy} рік",
                 Version = Assembly.GetExecutingAssembly().GetName().Version.ToString(),
                 Autor = $"©Greg_House_M_D {DateTime.Now:yyyy} рік",
-                Info = "Дане програмне забезпечення написане для магазину: \"Комп@с\"\nта може вільно використовуватись та поширюватись!"
+                Info = "Дане програмне забезпечення написане для магазину: \"Комп@с\"\nвоно може вільно використовуватись та поширюватись!"
             };
             InitializeComponent();
         }

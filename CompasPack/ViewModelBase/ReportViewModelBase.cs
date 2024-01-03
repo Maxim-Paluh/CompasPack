@@ -66,6 +66,7 @@ namespace CompasPack.ViewModel
         }
         protected virtual async void OnSaveReport()
         {
+            IsEnable = false;
             if (IsError())
                 return;
 
@@ -91,19 +92,6 @@ namespace CompasPack.ViewModel
                 if (res == MessageDialogResult.No || res == MessageDialogResult.Cancel)
                 { return; }
             }
-
-            await Task.Delay(100);
-            IsEnable = false;
-
-            try
-            {
-                await AidaReportHelper.GetAidaReport(_userPath.ReportPathSettings.AidaExeFilePath, System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}."), "/HML", RPFFilePath);
-            }
-            catch (Exception exception)
-            {
-                ShowErrors(new Exception($"В процесі формування звіту AIDA64 відбулася помилка.\nФайл: {reportHmlPath} не створено!", exception));
-            }
-
             try
             {
                 await WriteHTML(reportHtmlPath);
@@ -112,7 +100,14 @@ namespace CompasPack.ViewModel
             {
                 ShowErrors(new Exception($"В процесі формування звіту HTML відбулася помилка.\nФайл: {reportHtmlPath} не створено!", exception));
             }
-
+            try
+            {
+                await AidaReportHelper.GetAidaReport(_userPath.ReportPathSettings.AidaExeFilePath, System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}."), "/HML", RPFFilePath);
+            }
+            catch (Exception exception)
+            {
+                ShowErrors(new Exception($"В процесі формування звіту AIDA64 відбулася помилка.\nФайл: {reportHmlPath} не створено!", exception));
+            }
             try
             {
                 await WriteDOCX(reportPricePath);
@@ -138,7 +133,13 @@ namespace CompasPack.ViewModel
         }
 
         protected abstract bool IsError();
-        protected abstract Task WriteHTML(string path);
+        protected abstract string GetHTML();
+        protected async Task WriteHTML(string path)
+        {
+            var html = GetHTML();
+            ClipboardHelper.CopyToClipboard(html, "");
+            await _iOHelper.WriteAllTextAsync(path, html);
+        }
         protected async Task WriteDOCX(string reportPricePath)
         {
             await Task.Factory.StartNew(() =>
@@ -150,6 +151,8 @@ namespace CompasPack.ViewModel
                 if (!Directory.Exists(pathDirectory))
                     Directory.CreateDirectory(pathDirectory);
 
+                if(File.Exists(reportPricePath))
+                    File.Delete(reportPricePath);
                 File.Copy(ReportPricePath, reportPricePath);
 
                 using (WordprocessingDocument doc = WordprocessingDocument.Open(reportPricePath, true))

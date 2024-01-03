@@ -127,32 +127,31 @@ namespace CompasPack.ViewModel
             return false;
         }
 
-        protected override async Task WriteHTML(string path)
+        protected override string  GetHTML()
         {
-            string html = $"<html><head><style>table{{font-family: Arial;font-size: 13px;}}</style>" +
-           $"</head><body><table><tbody>" +
-           $"<tr><th>{PCCaseViewModel.Result}</th><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-           $"<tr><td>{CPUViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-           $"<tr><td>{MotherboardViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-           $"<tr><td>{MemoryViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-           $"<tr><td>{VideoControllerViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-           $"<tr><td>{PhysicalDiskViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-           $"<tr><td>{PowerSupplyViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-           $"<tr><td><b>ID: {IndexReport:000} (Прийшов {DateTime.Now:dd.MM.yyyy})</b></td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
-           $"<tr><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"> </td></tr></tbody></table></body></html>";
-            await _iOHelper.WriteAllTextAsync(path, html);
+            return $"<html><head><style>table{{font-family: Arial;font-size: 13px;}}</style>" +
+            $"</head><body><table><tbody>" +
+            $"<tr><th>{PCCaseViewModel.Result}</th><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+            $"<tr><td>{CPUViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+            $"<tr><td>{MotherboardViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+            $"<tr><td>{MemoryViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+            $"<tr><td>{VideoControllerViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+            $"<tr><td>{PhysicalDiskViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+            $"<tr><td>{PowerSupplyViewModel.Result}</td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+            $"<tr><td><b>ID: {IndexReport:000} (Прийшов {DateTime.Now:dd.MM.yyyy})</b></td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
+            $"<tr><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"> </td></tr></tbody></table></body></html>";
         }
         protected override string GetReplaceText(DocxReplaceTextEnum reportViewModelEnum)
         {
             switch (reportViewModelEnum)
             {
-                case DocxReplaceTextEnum.CPU:               return CPUViewModel.Result;
-                case DocxReplaceTextEnum.Motherboard:       return MotherboardViewModel.Result;
-                case DocxReplaceTextEnum.Memory:            return MemoryViewModel.Result;
-                case DocxReplaceTextEnum.VideoController:   return VideoControllerViewModel.Result;
-                case DocxReplaceTextEnum.PhysicalDisk:      return PhysicalDiskViewModel.Result;
-                case DocxReplaceTextEnum.PowerSupply:       return PowerSupplyViewModel.Result;
-                case DocxReplaceTextEnum.ReportId:          return $"{IndexReport:000}";
+                case DocxReplaceTextEnum.CPU: return CPUViewModel.Result;
+                case DocxReplaceTextEnum.Motherboard: return MotherboardViewModel.Result;
+                case DocxReplaceTextEnum.Memory: return MemoryViewModel.Result;
+                case DocxReplaceTextEnum.VideoController: return VideoControllerViewModel.Result;
+                case DocxReplaceTextEnum.PhysicalDisk: return PhysicalDiskViewModel.Result;
+                case DocxReplaceTextEnum.PowerSupply: return PowerSupplyViewModel.Result;
+                case DocxReplaceTextEnum.ReportId: return $"{IndexReport:000}";
 
                 default:
                     return null;
@@ -160,7 +159,7 @@ namespace CompasPack.ViewModel
         }
         public bool HasChanges()
         {
-            return false;
+            return !IsEnable;
         }
         public void Unsubscribe()
         {
