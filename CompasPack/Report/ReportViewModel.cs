@@ -17,7 +17,7 @@ namespace CompasPack.ViewModel
     public class ReportViewModel : ViewModelBase, IDetailViewModel
     {
         private TypeReport _reportType;
-        private IDetailViewModel? _reportformViewModel;
+        private IDetailViewModel _reportformViewModel;
         private readonly IIOHelper _iOHelper;
         private IMessageDialogService _messageDialogService;
         private readonly ReportSettingsSettingsHelper _reportSettingsSettingsHelper;
@@ -43,7 +43,7 @@ namespace CompasPack.ViewModel
                 return System.Enum.GetValues(typeof(TypeReport)).Cast<TypeReport>();
             }
         }
-        public IDetailViewModel? ReportFormViewModel
+        public IDetailViewModel ReportFormViewModel
         {
             get { return _reportformViewModel; }
             private set
@@ -146,10 +146,11 @@ namespace CompasPack.ViewModel
             
             if (tempAidaReport)
             {
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+               // Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
                 using (var stream = new StreamReader($"{Path.Combine(_iOHelper.CompasPackLog, "Report.xml")}", Encoding.GetEncoding("windows-1251")))
                 {
-                    _xDocument = await XDocument.LoadAsync(stream, LoadOptions.PreserveWhitespace, new System.Threading.CancellationToken());
+
+                    _xDocument = await Task.Factory.StartNew(() => XDocument.Load(stream, LoadOptions.PreserveWhitespace));
                 }
             }
 

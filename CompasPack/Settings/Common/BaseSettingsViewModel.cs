@@ -10,9 +10,9 @@ namespace CompasPack.Settings
 {
     public interface ISettingsViewModel
     {
-        public bool HasChanges { get; }
-        public string Title { get; }
-        public Task LoadAsync();
+        bool HasChanges { get; }
+        string Title { get; }
+        Task LoadAsync();
     }
 
     public class BaseSettingsViewModel<TSettings, TWrapper, TSettingsHelper> : ViewModelBase, ISettingsViewModel
@@ -84,7 +84,7 @@ namespace CompasPack.Settings
             SettingsWrapper.ValidateAllCustomErrors();
         }
 
-        private void UserPath_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void UserPath_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             HasChanges = !_newSettings.Equals(_currentSettings);
             ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();

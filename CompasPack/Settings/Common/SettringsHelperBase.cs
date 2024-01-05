@@ -9,16 +9,16 @@ namespace CompasPack.Settings
 {
     public interface ISettings<T>
     {
-        public Task LoadFromFile();
-        public Task<T?> LoadDefault();
-        public Task<bool> Save();
+        Task LoadFromFile();
+        Task<T> LoadDefault();
+        Task<bool> Save();
     }
     public class SettringsHelperBase<T> : ISettings<T> where T : class, new()
     {
         #region Properties
         private readonly IIOHelper _iOHelper;
         private IMessageDialogService _messageDialogService;
-        public T? Settings { get; set; }
+        public T Settings { get; set; }
         public string SettingsPathFolder { get; private set; }
         public string SettingsPathFile { get; private set; }
         public string SettingsPathDefaultFile { get; set; }
@@ -63,7 +63,7 @@ namespace CompasPack.Settings
                 await Save();                   // зберігаємо його, щоб в наступний раз він був навіть якщо користувач нічого не вносив в нього
             }
         }
-        public virtual async Task<T?> LoadDefault()
+        public virtual async Task<T> LoadDefault()
         {
             if (!string.IsNullOrWhiteSpace(SettingsPathDefaultFile) && File.Exists(SettingsPathDefaultFile))    // якщо вказано файл налаштувань за замовчуванням і він існує тоді завантажуємо його
                 return JsonConvert.DeserializeObject<T>(await _iOHelper.ReadAllTextAsync(SettingsPathDefaultFile), new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error });

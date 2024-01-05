@@ -10,8 +10,8 @@ namespace CompasPack.Wrapper
     {
         private Dictionary<string, List<string>> _errorsByPropertyName = new Dictionary<string, List<string>>();
         public bool HasErrors => _errorsByPropertyName.Any();
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
-        public IEnumerable GetErrors(string? propertyName)
+        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        public IEnumerable GetErrors(string propertyName)
         {
             return _errorsByPropertyName.ContainsKey(propertyName)
                     ? _errorsByPropertyName[propertyName]

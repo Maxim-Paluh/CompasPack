@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using static System.Net.Mime.MediaTypeNames;
+using CompasPack.Service;
 
 namespace CompasPack.ViewModel
 {
@@ -85,7 +85,7 @@ namespace CompasPack.ViewModel
 
             if(!string.IsNullOrWhiteSpace(Brand))
             if (Model.Contains(Brand))
-                Model = Model.Replace(Brand, "", StringComparison.InvariantCultureIgnoreCase).Trim();
+                Model = Model.Replace(Brand, "").Trim();
 
             Result = $"{Brand} {Model}".Trim();
         }

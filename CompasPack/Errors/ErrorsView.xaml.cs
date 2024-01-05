@@ -10,7 +10,7 @@ namespace CompasPack.View
     /// </summary>
     public partial class ErrorsView : Window
     {
-        private ErrorsViewModel? _errorsViewModel;
+        private ErrorsViewModel _errorsViewModel;
 
         public ErrorsView(List<Exception> exception)
         {

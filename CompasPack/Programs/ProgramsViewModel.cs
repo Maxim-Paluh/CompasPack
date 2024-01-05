@@ -19,7 +19,7 @@ namespace CompasPack.ViewModel
 {
     public interface ITextConsole
     {
-        public string TextConsole { get; set; }
+        string TextConsole { get; set; }
     }
     public class ProgramsViewModel : ViewModelBase, IDetailViewModel, ITextConsole
     {
@@ -92,7 +92,7 @@ namespace CompasPack.ViewModel
             AUCCommand = new DelegateCommand(OnAUC);
             IconCommand = new DelegateCommand(OnIcon);
             OpenDesktopIconSettingsCommand = new DelegateCommand(OnOpenDesktopIconSettings);
-            
+
             OpenAppLogCommand = new DelegateCommand(OnOpenAppLog);
             OpenExampleFileCommand = new DelegateCommand(OnOpenExampleFile);
             OpenKMSAutoCommand = new DelegateCommand(OpenKMSAuto);
@@ -111,7 +111,7 @@ namespace CompasPack.ViewModel
 
             GroupProgramViewModel.Clear();
             UserPresetPrograms.Clear();
-            
+
             _userPath = (UserPath)_userPathSettingsHelper.Settings.Clone();
             PathHelper.SetRootPath(_iOHelper.PathRoot, _userPath);
 
@@ -121,7 +121,7 @@ namespace CompasPack.ViewModel
 
             ProgramsHelper.CombinePathFolderAndImage(GroupProgramViewModel, _userPath);
             ProgramsHelper.CheckInstallPrograms(GroupProgramViewModel); // CheckInstall
-            
+
             _userPresetSettingsHelper.Settings.UserPresets.ForEach(x => UserPresetPrograms.Add(x)); // Add UserPresetPrograms     
             var tempUserPrest = UserPresetPrograms.FirstOrDefault(x => x.Name.Contains(Regex.Match(WinInfoHelper.GetProductName(), @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // heck UserPresetPrograms
             if (tempUserPrest != null)
@@ -146,11 +146,14 @@ namespace CompasPack.ViewModel
         }
         public bool HasChanges()
         {
-            return false;
+            return !IsEnabled;
         }
-        //*****************************************************************************************
-
-        //--------------------------------------
+        //***************************************************************************************************
+        private void OnClearConsole()
+        {
+            TextConsole = WinInfoHelper.GetSystemInfo();
+        }
+        //---------------------------------------------------------------------------------------------------
         private void OnSelectUserPreset()
         {
             if (UserPresetPrograms.Count != 0)
@@ -180,13 +183,14 @@ namespace CompasPack.ViewModel
         {
             OnSelectUserPreset();
         }
+        //---------------------------------------------------------------------------------------------------
         private async void OnInstall()
-        { 
-            var userPrograms = GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels).Where(x => x.Install == true);
-            var t = userPrograms.FirstOrDefault().IsInstall.ToString();
-            if (userPrograms.Any(x => x.UserProgram.DisableDefender == true && x.IsInstall.ToString() == "#FFFF0000"))
+        {
+            var programsToInstall = GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels).Where(x => x.Install == true);
+
+            if (programsToInstall.Any(x => x.UserProgram.DisableDefender == true && !x.IsInstall)) // якщо програма потребує вимклення антивірусника для свого встановлення і вона ще не встановлена тоді
             {
-                if (!WinDefenderHelper.CheckTamperProtectionDisable())
+                if (!WinDefenderHelper.CheckTamperProtectionDisable()) // Перевіряємо чи можемо ми вимкнути антивірусник
                 {
                     _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!\n" +
                         $"Оскільки встановлення одної з програм потребує автоматичного відключення ативірусного ПЗ!!!", "Помилка!");
@@ -194,103 +198,139 @@ namespace CompasPack.ViewModel
                 }
             }
             IsEnabled = false;
-            TextConsole += "<--------------------Start Install----------------------->\n";
-            foreach (var userProgramViewModel in userPrograms)
+            AddSplitter();
+            foreach (var programToInstall in programsToInstall)
             {
-                if (userProgramViewModel.IsInstall)
+                TextConsole += $"Start Install Programs: {programToInstall.UserProgram.ProgramName}\n";
+                if (programToInstall.IsInstall) // перевіряємо чи програма встановлена
                 {
-                    TextConsole += $"Programs: {userProgramViewModel.UserProgram.ProgramName}, Already Installed!!!\n";
-                    TextConsole += "<-------------------------------------------------------->\n";
+                    TextConsole += $"Programs: {programToInstall.UserProgram.ProgramName}, Already installed!!!\n";
+                    AddSplitter();
+                    continue;
                 }
+                if (programToInstall.UserProgram.OnlineInstaller != null && await SpeedTest(true) >= 0.5) // якщо є онлайн інсталятор і інтернет
+                    await InstallProgram(programToInstall, true); // встановлюємо онлайн 
                 else
-                {
-                    TextConsole += $"Start Install Programs: {userProgramViewModel.UserProgram.ProgramName}\n";
-                    if (userProgramViewModel.UserProgram.OnlineInstaller != null)
-                    {
-                        TextConsole += $"Start speed test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                        var speed = await NetworkHelper.SpeedTest();
-                        TextConsole += $"End speed test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                        TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
-
-                        if (speed >= 0.5)
-                        {
-                            //await InstallProgram(userProgramViewModel, true);
-                        }
-                        else
-                        { }
-                            //await InstallProgram(userProgramViewModel, false);
-                    }
-                    else
-                    {
-                         //await InstallProgram(userProgramViewModel, false);
-                    }
-                    TextConsole += "<-------------------------------------------------------->\n";
-                }
-
+                    await InstallProgram(programToInstall, false); // встановлюємо офлайн
+                AddSplitter();
             }
             IsEnabled = true;
         }
-        private async Task InstallProgram(UserProgramViewModel userProgramViewMode, bool onlineInstall)
+        private async Task InstallProgram(UserProgramViewModel userProgramViewMode, bool tryOnlineInstall)
         {
             var userProgram = userProgramViewMode.UserProgram;
-            string? ExecutableFile = null;
-            string? arguments = null;
+            string ExecutableFile = null;
+            string arguments = null;
             int countOpen = 0;
-            a:
-            if (userProgramViewMode.UserProgram.DisableDefender && !WinInfoHelper.GetProductName().Contains("Windows 7", StringComparison.InvariantCultureIgnoreCase))
+            do
             {
-                if (!await WinDefenderHelper.CheckDefenderDisable())
+                if (userProgramViewMode.UserProgram.DisableDefender && !WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це windows 10 
                 {
-                    TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                    var ResponseDefender = (await WinDefenderHelper.DisableRealtimeMonitoring()).Trim();
-                    if (!string.IsNullOrWhiteSpace(ResponseDefender))
-                        TextConsole += $"Response defender: {ResponseDefender}\n";
-                    TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+                    if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник увімкнутий
+                    {
+                        await OffDefender(true); // вимикаємо
+                        await Task.Delay(100);
+                    }
+                    if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник досі увімкнутий
+                    {
+                        TextConsole += "Error: defender is not disabled\n";
+                        break; // виходимо з циклу
+                    }
                 }
-                var Defender = await WinDefenderHelper.CheckDefenderDisable();
-                TextConsole += $"Defender is disable: {Defender}\n";
-                if (!Defender)
-                {
-                    TextConsole += "Error defender is disable\n";
-                    return;
-                }
-            }
-            if (onlineInstall)
-            {
-                ExecutableFile = Directory.GetFiles(userProgram.PathFolder)
-               .Where(x => x.Contains(userProgram.OnlineInstaller.FileName, StringComparison.InvariantCultureIgnoreCase))
-               .Where(x => x.Contains("exe", StringComparison.InvariantCultureIgnoreCase) || x.Contains("msi", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
 
-                arguments = string.Join(" ", userProgram.OnlineInstaller.Arguments);
-            }
-            if (ExecutableFile == null)
-            {
-                var Files = Directory.GetFiles(userProgram.PathFolder)
-                   .Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase))
-                   .Where(x => x.Contains("exe", StringComparison.InvariantCultureIgnoreCase) || x.Contains("msi", StringComparison.InvariantCultureIgnoreCase));
-                if (userProgram.Architecture == "x64")
+                if (tryOnlineInstall) // якщо є онлайн інсталятор намагаємось його знайти
                 {
-                    if (WinInfoHelper.GetIs64BitOperatingSystem())
-                        ExecutableFile = Files.Where(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                    ExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, userProgram.OnlineInstaller.FileName, userProgram.PathFolder).FirstOrDefault();
+                    arguments = string.Join(" ", userProgram.OnlineInstaller.Arguments);
+                }
+
+                if (ExecutableFile == null) // якщо онлайн інсталятор не знайдено тоді шукаємо офлайн
+                {
+                    var tempExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, userProgram.FileName, userProgram.PathFolder);
+                    if (userProgram.Architecture == "x64")
+                    {
+                        if (WinInfoHelper.GetIs64BitOperatingSystem())
+                            ExecutableFile = tempExecutableFile.Where(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                        else
+                            ExecutableFile = tempExecutableFile.Where(x => x.Contains("x86", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                    }
                     else
-                        ExecutableFile = Files.Where(x => x.Contains("x86", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                        ExecutableFile = tempExecutableFile.LastOrDefault();
+                    arguments = string.Join(" ", userProgram.Arguments);
                 }
-                else
-                    ExecutableFile = Files.LastOrDefault();
-                arguments = String.Join(" ", userProgram.Arguments);
-            }
 
-            if (userProgram.DisableDefender)
-                TextConsole += $"Find {userProgram.FileName} (Try {countOpen + 1} with 3), Resault:\n";
+                if (ExecutableFile == null) // якщо онлайн і офлайн інсталятор не знайдено
+                {
+                    TextConsole += $"Not found file: {userProgram.FileName} In folder: {userProgram.PathFolder}\n"; // сповіщаємо користувача, що файлу нема
+                    if (userProgram.DisableDefender) // якщо треба вимикати антивірусник і файла нема то намагаємось його добути з архіва і попереджаємо користувача      
+                    {
+                        TextConsole += $" {userProgram.FileName} (Try {countOpen + 1} with 3), Resault:\n";
+                        TextConsole += $"Error, Not Find {userProgram.FileName}\n"; // а тут 
+                        TextConsole += $"Find Rar.exe, Resault:\n";
+                        var RarPath = _userPathSettingsHelper.Settings.PortablePathSettings.RarPath;
+                        if (!File.Exists(RarPath))
+                        {
+                            TextConsole += $"Error, Not Find Rar.exe\n";
+                            return;
+                        }
+                        TextConsole += $"OK!!!, Path: {RarPath}\n";
+                        var pathRar = Directory.GetFiles(userProgram.PathFolder).Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault();
+                        int countUnrar = 0;
+                        TextConsole += $"Find arkhive {userProgram.FileName}, Resault:\n";
+                        if (string.IsNullOrWhiteSpace(pathRar))
+                        {
+                            TextConsole += $"Error, Not Find arkhive {userProgram.FileName}\n";
+                        }
+                        TextConsole += $"OK!!!, Path: {pathRar}\n";
+                    b:
+                        try
+                        {
+                            ProcessStartInfo ps = new ProcessStartInfo();
+                            ps.FileName = pathRar;
+                            ps.Arguments = $@"x -p1234 -o- {pathRar} {userProgram.PathFolder}";
+                            TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
+                            var proc = Process.Start(ps);
+                            if (!proc.WaitForExit(20000))
+                            {
+                                try { proc.Kill(); } catch (Exception) { }
+                                try { proc.Close(); } catch (Exception) { }
+
+                                TextConsole += "Error UnRar\n";
+                                if (countUnrar < 2)
+                                {
+                                    countUnrar++;
+                                    await Task.Delay(5000);
+                                    goto b;
+                                }
+                            }
+                            else
+                            {
+                                TextConsole += $"OK!!!\n";
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            TextConsole += "Error UnRar\n";
+                        }
+                        countOpen++;
+                        TextConsole += "********************************************************\n";
+                        continue;
+                    }
+                }
+            } while (countOpen < 2);
             
-            if (ExecutableFile != null)
+            if (ExecutableFile == null) // якщо файл так і не знайдено то сповіщаємо користувача про це
+            {
+                TextConsole += $"Programs: {userProgram.ProgramName}, Not installed!!!\n";
+            }
+            else
             {
                 if (userProgram.DisableDefender)
                     TextConsole += $"OK!!!, Find File and start Install: {ExecutableFile}\n";
                 else
                     TextConsole += $"File: {ExecutableFile}\n";
-                
-                ProcessStartInfo? StartInfo = null;
+
+                ProcessStartInfo StartInfo = null;
                 if (ExecutableFile.EndsWith(".msi"))
                 {
                     StartInfo = new ProcessStartInfo
@@ -301,7 +341,7 @@ namespace CompasPack.ViewModel
                     };
                     TextConsole += $"Install MSI File!!!\n";
                 }
-                else 
+                else
                 {
                     StartInfo = new ProcessStartInfo
                     {
@@ -314,7 +354,7 @@ namespace CompasPack.ViewModel
                 try
                 {
                     Process proc = Process.Start(StartInfo);
-                    await proc.WaitForExitAsync();
+                    //await proc.WaitForExitAsync();
                     TextConsole += $"Programs: {userProgram.ProgramName}, Installed!!!\n";
                     await Task.Delay(1000);
                     userProgramViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms());
@@ -324,80 +364,10 @@ namespace CompasPack.ViewModel
                     TextConsole += $"Program: {userProgram.ProgramName}.\nError install: \n{exp.Message}\n";
                 }
             }
-            else
-            {
-                if (userProgram.DisableDefender)
-                {
-                    TextConsole += $"Error, Not Find {userProgram.FileName}\n";
-                    TextConsole += $"Find Rar.exe, Resault:\n";
-                    var RarPath = _userPathSettingsHelper.Settings.PortablePathSettings.RarPath;
-                    if (File.Exists(RarPath))
-                    {
-                        TextConsole += $"OK!!!, Path: {RarPath}\n";
-                        var pathRar = Directory.GetFiles(userProgram.PathFolder).Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault();
-                        int countUnrar = 0;
-                        TextConsole += $"Find arkhive {userProgram.FileName}, Resault:\n";
-                        if (!string.IsNullOrWhiteSpace(pathRar))
-                        {
-                            TextConsole += $"OK!!!, Path: {pathRar}\n";
-                        b:
-                            try
-                            {
-                                ProcessStartInfo ps = new ProcessStartInfo();
-                                ps.FileName = pathRar;
-                                ps.Arguments = $@"x -p1234 -o- {pathRar} {userProgram.PathFolder}";
-                                TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
-                                var proc = Process.Start(ps);
-                                if (!proc.WaitForExit(20000))
-                                {
-                                    try { proc.Kill(); } catch (Exception) { }
-                                    try { proc.Close(); } catch (Exception) { }
 
-                                    TextConsole += "Error UnRar\n";
-                                    if (countUnrar < 2)
-                                    {
-                                        countUnrar++;
-                                        await Task.Delay(5000);
-                                        goto b;
-                                    }
-                                }
-                                else
-                                {
-                                    TextConsole += $"OK!!!\n";
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                TextConsole += "Error UnRar\n";
-                            }
-                            if (countOpen < 2)
-                            {
-                                countOpen++;
-                                TextConsole += "********************************************************\n";
-                                goto a;
-                            }
-                        }
-                        else
-                        {
-                            TextConsole += $"Error, Not Find arkhive {userProgram.FileName}\n";
-                        }
-                    }
-                    else
-                    {
-                        TextConsole += $"Error, Not Find Rar.exe\n";
-                    }
-                }
-                 else
-                    TextConsole += $"Not fount file: {userProgram.FileName} In folder: {userProgram.PathFolder}\n";
-            }
         }
-        private void OnClearConsole()
-        {
-            TextConsole = WinInfoHelper.GetSystemInfo();
-        }
-        //-------------------------------------
 
-        //--------------------------------------
+        //---------------------------------------------------------------------------------------------------
         private void OnAUC()
         {
             WinSettingsHelper.OpenAUC();
@@ -410,14 +380,14 @@ namespace CompasPack.ViewModel
         {
             WinSettingsHelper.OpenDesktopIconSettings();
         }
-        //**************************************************
+        //**************************************************************************************************
         private void OnDefault()
         {
             WinSettingsHelper.OpenDefaultPrograms();
         }
         private void OnOpenExampleFile()
         {
-            _iOHelper.OpenFolder(Path.Combine(_iOHelper.PathRoot, _userPathSettingsHelper.Settings.PathExampleFile));
+            _iOHelper.OpenFolder(_userPath.PathExampleFile);
         }
         private async void OpenKMSAuto()
         {
@@ -430,7 +400,7 @@ namespace CompasPack.ViewModel
             TextConsole += "<-----------------Start open KMSAuto-------------------->\n";
 
             int countOpenKMSAuto = 0;
-            a:
+        a:
             if (!await WinDefenderHelper.CheckDefenderDisable())
             {
                 TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
@@ -530,61 +500,96 @@ namespace CompasPack.ViewModel
         {
             _iOHelper.OpenFolder(_iOHelper.CompasPackLog);
         }
-        //***************************************************
-        private async void OnSpeedTest()
+        //**************************************************************************************************
+        private async void OnSpeedTest() // ✓
         {
-            TextConsole += "<-----------------Start test speed--------------------->\n";
-            TextConsole += $"Start test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-            IsEnabled = false;
+            await SpeedTest(false);
+        }
+        private async Task<double> SpeedTest(bool OnInstall) // ✓
+        {
+            if (!OnInstall)
+            {
+                IsEnabled = false;
+                AddSplitter();
+            }
+            TextConsole += $"Start speed test: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
             var speed = await NetworkHelper.SpeedTest();
-            TextConsole += $"End test: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
+            TextConsole += $"End speed test: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
             TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
-            TextConsole += "<------------------End test speed---------------------->\n";
-            IsEnabled = true;
-        }
-        private async void OnOffDefender()
-        {
-            if (WinDefenderHelper.CheckTamperProtectionDisable())
+            if (!OnInstall)
             {
-                IsEnabled = false;
-                TextConsole += "<----------------Start off defender-------------------->\n";
-                TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                var ResponseDefender = (await WinDefenderHelper.DisableRealtimeMonitoring()).Trim();
-                if (!string.IsNullOrWhiteSpace(ResponseDefender))
-                    TextConsole += $"Response defender: {ResponseDefender}\n";
-                TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                TextConsole += $"Defender is disable: {await WinDefenderHelper.CheckDefenderDisable()}\n";
-                TextConsole += "<-----------------End off defender--------------------->\n";
+                AddSplitter();
                 IsEnabled = true;
             }
-            else
-            {
-                _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
-            }
+            return speed;
         }
-        private async void OnOnDefender()
+        private async void OnOnDefender() // ✓
         {
-            if (WinDefenderHelper.CheckTamperProtectionDisable())
-            {
-                IsEnabled = false;
-                TextConsole += "<-----------------Start on defender-------------------->\n";
-                TextConsole += $"Start on defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                var ResponseDefender = (await WinDefenderHelper.EnableRealtimeMonitoring()).Trim();
-                if (!string.IsNullOrWhiteSpace(ResponseDefender))
-                    TextConsole += $"Response defender: {ResponseDefender}\n";
-                TextConsole += $"End on defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                TextConsole += $"Defender is disable: {await WinDefenderHelper.CheckDefenderDisable()}\n";
-                TextConsole += "<------------------End on defender--------------------->\n";
-                IsEnabled = true;
-            }
-            else
-            {
-                _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
-            }
+            await OnDefender(false);
         }
+        private async Task OnDefender(bool OnInstall) // ✓
+        {
+            if (!OnInstall)
+            {
+                if (!WinDefenderHelper.CheckTamperProtectionDisable())
+                {
+                    _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
+                    return;
+                }
+                IsEnabled = false;
+                AddSplitter();
+            }
 
+            TextConsole += $"Start on defender: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
+            var ResponseDefender = (await WinDefenderHelper.EnableRealtimeMonitoring()).Trim();
+            if (!string.IsNullOrWhiteSpace(ResponseDefender))
+                TextConsole += $"Response defender: {ResponseDefender}\n";
+            TextConsole += $"End on defender:  \t{DateTime.Now:dd/MM hh:mm:ss}\n";
+            TextConsole += $"Defender is disable: {await WinDefenderHelper.CheckDefenderDisable()}\n";
+            if (!OnInstall)
+            {
+                AddSplitter();
+                IsEnabled = true;
+            }
+        }
+        private async void OnOffDefender() // ✓
+        {
+            await OffDefender(false);
+        }
+        private async Task OffDefender(bool OnInstall) // ✓
+        {
+            if (!OnInstall)
+            {
+                if (!WinDefenderHelper.CheckTamperProtectionDisable())
+                {
+                    _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
+                    return;
+                }
+                IsEnabled = false;
+                AddSplitter();
+            }
+            TextConsole += $"Start off defender: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
+            var ResponseDefender = (await WinDefenderHelper.DisableRealtimeMonitoring()).Trim();
+            if (!string.IsNullOrWhiteSpace(ResponseDefender))
+                TextConsole += $"Response defender: {ResponseDefender}\n";
+            TextConsole += $"End off defender:  \t{DateTime.Now:dd/MM hh:mm:ss}\n";
+            TextConsole += $"Defender is disable: {await WinDefenderHelper.CheckDefenderDisable()}\n";
+            if (!OnInstall)
+            {
+                AddSplitter();
+                IsEnabled = true;
+            }
+        }
         //--------------------------------------
-
+        public void AddSplitter()
+        {
+            string[] strings = TextConsole.Split('\n');
+            if (string.IsNullOrWhiteSpace(strings.Last()))
+            {
+                if (!strings[strings.Length - 2].Contains("<-------------------------------------------------------------------->"))
+                    TextConsole += "<-------------------------------------------------------------------->\n";
+            }
+        }
 
         //--------------------------------------
         public ICommand SelectUserPresetCommand { get; }

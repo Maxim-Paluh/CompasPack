@@ -34,13 +34,19 @@ namespace CompasPack.Helper
             };
             try
             {
-                proc = Process.Start(StartInfo);
-                var timeoutSignal = new CancellationTokenSource(TimeSpan.FromSeconds(60));
-                await proc.WaitForExitAsync(timeoutSignal.Token);
+                proc = Process.Start(StartInfo);// TODO
+                await Task.Factory.StartNew(() =>
+                {
+                    if (!proc.WaitForExit(60000))
+                    {
+                        throw new Exception("Aida report time out");
+                    }
+                });
             }
             catch (Exception)
             {
-                proc?.Kill();
+                try { proc?.Kill(); } catch (Exception) { }
+                try { proc?.Close(); } catch (Exception) { }
                 throw;
             }
         }

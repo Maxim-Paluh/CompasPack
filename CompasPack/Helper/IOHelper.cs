@@ -10,18 +10,18 @@ namespace CompasPack.Helper
 {
     public interface IIOHelper
     {
-        public Task<string> ReadAllTextAsync(string path);
-        public Task WriteAllTextAsync(string path, string text);
+        Task<string> ReadAllTextAsync(string path);
+        Task WriteAllTextAsync(string path, string text);
         //--------------------------------------------------------
-        public string[] GetListFile(string path);
-        public string[] GetListFolder(string path);
+        string[] GetListFile(string path);
+        string[] GetListFolder(string path);
         //--------------------------------------------------------
-        public void OpenFolder(string path);
-        public void OpenCreateFolder(string path);
-        public void OpenFolderAndSelectFile(string path);
+        void OpenFolder(string path);
+        void OpenCreateFolder(string path);
+        void OpenFolderAndSelectFile(string path);
         //--------------------------------------------------------
-        public string CompasPackLog { get; set; }
-        public string PathRoot { get; set; }
+        string CompasPackLog { get; set; }
+        string PathRoot { get; set; }
     }
 
     public class IOHelper : IIOHelper
@@ -38,13 +38,13 @@ namespace CompasPack.Helper
         }
         public async Task<string> ReadAllTextAsync(string path)
         {
-            return await File.ReadAllTextAsync(path).ConfigureAwait(false);
+            return await Task.Factory.StartNew(() => File.ReadAllText(path));
         }
         public async Task WriteAllTextAsync(string pathFile, string text)
         {
             if (!Directory.Exists(Path.GetDirectoryName(pathFile)))
                 Directory.CreateDirectory(Path.GetDirectoryName(pathFile));
-            await File.WriteAllTextAsync(pathFile, text).ConfigureAwait(false);
+            await Task.Factory.StartNew(() => File.WriteAllText(pathFile, text));
         }
         //-------------------------------------------------------------------------------
         public string[] GetListFile(string path)
@@ -84,53 +84,5 @@ namespace CompasPack.Helper
             }
         }
         //-------------------------------------------------------------------------------
-
-
-
-        //public async Task<XDocument> GetXDocument()
-        //{
-        //    try
-        //    {
-        //        if (!Directory.Exists(CompasPackLog))
-        //            Directory.CreateDirectory(CompasPackLog);
-                
-        //        #if DEBUG
-        //        if (!File.Exists(CompasPackLog + "\\Report.xml"))
-        //        {
-        //            Process proc = Process.Start(new ProcessStartInfo()
-        //            {
-        //                FileName = Aida,
-        //                Arguments = "/R " + CompasPackLog + "\\Report. " + "/XML " + "/CUSTOM " + Path.GetDirectoryName(Aida) + "\\ForReport.rpf",
-        //                UseShellExecute = false
-        //            });
-        //            await proc.WaitForExitAsync();
-        //        }
-        //        #else
-        //            Process proc = Process.Start(new ProcessStartInfo()
-        //            {
-        //                FileName = Aida,
-        //                Arguments = "/R " + CompasPackLog + "\\Report. " + "/XML " + "/CUSTOM " + Path.GetDirectoryName(Aida) + "\\ForReport.rpf",
-        //                UseShellExecute = false
-        //            });
-        //            await proc.WaitForExitAsync();
-        //        #endif
-
-        //        if (!File.Exists(CompasPackLog + "\\Report.xml"))
-        //            return null;
-                
-        //        XDocument? document;
-        //        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-        //        using (var stream = new StreamReader(CompasPackLog + "\\Report.xml", Encoding.GetEncoding("windows-1251")))
-        //        {
-        //            document = await XDocument.LoadAsync(stream, LoadOptions.PreserveWhitespace, new System.Threading.CancellationToken());
-        //        }
-        //        return document;
-        //    }
-        //    catch (Exception) 
-        //    {
-        //        _messageDialogService.ShowInfoDialog($"Звіт AIDA64 не сформовано!", "Помилка!");
-        //        return null;
-        //    }
-        //}
     }
 }

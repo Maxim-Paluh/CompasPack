@@ -43,7 +43,7 @@ namespace CompasPack.Settings
     public class AspectRatio : ReportBase { }
     public class MonitorInterface : HardWare{ }
     public class LaptopHardWare : HardWare { }
-    public class HardWare()
+    public class HardWare
     {
         public string Name { get; set; }
         public bool IsSelect { get; set; }

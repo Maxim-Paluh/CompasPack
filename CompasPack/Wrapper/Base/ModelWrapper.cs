@@ -19,7 +19,7 @@ namespace CompasPack.Wrapper
             }
 
         }
-        protected virtual void SetValue<TValue>(TValue value, [CallerMemberName]string? propertyName = null)
+        protected virtual void SetValue<TValue>(TValue value, [CallerMemberName]string propertyName = null)
         {
             if (propertyName != null)
             {
@@ -28,14 +28,14 @@ namespace CompasPack.Wrapper
                 ValidatePropertyInternal(propertyName, value);
             }
         }
-        protected virtual TValue? GetValue<TValue>([CallerMemberName]string? propertyName = null)
+        protected virtual TValue GetValue<TValue>([CallerMemberName]string propertyName = null)
         {
             if (propertyName != null)
-                return (TValue?)typeof(T).GetProperty(propertyName)?.GetValue(Model);
+                return (TValue)typeof(T).GetProperty(propertyName)?.GetValue(Model);
             else
                 return default;
         }
-        private void ValidatePropertyInternal(string propertyName, object? currentValue)
+        private void ValidatePropertyInternal(string propertyName, object currentValue)
         {
             ClearError(propertyName);
 
@@ -43,7 +43,7 @@ namespace CompasPack.Wrapper
 
             ValidateCustomErrors(propertyName);
         }
-        private void ValidateDataAnnotations(string propertyName, object? currentValue)
+        private void ValidateDataAnnotations(string propertyName, object currentValue)
         {
             var results = new List<ValidationResult>();
             var context = new ValidationContext(Model) { MemberName = propertyName };
@@ -66,7 +66,7 @@ namespace CompasPack.Wrapper
                 }
             }
         }
-        protected virtual IEnumerable<string>? ValidateProperty(string propertyName)
+        protected virtual IEnumerable<string> ValidateProperty(string propertyName)
         {
             return null;
         }

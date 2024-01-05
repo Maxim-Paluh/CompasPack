@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using CompasPack.Settings;
+using CompasPack.Service;
 
 namespace CompasPack.ViewModel
 {

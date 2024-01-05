@@ -20,7 +20,7 @@ namespace CompasPack.ViewModel
     {
         private IMessageDialogService _messageDialogService;
         private readonly IIOHelper _iOHelper;
-        private IDetailViewModel? _formViewModel;
+        private IDetailViewModel _formViewModel;
         private readonly IIndex<string, IDetailViewModel> _formViewModelCreator;
         private bool _programsIsEnabled;
         private bool _reportIsEnabled;
@@ -52,7 +52,7 @@ namespace CompasPack.ViewModel
             }
         }
         public ObservableCollection<PortableProgram> PortablePrograms { get; private set; }
-        public IDetailViewModel? FormViewModel
+        public IDetailViewModel FormViewModel
         {
             get { return _formViewModel; }
             private set

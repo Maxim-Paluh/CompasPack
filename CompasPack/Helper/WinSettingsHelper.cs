@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using CompasPack.Service;
 
 namespace CompasPack.Helper
 {
@@ -7,9 +8,9 @@ namespace CompasPack.Helper
     {
         public static void OpenDefaultPrograms()
         {
-            string? argument = null;
-            string? fileName = null;
-            if (WinInfoHelper.GetProductName().Contains("Windows 7", StringComparison.InvariantCultureIgnoreCase))
+            string argument = null;
+            string fileName = null;
+            if (WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase))
             {
                 argument = "/name Microsoft.DefaultPrograms /page pageDefaultProgram";
                 fileName = "control.exe";

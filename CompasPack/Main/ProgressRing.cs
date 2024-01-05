@@ -88,7 +88,7 @@ namespace CompasPack.View
             get => (double)GetValue(EllipseDiameterScaleProperty);
             set => SetValue(EllipseDiameterScaleProperty, value);
         }
-        private List<Action>? deferredActions = new List<Action>();
+        private List<Action> deferredActions = new List<Action>();
         static ProgressRing()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ProgressRing), new FrameworkPropertyMetadata(typeof(ProgressRing)));
@@ -205,7 +205,7 @@ namespace CompasPack.View
         public static readonly object TrueBox = true;
         public static readonly object FalseBox = false;
         public static object Box(bool value) => value ? TrueBox : FalseBox;
-        public static object? Box(bool? value)
+        public static object Box(bool? value)
         {
             if (value.HasValue)
             {
@@ -217,7 +217,7 @@ namespace CompasPack.View
 
     public class ProgressRingAutomationPeer : FrameworkElementAutomationPeer
     {
-        public ProgressRingAutomationPeer([NotNull] ProgressRing owner)
+        public ProgressRingAutomationPeer(ProgressRing owner)
             : base(owner) { }
         protected override string GetClassNameCore()
         {
@@ -225,13 +225,14 @@ namespace CompasPack.View
         }
         protected override string GetNameCore()
         {
-            string? nameCore = base.GetNameCore();
+            string nameCore = base.GetNameCore();
 
-            if (this.Owner is ProgressRing { IsActive: true })
+            if (this.Owner is ProgressRing)
             {
-                return nameof(ProgressRing.IsActive) + nameCore;
+                if((Owner as ProgressRing).IsActive)
+                    return nameof(ProgressRing.IsActive) + nameCore;
             }
-            return nameCore!;
+            return nameCore;
         }
         protected override AutomationControlType GetAutomationControlTypeCore()
         {

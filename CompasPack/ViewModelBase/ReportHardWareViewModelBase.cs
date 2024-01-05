@@ -8,7 +8,7 @@ namespace CompasPack
     }
     public class ReportHardWareViewModelBase<T> : ViewModelBase
     {
-        private XDocument? _document;
+        private XDocument _document;
         private T _settings;
         private string _result;
         public T Settings
@@ -20,7 +20,7 @@ namespace CompasPack
                 OnPropertyChanged();
             }
         }
-        public XDocument? Document
+        public XDocument Document
         {
             get { return _document; }
             set

@@ -21,7 +21,7 @@ namespace CompasPack.Settings
             UserPath.PortablePathSettings = (PortablePathSettings)PortablePathSettings.Clone();
             return UserPath;
         }
-        public override bool Equals(object? obj)
+        public override bool Equals(object obj)
         {
             if (obj is UserPath userPath)
                 return PathFolderPrograms == userPath.PathFolderPrograms && PathFolderImageProgram == userPath.PathFolderImageProgram;
