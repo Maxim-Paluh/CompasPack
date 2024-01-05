@@ -221,10 +221,10 @@ namespace CompasPack.ViewModel
             var userProgram = userProgramViewMode.UserProgram;
             string ExecutableFile = null;
             string arguments = null;
-            int countOpen = 0;
+            int countUnzipping = 0;
             do
             {
-                if (userProgramViewMode.UserProgram.DisableDefender && !WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це windows 10 
+                if (userProgramViewMode.UserProgram.DisableDefender && !WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це не windows 7
                 {
                     if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник увімкнутий
                     {
@@ -259,77 +259,66 @@ namespace CompasPack.ViewModel
                     arguments = string.Join(" ", userProgram.Arguments);
                 }
 
-                if (ExecutableFile == null) // якщо онлайн і офлайн інсталятор не знайдено
+                if (ExecutableFile != null) // якщо інсталятор знайдено то покидаємо цикл
+                    break;
+                else // якщо онлайн і офлайн інсталятор не знайдено
                 {
-                    TextConsole += $"Not found file: {userProgram.FileName} In folder: {userProgram.PathFolder}\n"; // сповіщаємо користувача, що файлу нема
+                    TextConsole += $"Not found install file in folder: {userProgram.PathFolder}\n"; // сповіщаємо користувача, що файлу нема
+                    if (countUnzipping >= 2)
+                        break;
                     if (userProgram.DisableDefender) // якщо треба вимикати антивірусник і файла нема то намагаємось його добути з архіва і попереджаємо користувача      
                     {
-                        TextConsole += $" {userProgram.FileName} (Try {countOpen + 1} with 3), Resault:\n";
-                        TextConsole += $"Error, Not Find {userProgram.FileName}\n"; // а тут 
-                        TextConsole += $"Find Rar.exe, Resault:\n";
-                        var RarPath = _userPathSettingsHelper.Settings.PortablePathSettings.RarPath;
-                        if (!File.Exists(RarPath))
+                        TextConsole += $"<*************************Try unzipping {countUnzipping + 1}*************************>\n";
+                        if (!File.Exists(_userPath.PortablePathSettings.RarPath))
                         {
                             TextConsole += $"Error, Not Find Rar.exe\n";
-                            return;
+                            break;
                         }
-                        TextConsole += $"OK!!!, Path: {RarPath}\n";
                         var pathRar = Directory.GetFiles(userProgram.PathFolder).Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault();
-                        int countUnrar = 0;
-                        TextConsole += $"Find arkhive {userProgram.FileName}, Resault:\n";
+                        TextConsole += $"Find arkhive {userProgram.FileName}, Resault: ";
                         if (string.IsNullOrWhiteSpace(pathRar))
                         {
                             TextConsole += $"Error, Not Find arkhive {userProgram.FileName}\n";
+                            break;
                         }
-                        TextConsole += $"OK!!!, Path: {pathRar}\n";
-                    b:
+                        TextConsole += $"OK!!!, File: {Path.GetFileName(pathRar)}\n";
+
                         try
                         {
                             ProcessStartInfo ps = new ProcessStartInfo();
-                            ps.FileName = pathRar;
+                            ps.FileName = _userPath.PortablePathSettings.RarPath;
                             ps.Arguments = $@"x -p1234 -o- {pathRar} {userProgram.PathFolder}";
-                            TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
+                            TextConsole += $"Start unzipping, Resault: ";
                             var proc = Process.Start(ps);
                             if (!proc.WaitForExit(20000))
                             {
                                 try { proc.Kill(); } catch (Exception) { }
                                 try { proc.Close(); } catch (Exception) { }
 
-                                TextConsole += "Error UnRar\n";
-                                if (countUnrar < 2)
-                                {
-                                    countUnrar++;
-                                    await Task.Delay(5000);
-                                    goto b;
-                                }
+                                TextConsole += "Time out unzipping\n";
                             }
                             else
-                            {
                                 TextConsole += $"OK!!!\n";
-                            }
+
                         }
                         catch (Exception)
                         {
-                            TextConsole += "Error UnRar\n";
+                            TextConsole += "Error unzipping\n";
                         }
-                        countOpen++;
-                        TextConsole += "********************************************************\n";
-                        continue;
+                        countUnzipping++;
                     }
+                    else
+                        break;
                 }
-            } while (countOpen < 2);
-            
+            } while (true);
+
             if (ExecutableFile == null) // якщо файл так і не знайдено то сповіщаємо користувача про це
             {
                 TextConsole += $"Programs: {userProgram.ProgramName}, Not installed!!!\n";
             }
             else
             {
-                if (userProgram.DisableDefender)
-                    TextConsole += $"OK!!!, Find File and start Install: {ExecutableFile}\n";
-                else
-                    TextConsole += $"File: {ExecutableFile}\n";
-
+                TextConsole += $"File: {ExecutableFile}\n";
                 ProcessStartInfo StartInfo = null;
                 if (ExecutableFile.EndsWith(".msi"))
                 {
@@ -365,6 +354,8 @@ namespace CompasPack.ViewModel
                 }
             }
 
+            if (userProgram.DisableDefender && await WinDefenderHelper.CheckDefenderDisable())
+                await WinDefenderHelper.EnableRealtimeMonitoring();
         }
 
         //---------------------------------------------------------------------------------------------------
