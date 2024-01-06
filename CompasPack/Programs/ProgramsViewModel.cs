@@ -219,142 +219,148 @@ namespace CompasPack.ViewModel
         private async Task InstallProgram(UserProgramViewModel userProgramViewMode, bool tryOnlineInstall)
         {
             var userProgram = userProgramViewMode.UserProgram;
-            string ExecutableFile = null;
+            
             string arguments = null;
-            int countUnzipping = 0;
+           int countInstall = 0;
             do
             {
-                if (userProgramViewMode.UserProgram.DisableDefender && !WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це не windows 7
+                int countUnzipping = 0;
+                string ExecutableFile = null;
+                do
                 {
-                    if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник увімкнутий
+                    if (userProgramViewMode.UserProgram.DisableDefender && !WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це не windows 7
                     {
-                        await OffDefender(true); // вимикаємо
-                        await Task.Delay(100);
-                    }
-                    if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник досі увімкнутий
-                    {
-                        TextConsole += "Error: defender is not disabled\n";
-                        break; // виходимо з циклу
-                    }
-                }
-
-                if (tryOnlineInstall) // якщо є онлайн інсталятор намагаємось його знайти
-                {
-                    ExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, userProgram.OnlineInstaller.FileName, userProgram.PathFolder).FirstOrDefault();
-                    arguments = string.Join(" ", userProgram.OnlineInstaller.Arguments);
-                }
-
-                if (ExecutableFile == null) // якщо онлайн інсталятор не знайдено тоді шукаємо офлайн
-                {
-                    var tempExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, userProgram.FileName, userProgram.PathFolder);
-                    if (userProgram.Architecture == "x64")
-                    {
-                        if (WinInfoHelper.GetIs64BitOperatingSystem())
-                            ExecutableFile = tempExecutableFile.Where(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-                        else
-                            ExecutableFile = tempExecutableFile.Where(x => x.Contains("x86", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-                    }
-                    else
-                        ExecutableFile = tempExecutableFile.LastOrDefault();
-                    arguments = string.Join(" ", userProgram.Arguments);
-                }
-
-                if (ExecutableFile != null) // якщо інсталятор знайдено то покидаємо цикл
-                    break;
-                else // якщо онлайн і офлайн інсталятор не знайдено
-                {
-                    TextConsole += $"Not found install file in folder: {userProgram.PathFolder}\n"; // сповіщаємо користувача, що файлу нема
-                    if (countUnzipping >= 2)
-                        break;
-                    if (userProgram.DisableDefender) // якщо треба вимикати антивірусник і файла нема то намагаємось його добути з архіва і попереджаємо користувача      
-                    {
-                        TextConsole += $"<*************************Try unzipping {countUnzipping + 1}*************************>\n";
-                        if (!File.Exists(_userPath.PortablePathSettings.RarPath))
+                        if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник увімкнутий
                         {
-                            TextConsole += $"Error, Not Find Rar.exe\n";
-                            break;
+                            await OffDefender(true); // вимикаємо
+                            await Task.Delay(100);
                         }
-                        var pathRar = Directory.GetFiles(userProgram.PathFolder).Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault();
-                        TextConsole += $"Find arkhive {userProgram.FileName}, Resault: ";
-                        if (string.IsNullOrWhiteSpace(pathRar))
+                        if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник досі увімкнутий
                         {
-                            TextConsole += $"Error, Not Find arkhive {userProgram.FileName}\n";
-                            break;
+                            TextConsole += "Error: defender is not disabled\n";
+                            break; // виходимо з циклу
                         }
-                        TextConsole += $"OK!!!, File: {Path.GetFileName(pathRar)}\n";
-
-                        try
+                    }
+                    if (tryOnlineInstall) // якщо є онлайн інсталятор намагаємось його знайти
+                    {
+                        ExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, userProgram.OnlineInstaller.FileName, userProgram.PathFolder).FirstOrDefault();
+                        arguments = string.Join(" ", userProgram.OnlineInstaller.Arguments);
+                    }
+                    if (ExecutableFile == null) // якщо онлайн інсталятор не знайдено тоді шукаємо офлайн
+                    {
+                        var tempExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, userProgram.FileName, userProgram.PathFolder);
+                        if (userProgram.Architecture == "x64")
                         {
-                            ProcessStartInfo ps = new ProcessStartInfo();
-                            ps.FileName = _userPath.PortablePathSettings.RarPath;
-                            ps.Arguments = $@"x -p1234 -o- {pathRar} {userProgram.PathFolder}";
-                            TextConsole += $"Start unzipping, Resault: ";
-                            var proc = Process.Start(ps);
-                            if (!proc.WaitForExit(20000))
-                            {
-                                try { proc.Kill(); } catch (Exception) { }
-                                try { proc.Close(); } catch (Exception) { }
-
-                                TextConsole += "Time out unzipping\n";
-                            }
+                            if (WinInfoHelper.GetIs64BitOperatingSystem())
+                                ExecutableFile = tempExecutableFile.Where(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
                             else
-                                TextConsole += $"OK!!!\n";
-
+                                ExecutableFile = tempExecutableFile.Where(x => x.Contains("x86", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
                         }
-                        catch (Exception)
-                        {
-                            TextConsole += "Error unzipping\n";
-                        }
-                        countUnzipping++;
+                        else
+                            ExecutableFile = tempExecutableFile.LastOrDefault();
+                        arguments = string.Join(" ", userProgram.Arguments);
                     }
-                    else
+                    if (ExecutableFile != null) // якщо інсталятор знайдено то покидаємо цикл
                         break;
-                }
-            } while (true);
-
-            if (ExecutableFile == null) // якщо файл так і не знайдено то сповіщаємо користувача про це
-            {
-                TextConsole += $"Programs: {userProgram.ProgramName}, Not installed!!!\n";
-            }
-            else
-            {
-                ProcessStartInfo StartInfo = null;
-                if (ExecutableFile.EndsWith(".msi"))
-                {
-                    StartInfo = new ProcessStartInfo
+                    else // якщо онлайн і офлайн інсталятор не знайдено
                     {
-                        FileName = "msiexec",
-                        Arguments = $"/i {ExecutableFile} {arguments}",
-                        UseShellExecute = false
-                    };
-                    TextConsole += $"File msi: {ExecutableFile}\n";
+                        TextConsole += $"Not found install file in folder: {userProgram.PathFolder}\n"; // сповіщаємо користувача, що файлу нема
+                        if (countUnzipping >= 1)
+                            break;
+                        if (userProgram.DisableDefender) // якщо треба вимикати антивірусник і файла нема то намагаємось його добути з архіва і попереджаємо користувача      
+                        {
+                            if (!File.Exists(_userPath.PortablePathSettings.RarPath))
+                            {
+                                TextConsole += $"Error, Not Find Rar.exe\n";
+                                break;
+                            }
+                            var pathRar = Directory.GetFiles(userProgram.PathFolder).Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault();
+                            TextConsole += $"Find arkhive {userProgram.FileName}, resault: ";
+                            if (string.IsNullOrWhiteSpace(pathRar))
+                            {
+                                TextConsole += $"Error, Not Find arkhive {userProgram.FileName}\n";
+                                break;
+                            }
+                            TextConsole += $"OK!!!, File: {Path.GetFileName(pathRar)}\n";
+                            try
+                            {
+                                ProcessStartInfo ps = new ProcessStartInfo();
+                                ps.FileName = _userPath.PortablePathSettings.RarPath;
+                                ps.Arguments = $@"x -p1234 -o- {pathRar} {userProgram.PathFolder}";
+                                TextConsole += $"Start unzipping, resault: ";
+                                var proc = Process.Start(ps);
+                                if (!proc.WaitForExit(20000))
+                                {
+                                    try { proc.Kill(); } catch (Exception) { }
+                                    try { proc.Close(); } catch (Exception) { }
+
+                                    TextConsole += "Time out unzipping\n";
+                                }
+                                else
+                                    TextConsole += $"OK!!!\n";
+                            }
+                            catch (Exception)
+                            {
+                                TextConsole += "Error unzipping\n";
+                            }
+                            countUnzipping++;
+                        }
+                        else
+                            break;
+                    }
+                } while (true);
+                if (ExecutableFile == null) // якщо файл так і не знайдено то сповіщаємо користувача про це
+                {
+                    TextConsole += $"Programs: {userProgram.ProgramName}, not installed!!!\n";
+                    break;
                 }
                 else
                 {
-                    StartInfo = new ProcessStartInfo
+                    ProcessStartInfo StartInfo = null;
+                    if (ExecutableFile.EndsWith(".msi"))
                     {
-                        FileName = ExecutableFile,
-                        Arguments = arguments,
-                        UseShellExecute = false
-                    };
-                    TextConsole += $"File exe: {ExecutableFile}\n";
-                }
-                TextConsole += $"Arguments: {StartInfo.Arguments}\n";
-                
-                try
-                {
-                    Process proc = Process.Start(StartInfo);
-                    //await Task.Factory.StartNew(()=>proc.WaitForExit());
-                    TextConsole += $"Programs: {userProgram.ProgramName}, Installed!!!\n";
-                    await Task.Delay(1000);
-                    userProgramViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms());
-                }
-                catch (Exception exp)
-                {
-                    TextConsole += $"Program: {userProgram.ProgramName}, Error install:\n{exp.Message}\n";
-                }
-            }
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = "msiexec",
+                            Arguments = $"/i {ExecutableFile} {arguments}",
+                            UseShellExecute = false
+                        };
+                        TextConsole += $"File msi: {ExecutableFile}\n";
+                    }
+                    else
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = ExecutableFile,
+                            Arguments = arguments,
+                            UseShellExecute = false
+                        };
+                        TextConsole += $"File exe: {ExecutableFile}\n";
+                    }
+                    TextConsole += $"Arguments: {StartInfo.Arguments}\n";
 
+                    try
+                    {
+                        Process proc = Process.Start(StartInfo);
+                        //await Task.Factory.StartNew(()=>proc.WaitForExit());
+                        TextConsole += $"Programs: {userProgram.ProgramName}, Installed!!!\n";
+                        await Task.Delay(1000);
+                        userProgramViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms());
+                        break;
+                    }
+                    catch (Exception exp)
+                    {
+                        TextConsole += $"Program: {userProgram.ProgramName}, error install: {exp.Message}\n";
+                        if (!userProgram.DisableDefender) // якщо це програма яка не потребує вимкнення антивірусника і її встановелння викликало помилку тоді не пробуємо ставити її ще раз
+                            break;
+                    }
+
+                    countInstall++;
+                    if (countInstall >= 2)
+                        break;
+                    TextConsole += $"<******************************************************************>\n";
+                }
+            } while (true);
             if (userProgram.DisableDefender && await WinDefenderHelper.CheckDefenderDisable())
                 await WinDefenderHelper.EnableRealtimeMonitoring();
         }
@@ -408,16 +414,15 @@ namespace CompasPack.ViewModel
                     }
                 }
 
-                var pathKMS = _userPathSettingsHelper.Settings.PortablePathSettings.KMSAutoPath;
-                TextConsole += $"Find KMSAuto (Try {countOpenKMSAuto + 1} with 3), Resault:\n";
-                if (!string.IsNullOrWhiteSpace(pathKMS))
+                TextConsole += $"Find KMSAuto, Resault: ";
+                if (File.Exists(_userPath.PortablePathSettings.KMSAutoPath))
                 {
-                    TextConsole += $"OK!!!, Path: {pathKMS}\n";
+                    TextConsole += $"OK!!!\n";
                     Process proc = new Process()
                     {
                         StartInfo = new ProcessStartInfo
                         {
-                            FileName = pathKMS,
+                            FileName = _userPath.PortablePathSettings.KMSAutoPath,
                             UseShellExecute = false,
                         }
                     };
@@ -425,7 +430,7 @@ namespace CompasPack.ViewModel
                 }
                 else
                 {
-                    TextConsole += $"Error, Not Find KMSAuto\n";
+                    TextConsole += $"Error\n";
                     TextConsole += $"Find Rar.exe, Resault:\n";
                     var RarPath = _userPathSettingsHelper.Settings.PortablePathSettings.RarPath;
                     if (File.Exists(RarPath))
