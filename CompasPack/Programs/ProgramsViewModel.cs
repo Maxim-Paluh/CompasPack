@@ -343,6 +343,7 @@ namespace CompasPack.ViewModel
                     {
                         Process proc = Process.Start(StartInfo);
                         //await Task.Factory.StartNew(()=>proc.WaitForExit());
+                        //throw new Exception("dfgdfsg");
                         TextConsole += $"Programs: {userProgram.ProgramName}, Installed!!!\n";
                         await Task.Delay(1000);
                         userProgramViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms());
@@ -358,7 +359,7 @@ namespace CompasPack.ViewModel
                     countInstall++;
                     if (countInstall >= 2)
                         break;
-                    TextConsole += $"<******************************************************************>\n";
+                    TextConsole += $"<***************************************************************************>\n";
                 }
             } while (true);
             if (userProgram.DisableDefender && await WinDefenderHelper.CheckDefenderDisable())
@@ -583,8 +584,8 @@ namespace CompasPack.ViewModel
             string[] strings = TextConsole.Split('\n');
             if (string.IsNullOrWhiteSpace(strings.Last()))
             {
-                if (!strings[strings.Length - 2].Contains("<-------------------------------------------------------------------->"))
-                    TextConsole += "<-------------------------------------------------------------------->\n";
+                if (!strings[strings.Length - 2].Contains("<------------------------------------------------------------------------------>"))
+                    TextConsole += "<------------------------------------------------------------------------------>\n";
             }
         }
 
