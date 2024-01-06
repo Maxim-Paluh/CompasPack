@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 
@@ -12,13 +13,13 @@ namespace CompasPack.View
 
         public AboutView()
         {
-
             DataContext = new AboutContext()
             {
-                Name = $"Comp@sPack (32 розрядна версія) {DateTime.Now:yyyy} рік",
+
+                Name = Assembly.GetExecutingAssembly().GetName().Name.ToString(),
                 Version = Assembly.GetExecutingAssembly().GetName().Version.ToString(),
-                Autor = $"©Greg_House_M_D {DateTime.Now:yyyy} рік",
-                Info = "Дане програмне забезпечення написане для магазину: \"Комп@с\"\nвоно може вільно використовуватись та поширюватись!"
+                Autor = "Greg_House_M_D ©  2024",
+            Info = "Дане програмне забезпечення написане для магазину: \"Комп@с\"\nвоно може вільно використовуватись та поширюватись!"
             };
             InitializeComponent();
         }

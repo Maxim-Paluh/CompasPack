@@ -318,7 +318,6 @@ namespace CompasPack.ViewModel
             }
             else
             {
-                TextConsole += $"File: {ExecutableFile}\n";
                 ProcessStartInfo StartInfo = null;
                 if (ExecutableFile.EndsWith(".msi"))
                 {
@@ -328,7 +327,7 @@ namespace CompasPack.ViewModel
                         Arguments = $"/i {ExecutableFile} {arguments}",
                         UseShellExecute = false
                     };
-                    TextConsole += $"Install MSI File!!!\n";
+                    TextConsole += $"File msi: {ExecutableFile}\n";
                 }
                 else
                 {
@@ -338,25 +337,28 @@ namespace CompasPack.ViewModel
                         Arguments = arguments,
                         UseShellExecute = false
                     };
+                    TextConsole += $"File exe: {ExecutableFile}\n";
                 }
                 TextConsole += $"Arguments: {StartInfo.Arguments}\n";
+                
                 try
                 {
                     Process proc = Process.Start(StartInfo);
-                    //await proc.WaitForExitAsync();
+                    //await Task.Factory.StartNew(()=>proc.WaitForExit());
                     TextConsole += $"Programs: {userProgram.ProgramName}, Installed!!!\n";
                     await Task.Delay(1000);
                     userProgramViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms());
                 }
                 catch (Exception exp)
                 {
-                    TextConsole += $"Program: {userProgram.ProgramName}.\nError install: \n{exp.Message}\n";
+                    TextConsole += $"Program: {userProgram.ProgramName}, Error install:\n{exp.Message}\n";
                 }
             }
 
             if (userProgram.DisableDefender && await WinDefenderHelper.CheckDefenderDisable())
                 await WinDefenderHelper.EnableRealtimeMonitoring();
         }
+
 
         //---------------------------------------------------------------------------------------------------
         private void OnAUC()
@@ -382,110 +384,109 @@ namespace CompasPack.ViewModel
         }
         private async void OpenKMSAuto()
         {
+            int countOpenKMSAuto = 0;
             if (!WinDefenderHelper.CheckTamperProtectionDisable())
             {
-                _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
+                _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
                 return;
             }
-            //------------------------------------------------------------------------------------------------------
-            TextConsole += "<-----------------Start open KMSAuto-------------------->\n";
-
-            int countOpenKMSAuto = 0;
-        a:
-            if (!await WinDefenderHelper.CheckDefenderDisable())
+            AddSplitter();
+            
+            do
             {
-                TextConsole += $"Start off defender: \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-                var ResponseDefender = (await WinDefenderHelper.DisableRealtimeMonitoring()).Trim();
-                if (!string.IsNullOrWhiteSpace(ResponseDefender))
-                    TextConsole += $"Response defender: {ResponseDefender}\n";
-                TextConsole += $"End off defender:  \t{DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff")}\n";
-            }
-            var Defender = await WinDefenderHelper.CheckDefenderDisable();
-            TextConsole += $"Defender is disable: {Defender}\n";
-            if (!Defender)
-            {
-                TextConsole += "<-----------------End open KMSAuto--------------------->\n";
-                return;
-            }
-            //------------------------------------------------------------------------------------------------------
-            var pathKMS = _userPathSettingsHelper.Settings.PortablePathSettings.KMSAutoPath;
-            TextConsole += $"Find KMSAuto (Try {countOpenKMSAuto + 1} with 3), Resault:\n";
-            if (!string.IsNullOrWhiteSpace(pathKMS))
-            {
-                TextConsole += $"OK!!!, Path: {pathKMS}\n";
-                Process proc = new Process()
+                if (!WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це не windows 7
                 {
-                    StartInfo = new ProcessStartInfo
+                    if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник увімкнутий
                     {
-                        FileName = pathKMS,
-                        UseShellExecute = false,
+                        await OffDefender(true); // вимикаємо
+                        await Task.Delay(100);
                     }
-                };
-                proc.Start();
-            }
-            else
-            {
-                TextConsole += $"Error, Not Find KMSAuto\n";
-                TextConsole += $"Find Rar.exe, Resault:\n";
-                var RarPath = _userPathSettingsHelper.Settings.PortablePathSettings.RarPath;
-                if (File.Exists(RarPath))
-                {
-                    TextConsole += $"OK!!!, Path: {_userPathSettingsHelper.Settings.PortablePathSettings.RarPath}\n";
-                    var KMSAutoRarPath = _userPathSettingsHelper.Settings.PortablePathSettings.KMSAutoRarPath;
-                    int countUnrar = 0;
-                    TextConsole += $"Find arkhive KMSAuto, Resault:\n";
-                    if (!string.IsNullOrWhiteSpace(KMSAutoRarPath))
+                    if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник досі увімкнутий
                     {
-                        TextConsole += $"OK!!!, Path: {KMSAutoRarPath}\n";
-                    b:
-                        try
-                        {
-                            ProcessStartInfo ps = new ProcessStartInfo();
-                            ps.FileName = RarPath;
-                            //ps.Arguments = $@"x -p1234 -o- {KMSAutoRarPath} {_iOHelper.Crack}";
-                            //TODO FIX!!!!!!!!!!!!
-                            TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
-                            var proc = Process.Start(ps);
-                            if (!proc.WaitForExit(20000))
-                            {
-                                try { proc.Kill(); } catch (Exception) { }
-                                try { proc.Close(); } catch (Exception) { }
+                        TextConsole += "Error: defender is not disabled\n";
+                        break; // виходимо з циклу
+                    }
+                }
 
-                                TextConsole += "Error UnRar\n";
-                                if (countUnrar < 2)
+                var pathKMS = _userPathSettingsHelper.Settings.PortablePathSettings.KMSAutoPath;
+                TextConsole += $"Find KMSAuto (Try {countOpenKMSAuto + 1} with 3), Resault:\n";
+                if (!string.IsNullOrWhiteSpace(pathKMS))
+                {
+                    TextConsole += $"OK!!!, Path: {pathKMS}\n";
+                    Process proc = new Process()
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = pathKMS,
+                            UseShellExecute = false,
+                        }
+                    };
+                    proc.Start();
+                }
+                else
+                {
+                    TextConsole += $"Error, Not Find KMSAuto\n";
+                    TextConsole += $"Find Rar.exe, Resault:\n";
+                    var RarPath = _userPathSettingsHelper.Settings.PortablePathSettings.RarPath;
+                    if (File.Exists(RarPath))
+                    {
+                        TextConsole += $"OK!!!, Path: {_userPathSettingsHelper.Settings.PortablePathSettings.RarPath}\n";
+                        var KMSAutoRarPath = _userPathSettingsHelper.Settings.PortablePathSettings.KMSAutoRarPath;
+                        int countUnrar = 0;
+                        TextConsole += $"Find arkhive KMSAuto, Resault:\n";
+                        if (!string.IsNullOrWhiteSpace(KMSAutoRarPath))
+                        {
+                            TextConsole += $"OK!!!, Path: {KMSAutoRarPath}\n";
+                        b:
+                            try
+                            {
+                                ProcessStartInfo ps = new ProcessStartInfo();
+                                ps.FileName = RarPath;
+                                //ps.Arguments = $@"x -p1234 -o- {KMSAutoRarPath} {_iOHelper.Crack}";
+                                //TODO FIX!!!!!!!!!!!!
+                                TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
+                                var proc = Process.Start(ps);
+                                if (!proc.WaitForExit(20000))
                                 {
-                                    countUnrar++;
-                                    await Task.Delay(5000);
-                                    goto b;
+                                    try { proc.Kill(); } catch (Exception) { }
+                                    try { proc.Close(); } catch (Exception) { }
+
+                                    TextConsole += "Error UnRar\n";
+                                    if (countUnrar < 2)
+                                    {
+                                        countUnrar++;
+                                        await Task.Delay(5000);
+                                        goto b;
+                                    }
+                                }
+                                else
+                                {
+                                    TextConsole += $"OK!!!\n";
                                 }
                             }
-                            else
+                            catch (Exception)
                             {
-                                TextConsole += $"OK!!!\n";
+                                TextConsole += "Error UnRar\n";
+                            }
+                            if (countOpenKMSAuto < 2)
+                            {
+                                countOpenKMSAuto++;
+                                TextConsole += "********************************************************\n";
+
                             }
                         }
-                        catch (Exception)
+                        else
                         {
-                            TextConsole += "Error UnRar\n";
-                        }
-                        if (countOpenKMSAuto < 2)
-                        {
-                            countOpenKMSAuto++;
-                            TextConsole += "********************************************************\n";
-                            goto a;
+                            TextConsole += $"Error, Not Find arkhive KMSAuto\n";
                         }
                     }
                     else
                     {
-                        TextConsole += $"Error, Not Find arkhive KMSAuto\n";
+                        TextConsole += $"Error, Not Find Rar.exe\n";
                     }
                 }
-                else
-                {
-                    TextConsole += $"Error, Not Find Rar.exe\n";
-                }
-            }
-            TextConsole += "<-----------------End open KMSAuto--------------------->\n";
+            }while (true);
+            AddSplitter();
         }
         private void OnOpenAppLog()
         {
