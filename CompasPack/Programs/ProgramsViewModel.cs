@@ -329,7 +329,8 @@ namespace CompasPack.ViewModel
                         {
                             FileName = ExecutableFile,
                             Arguments = arguments,
-                            UseShellExecute = false
+                            UseShellExecute = false,
+                            WorkingDirectory = userProgram.PathFolder
                         };
                         TextConsole += $"File exe: {ExecutableFile}\n";
                     }

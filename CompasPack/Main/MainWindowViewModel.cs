@@ -166,7 +166,8 @@ namespace CompasPack.ViewModel
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = portableProgram.Path
+                        FileName = portableProgram.Path,
+                        WorkingDirectory = Path.GetDirectoryName(portableProgram.Path)
                     }
                 }.Start();
             }
