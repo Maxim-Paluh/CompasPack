@@ -407,6 +407,11 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.manifest" />
+    <None Include="JSON\PortableProgramsSettings.json" />
+    <None Include="JSON\ReportSettings.json" />
+    <None Include="JSON\UserPathSettings.json" />
+    <None Include="JSON\UserPresetSettings.json" />
+    <None Include="JSON\UserProgramsSettings.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -431,7 +436,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
-    <Folder Include="JSON\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">

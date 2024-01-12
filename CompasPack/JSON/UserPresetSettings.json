@@ -1,0 +1,41 @@
+{
+  "UserPresets": [
+    {
+      "Name": "Nothing",
+      "InstallProgramName": []
+    },
+    {
+      "Name": "Windows 7",
+      "InstallProgramName": [
+        "Google Chrome",
+        "Mozilla Firefox",
+        "Opera",
+        "Adobe Acrobat Reader",
+        "FastStone",
+        "K-Lite Codec Pack",
+        "Notepad++",
+        "7-Zip",
+        "WinRAR 4.00",
+        "Unlocker",
+        "Microsoft Security Essentials",
+        "Report Greg_House_M_D"
+      ]
+    },
+    {
+      "Name": "Windows 10",
+      "InstallProgramName": [
+        "Google Chrome",
+        "Mozilla Firefox",
+        "Opera",
+        "Adobe Acrobat Reader",
+        "FastStone",
+        "K-Lite Codec Pack",
+        "Notepad++",
+        "7-Zip",
+        "WinRAR 5.40",
+        "Unlocker",
+        "Report Greg_House_M_D"
+      ]
+    }
+  ]
+}
