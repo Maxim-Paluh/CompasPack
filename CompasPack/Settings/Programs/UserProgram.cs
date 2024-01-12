@@ -12,7 +12,6 @@ namespace CompasPack.Settings
         public string Description { get; set; }
         public string PathFolder { get; set; }  
         public string FileImage { get; set; }
-        public string Architecture { get; set; }
         public string FileName { get; set; }
         public List<string> Arguments { get; set; }
         public OnlineInstaller OnlineInstaller { get; set; }

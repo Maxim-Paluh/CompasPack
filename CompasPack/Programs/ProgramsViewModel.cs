@@ -221,68 +221,63 @@ namespace CompasPack.ViewModel
             var userProgram = userProgramViewMode.UserProgram;
             
             string arguments = null;
-           int countInstall = 0;
-            do
+            int countInstall = 0; // лічильник спроб встановити програму (всього дві спроби)
+            do // цикл встановлення програми (Дві спроби)
             {
-                int countUnzipping = 0;
+                int countUnzipping = 0; // лічильник спроб розпакувати архів якщо інсталятор схавав антивірусник(одна спроба розпакувати на одну спробу встановити програму)
                 string ExecutableFile = null;
-                do
+                do // цикл пошуку файла (цікаво зроблено, він виконується або 0.5 або на 1.5 рази завдяки if (ExecutableFile != null)  break; та if (countUnzipping >= 1)  break;)
                 {
                     if (userProgramViewMode.UserProgram.DisableDefender && !WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це не windows 7
                     {
                         if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник увімкнутий
                         {
                             await OffDefender(true); // вимикаємо
-                            await Task.Delay(100);
+                            await Task.Delay(100); // зачекаємо вимкнення
                         }
                         if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник досі увімкнутий
                         {
-                            TextConsole += "Error: defender is not disabled\n";
-                            break; // виходимо з циклу
+                            TextConsole += "Error: defender is not disabled\n"; // сповіщаємо про помилку
+                            break; // виходимо з циклу (далі буде помилка в циклі встановлення)
                         }
                     }
-                    if (tryOnlineInstall) // якщо є онлайн інсталятор намагаємось його знайти
+                    if (tryOnlineInstall) // якщо є онлайн інсталятор намагаємось його знайти і задаємо аргумент онлайн інсталятора
                     {
                         ExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, userProgram.OnlineInstaller.FileName, userProgram.PathFolder).FirstOrDefault();
                         arguments = string.Join(" ", userProgram.OnlineInstaller.Arguments);
                     }
-                    if (ExecutableFile == null) // якщо онлайн інсталятор не знайдено тоді шукаємо офлайн
+                    if (ExecutableFile == null) // якщо онлайн інсталятор не знайдено тоді шукаємо офлайн і задаємо аргументи офлайн інсталятора
                     {
-                        var tempExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, userProgram.FileName, userProgram.PathFolder);
-                        if (userProgram.Architecture == "x64")
-                        {
-                            if (WinInfoHelper.GetIs64BitOperatingSystem())
-                                ExecutableFile = tempExecutableFile.Where(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-                            else
-                                ExecutableFile = tempExecutableFile.Where(x => x.Contains("x86", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-                        }
-                        else
-                            ExecutableFile = tempExecutableFile.LastOrDefault();
-                        arguments = string.Join(" ", userProgram.Arguments);
+                        var tempExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, userProgram.FileName, userProgram.PathFolder); // ортимуємо список файлів
+                        if (WinInfoHelper.GetIs64BitOperatingSystem()) // якщо наша система х64
+                            ExecutableFile = tempExecutableFile.FirstOrDefault(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)); // то намагаємось знайти файл, що містить х64 в назві
+                        if (ExecutableFile == null) //якщо система не х64 або файла х64 нема
+                            ExecutableFile = tempExecutableFile.LastOrDefault();  // обираємо те що є
+                        arguments = string.Join(" ", userProgram.Arguments); 
                     }
-                    if (ExecutableFile != null) // якщо інсталятор знайдено то покидаємо цикл
-                        break;
+                    if (ExecutableFile != null) // якщо інсталятор знайдено то 
+                        break; // покидаємо цикл пошуку файлу (внутрішній) (далі буде спроба встановити програму) 
                     else // якщо онлайн і офлайн інсталятор не знайдено
                     {
                         TextConsole += $"Not found install file in folder: {userProgram.PathFolder}\n"; // сповіщаємо користувача, що файлу нема
-                        if (countUnzipping >= 1)
-                            break;
-                        if (userProgram.DisableDefender) // якщо треба вимикати антивірусник і файла нема то намагаємось його добути з архіва і попереджаємо користувача      
+                        if (countUnzipping >= 1) // якщо ми вже спробували його розпакувати еле його досі нема
+                            break; // то покидаємо цикл пошуку файлу (далі буде помилка в циклі встановлення)
+                        if (userProgram.DisableDefender) // якщо треба вимикати антивірусник і файла нема то намагаємось його добути з архіва
                         {
-                            if (!File.Exists(_userPath.PortablePathSettings.RarPath))
+                            if (!File.Exists(_userPath.PortablePathSettings.RarPath)) // перевіряємо чи на місці архіватор
                             {
-                                TextConsole += $"Error, Not Find Rar.exe\n";
-                                break;
+                                TextConsole += $"Error, Not Find Rar.exe\n"; // якщо його нема то сповіщаємо користувача
+                                break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі встановлення)
                             }
-                            var pathRar = Directory.GetFiles(userProgram.PathFolder).Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault();
-                            TextConsole += $"Find arkhive {userProgram.FileName}, resault: ";
-                            if (string.IsNullOrWhiteSpace(pathRar))
+                            var pathRar = Directory.GetFiles(userProgram.PathFolder).Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault(); // шукаємо файл архіва
+                            TextConsole += $"Find arkhive {userProgram.FileName}, resault: "; // сповіщаємо користувача
+                            if (string.IsNullOrWhiteSpace(pathRar)) // перевіряємо чи знайдено архів
                             {
-                                TextConsole += $"Error, Not Find arkhive {userProgram.FileName}\n";
-                                break;
+                                TextConsole += $"Error, Not Find arkhive {userProgram.FileName}\n"; // якщо його нема то сповіщаємо користувача
+                                break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі встановлення)
                             }
-                            TextConsole += $"OK!!!, File: {Path.GetFileName(pathRar)}\n";
-                            try
+                            TextConsole += $"OK!!!, File: {Path.GetFileName(pathRar)}\n"; // яповіщаємо користувача, що все гаразд
+                            try // весь try catch це спробу розпакувати архів
                             {
                                 ProcessStartInfo ps = new ProcessStartInfo();
                                 ps.FileName = _userPath.PortablePathSettings.RarPath;
@@ -303,21 +298,22 @@ namespace CompasPack.ViewModel
                             {
                                 TextConsole += "Error unzipping\n";
                             }
-                            countUnzipping++;
+                            countUnzipping++; // лічильник спроб розпакувати архів
                         }
-                        else
-                            break;
+                        else // якщо антивірусник не треба вимикати і файла немає то значить помилився десь користувач
+                            break; //тому покидаємо цикл пошуку файлу(далі буде помилка в циклі встановлення)
                     }
                 } while (true);
-                if (ExecutableFile == null) // якщо файл так і не знайдено то сповіщаємо користувача про це
+                
+                if (ExecutableFile == null) // якщо файл так і не знайдено 
                 {
-                    TextConsole += $"Programs: {userProgram.ProgramName}, not installed!!!\n";
-                    break;
+                    TextConsole += $"Programs: {userProgram.ProgramName}, not installed!!!\n"; //то сповіщаємо користувача про це
+                    break; // і виходимо з циклу встановлення програми
                 }
-                else
+                else // якщо файл знайдено
                 {
                     ProcessStartInfo StartInfo = null;
-                    if (ExecutableFile.EndsWith(".msi"))
+                    if (ExecutableFile.EndsWith(".msi")) // перевіряємо чи це Msi чи Exe і створюємо відповідні ProcessStartInfo
                     {
                         StartInfo = new ProcessStartInfo
                         {
@@ -339,31 +335,30 @@ namespace CompasPack.ViewModel
                     }
                     TextConsole += $"Arguments: {StartInfo.Arguments}\n";
 
-                    try
+                    try // намагаємось встановити програму і очікуємо завершення її встановлення
                     {
                         Process proc = Process.Start(StartInfo);
-                        //await Task.Factory.StartNew(()=>proc.WaitForExit());
-                        //throw new Exception("dfgdfsg");
+                        await Task.Factory.StartNew(() => proc.WaitForExit());
                         TextConsole += $"Programs: {userProgram.ProgramName}, Installed!!!\n";
-                        await Task.Delay(1000);
-                        userProgramViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms());
-                        break;
+                        await Task.Delay(1000); // пауза для CheckInstall (щоб встиг оновитись реєстр)
+                        userProgramViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms()); // CheckInstall
+                        break; // покидаємо цикл встановлення програми
                     }
                     catch (Exception exp)
                     {
                         TextConsole += $"Program: {userProgram.ProgramName}, error install: {exp.Message}\n";
                         if (!userProgram.DisableDefender) // якщо це програма яка не потребує вимкнення антивірусника і її встановелння викликало помилку тоді не пробуємо ставити її ще раз
-                            break;
+                            break; // покидаємо цикл встановлення програми
                     }
 
-                    countInstall++;
+                    countInstall++; // лічильник спроб встановити програму їх як сказано на початку буде лише дві
                     if (countInstall >= 2)
                         break;
                     TextConsole += $"<***************************************************************************>\n";
                 }
             } while (true);
-            if (userProgram.DisableDefender && await WinDefenderHelper.CheckDefenderDisable())
-                await WinDefenderHelper.EnableRealtimeMonitoring();
+            if (userProgram.DisableDefender && await WinDefenderHelper.CheckDefenderDisable()) //якщо треба було вимкнути антивірусник  і він вимкнутий
+                await WinDefenderHelper.EnableRealtimeMonitoring(); // вмикаємо назад
         }
 
 
@@ -391,108 +386,117 @@ namespace CompasPack.ViewModel
         }
         private async void OpenKMSAuto()
         {
-            int countOpenKMSAuto = 0;
-            if (!WinDefenderHelper.CheckTamperProtectionDisable())
+            if (!WinDefenderHelper.CheckTamperProtectionDisable()) // Перевіряємо чи можемо ми вимкнути антивірусник
             {
-                _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
-                return;
+                _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!"); // якщо ні то сповіщаємо користувача
+                return; // виходимо
             }
+            IsEnabled = false;
             AddSplitter();
-            
-            do
+            TextConsole += $"Start open KMSAuto\n";
+            int countOpenKMSAuto = 0;
+            do // цикл запуску KMSAuto (Дві спроби)
             {
-                if (!WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це не windows 7
+                int countUnzipping = 0;
+                string ExecutableFile = null;
+                do // цикл пошуку файла (цікаво зроблено, він виконується або 0.5 або на 1.5 рази)
                 {
-                    if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник увімкнутий
+                    if (!WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це не windows 7
                     {
-                        await OffDefender(true); // вимикаємо
-                        await Task.Delay(100);
-                    }
-                    if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник досі увімкнутий
-                    {
-                        TextConsole += "Error: defender is not disabled\n";
-                        break; // виходимо з циклу
-                    }
-                }
-
-                TextConsole += $"Find KMSAuto, Resault: ";
-                if (File.Exists(_userPath.PortablePathSettings.KMSAutoPath))
-                {
-                    TextConsole += $"OK!!!\n";
-                    Process proc = new Process()
-                    {
-                        StartInfo = new ProcessStartInfo
+                        if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник увімкнутий
                         {
-                            FileName = _userPath.PortablePathSettings.KMSAutoPath,
-                            UseShellExecute = false,
+                            await OffDefender(true); // вимикаємо
+                            await Task.Delay(100);
                         }
+                        if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник досі увімкнутий
+                        {
+                            TextConsole += "Error: defender is not disabled\n";
+                            break; // виходимо з циклу
+                        }
+                    }
+                    if (File.Exists(_userPath.PortablePathSettings.KMSAutoPath)) // якщо KMSAuto є на свому місці
+                    {
+                        ExecutableFile = _userPath.PortablePathSettings.KMSAutoPath; // назначаємо його
+                        break; // покидаємо цикл пошуку файлу (внутрішній) (далі буде спроба запустити KMSAuto) 
+                    }
+                    else // якщо файла нема
+                    {
+                        TextConsole += $"Not found KMSAuto\n"; // сповіщаємо користувача, що файлу нема
+                        if (countUnzipping >= 1) // якщо ми вже спробували його розпакувати еле його досі нема
+                            break; // то покидаємо цикл пошуку файлу(далі буде помилка в циклі встановлення)
+                        if (!File.Exists(_userPath.PortablePathSettings.RarPath)) // перевіряємо чи на місці архіватор
+                        {
+                            TextConsole += $"Error, Not Find Rar.exe\n"; // якщо його нема то сповіщаємо користувача
+                            break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі запуска KMSAuto)
+                        }
+                        TextConsole += $"Find arkhive {Path.GetFileName(_userPath.PortablePathSettings.KMSAutoRarPath)}, resault: ";
+                        if (!File.Exists(_userPath.PortablePathSettings.KMSAutoRarPath)) // перевіряємо чи знайдено архів
+                        {
+                            TextConsole += $"Error, not Find arkhive!\n"; // якщо його нема то сповіщаємо користувача
+                            break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі запуска KMSAuto)
+                        }
+                        TextConsole += $"OK!\n";
+                        try // весь try catch це спробу розпакувати архів
+                        {
+                            ProcessStartInfo ps = new ProcessStartInfo();
+                            ps.FileName = _userPath.PortablePathSettings.RarPath;
+                            ps.Arguments = $@"x -p1234 -o- {_userPath.PortablePathSettings.KMSAutoRarPath} {Path.GetDirectoryName(_userPath.PortablePathSettings.KMSAutoRarPath)}";
+                            TextConsole += $"Start unzipping, resault: ";
+                            var proc = Process.Start(ps);
+                            if (!proc.WaitForExit(20000))
+                            {
+                                try { proc.Kill(); } catch (Exception) { }
+                                try { proc.Close(); } catch (Exception) { }
+
+                                TextConsole += "Time out unzipping\n";
+                            }
+                            else
+                                TextConsole += $"OK!!!\n";
+                        }
+                        catch (Exception)
+                        {
+                            TextConsole += "Error unzipping\n";
+                        }
+                        countUnzipping++; // лічильник спроб розпакувати архів
+                    }
+                } while (true);
+                if (ExecutableFile == null) // якщо KMSAuto так і не знайдено то
+                {
+                    TextConsole += $"KMSAuto is not open!!!\n"; //сповіщаємо користувача про це (далі ще раз спробуємо знайти файл якщо не вичерпано ліміт спроб)
+                }
+                else // якщо KMSAuto знайдено
+                {
+                    var StartInfo = new ProcessStartInfo // ProcessStartInfo
+                    {
+                        FileName = ExecutableFile,
+                        UseShellExecute = false,
                     };
-                    proc.Start();
-                }
-                else
-                {
-                    TextConsole += $"Error\n";
-                    TextConsole += $"Find Rar.exe, Resault:\n";
-                    var RarPath = _userPathSettingsHelper.Settings.PortablePathSettings.RarPath;
-                    if (File.Exists(RarPath))
+                    try // спроба запустити
                     {
-                        TextConsole += $"OK!!!, Path: {_userPathSettingsHelper.Settings.PortablePathSettings.RarPath}\n";
-                        var KMSAutoRarPath = _userPathSettingsHelper.Settings.PortablePathSettings.KMSAutoRarPath;
-                        int countUnrar = 0;
-                        TextConsole += $"Find arkhive KMSAuto, Resault:\n";
-                        if (!string.IsNullOrWhiteSpace(KMSAutoRarPath))
+                        Process proc = Process.Start(StartInfo);
+                        TextConsole += $"KMSAuto open\n";
+                        AddSplitter();
+                        await Task.Run(() => proc.WaitForExit()); // очыкуэмо завершення роботи програми
+                        break; // покидаэмо цикл запуску програми
+                    }
+                    catch (Exception exp)
+                    {
+                        TextConsole += $"KMSAuto error open: {exp.Message}\n"; // якщо сталась помилка сповыщаэмо про це
+                        if (countOpenKMSAuto + 1 < 2)
                         {
-                            TextConsole += $"OK!!!, Path: {KMSAutoRarPath}\n";
-                        b:
-                            try
-                            {
-                                ProcessStartInfo ps = new ProcessStartInfo();
-                                ps.FileName = RarPath;
-                                //ps.Arguments = $@"x -p1234 -o- {KMSAutoRarPath} {_iOHelper.Crack}";
-                                //TODO FIX!!!!!!!!!!!!
-                                TextConsole += $"Start UnRar with Args (Try {countUnrar + 1} with 3):\n{ps.Arguments}, Resault:\n";
-                                var proc = Process.Start(ps);
-                                if (!proc.WaitForExit(20000))
-                                {
-                                    try { proc.Kill(); } catch (Exception) { }
-                                    try { proc.Close(); } catch (Exception) { }
-
-                                    TextConsole += "Error UnRar\n";
-                                    if (countUnrar < 2)
-                                    {
-                                        countUnrar++;
-                                        await Task.Delay(5000);
-                                        goto b;
-                                    }
-                                }
-                                else
-                                {
-                                    TextConsole += $"OK!!!\n";
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                TextConsole += "Error UnRar\n";
-                            }
-                            if (countOpenKMSAuto < 2)
-                            {
-                                countOpenKMSAuto++;
-                                TextConsole += "********************************************************\n";
-
-                            }
-                        }
-                        else
-                        {
-                            TextConsole += $"Error, Not Find arkhive KMSAuto\n";
+                            TextConsole += $"Pause 20 seconds...\n";
+                            await Task.Delay(20000); // пауза для того щоб антивірусник "відпустив" файл
                         }
                     }
-                    else
-                    {
-                        TextConsole += $"Error, Not Find Rar.exe\n";
-                    }
                 }
-            }while (true);
+                countOpenKMSAuto++; // збільшуємо лічильник спроб запуску
+                if (countOpenKMSAuto >= 2) // перевіряємо кількість спроб запуску
+                    break; // виходимо якщо їх було дві
+                TextConsole += $"<***************************************************************************>\n";
+            } while (true);
             AddSplitter();
+            IsEnabled = true;
+            await WinDefenderHelper.EnableRealtimeMonitoring();
         }
         private void OnOpenAppLog()
         {
