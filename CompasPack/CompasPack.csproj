@@ -55,6 +55,9 @@
   <PropertyGroup>
     <ApplicationIcon>CompasPack.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=7.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.7.1.0\lib\netstandard2.0\Autofac.dll</HintPath>
@@ -450,4 +453,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>XCOPY "$(ProjectDir)JSON\" "$(TargetDir)Settings" /S /Y /I</PostBuildEvent>
+  </PropertyGroup>
 </Project>
