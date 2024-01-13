@@ -2,21 +2,21 @@
   "PathFolderPrograms": "Comp@s\\CompasPack\\!Install",
   "PathFolderImageProgram": "Comp@s\\CompasPack\\!Install\\!Sample\\Icon",
   "PathExampleFile": "Comp@s\\CompasPack\\!Install\\!Sample",
-   
-  "ReportPathSettings": {
-	  "AidaExeFilePath" : "Comp@s\\CompasPack\\!Portable\\AIDA64\\aida64.exe",
-	  "LogInstallRPF" : "Comp@s\\CompasPack\\!Portable\\AIDA64\\ForLog.rpf",
-	  "ReportRPF" : "Comp@s\\CompasPack\\!Portable\\AIDA64\\ForReport.rpf",
-	  "MonitorReportRPF" : "Comp@s\\CompasPack\\!Portable\\AIDA64\\ForMonitor.rpf",
-	  
-	  "LaptopReportPath" : "Report\\laptop",
-	  "PCReportPath" : "Report\\pc",
-	  "MonitorReportPath" : "Report\\monitor",
-	  
-	  "LaptopPricePath" : "PriceSource\\PriceLaptop.docx",
-	  "PCPricePath" : "PriceSource\\PricePC.docx",
-	  "MonitorPricePath" : "PriceSource\\PriceMonitor.docx"
-  },
+
+	"ReportPathSettings": {
+		"AidaExeFilePath": "Comp@s\\CompasPack\\!Portable\\AIDA64\\aida64.exe",
+		"LogInstallRPF": "Comp@s\\CompasPack\\!Portable\\AIDA64\\ForLog.rpf",
+		"ReportRPF": "Comp@s\\CompasPack\\!Portable\\AIDA64\\ForReport.rpf",
+		"MonitorReportRPF": "Comp@s\\CompasPack\\!Portable\\AIDA64\\ForMonitor.rpf",
+
+		"LaptopReportPath": "Comp@s\\CompasPack\\!Report\\laptop",
+		"PCReportPath": "Comp@s\\CompasPack\\!Report\\pc",
+		"MonitorReportPath": "Comp@s\\CompasPack\\!Report\\monitor",
+
+		"LaptopPricePath": "Comp@s\\CompasPack\\!CompasPack\\PriceSource\\PriceLaptop.docx",
+		"PCPricePath": "Comp@s\\CompasPack\\!CompasPack\\PriceSource\\PricePC.docx",
+		"MonitorPricePath": "Comp@s\\CompasPack\\!CompasPack\\PriceSource\\PriceMonitor.docx"
+	},
   
   "PortablePathSettings" : {
 	  "RarPath" : "Comp@s\\CompasPack\\!Portable\\WinRAR\\WinRAR.exe",
