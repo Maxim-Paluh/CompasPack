@@ -102,7 +102,7 @@ namespace CompasPack.ViewModel
             }
             try
             {
-                await AidaReportHelper.GetAidaReport(_userPath.ReportPathSettings.AidaExeFilePath, System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}."), "/HML", RPFFilePath);
+                await AidaReportHelper.GetAidaReport(_userPath.ReportPathSettings.AidaExeFilePath, System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}."), "/HML", RPFFilePath, 240);
             }
             catch (Exception exception)
             {

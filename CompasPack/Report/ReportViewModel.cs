@@ -120,7 +120,7 @@ namespace CompasPack.ViewModel
                     try
                     {
                         await AidaReportHelper.GetAidaReport(_userPath.ReportPathSettings.AidaExeFilePath, Path.Combine(_iOHelper.CompasPackLog, "Report."),
-                                                                           "/XML", _userPath.ReportPathSettings.ReportRPF);
+                                                                           "/XML", _userPath.ReportPathSettings.ReportRPF,120);
                         tempAidaReport = true;
                     }
                     catch (Exception)
@@ -134,7 +134,7 @@ namespace CompasPack.ViewModel
                     try
                     {
                         await AidaReportHelper.GetAidaReport(_userPath.ReportPathSettings.AidaExeFilePath, Path.Combine(_iOHelper.CompasPackLog, "Report."),
-                                                                           "/XML", _userPath.ReportPathSettings.ReportRPF);
+                                                                           "/XML", _userPath.ReportPathSettings.ReportRPF, 120);
                         tempAidaReport = true;
                     }
                     catch (Exception)

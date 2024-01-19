@@ -13,7 +13,7 @@ namespace CompasPack.Helper
 {
     public static class AidaReportHelper
     {
-        public static async Task GetAidaReport(string aidaExeFilePath, string reportPath, string type, string rpfPath)
+        public static async Task GetAidaReport(string aidaExeFilePath, string reportPath, string type, string rpfPath, int secondswait)
         {
             if (string.IsNullOrWhiteSpace(aidaExeFilePath))
                 throw new ArgumentException($"{nameof(aidaExeFilePath)} Is Null Or White Space");
@@ -37,7 +37,7 @@ namespace CompasPack.Helper
                 proc = Process.Start(StartInfo);// TODO
                 await Task.Factory.StartNew(() =>
                 {
-                    if (!proc.WaitForExit(60000))
+                    if (!proc.WaitForExit(secondswait*1000))
                     {
                         throw new Exception("Aida report time out");
                     }

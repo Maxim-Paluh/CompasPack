@@ -23,7 +23,7 @@ namespace LogInstall
                 var Root = Path.GetPathRoot(CurrentDirectory);
                 var aidaExe = Path.Combine(Root, ReadAllTextAsync("AidaPath.txt"));
                 var aidaRPF = Path.Combine(Path.GetDirectoryName(aidaExe), "ForLog.rpf");
-                GetAidaReport(aidaExe, CompasPackLogFile, "/HML", aidaRPF);
+                GetAidaReport(aidaExe, CompasPackLogFile, "/HML", aidaRPF, 240);
                 Thread.Sleep(1000);
             }
             catch (Exception ex)
@@ -33,7 +33,7 @@ namespace LogInstall
             }
         }
 
-        public static void GetAidaReport(string aidaExeFilePath, string reportPath, string type, string rpfPath)
+        public static void GetAidaReport(string aidaExeFilePath, string reportPath, string type, string rpfPath, int secondswait)
         {
             if (string.IsNullOrWhiteSpace(aidaExeFilePath))
                 throw new ArgumentException($"{nameof(aidaExeFilePath)} Is Null Or White Space");
@@ -58,7 +58,7 @@ namespace LogInstall
                 Console.WriteLine("Запущено генерацiю звiту з такими параметрами:");
                 Console.WriteLine($"FileName: {StartInfo.FileName}");
                 Console.WriteLine($"Arguments: {StartInfo.Arguments}");
-                if (!proc.WaitForExit(60000))
+                if (!proc.WaitForExit(secondswait*1000))
                 {
                     throw new Exception("Aida report time out");
                 }
