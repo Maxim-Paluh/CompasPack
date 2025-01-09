@@ -76,7 +76,7 @@
                 <MenuItem Header="Тема">
                     <MenuItem Header="Світла"></MenuItem>
                 </MenuItem>
-                <MenuItem Header="Налаштування"></MenuItem>
+                <MenuItem Header="Налаштування" Command="{Binding OpenSettingsCommand}"></MenuItem>
                 </MenuItem>
             <MenuItem Header=" Довідка">
                 <MenuItem Header="Перевірити оновлення" Command="{Binding CheckUpdateProgramCommand}"></MenuItem>

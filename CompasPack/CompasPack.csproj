@@ -221,6 +221,10 @@
     <Compile Include="Service\TextBoxUtilities.cs" />
     <Compile Include="Settings\Common\BaseSettingsViewModel.cs" />
     <Compile Include="Settings\Common\SettringsHelperBase.cs" />
+    <Compile Include="Settings\MainSettingsViewModel.cs" />
+    <Compile Include="Settings\MainSettingsView.xaml.cs">
+      <DependentUpon>MainSettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\Portable\PortableProgram.cs" />
     <Compile Include="Settings\Portable\PortableProgramsSettingsHelper.cs" />
     <Compile Include="Settings\Programs\GroupPrograms.cs" />
@@ -231,10 +235,10 @@
     <Compile Include="Settings\Report\ReportSettingsSettingsHelper.cs" />
     <Compile Include="Settings\UserPath\UserPath.cs" />
     <Compile Include="Settings\UserPath\UserPathSettingsHelper.cs" />
-    <Compile Include="Settings\UserPath\UserPathTabView.xaml.cs">
-      <DependentUpon>UserPathTabView.xaml</DependentUpon>
+    <Compile Include="Settings\UserPath\UserPathSettingsTabView.xaml.cs">
+      <DependentUpon>UserPathSettingsTabView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Settings\UserPath\UserPathTabViewModel.cs" />
+    <Compile Include="Settings\UserPath\UserPathSettingsTabViewModel.cs" />
     <Compile Include="Settings\UserPreset\UserPreset.cs" />
     <Compile Include="Settings\UserPreset\UserPresetSettingsHelper.cs" />
     <Compile Include="Startup\Bootstrapper.cs" />
@@ -246,7 +250,9 @@
     <Compile Include="Wrapper\Base\ModelWrapper.cs" />
     <Compile Include="Wrapper\Base\NotifyDataErrorInfoBase.cs" />
     <Compile Include="Wrapper\Settings\GroupsProgramsWrapper.cs" />
-    <Compile Include="Wrapper\Settings\UserPathWrapper.cs" />
+    <Compile Include="Wrapper\Settings\UserPath\PortablePathSettingsWrapper.cs" />
+    <Compile Include="Wrapper\Settings\UserPath\ReportPathSettingsWrapper.cs" />
+    <Compile Include="Wrapper\Settings\UserPath\UserPathWrapper.cs" />
     <Page Include="About\AboutView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -367,7 +373,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Settings\UserPath\UserPathTabView.xaml">
+    <Page Include="Settings\MainSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Settings\UserPath\UserPathSettingsTabView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

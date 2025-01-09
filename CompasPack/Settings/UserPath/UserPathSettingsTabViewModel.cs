@@ -7,13 +7,13 @@ using CompasPack.View.Service;
 
 namespace CompasPack.Settings
 {
-    public class UserPathTabViewModel: BaseSettingsViewModel<UserPath, UserPathWrapper, UserPathSettingsHelper>
+    public class UserPathSettingsTabViewModel: BaseSettingsViewModel<UserPath, UserPathWrapper, UserPathSettingsHelper>
     {
         #region Properties
         #endregion
 
         #region Constructor
-        public UserPathTabViewModel(IMessageDialogService messageDialogService, UserPathSettingsHelper settingsHelper) : base(messageDialogService, settingsHelper)
+        public UserPathSettingsTabViewModel(IMessageDialogService messageDialogService, UserPathSettingsHelper settingsHelper) : base(messageDialogService, settingsHelper)
         {
             Title = "Шляхи";
         }

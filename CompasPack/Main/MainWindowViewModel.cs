@@ -13,12 +13,14 @@ using CompasPack.Helper;
 using CompasPack.Settings.Portable;
 using System.Collections.ObjectModel;
 using CompasPack.Service;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace CompasPack.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
         private IMessageDialogService _messageDialogService;
+        private readonly Func<MainSettingsView> _mainSettingsViewCreator;
         private readonly IIOHelper _iOHelper;
         private IDetailViewModel _formViewModel;
         private readonly IIndex<string, IDetailViewModel> _formViewModelCreator;
@@ -74,7 +76,8 @@ namespace CompasPack.ViewModel
             UserProgramsSettingsHelper userProgramsSettingsHelper,
             UserPresetSettingsHelper userPresetSettingsHelper,
             ReportSettingsSettingsHelper reportSettingsSettingsHelper,
-            PortableProgramsSettingsHelper portableProgramsSettingsHelper)
+            PortableProgramsSettingsHelper portableProgramsSettingsHelper,
+            Func<MainSettingsView> MainSettingsViewCreator)
         {
             _messageDialogService = messageDialogService;
             _iOHelper = iOHelper;
@@ -84,6 +87,7 @@ namespace CompasPack.ViewModel
             _userPresetSettingsHelper = userPresetSettingsHelper;
             _reportSettingsSettingsHelper = reportSettingsSettingsHelper;
             _portableProgramsSettingsHelper = portableProgramsSettingsHelper;
+            _mainSettingsViewCreator = MainSettingsViewCreator;
             //--------------------------------------------------------------------
             ProgramsIsEnabled = true;
             ReportIsEnabled = true;
@@ -91,6 +95,7 @@ namespace CompasPack.ViewModel
             PortablePrograms = new ObservableCollection<PortableProgram>();
             //--------------------------------------------------------------------
             ClosedAppCommand = new DelegateCommand(OnClosedApp);
+            OpenSettingsCommand = new DelegateCommand(OnOpenSettings);
             CheckUpdateProgramCommand = new DelegateCommand(OnCheckUpdateProgram);
             AboutProgramCommand = new DelegateCommand(OnAboutProgram);
             CreateFormCommand = new DelegateCommand<Type>(OnCreateNewFormExecute);
@@ -179,6 +184,12 @@ namespace CompasPack.ViewModel
         {
             System.Windows.Application.Current.Shutdown();
         }
+        private async void OnOpenSettings()
+        {
+            var mainSettingsView = _mainSettingsViewCreator.Invoke();
+            mainSettingsView.ShowDialog();
+            await LoadAsync(); //TODO Змінити це в залежності від принципу роботи збереження налаштувань для оптимізації
+        }
         private void OnCheckUpdateProgram()
         {
             _messageDialogService.ShowInfoDialog("В даний момент ця функція відсутня, зверніться до розробника!", "Помилка!");
@@ -210,6 +221,7 @@ namespace CompasPack.ViewModel
         }
         //--------------------------------------
         public ICommand ClosedAppCommand { get; }
+        public ICommand OpenSettingsCommand { get; set; }
         public ICommand CheckUpdateProgramCommand { get; }
         public ICommand AboutProgramCommand { get; }
         public ICommand CreateFormCommand { get; set; }

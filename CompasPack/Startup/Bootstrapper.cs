@@ -22,6 +22,10 @@ namespace CompasPack.Startup
 
             builder.RegisterType<ProgramsViewModel>().Keyed<IDetailViewModel>(nameof(ProgramsViewModel));
             builder.RegisterType<ReportViewModel>().Keyed<IDetailViewModel>(nameof(ReportViewModel));
+            
+            builder.RegisterType<MainSettingsView>().AsSelf();
+            builder.RegisterType<MainSettingsViewModel>().AsSelf();
+            builder.RegisterType<UserPathSettingsTabViewModel>().Keyed<ISettingsViewModel>(nameof(UserPathSettingsTabViewModel));
 
 
             /////////////////////////////////////////////////////////////////////////////////
