@@ -8,111 +8,121 @@
              mc:Ignorable="d" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:Src="clr-namespace:CompasPack.View.Service"
-             d:DesignHeight="450" d:DesignWidth="1100">
+             d:DesignHeight="450" d:DesignWidth="1500">
     <UserControl.Resources>
-        <Src:InstallConverter x:Key="InstallConvertor"/>
-        <Src:IsInstallConverter x:Key="IsInstallConverter"/>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
-        <DataTemplate x:Key="GroupProgram">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <Border BorderBrush="DarkBlue" Background="AliceBlue" Margin="2" BorderThickness="1" CornerRadius="3">
-                    <Grid Margin="5">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Button Grid.Row="0" Content="{Binding GroupProgram.Name, Mode=OneTime}" Command="{Binding SetVisibilityCommand}">
-                            <Button.ToolTip>
-                                <Label Content="{Binding GroupProgram.Description, Mode=OneTime}"></Label>
-                            </Button.ToolTip>
-                        </Button>
-                        <ItemsControl  Grid.Row="1" Visibility="{Binding IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding UserProgramViewModels}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button Margin="3" 
-                                            IsEnabled="{Binding Path=DataContext.IsEnabled, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"  
-                                            Command="{Binding SelectProgramCommand}"
-                                            MinWidth="120">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border Background="{Binding Install, Converter={StaticResource InstallConvertor}}" BorderBrush="Gray" BorderThickness="1" CornerRadius="1">
-                                                    <ContentPresenter RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                        <Grid Margin="1">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="55"></ColumnDefinition>
-                                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="16"></RowDefinition>
-                                                <RowDefinition Height="16"></RowDefinition>
-                                                <RowDefinition Height="16"></RowDefinition>
-                                            </Grid.RowDefinitions>
-                                            <Image Grid.Column="0" Width="48" Height="48" Grid.RowSpan="3" Source="{Binding UserProgram.FileImage, Mode=OneTime}"></Image>
+        <ResourceDictionary>
+            <!-- Підключення вашого ResourceDictionary -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ProgramsDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <!-- Інші ресурси тут, якщо потрібно -->
+            <Src:InstallConverter x:Key="InstallConvertor"/>
+            <Src:IsInstallConverter x:Key="IsInstallConverter"/>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
-                                            <TextBlock  Height="16" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding UserProgram.ProgramName, Mode=OneTime}"></TextBlock>
-                                            <TextBlock  Height="16" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="Text" Value="Paid" />
-                                                        <Setter Property="Foreground" Value="Red" />
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding UserProgram.IsFree, Mode=OneTime}" Value="True">
-                                                                <Setter Property="Text" Value="Free" />
-                                                                <Setter Property="Foreground" Value="Green" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                            <Ellipse   Height="11" Grid.Column="2" Grid.Row="2" Width="11" Fill="{Binding IsInstall, Converter={StaticResource IsInstallConverter}}" Visibility="{Binding VisibilityIsInstall, Converter={StaticResource BooleanToVisibilityConverter}}"></Ellipse>
-                                            <Grid.ToolTip>
-                                                <Grid>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto"></RowDefinition>
-                                                        <RowDefinition Height="Auto"></RowDefinition>
-                                                        <RowDefinition Height="Auto"></RowDefinition>
-                                                        <RowDefinition Height="Auto"></RowDefinition>
-                                                        <RowDefinition Height="Auto"></RowDefinition>
-                                                    </Grid.RowDefinitions>
-                                                    <Grid.ColumnDefinitions>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Label Grid.Row="1" Content="{Binding UserProgram.Description, Mode=OneTime}"></Label>
-                                                    <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                                        <Label Content="Path Folder:"></Label>
-                                                        <Label Content="{Binding UserProgram.PathFolder, Mode=OneTime}"></Label>
-                                                    </StackPanel>
-                                                    <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                                        <Label Content="File Name:"></Label>
-                                                        <Label Content="{Binding UserProgram.FileName, Mode=OneTime}"></Label>
-                                                    </StackPanel>
-                                                    <StackPanel Grid.Row="4">
-                                                        <Label Content="Arguments:"></Label>
-                                                        <ItemsControl Margin="10 0 0 0" ItemsSource="{Binding UserProgram.Arguments, Mode=OneTime}"/>
-                                                    </StackPanel>
-                                                </Grid>
-                                            </Grid.ToolTip>
-                                        </Grid>
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                        </ItemsControl>
-                    </Grid>
-                </Border>
-            </ScrollViewer>
-        </DataTemplate>
+            <DataTemplate x:Key="GroupProgram">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Border BorderBrush="DarkBlue" Background="AliceBlue" Margin="2" BorderThickness="1" CornerRadius="3">
+                        <Grid Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Button Grid.Row="0" Content="{Binding GroupProgram.Name, Mode=OneTime}" Command="{Binding SetVisibilityCommand}">
+                                <Button.ToolTip>
+                                    <Label Content="{Binding GroupProgram.Description, Mode=OneTime}"></Label>
+                                </Button.ToolTip>
+                            </Button>
+                            <ItemsControl  Grid.Row="1" Visibility="{Binding IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding UserProgramViewModels}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Margin="3" 
+                                    IsEnabled="{Binding Path=DataContext.IsEnabled, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"  
+                                    Command="{Binding SelectProgramCommand}"
+                                    MinWidth="120">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{Binding Install, Converter={StaticResource InstallConvertor}}" BorderBrush="Gray" BorderThickness="1" CornerRadius="1">
+                                                        <ContentPresenter RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                            <Grid Margin="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="55"></ColumnDefinition>
+                                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="16"></RowDefinition>
+                                                    <RowDefinition Height="16"></RowDefinition>
+                                                    <RowDefinition Height="16"></RowDefinition>
+                                                </Grid.RowDefinitions>
+                                                <Image Grid.Column="0" Width="48" Height="48" Grid.RowSpan="3" Source="{Binding UserProgram.FileImage, Mode=OneTime}"></Image>
+
+                                                <TextBlock  Height="16" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding UserProgram.ProgramName, Mode=OneTime}"></TextBlock>
+                                                <TextBlock  Height="16" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="Paid" />
+                                                            <Setter Property="Foreground" Value="Red" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding UserProgram.IsFree, Mode=OneTime}" Value="True">
+                                                                    <Setter Property="Text" Value="Free" />
+                                                                    <Setter Property="Foreground" Value="Green" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <Ellipse   Height="11" Grid.Column="2" Grid.Row="2" Width="11" Fill="{Binding IsInstall, Converter={StaticResource IsInstallConverter}}" Visibility="{Binding VisibilityIsInstall, Converter={StaticResource BooleanToVisibilityConverter}}"></Ellipse>
+                                                <Grid.ToolTip>
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto"></RowDefinition>
+                                                            <RowDefinition Height="Auto"></RowDefinition>
+                                                            <RowDefinition Height="Auto"></RowDefinition>
+                                                            <RowDefinition Height="Auto"></RowDefinition>
+                                                            <RowDefinition Height="Auto"></RowDefinition>
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.ColumnDefinitions>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Grid.Row="1" Content="{Binding UserProgram.Description, Mode=OneTime}"></Label>
+                                                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                                            <Label Content="Path Folder:"></Label>
+                                                            <Label Content="{Binding UserProgram.PathFolder, Mode=OneTime}"></Label>
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                                            <Label Content="File Name:"></Label>
+                                                            <Label Content="{Binding UserProgram.FileName, Mode=OneTime}"></Label>
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Row="4">
+                                                            <Label Content="Arguments:"></Label>
+                                                            <ItemsControl Margin="10 0 0 0" ItemsSource="{Binding UserProgram.Arguments, Mode=OneTime}"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Grid.ToolTip>
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </Grid>
+                    </Border>
+                </ScrollViewer>
+            </DataTemplate>
+        </ResourceDictionary>
+
+        
     </UserControl.Resources>
-    
-    
+
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2.5*"></ColumnDefinition>
@@ -137,49 +147,48 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <TextBlock Margin="0 0 3 0" Text="Шаблон:"></TextBlock>
-                <ComboBox IsEnabled="{Binding IsEnabled}" Grid.Column="1" Width="auto"
+                <TextBlock Grid.Column="0" Grid.Row="0"  Margin="0 0 3 0" Text="Шаблон:" FontWeight="Bold" VerticalAlignment="Top" Height="19.96"></TextBlock>
+                <ComboBox Grid.Column="1" Grid.Row="0" IsEnabled="{Binding IsEnabled}"  Width="auto" Height="22"
                 ItemsSource="{Binding UserPresetPrograms}"
                 DisplayMemberPath="Name"
                 SelectedValuePath="Name"
                 SelectedValue="{Binding SelectedUserPreset, Mode=TwoWay}">
-                    <!--<i:Interaction.Triggers>
-                        <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
-                            <i:InvokeCommandAction Command="{Binding SelectUserPresetCommand}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>-->
-                    
+
                     <i:Interaction.Behaviors>
                         <Service:ClickComboBoxBehavior Command="{Binding SelectUserPresetCommand}" />
                     </i:Interaction.Behaviors>
                 </ComboBox>
-                <Button Grid.Column="2" IsEnabled="{Binding IsEnabled}" Margin="5 3 5 0" Command="{Binding OnlyFreeCommand}" Content="Only Free"></Button>
+                <Button Template="{DynamicResource RoundedButton}" Grid.Column="2" IsEnabled="{Binding IsEnabled}" Margin="5 0 5 0"  Width="75" Command="{Binding OnlyFreeCommand}"  Content="Only Free"></Button>
             </Grid>
 
             <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="42*"/>
+                    <ColumnDefinition Width="383*"/>
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <WrapPanel  Grid.Row="0">
-                    <TextBlock Margin="0 0 14 0" Text="Before:"></TextBlock>
-                    <Button Content="AUC" Margin="0 0 5 5"  Command="{Binding AUCCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
-                    <Button Content="Icon" Margin="0 0 5 5" Command="{Binding IconCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
-                    <Button Content="DesktopIcon" Margin="0 0 5 5" Command="{Binding OpenDesktopIconSettingsCommand}" Width="75" Style="{StaticResource ChangeColorButton}">
+                <WrapPanel  Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,70">
+                    <TextBlock Margin="0 0 34 0" Text="До:" ToolTip="Кроки котрі бажано виконати до встановлення набору програм" FontWeight="Bold" Height="19.96" VerticalAlignment="Top"></TextBlock>
+                    <Button Template="{DynamicResource RoundedButton}" Content="AUC" Margin="0 0 5 5"  Command="{Binding AUCCommand}" Height="22" Width="75" Style="{StaticResource ChangeColorButton}" ></Button>
+                    <Button Template="{DynamicResource RoundedButton}" Content="Icon" Margin="0 0 5 5" Command="{Binding IconCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                    <Button Template="{DynamicResource RoundedButton}" Content="DesktopIcon" Margin="0 0 5 5" Command="{Binding OpenDesktopIconSettingsCommand}" Width="75" Style="{StaticResource ChangeColorButton}">
                     </Button>
                 </WrapPanel>
-                <WrapPanel Grid.Row="1">
-                    <TextBlock Margin="0 0 22 0" Text="After:"></TextBlock>
-                    <Button Content="Default" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding DefaultCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
-                    <Button Content="Example File" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenExampleFileCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
-                    <Button Content="KMSAuto" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenKMSAutoCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
-                    <Button Content="AppLog" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenAppLogCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                <WrapPanel Grid.ColumnSpan="2" Margin="0,27,0,43">
+                    <TextBlock Margin="0 0 18 0" Text="Після:" ToolTip="Кроки котрі виконуються після встановлення набору програм" FontWeight="Bold" Height="19.96" VerticalAlignment="Top"></TextBlock>
+                    <Button Template="{DynamicResource RoundedButton}" Content="Default" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding DefaultCommand}" Height="22" Width="75" Style="{StaticResource ChangeColorButton}" ></Button>
+                    <Button Template="{DynamicResource RoundedButton}" Content="Example File" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenExampleFileCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                    <Button Template="{DynamicResource RoundedButton}" Content="KMSAuto" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenKMSAutoCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                    <Button Template="{DynamicResource RoundedButton}" Content="AppLog" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenAppLogCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
                 </WrapPanel>
-                <WrapPanel Grid.Row="2">
-                    <Button Content="SpeedTest" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding SpeedTestCommand}" Width="75"></Button>
-                    <Button Content="OffDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OffDefenderCommand}" Width="75"></Button>
-                    <Button Content="OnDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OnDefenderCommand}" Width="75"></Button>
+                <WrapPanel Grid.ColumnSpan="2" Margin="0,54,0,18">
+                    <Button Template="{DynamicResource RoundedButton}" Content="SpeedTest" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding SpeedTestCommand}" Width="75"></Button>
+                    <Button Template="{DynamicResource RoundedButton}" Content="OffDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OffDefenderCommand}" Width="75"></Button>
+                    <Button Template="{DynamicResource RoundedButton}" Content="OnDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OnDefenderCommand}" Width="75"></Button>
                 </WrapPanel>
             </Grid>
 
