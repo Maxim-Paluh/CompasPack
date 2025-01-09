@@ -4,10 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CompasPack.View"
+             xmlns:Service="clr-namespace:CompasPack.Service"
              mc:Ignorable="d" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:Src="clr-namespace:CompasPack.View.Service"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="1100">
     <UserControl.Resources>
         <Src:InstallConverter x:Key="InstallConvertor"/>
         <Src:IsInstallConverter x:Key="IsInstallConverter"/>
@@ -132,21 +133,27 @@
 
             <Grid Margin="0 0 0 5" Grid.Row="0">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <ComboBox IsEnabled="{Binding IsEnabled}" Grid.Column="0" Width="auto"
+                <TextBlock Margin="0 0 3 0" Text="Шаблон:"></TextBlock>
+                <ComboBox IsEnabled="{Binding IsEnabled}" Grid.Column="1" Width="auto"
                 ItemsSource="{Binding UserPresetPrograms}"
                 DisplayMemberPath="Name"
                 SelectedValuePath="Name"
                 SelectedValue="{Binding SelectedUserPreset, Mode=TwoWay}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
+                    <!--<i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
                             <i:InvokeCommandAction Command="{Binding SelectUserPresetCommand}"/>
                         </i:EventTrigger>
-                    </i:Interaction.Triggers>
+                    </i:Interaction.Triggers>-->
+                    
+                    <i:Interaction.Behaviors>
+                        <Service:ClickComboBoxBehavior Command="{Binding SelectUserPresetCommand}" />
+                    </i:Interaction.Behaviors>
                 </ComboBox>
-                <CheckBox IsEnabled="{Binding IsEnabled}" Margin="5 3 5 0" IsChecked="{Binding OnlyFree}" Command="{Binding OnlyFreeCommand}" Grid.Column="1" Content="Only Free"></CheckBox>
+                <Button Grid.Column="2" IsEnabled="{Binding IsEnabled}" Margin="5 3 5 0" Command="{Binding OnlyFreeCommand}" Content="Only Free"></Button>
             </Grid>
 
             <Grid Grid.Row="1">
@@ -156,14 +163,14 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
                 <WrapPanel  Grid.Row="0">
-                    <TextBlock Margin="0 0 10 0" Text="Before:"></TextBlock>
+                    <TextBlock Margin="0 0 14 0" Text="Before:"></TextBlock>
                     <Button Content="AUC" Margin="0 0 5 5"  Command="{Binding AUCCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
                     <Button Content="Icon" Margin="0 0 5 5" Command="{Binding IconCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
                     <Button Content="DesktopIcon" Margin="0 0 5 5" Command="{Binding OpenDesktopIconSettingsCommand}" Width="75" Style="{StaticResource ChangeColorButton}">
                     </Button>
                 </WrapPanel>
                 <WrapPanel Grid.Row="1">
-                    <TextBlock Margin="0 0 18 0" Text="After:"></TextBlock>
+                    <TextBlock Margin="0 0 22 0" Text="After:"></TextBlock>
                     <Button Content="Default" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding DefaultCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
                     <Button Content="Example File" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenExampleFileCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
                     <Button Content="KMSAuto" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenKMSAutoCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>

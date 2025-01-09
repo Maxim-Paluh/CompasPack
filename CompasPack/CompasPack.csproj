@@ -215,6 +215,7 @@
       <DependentUpon>ReportsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Report\ReportViewModel.cs" />
+    <Compile Include="Service\ClickComboBoxBehavior.cs" />
     <Compile Include="Service\Converter.cs" />
     <Compile Include="Service\Extensions.cs" />
     <Compile Include="Service\MessageDialogService.cs" />

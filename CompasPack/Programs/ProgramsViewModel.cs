@@ -53,11 +53,6 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public bool OnlyFree
-        {
-            get;
-            set;
-        }
         public bool IsEnabled
         {
             get { return _isEnabled; }
@@ -163,15 +158,7 @@ namespace CompasPack.ViewModel
                 {
                     if (Preset.InstallProgramName.Contains(program.UserProgram.ProgramName))
                     {
-                        if (OnlyFree == false)
-                            program.SelectProgram();
-                        else
-                        {
-                            if (program.UserProgram.IsFree == true)
-                                program.SelectProgram();
-                            else
-                                program.NotSelectProgram();
-                        }
+                        program.SelectProgram();
                     }
                     else
                         program.NotSelectProgram();
@@ -181,7 +168,11 @@ namespace CompasPack.ViewModel
         }
         private void OnOnlyFree()
         {
-            OnSelectUserPreset();
+            foreach (var program in GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels))
+            {
+                if(program.Install == true && program.UserProgram.IsFree==false)
+                    program.NotSelectProgram();
+            }
         }
         //---------------------------------------------------------------------------------------------------
         private async void OnInstall()
