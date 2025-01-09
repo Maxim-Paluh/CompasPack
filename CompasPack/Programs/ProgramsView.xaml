@@ -126,14 +126,15 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2.5*"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <ScrollViewer Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
             <ItemsControl  ItemsSource="{Binding GroupProgramViewModel}"
-                              ItemTemplate="{StaticResource GroupProgram}"/>
+                              ItemTemplate="{StaticResource GroupProgram}" FontSize="11"/>
         </ScrollViewer>
-
-        <Grid Grid.Column="1" Grid.Row="1" Margin="2">
+        <GridSplitter Grid.Column="1" ShowsPreview="False" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+        <Grid Grid.Column="2" Grid.Row="1" Margin="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
@@ -170,25 +171,31 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <WrapPanel  Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,70">
-                    <TextBlock Margin="0 0 34 0" Text="До:" ToolTip="Кроки котрі бажано виконати до встановлення набору програм" FontWeight="Bold" Height="19.96" VerticalAlignment="Top"></TextBlock>
+                <WrapPanel  Grid.Row="0" Grid.ColumnSpan="2">
+                    <TextBlock Margin="0 0 34 0" Text="До:" ToolTip="Кроки котрі можуть полегшити встановлення набору програм, та покращити відображення компонентів Windows" FontWeight="Bold" Height="19.96" VerticalAlignment="Top"></TextBlock>
                     <Button Template="{DynamicResource RoundedButton}" Content="AUC" Margin="0 0 5 5"  Command="{Binding AUCCommand}" Height="22" Width="75" Style="{StaticResource ChangeColorButton}" ></Button>
                     <Button Template="{DynamicResource RoundedButton}" Content="Icon" Margin="0 0 5 5" Command="{Binding IconCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
-                    <Button Template="{DynamicResource RoundedButton}" Content="DesktopIcon" Margin="0 0 5 5" Command="{Binding OpenDesktopIconSettingsCommand}" Width="75" Style="{StaticResource ChangeColorButton}">
-                    </Button>
+                    <Button Template="{DynamicResource RoundedButton}" Content="DesktopIcon" Margin="0 0 5 5" Command="{Binding OpenDesktopIconSettingsCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                    <Button Template="{DynamicResource RoundedButton}" Content="SpeedTest" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding SpeedTestCommand}" HorizontalAlignment="Left" Width="75"></Button>
                 </WrapPanel>
-                <WrapPanel Grid.ColumnSpan="2" Margin="0,27,0,43">
+                <WrapPanel Grid.Row="1" Grid.ColumnSpan="2">
                     <TextBlock Margin="0 0 18 0" Text="Після:" ToolTip="Кроки котрі виконуються після встановлення набору програм" FontWeight="Bold" Height="19.96" VerticalAlignment="Top"></TextBlock>
                     <Button Template="{DynamicResource RoundedButton}" Content="Default" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding DefaultCommand}" Height="22" Width="75" Style="{StaticResource ChangeColorButton}" ></Button>
                     <Button Template="{DynamicResource RoundedButton}" Content="Example File" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenExampleFileCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
-                    <Button Template="{DynamicResource RoundedButton}" Content="KMSAuto" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenKMSAutoCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                    
                     <Button Template="{DynamicResource RoundedButton}" Content="AppLog" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenAppLogCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
                 </WrapPanel>
-                <WrapPanel Grid.ColumnSpan="2" Margin="0,54,0,18">
-                    <Button Template="{DynamicResource RoundedButton}" Content="SpeedTest" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding SpeedTestCommand}" Width="75"></Button>
-                    <Button Template="{DynamicResource RoundedButton}" Content="OffDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OffDefenderCommand}" Width="75"></Button>
-                    <Button Template="{DynamicResource RoundedButton}" Content="OnDefender" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OnDefenderCommand}" Width="75"></Button>
+                <WrapPanel Grid.Row="2" Grid.ColumnSpan="2" >
+                    <TextBlock Margin="0 0 14 0" Text="Захищені програми:" ToolTip="Програми котрі захищені від запуску з вбудованим антивірусом Windows, також передбачена інтегрована процедура відновлення втрачених файлів шляхом розпакування захищеного архіву" FontWeight="Bold" Height="19.96" VerticalAlignment="Top"></TextBlock>
+                    <Button Template="{DynamicResource RoundedButton}" Content="KMSAuto" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenKMSAutoCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                    <Button Template="{DynamicResource RoundedButton}" Content="Temp" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Width="75"></Button>
+                </WrapPanel>
+                <WrapPanel Grid.Row="3" Grid.ColumnSpan="2">
+                    <TextBlock Margin="0 0 5 0" Text="Антивірусна програма:" ToolTip="Для ручного керування вбудованим в Windows антивірусом" FontWeight="Bold" Height="19.96" VerticalAlignment="Top" FontSize="11.4"></TextBlock>
+                    <Button Template="{DynamicResource RoundedButton}" Content="Off" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OffDefenderCommand}" Width="75"></Button>
+                    <Button Template="{DynamicResource RoundedButton}" Content="On" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OnDefenderCommand}" Width="75"></Button>
                 </WrapPanel>
             </Grid>
 
