@@ -19,7 +19,7 @@ namespace CompasPack.ViewModel
         }
         public void Load()
         {
-            var tempMonitorAspectRatio = Document.XPathSelectElement(Settings.AspectRatio.XPath);
+            var tempMonitorAspectRatio = Document.XPathSelectElement(Settings.MonitorAspectRatio.XPath);
             if (tempMonitorAspectRatio != null)
                 MonitorAspectRatio = tempMonitorAspectRatio.Value;
             else

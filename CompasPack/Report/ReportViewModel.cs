@@ -20,7 +20,7 @@ namespace CompasPack.ViewModel
         private IDetailViewModel _reportformViewModel;
         private readonly IIOHelper _iOHelper;
         private IMessageDialogService _messageDialogService;
-        private readonly ReportSettingsSettingsHelper _reportSettingsSettingsHelper;
+        private readonly ReportSettingsHelper _reportSettingsSettingsHelper;
         private readonly UserPathSettingsHelper _userPathSettingsHelper;
         private UserPath _userPath;
         private XDocument _xDocument;
@@ -62,7 +62,7 @@ namespace CompasPack.ViewModel
             }
         }
         public bool IsChanges { get; set; } 
-        public ReportViewModel(IIOHelper iOHelper, IMessageDialogService messageDialogService, ReportSettingsSettingsHelper reportSettingsSettingsHelper, UserPathSettingsHelper userPathSettingsHelper)
+        public ReportViewModel(IIOHelper iOHelper, IMessageDialogService messageDialogService, ReportSettingsHelper reportSettingsSettingsHelper, UserPathSettingsHelper userPathSettingsHelper)
         {
             _iOHelper = iOHelper;
             GenerateReportCommand = new DelegateCommand(OnGenerateReport);

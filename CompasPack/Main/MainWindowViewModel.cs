@@ -68,14 +68,14 @@ namespace CompasPack.ViewModel
         private readonly UserPathSettingsHelper _userPathSettingsHelper;
         private readonly UserProgramsSettingsHelper _userProgramsSettingsHelper;
         private readonly UserPresetSettingsHelper _userPresetSettingsHelper;
-        private readonly ReportSettingsSettingsHelper _reportSettingsSettingsHelper;
+        private readonly ReportSettingsHelper _reportSettingsHelper;
         private readonly PortableProgramsSettingsHelper _portableProgramsSettingsHelper;
 
         public MainWindowViewModel(IMessageDialogService messageDialogService, IIOHelper iOHelper, IEventAggregator eventAggregator, IIndex<string, IDetailViewModel> formViewModelCreator,
             UserPathSettingsHelper userPathSettingsHelper,
             UserProgramsSettingsHelper userProgramsSettingsHelper,
             UserPresetSettingsHelper userPresetSettingsHelper,
-            ReportSettingsSettingsHelper reportSettingsSettingsHelper,
+            ReportSettingsHelper reportSettingsHelper,
             PortableProgramsSettingsHelper portableProgramsSettingsHelper,
             Func<MainSettingsView> MainSettingsViewCreator)
         {
@@ -85,7 +85,7 @@ namespace CompasPack.ViewModel
             _userPathSettingsHelper = userPathSettingsHelper;
             _userProgramsSettingsHelper = userProgramsSettingsHelper;
             _userPresetSettingsHelper = userPresetSettingsHelper;
-            _reportSettingsSettingsHelper = reportSettingsSettingsHelper;
+            _reportSettingsHelper = reportSettingsHelper;
             _portableProgramsSettingsHelper = portableProgramsSettingsHelper;
             _mainSettingsViewCreator = MainSettingsViewCreator;
             //--------------------------------------------------------------------
@@ -128,8 +128,8 @@ namespace CompasPack.ViewModel
             await _userProgramsSettingsHelper.LoadFromFile();
             ProgramsIsEnabled = _userProgramsSettingsHelper.IsLoad;
 
-            await _reportSettingsSettingsHelper.LoadFromFile();
-            ReportIsEnabled = _reportSettingsSettingsHelper.IsLoad;
+            await _reportSettingsHelper.LoadFromFile();
+            ReportIsEnabled = _reportSettingsHelper.IsLoad;
 
             await _userPathSettingsHelper.LoadFromFile();
             if (!_userPathSettingsHelper.IsLoad)

@@ -226,14 +226,32 @@
     <Compile Include="Settings\MainSettingsView.xaml.cs">
       <DependentUpon>MainSettingsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Settings\Portable\PortablePrograms.cs" />
+    <Compile Include="Settings\Portable\PortableProgramsSettings.cs" />
     <Compile Include="Settings\Portable\PortableProgramsSettingsHelper.cs" />
     <Compile Include="Settings\Programs\GroupPrograms.cs" />
     <Compile Include="Settings\Programs\UserProgram.cs" />
     <Compile Include="Settings\Programs\UserProgramsSettingsHelper.cs" />
     <Compile Include="Settings\Programs\UserProgramsTabViewModel.cs" />
+    <Compile Include="Settings\Report\Base\DocxReplaceTextEnum.cs" />
+    <Compile Include="Settings\Report\Base\HardWare.cs" />
+    <Compile Include="Settings\Report\Base\ReportBase.cs" />
+    <Compile Include="Settings\Report\Common\CPUReportSettings.cs" />
+    <Compile Include="Settings\Report\Common\MemoryFrequency.cs" />
+    <Compile Include="Settings\Report\Common\MemoryReportSettings.cs" />
+    <Compile Include="Settings\Report\Common\MemoryType.cs" />
+    <Compile Include="Settings\Report\Common\VideoControllerReportSettings.cs" />
+    <Compile Include="Settings\Report\Laptops\LaptopBatteryReportSettings.cs" />
+    <Compile Include="Settings\Report\Laptops\LaptopHardWare.cs" />
+    <Compile Include="Settings\Report\Monitor\MonitorAspectRatio.cs" />
+    <Compile Include="Settings\Report\Monitor\MonitorInterface.cs" />
+    <Compile Include="Settings\Report\Monitor\MonitorModel.cs" />
+    <Compile Include="Settings\Report\Monitor\MonitorName.cs" />
+    <Compile Include="Settings\Report\Monitor\MonitorReportSettings.cs" />
+    <Compile Include="Settings\Report\Monitor\MonitorSize.cs" />
+    <Compile Include="Settings\Report\Monitor\MonitorType.cs" />
+    <Compile Include="Settings\Report\PC\MotherboardReportSettings.cs" />
     <Compile Include="Settings\Report\ReportSettings.cs" />
-    <Compile Include="Settings\Report\ReportSettingsSettingsHelper.cs" />
+    <Compile Include="Settings\Report\ReportSettingsHelper.cs" />
     <Compile Include="Settings\UserPath\UserPath.cs" />
     <Compile Include="Settings\UserPath\UserPathSettingsHelper.cs" />
     <Compile Include="Settings\UserPath\UserPathSettingsTabView.xaml.cs">

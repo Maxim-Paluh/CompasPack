@@ -59,7 +59,7 @@
         "(\\).*)"
       ]
     },
-    "AspectRatio": {
+    "MonitorAspectRatio": {
       "XPath": "//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi монiтора\")]//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"спiввiдношення сторiн\")]/Value",
       "Regex": null
     },
@@ -68,15 +68,15 @@
         "Name": "VGA",
         "IsSelect": false
       },
-	  {
+      {
         "Name": "HDMI",
         "IsSelect": false
       },
-	  {
+      {
         "Name": "DisplayPort",
         "IsSelect": false
       },
-	  {
+      {
         "Name": "Mini VGA",
         "IsSelect": false
       },

@@ -5,16 +5,16 @@ using CompasPack.Service;
 namespace CompasPack.Settings
 {
     [Serializable]
-    public class PortablePrograms : ICloneable
+    public class PortableProgramsSettings : ICloneable
     {
         public List<PortableProgram> PortableProgramsList { get; set; }
-        public PortablePrograms()
+        public PortableProgramsSettings()
         {
             PortableProgramsList = new List<PortableProgram>();
         }
         public object Clone()
         {
-            return new PortablePrograms
+            return new PortableProgramsSettings
             {
                 PortableProgramsList = (List<PortableProgram>)PortableProgramsList.Clone()
             };
