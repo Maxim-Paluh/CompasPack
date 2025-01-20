@@ -18,7 +18,7 @@ namespace CompasPack.Settings
     public class BaseSettingsViewModel<TSettings, TWrapper, TSettingsHelper> : ViewModelBase, ISettingsViewModel
         where TSettings : class, ICloneable, new()
         where TWrapper : ModelWrapper<TSettings>, new()
-        where TSettingsHelper : SettringsHelperBase<TSettings>      
+        where TSettingsHelper : SettingsHelperBase<TSettings>      
     {
         #region Properties
         protected IMessageDialogService _messageDialogService;

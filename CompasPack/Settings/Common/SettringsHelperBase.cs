@@ -13,7 +13,7 @@ namespace CompasPack.Settings
         Task<T> LoadDefault();
         Task<bool> Save();
     }
-    public class SettringsHelperBase<T> : ISettings<T> where T : class, new()
+    public class SettingsHelperBase<T> : ISettings<T> where T : class, new()
     {
         #region Properties
         private readonly IIOHelper _iOHelper;
@@ -26,7 +26,7 @@ namespace CompasPack.Settings
         #endregion
 
         #region Constructors
-        public SettringsHelperBase(IIOHelper iOHelper, IMessageDialogService messageDialogService, string fileName)
+        public SettingsHelperBase(IIOHelper iOHelper, IMessageDialogService messageDialogService, string fileName)
         {
             _iOHelper = iOHelper;
             _messageDialogService = messageDialogService;

@@ -3,7 +3,7 @@ using CompasPack.View.Service;
 
 namespace CompasPack.Settings
 {
-    public class UserPresetSettingsHelper : SettringsHelperBase<UserPresetsCommon>
+    public class UserPresetSettingsHelper : SettingsHelperBase<UserPresetsCommon>
     {
 
         #region Properties

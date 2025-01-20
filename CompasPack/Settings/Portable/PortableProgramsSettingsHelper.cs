@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CompasPack.Settings.Portable
 {
-    public class PortableProgramsSettingsHelper : SettringsHelperBase<PortablePrograms>
+    public class PortableProgramsSettingsHelper : SettingsHelperBase<PortablePrograms>
     {
         public PortableProgramsSettingsHelper(IIOHelper iOHelper, IMessageDialogService messageDialogService) : base(iOHelper, messageDialogService, "PortableProgramsSettings")
         {

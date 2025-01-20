@@ -4,7 +4,7 @@ using CompasPack.View.Service;
 
 namespace CompasPack.Settings
 {
-    public class UserPathSettingsHelper : SettringsHelperBase<UserPath>
+    public class UserPathSettingsHelper : SettingsHelperBase<UserPath>
     {
         #region Properties
         #endregion
