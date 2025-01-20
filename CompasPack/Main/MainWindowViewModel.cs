@@ -115,12 +115,12 @@ namespace CompasPack.ViewModel
             PortableIsEnabled = _portableProgramsSettingsHelper.IsLoad;
             if(PortableIsEnabled)
             {
-                var portablePrograms = _portableProgramsSettingsHelper.Settings.portablePrograms.Clone();
+                var portablePrograms = _portableProgramsSettingsHelper.Settings.PortableProgramsList.Clone();
                 foreach (var portableProgram in portablePrograms)
                 {
                     if (portableProgram != null && !string.IsNullOrWhiteSpace(portableProgram.Path))
-                        portableProgram.Path = Path.Combine(_iOHelper.PathRoot, portableProgram.Path);
-                    
+                        portableProgram.Path = Path.Combine(_iOHelper.PathRoot, portableProgram.Path); // якщо path2 повний, то буде використано його (повний шлях), інакше буде використано відносний шлях
+
                     PortablePrograms.Add(portableProgram);
                 }
             }

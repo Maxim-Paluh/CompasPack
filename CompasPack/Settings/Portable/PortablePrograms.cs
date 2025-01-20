@@ -4,21 +4,23 @@ using CompasPack.Service;
 
 namespace CompasPack.Settings
 {
+    [Serializable]
     public class PortablePrograms : ICloneable
     {
-        public List<PortableProgram> portablePrograms { get; set; }
+        public List<PortableProgram> PortableProgramsList { get; set; }
         public PortablePrograms()
         {
-            portablePrograms = new List<PortableProgram>();
+            PortableProgramsList = new List<PortableProgram>();
         }
         public object Clone()
         {
             return new PortablePrograms
             {
-                portablePrograms = (List<PortableProgram>)portablePrograms.Clone()
+                PortableProgramsList = (List<PortableProgram>)PortableProgramsList.Clone()
             };
         }
     }
+    [Serializable]
     public class PortableProgram : ICloneable
     {
         public string ProgramName { get; set; }

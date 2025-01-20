@@ -1,35 +1,34 @@
 {
-  "portablePrograms": 
-  [
-  {
-	  "ProgramName" : "CrystalDisk",
-	  "Path" : "Comp@s\\CompasPack\\!Portable\\CrystalDisk\\DiskInfo32.exe"
-  },
-  {
-	  "ProgramName" : "AIDA64",
-	  "Path" : "Comp@s\\CompasPack\\!Portable\\AIDA64\\aida64.exe"
-  },
-  {
-	  "ProgramName" : "TotalCMD 7.00",
-	  "Path" : "Comp@s\\CompasPack\\!Portable\\TotalCommander700\\Totalcmd.exe"
-  },
-  {
-	  "ProgramName" : "TotalCMD 9.51",
-	  "Path" : "Comp@s\\CompasPack\\!Portable\\TotalCommander951\\TOTALCMD.EXE"
-  },
+  "PortableProgramsList": [
+    {
+      "ProgramName": "CrystalDisk",
+      "Path": "F:\\!Portable\\CrystalDisk\\DiskInfo32.exe"
+    },
+    {
+      "ProgramName": "AIDA64",
+      "Path": "F:\\!Portable\\AIDA64\\aida64.exe"
+    },
+    {
+      "ProgramName": "TotalCMD 7.00",
+      "Path": "F:\\!Portable\\TotalCommander700\\Totalcmd.exe"
+    },
+    {
+      "ProgramName": "TotalCMD 9.51",
+      "Path": "F:\\!Portable\\TotalCommander951\\TOTALCMD.EXE"
+    },
     null,
-  {
-	  "ProgramName" : "WinRar",
-	  "Path" : "Comp@s\\CompasPack\\!Portable\\WinRAR\\WinRAR.exe"
-  },
+    {
+      "ProgramName": "WinRar",
+      "Path": "F:\\!Portable\\WinRAR\\WinRAR.exe"
+    },
     null,
-  {
-	  "ProgramName" : "CPU-Z",
-	  "Path" : "Comp@s\\CompasPack\\!Portable\\CPU-Z\\cpuz_x64.exe"
-  },
-  {
-	  "ProgramName" : "FurMark",
-	  "Path" : "Comp@s\\CompasPack\\!Portable\\FurMark\\FurMark.exe"
-  },
+    {
+      "ProgramName": "CPU-Z",
+      "Path": "F:\\!Portable\\CPU-Z\\cpuz_x64.exe"
+    },
+    {
+      "ProgramName": "FurMark",
+      "Path": "F:\\!Portable\\FurMark\\FurMark.exe"
+    }
   ]
 }

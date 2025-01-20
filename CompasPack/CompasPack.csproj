@@ -226,7 +226,7 @@
     <Compile Include="Settings\MainSettingsView.xaml.cs">
       <DependentUpon>MainSettingsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Settings\Portable\PortableProgram.cs" />
+    <Compile Include="Settings\Portable\PortablePrograms.cs" />
     <Compile Include="Settings\Portable\PortableProgramsSettingsHelper.cs" />
     <Compile Include="Settings\Programs\GroupPrograms.cs" />
     <Compile Include="Settings\Programs\UserProgram.cs" />
