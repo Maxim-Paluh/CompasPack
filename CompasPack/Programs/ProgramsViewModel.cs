@@ -185,6 +185,7 @@ namespace CompasPack.ViewModel
                 }
             }
             IsEnabled = false;
+            if(programsToInstall.Count()!=0)
             AddSplitter();
             foreach (var programToInstall in programsToInstall)
             {
