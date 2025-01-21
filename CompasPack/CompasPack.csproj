@@ -139,6 +139,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helper\ArchiverHelper.cs" />
     <Compile Include="Report\Common\CPUView.xaml.cs">
       <DependentUpon>CPUView.xaml</DependentUpon>
     </Compile>
@@ -475,8 +476,13 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="7za\7za.exe" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY "$(ProjectDir)JSON\" "$(TargetDir)Settings" /S /Y /I</PostBuildEvent>
+    <PostBuildEvent>XCOPY "$(ProjectDir)JSON\" "$(TargetDir)Settings" /S /Y /I
+XCOPY "$(ProjectDir)7za\" "$(TargetDir)"  /Y
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

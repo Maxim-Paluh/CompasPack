@@ -1,4 +1,5 @@
 {
+  "ArchivePassword": "1234",
   "ProgramsPaths": {
     "PathFolderPrograms": "F:\\!Install",
     "PathFolderImageProgram": "F:\\!Install\\!Sample\\Icon",
@@ -50,7 +51,7 @@
       "PathRar": "F:\\!Portable\\!Crack\\KMSAuto\\KMSAuto.rar"
     }
   ],
-  
+
 
   "GroupsPrograms": [
     {
@@ -412,7 +413,7 @@
           "ProgramName": "Microsoft Office 2016",
           "InstallProgramName": "плюс 2016",
           "IsFree": false,
-          "DisableDefender": false,
+          "DisableDefender": true,
           "Description": "Microsoft Office 2016 — остання версія популярного офісного пакету компанії Microsoft, що розповсюджувався за допомогою MSI-інсталятора.\nПакет був представлений широкій публіці наприкінці 2014 року.\nОфіційний реліз відбувся разом із новою операційною системою Windows 10 в один день, 29 липня 2015.",
           "PathFolder": "Office\\Office 2016",
           "FileImage": "Office2016.ico",

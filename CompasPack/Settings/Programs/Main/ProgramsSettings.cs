@@ -10,6 +10,7 @@ namespace CompasPack.Settings
 {
     public class ProgramsSettings : ICloneable
     {
+        public string ArchivePassword { get; set; }
         public ProgramsPaths ProgramsPaths { get; set; }
         public List<ProgramsSet> ProgramsSets  { get; set; }
         public List<ProtectedProgram> ProtectedPrograms { get; set; }

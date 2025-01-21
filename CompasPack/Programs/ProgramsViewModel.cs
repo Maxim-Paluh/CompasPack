@@ -186,7 +186,7 @@ namespace CompasPack.ViewModel
             }
             IsEnabled = false;
             if(programsToInstall.Count()!=0)
-            AddSplitter();
+                AddSplitter();
             foreach (var programToInstall in programsToInstall)
             {
                 TextConsole += $"Start Install Programs: {programToInstall.Program.ProgramName}\n";
@@ -252,39 +252,32 @@ namespace CompasPack.ViewModel
                             break; // то покидаємо цикл пошуку файлу (далі буде помилка в циклі встановлення)
                         if (program.DisableDefender) // якщо треба вимикати антивірусник і файла нема то намагаємось його добути з архіва
                         {
-                            if (!File.Exists("F:\\!Portable\\WinRAR\\WinRAR.exe")) //TODO FIX!!!!!!!!!!!!!!!! // перевіряємо чи на місці архіватор 
+                            if (!File.Exists("7za.exe")) // перевіряємо чи на місці архіватор 
                             {
-                                TextConsole += $"Error, Not Find Rar.exe\n"; // якщо його нема то сповіщаємо користувача
+                                TextConsole += $"Error, Not 7za.exe\n"; // якщо його нема то сповіщаємо користувача
                                 break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі встановлення)
                             }
-                            var pathRar = Directory.GetFiles(program.PathFolder).Where(x => x.Contains(program.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault(); // шукаємо файл архіва
-                            TextConsole += $"Find arkhive {program.FileName}, resault: "; // сповіщаємо користувача
+                            TextConsole += $"Trying find archive, resault: "; // сповіщаємо користувача про спробу знайти архів
+                            var pathRar = Directory.GetFiles(program.PathFolder).Where(x => x.Contains(program.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".7z")).FirstOrDefault(); // шукаємо архів
                             if (string.IsNullOrWhiteSpace(pathRar)) // перевіряємо чи знайдено архів
                             {
-                                TextConsole += $"Error, Not Find arkhive {program.FileName}\n"; // якщо його нема то сповіщаємо користувача
+                                TextConsole += $"Error, Not Find arkhive\n"; // якщо його нема то сповіщаємо користувача
                                 break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі встановлення)
                             }
-                            TextConsole += $"OK!!!, File: {Path.GetFileName(pathRar)}\n"; // яповіщаємо користувача, що все гаразд
-                            try // весь try catch це спробу розпакувати архів
+                            TextConsole += $"OK!!!\n"; // сповіщаємо користувача, що архів знайдено
+                            TextConsole += $"Start decompress, resault: ";
+                            await Task.Delay(500); // дамо часу основному потоку обновити інформацію в консолі
+                            switch (ArchiverHelper.Decompress(pathRar, program.PathFolder, _programsSettingsHelper.Settings.ArchivePassword, 20000)) //спробу розпакувати архів
                             {
-                                ProcessStartInfo ps = new ProcessStartInfo();
-                                ps.FileName = "F:\\!Portable\\WinRAR\\WinRAR.exe"; //TODO FIX!!!!!!!!!!!!!!!!
-                                ps.Arguments = $@"x -p1234 -o- {pathRar} {program.PathFolder}";
-                                TextConsole += $"Start unzipping, resault: ";
-                                var proc = Process.Start(ps);
-                                if (!proc.WaitForExit(20000))
-                                {
-                                    try { proc.Kill(); } catch (Exception) { }
-                                    try { proc.Close(); } catch (Exception) { }
-
-                                    TextConsole += "Time out unzipping\n";
-                                }
-                                else
+                                case ResultArchiver.OK:
                                     TextConsole += $"OK!!!\n";
-                            }
-                            catch (Exception)
-                            {
-                                TextConsole += "Error unzipping\n";
+                                    break;
+                                case ResultArchiver.TimeOut:
+                                    TextConsole += "Time out unzipping\n";
+                                    break;
+                                case ResultArchiver.Error:
+                                    TextConsole += "Error unzipping\n";
+                                    break;
                             }
                             countUnzipping++; // лічильник спроб розпакувати архів
                         }
