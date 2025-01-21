@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorResolutionViewModel : ReportHardWareViewModelBase<MonitorReportSettings>, IReportViewModel
+    public class MonitorResolutionViewModel : ReportHardWareViewModelBase<Monitor>, IReportViewModel
     {
         private string _monitorResolution;
         public string MonitorResolution
@@ -16,7 +16,7 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public MonitorResolutionViewModel(MonitorReportSettings monitorReportSettings, XDocument xDocument)
+        public MonitorResolutionViewModel(Monitor monitorReportSettings, XDocument xDocument)
         {
             Settings = monitorReportSettings;
             Document = xDocument;

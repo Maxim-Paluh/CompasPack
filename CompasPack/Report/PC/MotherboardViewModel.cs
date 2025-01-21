@@ -5,7 +5,7 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    public class MotherboardViewModel : ReportHardWareViewModelBase<MotherboardReportSettings>, IReportViewModel
+    public class MotherboardViewModel : ReportHardWareViewModelBase<Motherboard>, IReportViewModel
     {
         private string _name;
         public string Name
@@ -17,7 +17,7 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public MotherboardViewModel(MotherboardReportSettings motherboardReportSettings, XDocument xDocument)
+        public MotherboardViewModel(Motherboard motherboardReportSettings, XDocument xDocument)
         {
             Settings = motherboardReportSettings;
             Document = xDocument;

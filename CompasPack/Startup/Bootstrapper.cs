@@ -25,7 +25,6 @@ namespace CompasPack.Startup
             
             builder.RegisterType<MainSettingsView>().AsSelf();
             builder.RegisterType<MainSettingsViewModel>().AsSelf();
-            builder.RegisterType<UserPathSettingsTabViewModel>().Keyed<ISettingsViewModel>(nameof(UserPathSettingsTabViewModel));
 
 
             /////////////////////////////////////////////////////////////////////////////////
@@ -48,9 +47,7 @@ namespace CompasPack.Startup
             builder.RegisterType<MessageDialogService>().As<IMessageDialogService>();
             
             
-            builder.RegisterType<UserPathSettingsHelper>().AsSelf().SingleInstance();
-            builder.RegisterType<UserProgramsSettingsHelper>().AsSelf().SingleInstance();
-            builder.RegisterType<UserPresetSettingsHelper>().AsSelf().SingleInstance();
+            builder.RegisterType<ProgramsSettingsHelper>().AsSelf().SingleInstance();
             builder.RegisterType<ReportSettingsHelper>().AsSelf().SingleInstance();
             builder.RegisterType<PortableProgramsSettingsHelper>().AsSelf().SingleInstance();
             return builder.Build();

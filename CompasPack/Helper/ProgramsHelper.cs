@@ -5,19 +5,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CompasPack.Service;
+using CompasPack.Settings.Programs;
 
 namespace CompasPack.Helper
 {
     public class ProgramsHelper
     {
-        public static void CombinePathFolderAndImage(IList<GroupProgramViewModel> groupPrograms, UserPath userPath)
+        public static void CombinePathFolderAndImage(IList<GroupProgramViewModel> groupPrograms, ProgramsPaths programsPaths)
         {
-            if (userPath.PathFolderPrograms != null && userPath.PathFolderImageProgram != null)
+            if (programsPaths.PathFolderPrograms != null && programsPaths.PathFolderImageProgram != null)
             {
-                foreach (var item in groupPrograms.SelectMany(group => group.UserProgramViewModels))
+                foreach (var item in groupPrograms.SelectMany(group => group.ProgramViewModels))
                 {
-                    item.UserProgram.PathFolder = Path.Combine(userPath.PathFolderPrograms, item.UserProgram.PathFolder);
-                    item.UserProgram.FileImage = Path.Combine(userPath.PathFolderImageProgram, item.UserProgram.FileImage);
+                    item.Program.PathFolder = Path.Combine(programsPaths.PathFolderPrograms, item.Program.PathFolder);
+                    item.Program.FileImage = Path.Combine(programsPaths.PathFolderImageProgram, item.Program.FileImage);
                 }
             }
         }
@@ -25,7 +26,7 @@ namespace CompasPack.Helper
         public static void CheckInstallPrograms(IList<GroupProgramViewModel> groupProgramViewModels)
         {
             var tempListPrograms = WinInfoHelper.ListInstallPrograms();
-            foreach (var program in groupProgramViewModels.SelectMany(group => group.UserProgramViewModels))
+            foreach (var program in groupProgramViewModels.SelectMany(group => group.ProgramViewModels))
                 program.CheckInstall(tempListPrograms);
         }
 

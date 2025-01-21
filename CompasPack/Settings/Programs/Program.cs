@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CompasPack.Settings
 {
-    public class UserProgram : ICloneable
+    public class Program : ICloneable
     {
         public string ProgramName { get; set; }
         public string InstallProgramName { get; set; }
@@ -17,10 +17,10 @@ namespace CompasPack.Settings
         public OnlineInstaller OnlineInstaller { get; set; }
         public object Clone()
         {
-            var UserProgram = (UserProgram)MemberwiseClone();
+            var program = (Program)MemberwiseClone();
             if (OnlineInstaller != null)
-                UserProgram.OnlineInstaller = (OnlineInstaller)OnlineInstaller.Clone();
-            return UserProgram;
+                program.OnlineInstaller = (OnlineInstaller)OnlineInstaller.Clone();
+            return program;
         }
     }
     public class OnlineInstaller : ICloneable

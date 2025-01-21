@@ -4,7 +4,7 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorAspectRatioViewModel : ReportHardWareViewModelBase<MonitorReportSettings>, IReportViewModel
+    public class MonitorAspectRatioViewModel : ReportHardWareViewModelBase<Monitor>, IReportViewModel
     {     
         private string _monitorAspectRatio;
         public string MonitorAspectRatio
@@ -12,7 +12,7 @@ namespace CompasPack.ViewModel
             get { return _monitorAspectRatio; }
             set { _monitorAspectRatio = value; }
         }
-        public MonitorAspectRatioViewModel(MonitorReportSettings monitorReportSettings, XDocument xDocument)
+        public MonitorAspectRatioViewModel(Monitor monitorReportSettings, XDocument xDocument)
         {
             Settings = monitorReportSettings;
             Document = xDocument;

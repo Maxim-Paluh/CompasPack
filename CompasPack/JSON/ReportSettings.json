@@ -1,17 +1,32 @@
 {
-  "CPUReportSettings": {
+  "ReportPaths": {
+    "AidaExeFilePath": "F:\\!Portable\\AIDA64\\aida64.exe",
+
+    "ReportRPF": "F:\\!Portable\\AIDA64\\ForReport.rpf",
+    "LogInstallRPF": "F:\\!Portable\\AIDA64\\ForLog.rpf",
+    "MonitorReportRPF": "F:\\!Portable\\AIDA64\\ForMonitor.rpf",
+
+    "LaptopReportPath": "F:\\!Report\\laptop",
+    "PCReportPath": "F:\\!Report\\pc",
+    "MonitorReportPath": "F:\\!Report\\monitor",
+
+    "LaptopPricePath": "F:\\!Report\\PriceSource\\PriceLaptop.docx",
+    "PCPricePath": "F:\\!Report\\PriceSource\\PricePC.docx",
+    "MonitorPricePath": "F:\\!Report\\PriceSource\\PriceMonitor.docx"
+  },
+  "CPU": {
     "Regex": [
       "\\((?:[^)(]|\\([^)(]*\\))*\\)",
       "\\{(?:[^}{]|\\{[^}{]*\\))*\\}"
     ]
   },
-  "MotherboardReportSettings": {
+  "Motherboard": {
     "XPath": "//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"системна плата\")]//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"системна плата\")]/Value",
     "Regex": [
       "\\((?:[^)(]|\\([^)(]*\\))*\\)"
     ]
   },
-  "MemoryReportSettings": {
+  "Memory": {
     "MemoryType": {
       "XPath": "//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi шини пам'ятi\")]//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"тип шини\")]/Value",
       "Regex": [
@@ -25,19 +40,19 @@
       ]
     }
   },
-  "VideoControllerReportSettings": {
+  "VideoController": {
     "XPath": null,
     "Regex": [
       "\\((?:[^)(]|\\([^)(]*\\))*\\)"
     ]
   },
-  "LaptopBatteryReportSettings": {
+  "LaptopBattery": {
     "XPath": "//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi') , \"зносу\")]/Value",
     "Regex": [
       "[^\\d]+"
     ]
   },
-  "MonitorReportSettings": {
+  "Monitor": {
     "MonitorName": {
       "XPath": "//Group[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"властивостi монiтора\")]//Item[contains(translate(., 'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯI', 'Абвгґдеєжзиіїйклмнопрстуфхцчшщьюяi'), \"iм'я\")]/Value",
       "Regex": null
@@ -399,22 +414,22 @@
     "Zeuslap": [],
     "Zyrex": []
   },
-  "ReportViewModelDictionary" : {
-	"CPU" : "compascpu",
-	"Memory" : "compasmemory",
-	"MonitorDiagonal" : "diag",
-	"PhysicalDisk" : "compashdd",
-	"VideoController": "compasgpu",
-	"LaptopBattery" : "compasbettery",
-	"Laptop_Brand" : "brand",
-	"Laptop_Line_Model" : "model",
-	"LaptopOther" : "compasother",
-	"Monitor_Brand" : "brand",
-	"MonitorAspectRatio" : "compasaspectratio",
-	"MonitorOther" : "compasinterface",
-	"MonitorResolution" : "compasresolution",
-	"Motherboard" : "compasmotherboard",
-	"PowerSupply" : "compaspower",
-	"ReportId" : "compasid"
+  "DocxReplaceTextDictionary": {
+    "CPU": "compascpu",
+    "Memory": "compasmemory",
+    "MonitorDiagonal": "diag",
+    "PhysicalDisk": "compashdd",
+    "VideoController": "compasgpu",
+    "LaptopBattery": "compasbettery",
+    "Laptop_Brand": "brand",
+    "Laptop_Line_Model": "model",
+    "LaptopOther": "compasother",
+    "Monitor_Brand": "brand",
+    "MonitorAspectRatio": "compasaspectratio",
+    "MonitorOther": "compasinterface",
+    "MonitorResolution": "compasresolution",
+    "Motherboard": "compasmotherboard",
+    "PowerSupply": "compaspower",
+    "ReportId": "compasid"
   }
 }

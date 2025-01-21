@@ -14,6 +14,7 @@ using System.Diagnostics;
 using CompasPack.Service;
 using CompasPack.Settings;
 using System.Text.RegularExpressions;
+using CompasPack.Settings.Programs;
 
 namespace CompasPack.ViewModel
 {
@@ -25,15 +26,13 @@ namespace CompasPack.ViewModel
     {
         private IMessageDialogService _messageDialogService;
         private IEventAggregator _eventAggregator;
-        private readonly UserProgramsSettingsHelper _userProgramsSettingsHelper;
-        private readonly UserPresetSettingsHelper _userPresetSettingsHelper;
-        private readonly UserPathSettingsHelper _userPathSettingsHelper;
-        private UserPath _userPath;
+        private readonly ProgramsSettingsHelper _programsSettingsHelper;
+        private ProgramsPaths _programsPaths;
         private readonly IIOHelper _iOHelper;
-        private string _selectedUserPreset;
+        private string _selectedProgramsSets;
         private string _textConsole;
         private bool _isEnabled;
-        public ObservableCollection<UserPreset> UserPresetPrograms { get; }
+        public ObservableCollection<ProgramsSet> ProgramsSets { get; }
         public ObservableCollection<GroupProgramViewModel> GroupProgramViewModel { get; }
         public string TextConsole
         {
@@ -44,12 +43,12 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public string SelectedUserPreset
+        public string SelectedProgramsSet
         {
-            get { return _selectedUserPreset; }
+            get { return _selectedProgramsSets; }
             set
             {
-                _selectedUserPreset = value;
+                _selectedProgramsSets = value;
                 OnPropertyChanged();
             }
         }
@@ -63,23 +62,19 @@ namespace CompasPack.ViewModel
             }
         }
         public ProgramsViewModel(IMessageDialogService messageDialogService, IIOHelper iOHelper, IEventAggregator eventAggregator,
-            UserProgramsSettingsHelper userProgramsSettingsHelper,
-            UserPresetSettingsHelper userPresetSettingsHelper,
-            UserPathSettingsHelper userPathSettingsHelper)
+            ProgramsSettingsHelper ProgramsSettingsHelper)
         {
-            UserPresetPrograms = new ObservableCollection<UserPreset>();
+            ProgramsSets = new ObservableCollection<ProgramsSet>();
             GroupProgramViewModel = new ObservableCollection<GroupProgramViewModel>();
 
             _messageDialogService = messageDialogService;
             _eventAggregator = eventAggregator;
-            _userProgramsSettingsHelper = userProgramsSettingsHelper;
-            _userPresetSettingsHelper = userPresetSettingsHelper;
-            _userPathSettingsHelper = userPathSettingsHelper;
+            _programsSettingsHelper = ProgramsSettingsHelper;
             _iOHelper = iOHelper;
             IsEnabled = true;
 
 
-            SelectUserPresetCommand = new DelegateCommand(OnSelectUserPreset);
+            SelectProgramsSetCommand = new DelegateCommand(OnSelectProgramsSet);
             InstallCommand = new DelegateCommand(OnInstall);
             OnlyFreeCommand = new DelegateCommand(OnOnlyFree);
             ClearConsoleCommand = new DelegateCommand(OnClearConsole);
@@ -90,7 +85,7 @@ namespace CompasPack.ViewModel
 
             OpenAppLogCommand = new DelegateCommand(OnOpenAppLog);
             OpenExampleFileCommand = new DelegateCommand(OnOpenExampleFile);
-            OpenKMSAutoCommand = new DelegateCommand(OpenKMSAuto);
+            //OpenKMSAutoCommand = new DelegateCommand(OpenKMSAuto);
             DefaultCommand = new DelegateCommand(OnDefault);
 
             SpeedTestCommand = new DelegateCommand(OnSpeedTest);
@@ -104,40 +99,41 @@ namespace CompasPack.ViewModel
         {
             TextConsole = WinInfoHelper.GetSystemInfo();
 
+            ProgramsSets.Clear();
             GroupProgramViewModel.Clear();
-            UserPresetPrograms.Clear();
+            
 
-            _userPath = (UserPath)_userPathSettingsHelper.Settings.Clone();
-            PathHelper.SetRootPath(_iOHelper.PathRoot, _userPath);
+            _programsPaths = (ProgramsPaths)_programsSettingsHelper.Settings.ProgramsPaths.Clone();
+            PathHelper.SetRootPath(_iOHelper.PathRoot, _programsPaths);
 
-            var GroupsPrograms = (List<GroupPrograms>)_userProgramsSettingsHelper.Settings.GroupsPrograms?.Clone();
+            var GroupsPrograms = (List<GroupPrograms>)_programsSettingsHelper.Settings.GroupsPrograms?.Clone();
             foreach (var groupProgram in GroupsPrograms)
-                GroupProgramViewModel.Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<UserProgramViewModel>(groupProgram.UserPrograms.Select(x => new UserProgramViewModel(x, groupProgram, _eventAggregator)))));
+                GroupProgramViewModel.Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<ProgramViewModel>(groupProgram.Programs.Select(x => new ProgramViewModel(x, groupProgram, _eventAggregator)))));
 
-            ProgramsHelper.CombinePathFolderAndImage(GroupProgramViewModel, _userPath);
+            ProgramsHelper.CombinePathFolderAndImage(GroupProgramViewModel, _programsPaths);
             ProgramsHelper.CheckInstallPrograms(GroupProgramViewModel); // CheckInstall
 
-            _userPresetSettingsHelper.Settings.UserPresets.ForEach(x => UserPresetPrograms.Add(x)); // Add UserPresetPrograms     
-            var tempUserPrest = UserPresetPrograms.FirstOrDefault(x => x.Name.Contains(Regex.Match(WinInfoHelper.GetProductName(), @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // heck UserPresetPrograms
-            if (tempUserPrest != null)
-                SelectedUserPreset = tempUserPrest.Name;
-            OnSelectUserPreset();
+            _programsSettingsHelper.Settings.ProgramsSets.ForEach(x => ProgramsSets.Add(x)); // Add ProgramsSets     
+            var tempProgramsSet = ProgramsSets.FirstOrDefault(x => x.Name.Contains(Regex.Match(WinInfoHelper.GetProductName(), @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // heck ProgramsSet
+            if (tempProgramsSet != null)
+                SelectedProgramsSet = tempProgramsSet.Name;
+            OnSelectProgramsSet();
             return Task.CompletedTask;
         }
 
         private void SelectSingleProgram(SelectSingleProgramEventArgs obj)
         {
-            foreach (var userProgramViewModel in GroupProgramViewModel.Single(x => x.GroupProgram.Name == obj.NameGroup).UserProgramViewModels)
+            foreach (var programViewModel in GroupProgramViewModel.Single(x => x.GroupProgram.Name == obj.NameGroup).ProgramViewModels)
             {
-                if (userProgramViewModel.UserProgram.ProgramName != obj.NameProgram)
+                if (programViewModel.Program.ProgramName != obj.NameProgram)
                 {
-                    userProgramViewModel.NotSelectProgram();
+                    programViewModel.NotSelectProgram();
                 }
             }
         }
         public void Unsubscribe()
         {
-            UserPresetPrograms.Clear();
+           
         }
         public bool HasChanges()
         {
@@ -149,14 +145,14 @@ namespace CompasPack.ViewModel
             TextConsole = WinInfoHelper.GetSystemInfo();
         }
         //---------------------------------------------------------------------------------------------------
-        private void OnSelectUserPreset()
+        private void OnSelectProgramsSet()
         {
-            if (UserPresetPrograms.Count != 0)
+            if (ProgramsSets.Count != 0)
             {
-                var Preset = UserPresetPrograms.Single(x => x.Name == SelectedUserPreset);
-                foreach (var program in GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels))
+                var Preset = ProgramsSets.Single(x => x.Name == SelectedProgramsSet);
+                foreach (var program in GroupProgramViewModel.SelectMany(group => group.ProgramViewModels))
                 {
-                    if (Preset.InstallProgramName.Contains(program.UserProgram.ProgramName))
+                    if (Preset.InstallProgramName.Contains(program.Program.ProgramName))
                     {
                         program.SelectProgram();
                     }
@@ -168,18 +164,18 @@ namespace CompasPack.ViewModel
         }
         private void OnOnlyFree()
         {
-            foreach (var program in GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels))
+            foreach (var program in GroupProgramViewModel.SelectMany(group => group.ProgramViewModels))
             {
-                if(program.Install == true && program.UserProgram.IsFree==false)
+                if(program.Install == true && program.Program.IsFree==false)
                     program.NotSelectProgram();
             }
         }
         //---------------------------------------------------------------------------------------------------
         private async void OnInstall()
         {
-            var programsToInstall = GroupProgramViewModel.SelectMany(group => group.UserProgramViewModels).Where(x => x.Install == true);
+            var programsToInstall = GroupProgramViewModel.SelectMany(group => group.ProgramViewModels).Where(x => x.Install == true);
 
-            if (programsToInstall.Any(x => x.UserProgram.DisableDefender == true && !x.IsInstall)) // якщо програма потребує вимклення антивірусника для свого встановлення і вона ще не встановлена тоді
+            if (programsToInstall.Any(x => x.Program.DisableDefender == true && !x.IsInstall)) // якщо програма потребує вимклення антивірусника для свого встановлення і вона ще не встановлена тоді
             {
                 if (!WinDefenderHelper.CheckTamperProtectionDisable()) // Перевіряємо чи можемо ми вимкнути антивірусник
                 {
@@ -192,14 +188,14 @@ namespace CompasPack.ViewModel
             AddSplitter();
             foreach (var programToInstall in programsToInstall)
             {
-                TextConsole += $"Start Install Programs: {programToInstall.UserProgram.ProgramName}\n";
+                TextConsole += $"Start Install Programs: {programToInstall.Program.ProgramName}\n";
                 if (programToInstall.IsInstall) // перевіряємо чи програма встановлена
                 {
-                    TextConsole += $"Programs: {programToInstall.UserProgram.ProgramName}, Already installed!!!\n";
+                    TextConsole += $"Programs: {programToInstall.Program.ProgramName}, Already installed!!!\n";
                     AddSplitter();
                     continue;
                 }
-                if (programToInstall.UserProgram.OnlineInstaller != null && await SpeedTest(true) >= 0.5) // якщо є онлайн інсталятор і інтернет
+                if (programToInstall.Program.OnlineInstaller != null && await SpeedTest(true) >= 0.5) // якщо є онлайн інсталятор і інтернет
                     await InstallProgram(programToInstall, true); // встановлюємо онлайн 
                 else
                     await InstallProgram(programToInstall, false); // встановлюємо офлайн
@@ -207,9 +203,9 @@ namespace CompasPack.ViewModel
             }
             IsEnabled = true;
         }
-        private async Task InstallProgram(UserProgramViewModel userProgramViewMode, bool tryOnlineInstall)
+        private async Task InstallProgram(ProgramViewModel programViewMode, bool tryOnlineInstall)
         {
-            var userProgram = userProgramViewMode.UserProgram;
+            var program = programViewMode.Program;
             
             string arguments = null;
             int countInstall = 0; // лічильник спроб встановити програму (всього дві спроби)
@@ -219,7 +215,7 @@ namespace CompasPack.ViewModel
                 string ExecutableFile = null;
                 do // цикл пошуку файла (цікаво зроблено, він виконується або 0.5 або на 1.5 рази завдяки if (ExecutableFile != null)  break; та if (countUnzipping >= 1)  break;)
                 {
-                    if (userProgramViewMode.UserProgram.DisableDefender && !WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це не windows 7
+                    if (programViewMode.Program.DisableDefender && !WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це не windows 7
                     {
                         if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник увімкнутий
                         {
@@ -234,45 +230,45 @@ namespace CompasPack.ViewModel
                     }
                     if (tryOnlineInstall) // якщо є онлайн інсталятор намагаємось його знайти і задаємо аргумент онлайн інсталятора
                     {
-                        ExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, userProgram.OnlineInstaller.FileName, userProgram.PathFolder).FirstOrDefault();
-                        arguments = string.Join(" ", userProgram.OnlineInstaller.Arguments);
+                        ExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, program.OnlineInstaller.FileName, program.PathFolder).FirstOrDefault();
+                        arguments = string.Join(" ", program.OnlineInstaller.Arguments);
                     }
                     if (ExecutableFile == null) // якщо онлайн інсталятор не знайдено тоді шукаємо офлайн і задаємо аргументи офлайн інсталятора
                     {
-                        var tempExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, userProgram.FileName, userProgram.PathFolder); // ортимуємо список файлів
+                        var tempExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, program.FileName, program.PathFolder); // ортимуємо список файлів
                         if (WinInfoHelper.GetIs64BitOperatingSystem()) // якщо наша система х64
                             ExecutableFile = tempExecutableFile.FirstOrDefault(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)); // то намагаємось знайти файл, що містить х64 в назві
                         if (ExecutableFile == null) //якщо система не х64 або файла х64 нема
                             ExecutableFile = tempExecutableFile.LastOrDefault();  // обираємо те що є
-                        arguments = string.Join(" ", userProgram.Arguments); 
+                        arguments = string.Join(" ", program.Arguments); 
                     }
                     if (ExecutableFile != null) // якщо інсталятор знайдено то 
                         break; // покидаємо цикл пошуку файлу (внутрішній) (далі буде спроба встановити програму) 
                     else // якщо онлайн і офлайн інсталятор не знайдено
                     {
-                        TextConsole += $"Not found install file in folder: {userProgram.PathFolder}\n"; // сповіщаємо користувача, що файлу нема
+                        TextConsole += $"Not found install file in folder: {program.PathFolder}\n"; // сповіщаємо користувача, що файлу нема
                         if (countUnzipping >= 1) // якщо ми вже спробували його розпакувати еле його досі нема
                             break; // то покидаємо цикл пошуку файлу (далі буде помилка в циклі встановлення)
-                        if (userProgram.DisableDefender) // якщо треба вимикати антивірусник і файла нема то намагаємось його добути з архіва
+                        if (program.DisableDefender) // якщо треба вимикати антивірусник і файла нема то намагаємось його добути з архіва
                         {
-                            if (!File.Exists(_userPath.PortablePathSettings.RarPath)) // перевіряємо чи на місці архіватор
+                            if (!File.Exists("F:\\!Portable\\WinRAR\\WinRAR.exe")) //TODO FIX!!!!!!!!!!!!!!!! // перевіряємо чи на місці архіватор 
                             {
                                 TextConsole += $"Error, Not Find Rar.exe\n"; // якщо його нема то сповіщаємо користувача
                                 break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі встановлення)
                             }
-                            var pathRar = Directory.GetFiles(userProgram.PathFolder).Where(x => x.Contains(userProgram.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault(); // шукаємо файл архіва
-                            TextConsole += $"Find arkhive {userProgram.FileName}, resault: "; // сповіщаємо користувача
+                            var pathRar = Directory.GetFiles(program.PathFolder).Where(x => x.Contains(program.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".rar")).FirstOrDefault(); // шукаємо файл архіва
+                            TextConsole += $"Find arkhive {program.FileName}, resault: "; // сповіщаємо користувача
                             if (string.IsNullOrWhiteSpace(pathRar)) // перевіряємо чи знайдено архів
                             {
-                                TextConsole += $"Error, Not Find arkhive {userProgram.FileName}\n"; // якщо його нема то сповіщаємо користувача
+                                TextConsole += $"Error, Not Find arkhive {program.FileName}\n"; // якщо його нема то сповіщаємо користувача
                                 break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі встановлення)
                             }
                             TextConsole += $"OK!!!, File: {Path.GetFileName(pathRar)}\n"; // яповіщаємо користувача, що все гаразд
                             try // весь try catch це спробу розпакувати архів
                             {
                                 ProcessStartInfo ps = new ProcessStartInfo();
-                                ps.FileName = _userPath.PortablePathSettings.RarPath;
-                                ps.Arguments = $@"x -p1234 -o- {pathRar} {userProgram.PathFolder}";
+                                ps.FileName = "F:\\!Portable\\WinRAR\\WinRAR.exe"; //TODO FIX!!!!!!!!!!!!!!!!
+                                ps.Arguments = $@"x -p1234 -o- {pathRar} {program.PathFolder}";
                                 TextConsole += $"Start unzipping, resault: ";
                                 var proc = Process.Start(ps);
                                 if (!proc.WaitForExit(20000))
@@ -298,7 +294,7 @@ namespace CompasPack.ViewModel
                 
                 if (ExecutableFile == null) // якщо файл так і не знайдено 
                 {
-                    TextConsole += $"Programs: {userProgram.ProgramName}, not installed!!!\n"; //то сповіщаємо користувача про це
+                    TextConsole += $"Programs: {program.ProgramName}, not installed!!!\n"; //то сповіщаємо користувача про це
                     break; // і виходимо з циклу встановлення програми
                 }
                 else // якщо файл знайдено
@@ -321,7 +317,7 @@ namespace CompasPack.ViewModel
                             FileName = ExecutableFile,
                             Arguments = arguments,
                             UseShellExecute = false,
-                            WorkingDirectory = userProgram.PathFolder
+                            WorkingDirectory = program.PathFolder
                         };
                         TextConsole += $"File exe: {ExecutableFile}\n";
                     }
@@ -331,15 +327,15 @@ namespace CompasPack.ViewModel
                     {
                         Process proc = Process.Start(StartInfo);
                         await Task.Factory.StartNew(() => proc.WaitForExit());
-                        TextConsole += $"Programs: {userProgram.ProgramName}, Installed!!!\n";
+                        TextConsole += $"Programs: {program.ProgramName}, Installed!!!\n";
                         await Task.Delay(1000); // пауза для CheckInstall (щоб встиг оновитись реєстр)
-                        userProgramViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms()); // CheckInstall
+                        programViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms()); // CheckInstall
                         break; // покидаємо цикл встановлення програми
                     }
                     catch (Exception exp)
                     {
-                        TextConsole += $"Program: {userProgram.ProgramName}, error install: {exp.Message}\n";
-                        if (!userProgram.DisableDefender) // якщо це програма яка не потребує вимкнення антивірусника і її встановелння викликало помилку тоді не пробуємо ставити її ще раз
+                        TextConsole += $"Program: {program.ProgramName}, error install: {exp.Message}\n";
+                        if (!program.DisableDefender) // якщо це програма яка не потребує вимкнення антивірусника і її встановелння викликало помилку тоді не пробуємо ставити її ще раз
                             break; // покидаємо цикл встановлення програми
                     }
 
@@ -349,7 +345,7 @@ namespace CompasPack.ViewModel
                     TextConsole += $"<***************************************************************************>\n";
                 }
             } while (true);
-            if (userProgram.DisableDefender && await WinDefenderHelper.CheckDefenderDisable()) //якщо треба було вимкнути антивірусник  і він вимкнутий
+            if (program.DisableDefender && await WinDefenderHelper.CheckDefenderDisable()) //якщо треба було вимкнути антивірусник  і він вимкнутий
                 await WinDefenderHelper.EnableRealtimeMonitoring(); // вмикаємо назад
         }
 
@@ -374,9 +370,9 @@ namespace CompasPack.ViewModel
         }
         private void OnOpenExampleFile()
         {
-            _iOHelper.OpenFolder(_userPath.PathExampleFile);
+            _iOHelper.OpenFolder(_programsPaths.PathExampleFile);
         }
-        private async void OpenKMSAuto()
+        /*private async void OpenKMSAuto()
         {
             if (!WinDefenderHelper.CheckTamperProtectionDisable()) // Перевіряємо чи можемо ми вимкнути антивірусник
             {
@@ -416,7 +412,7 @@ namespace CompasPack.ViewModel
                         TextConsole += $"Not found KMSAuto\n"; // сповіщаємо користувача, що файлу нема
                         if (countUnzipping >= 1) // якщо ми вже спробували його розпакувати еле його досі нема
                             break; // то покидаємо цикл пошуку файлу(далі буде помилка в циклі встановлення)
-                        if (!File.Exists(_userPath.PortablePathSettings.RarPath)) // перевіряємо чи на місці архіватор
+                        if (!File.Exists("F:\\!Portable\\WinRAR\\WinRAR.exe")) //TODO FIX!!!!!!!!!!!!!!!! // перевіряємо чи на місці архіватор
                         {
                             TextConsole += $"Error, Not Find Rar.exe\n"; // якщо його нема то сповіщаємо користувача
                             break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі запуска KMSAuto)
@@ -431,7 +427,7 @@ namespace CompasPack.ViewModel
                         try // весь try catch це спробу розпакувати архів
                         {
                             ProcessStartInfo ps = new ProcessStartInfo();
-                            ps.FileName = _userPath.PortablePathSettings.RarPath;
+                            ps.FileName = "F:\\!Portable\\WinRAR\\WinRAR.exe"; //TODO FIX!!!!!!!!!!!!!!!!
                             ps.Arguments = $@"x -p1234 -o- {_userPath.PortablePathSettings.KMSAutoRarPath} {Path.GetDirectoryName(_userPath.PortablePathSettings.KMSAutoRarPath)}";
                             TextConsole += $"Start unzipping, resault: ";
                             var proc = Process.Start(ps);
@@ -489,7 +485,7 @@ namespace CompasPack.ViewModel
             AddSplitter();
             IsEnabled = true;
             await WinDefenderHelper.EnableRealtimeMonitoring();
-        }
+        }*/
         private void OnOpenAppLog()
         {
             _iOHelper.OpenFolder(_iOHelper.CompasPackLog);
@@ -586,7 +582,7 @@ namespace CompasPack.ViewModel
         }
 
         //--------------------------------------
-        public ICommand SelectUserPresetCommand { get; }
+        public ICommand SelectProgramsSetCommand { get; }
         public ICommand OnlyFreeCommand { get; }
         public ICommand InstallCommand { get; }
         public ICommand ClearConsoleCommand { get; }
@@ -597,7 +593,7 @@ namespace CompasPack.ViewModel
         //****************************************************
         public ICommand DefaultCommand { get; }
         public ICommand OpenExampleFileCommand { get; }
-        public ICommand OpenKMSAutoCommand { get; }
+        //public ICommand OpenKMSAutoCommand { get; }
         public ICommand OpenAppLogCommand { get; }
         //****************************************************
         public ICommand SpeedTestCommand { get; }

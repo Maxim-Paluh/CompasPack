@@ -7,7 +7,7 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    public class MemoryViewModel : ReportHardWareViewModelBase<MemoryReportSettings>, IReportViewModel
+    public class MemoryViewModel : ReportHardWareViewModelBase<Memory>, IReportViewModel
     {
         private string _type;
         private string _size;
@@ -39,7 +39,7 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public MemoryViewModel(MemoryReportSettings memoryReportSettings, XDocument xDocument)
+        public MemoryViewModel(Memory memoryReportSettings, XDocument xDocument)
         {
             Settings= memoryReportSettings;
             Document = xDocument;

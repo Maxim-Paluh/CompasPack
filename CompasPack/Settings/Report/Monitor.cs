@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CompasPack.Settings
 {
-    public class MonitorReportSettings
+    public class Monitor
     {
         public MonitorName MonitorName { get; set; }
         public MonitorModel MonitorModel { get; set; }

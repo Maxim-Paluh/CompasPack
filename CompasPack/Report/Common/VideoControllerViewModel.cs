@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace CompasPack.ViewModel
 {
-    public class VideoControllerViewModel : ReportHardWareViewModelBase<VideoControllerReportSettings>, IReportViewModel
+    public class VideoControllerViewModel : ReportHardWareViewModelBase<VideoController>, IReportViewModel
     {
         private VideoAdapter _selectedVideoAdapter;
         private static object _lock = new object();
@@ -23,7 +23,7 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public VideoControllerViewModel(VideoControllerReportSettings videoControllerReportSettings)
+        public VideoControllerViewModel(VideoController videoControllerReportSettings)
         {
             Settings = videoControllerReportSettings;
             VideoAdapters = new ObservableCollection<VideoAdapter>();

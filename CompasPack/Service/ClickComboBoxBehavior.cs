@@ -1,4 +1,5 @@
 ﻿using CompasPack.Settings;
+using CompasPack.Settings.Programs;
 using Microsoft.Xaml.Behaviors;
 using System;
 using System.Collections.Generic;
@@ -42,8 +43,8 @@ namespace CompasPack.Service
             if (Command != null && Command.CanExecute(null))
             {
                 // тут доводиться перевіряти який саме елемент викликав подію, щоб оптимізувати код використано саме такий метод де весь клас ClickComboBoxBehavior строрений лише для одного ComboBoxItem
-                // якщо подію викликав ComboBoxItem то його DataContext повинно бути UserPreset, якщо це сам ComboBox то там DataContext буде ProgramsViewModel
-                if (e.OriginalSource is FrameworkElement element && element.DataContext is UserPreset)
+                // якщо подію викликав ComboBoxItem то його DataContext повинно бути ProgramsSet, якщо це сам ComboBox то там DataContext буде ProgramsViewModel
+                if (e.OriginalSource is FrameworkElement element && element.DataContext is ProgramsSet)
                 {
                     Command.Execute(null);
                 }

@@ -226,40 +226,37 @@
     <Compile Include="Settings\MainSettingsView.xaml.cs">
       <DependentUpon>MainSettingsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Settings\Portable\PortableProgramsSettings.cs" />
-    <Compile Include="Settings\Portable\PortableProgramsSettingsHelper.cs" />
+    <Compile Include="Settings\Portable\PortableProgram.cs" />
+    <Compile Include="Settings\Portable\Main\PortableProgramsSettings.cs" />
+    <Compile Include="Settings\Portable\Main\PortableProgramsSettingsHelper.cs" />
     <Compile Include="Settings\Programs\GroupPrograms.cs" />
-    <Compile Include="Settings\Programs\UserProgram.cs" />
-    <Compile Include="Settings\Programs\UserProgramsSettingsHelper.cs" />
-    <Compile Include="Settings\Programs\UserProgramsTabViewModel.cs" />
-    <Compile Include="Settings\Report\Base\DocxReplaceTextEnum.cs" />
-    <Compile Include="Settings\Report\Base\HardWare.cs" />
-    <Compile Include="Settings\Report\Base\ReportBase.cs" />
-    <Compile Include="Settings\Report\Common\CPUReportSettings.cs" />
-    <Compile Include="Settings\Report\Common\MemoryFrequency.cs" />
-    <Compile Include="Settings\Report\Common\MemoryReportSettings.cs" />
-    <Compile Include="Settings\Report\Common\MemoryType.cs" />
-    <Compile Include="Settings\Report\Common\VideoControllerReportSettings.cs" />
-    <Compile Include="Settings\Report\Laptops\LaptopBatteryReportSettings.cs" />
-    <Compile Include="Settings\Report\Laptops\LaptopHardWare.cs" />
-    <Compile Include="Settings\Report\Monitor\MonitorAspectRatio.cs" />
-    <Compile Include="Settings\Report\Monitor\MonitorInterface.cs" />
-    <Compile Include="Settings\Report\Monitor\MonitorModel.cs" />
-    <Compile Include="Settings\Report\Monitor\MonitorName.cs" />
-    <Compile Include="Settings\Report\Monitor\MonitorReportSettings.cs" />
-    <Compile Include="Settings\Report\Monitor\MonitorSize.cs" />
-    <Compile Include="Settings\Report\Monitor\MonitorType.cs" />
-    <Compile Include="Settings\Report\PC\MotherboardReportSettings.cs" />
-    <Compile Include="Settings\Report\ReportSettings.cs" />
-    <Compile Include="Settings\Report\ReportSettingsHelper.cs" />
-    <Compile Include="Settings\UserPath\UserPath.cs" />
-    <Compile Include="Settings\UserPath\UserPathSettingsHelper.cs" />
-    <Compile Include="Settings\UserPath\UserPathSettingsTabView.xaml.cs">
-      <DependentUpon>UserPathSettingsTabView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Settings\UserPath\UserPathSettingsTabViewModel.cs" />
-    <Compile Include="Settings\UserPreset\UserPreset.cs" />
-    <Compile Include="Settings\UserPreset\UserPresetSettingsHelper.cs" />
+    <Compile Include="Settings\Programs\Main\ProgramsSettings.cs" />
+    <Compile Include="Settings\Programs\ProgramsPaths.cs" />
+    <Compile Include="Settings\Programs\Program.cs" />
+    <Compile Include="Settings\Programs\Main\ProgramsSettingsHelper.cs" />
+    <Compile Include="Settings\Programs\ProtectedProgram.cs" />
+    <Compile Include="Settings\Programs\ProgramsSet.cs" />
+    <Compile Include="Settings\Report\DocxReplaceTextEnum.cs" />
+    <Compile Include="Settings\Report\HardWare.cs" />
+    <Compile Include="Settings\Report\ReportBase.cs" />
+    <Compile Include="Settings\Report\ReportPaths.cs" />
+    <Compile Include="Settings\Report\CPU.cs" />
+    <Compile Include="Settings\Report\MemoryFrequency.cs" />
+    <Compile Include="Settings\Report\Memory.cs" />
+    <Compile Include="Settings\Report\MemoryType.cs" />
+    <Compile Include="Settings\Report\VideoController.cs" />
+    <Compile Include="Settings\Report\LaptopBattery.cs" />
+    <Compile Include="Settings\Report\LaptopHardWare.cs" />
+    <Compile Include="Settings\Report\MonitorAspectRatio.cs" />
+    <Compile Include="Settings\Report\MonitorInterface.cs" />
+    <Compile Include="Settings\Report\MonitorModel.cs" />
+    <Compile Include="Settings\Report\MonitorName.cs" />
+    <Compile Include="Settings\Report\Monitor.cs" />
+    <Compile Include="Settings\Report\MonitorSize.cs" />
+    <Compile Include="Settings\Report\MonitorType.cs" />
+    <Compile Include="Settings\Report\Motherboard.cs" />
+    <Compile Include="Settings\Report\Main\ReportSettings.cs" />
+    <Compile Include="Settings\Report\Main\ReportSettingsHelper.cs" />
     <Compile Include="Startup\Bootstrapper.cs" />
     <Compile Include="ViewModelBase\IDetailViewModel.cs" />
     <Compile Include="ViewModelBase\LookupItem.cs" />
@@ -268,7 +265,6 @@
     <Compile Include="ViewModelBase\ViewModelBase.cs" />
     <Compile Include="Wrapper\Base\ModelWrapper.cs" />
     <Compile Include="Wrapper\Base\NotifyDataErrorInfoBase.cs" />
-    <Compile Include="Wrapper\Settings\GroupsProgramsWrapper.cs" />
     <Compile Include="Wrapper\Settings\UserPath\PortablePathSettingsWrapper.cs" />
     <Compile Include="Wrapper\Settings\UserPath\ReportPathSettingsWrapper.cs" />
     <Compile Include="Wrapper\Settings\UserPath\UserPathWrapper.cs" />
@@ -400,10 +396,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Settings\UserPath\UserPathSettingsTabView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -424,7 +416,7 @@
       <DependentUpon>ProgramsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Programs\ProgramsViewModel.cs" />
-    <Compile Include="Programs\UserProgramViewModel.cs" />
+    <Compile Include="Programs\ProgramViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -445,9 +437,7 @@
     <None Include="app.manifest" />
     <None Include="JSON\PortableProgramsSettings.json" />
     <None Include="JSON\ReportSettings.json" />
-    <None Include="JSON\UserPathSettings.json" />
-    <None Include="JSON\UserPresetSettings.json" />
-    <None Include="JSON\UserProgramsSettings.json" />
+    <None Include="JSON\ProgramsSettings.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

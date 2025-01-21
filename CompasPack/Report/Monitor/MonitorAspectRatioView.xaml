@@ -24,7 +24,7 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="AspectRatio:"></TextBlock>
                 <WrapPanel Grid.Row="0" Grid.Column="1" Margin="4" HorizontalAlignment="Left">
                     <TextBlock Text="XPath:"></TextBlock>
-                    <TextBox IsReadOnly="True" Background="LightGray" MinWidth="150" MaxWidth="200" Margin="5 0 0 0" Text="{Binding Settings.AspectRatio.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox IsReadOnly="True" Background="LightGray" MinWidth="150" MaxWidth="200" Margin="5 0 0 0" Text="{Binding Settings.MonitorAspectRatio.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 <WrapPanel  Grid.Row="0" Grid.Column="2"  Margin="4" >
                     <TextBlock  Width="70"  Text="AspectRatio:"></TextBlock>

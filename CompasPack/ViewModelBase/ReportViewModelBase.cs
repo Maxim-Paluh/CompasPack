@@ -21,11 +21,10 @@ namespace CompasPack.ViewModel
 {
     public abstract class ReportViewModelBase : ViewModelBase
     {
-        protected ReportSettings _reportSettings;
+        protected readonly ReportSettings _reportSettings;
         protected XDocument _xDocument;
         protected IIOHelper _iOHelper;
         protected IMessageDialogService _messageDialogService;
-        protected readonly UserPath _userPath;
         private bool _isEnable;
         private int _indexReport;
 
@@ -38,9 +37,9 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public string ReportPath {get; set;}
-        public string ReportPricePath { get; set; }
-        public string RPFFilePath { get; set; } 
+        public string ReportPath {get;}
+        public string ReportPricePath { get; }
+        public string RPFFilePath { get; } 
         public int IndexReport
         {
             get { return _indexReport; }
@@ -50,14 +49,21 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public ReportViewModelBase(IIOHelper iOHelper, ReportSettings reportSettings, UserPath userPath, XDocument xDocument, IMessageDialogService messageDialogService)
+        public ReportViewModelBase(IIOHelper iOHelper, ReportSettings reportSettings, XDocument xDocument, IMessageDialogService messageDialogService,
+            string reportPath, string reportPricePath, string rPFFilePath)
         {
             IsEnable = false;
             _iOHelper = iOHelper;
             _reportSettings = reportSettings;
-            _userPath = userPath;
             _xDocument = xDocument;
             _messageDialogService = messageDialogService;
+
+            ReportPath = reportPath;
+            ReportPricePath = reportPricePath;
+            RPFFilePath = rPFFilePath;
+
+            IndexReport = GetLastReport(ReportPath)+1;
+
             SaveReportCommand = new DelegateCommand(OnSaveReport);
 
             OpenReportCommand = new DelegateCommand(OnOpenReport);
@@ -102,7 +108,7 @@ namespace CompasPack.ViewModel
             }
             try
             {
-                await AidaReportHelper.GetAidaReport(_userPath.ReportPathSettings.AidaExeFilePath, System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}."), "/HML", RPFFilePath, 240);
+                await AidaReportHelper.GetAidaReport(_reportSettings.ReportPaths.AidaExeFilePath, System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}."), "/HML", RPFFilePath, 240);
             }
             catch (Exception exception)
             {
@@ -159,7 +165,7 @@ namespace CompasPack.ViewModel
                 {
                     var document = doc.MainDocumentPart.Document;
 
-                    foreach (var item in _reportSettings.ReportViewModelDictionary)
+                    foreach (var item in _reportSettings.DocxReplaceTextDictionary)
                     {
                         var replaceText = GetReplaceText(item.Key);
                         if (replaceText != null)
@@ -183,7 +189,7 @@ namespace CompasPack.ViewModel
 
         }
         protected abstract string GetReplaceText(DocxReplaceTextEnum reportViewModelEnum);
-        protected int GetLastReport(string paht)
+        private int GetLastReport(string paht)
         {
             var lastString = _iOHelper.GetListFile(paht).Select(x => x = Regex.Match(x, "\\d+").Value).OrderBy(x => x).LastOrDefault();
             if (lastString != null)

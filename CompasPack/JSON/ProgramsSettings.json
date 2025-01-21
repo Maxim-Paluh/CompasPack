@@ -1,10 +1,63 @@
 {
+  "ProgramsPaths": {
+    "PathFolderPrograms": "F:\\!Install",
+    "PathFolderImageProgram": "F:\\!Install\\!Sample\\Icon",
+    "PathExampleFile": "F:\\!Install\\!Sample"
+  },
+  "ProgramsSets": [
+    {
+      "Name": "Nothing",
+      "InstallProgramName": []
+    },
+    {
+      "Name": "Windows 7",
+      "InstallProgramName": [
+        "Google Chrome",
+        "Mozilla Firefox",
+        "Opera",
+        "Adobe Acrobat Reader",
+        "FastStone",
+        "K-Lite Codec Pack",
+        "Notepad++",
+        "7-Zip",
+        "WinRAR 4.00",
+        "Unlocker",
+        "Microsoft Security Essentials",
+        "Report Greg_House_M_D"
+      ]
+    },
+    {
+      "Name": "Windows 10",
+      "InstallProgramName": [
+        "Google Chrome",
+        "Mozilla Firefox",
+        "Opera",
+        "Adobe Acrobat Reader",
+        "FastStone",
+        "K-Lite Codec Pack",
+        "Notepad++",
+        "7-Zip",
+        "WinRAR 5.40",
+        "Unlocker",
+        "Report Greg_House_M_D"
+      ]
+    }
+  ],
+  "ProtectedPrograms": [
+    {
+      "Name": "KMS",
+      "PathExe": "F:\\!Portable\\!Crack\\KMSAuto\\KMSAuto Net.exe",
+      "PathRar": "F:\\!Portable\\!Crack\\KMSAuto\\KMSAuto.rar"
+    }
+  ],
+  
+
   "GroupsPrograms": [
     {
       "Name": "Браузери",
       "Description": "Браузер - це програмне забезпечення для комп'ютера або іншого електронного пристрою, як правило, під'єднаного до Інтернету,\nщо дає можливість користувачеві взаємодіяти з текстом, малюнками або іншою інформацією на гіпертекстовій вебсторінці.\nТексти та малюнки можуть містити посилання на інші вебсторінки, розташовані на тому ж вебсайті або на інших вебсайтах.\nВебпереглядач з допомогою гіперпосилань дозволяє користувачеві швидко та просто отримувати інформацію, розміщену на багатьох вебсторінках.",
       "SingleChoice": false,
-      "UserPrograms": [
+      "Programs": [
         {
           "ProgramName": "Google Chrome",
           "InstallProgramName": "Chrome",
@@ -28,7 +81,7 @@
         },
         {
           "ProgramName": "Mozilla Firefox",
-		  "InstallProgramName": "Mozilla",
+          "InstallProgramName": "Mozilla",
           "IsFree": true,
           "DisableDefender": false,
           "Description": "Mozilla Firefox - це вільний безкоштовний браузер з відкритим кодом, використовує ядро Quantum (вдосконалений Gecko).",
@@ -76,7 +129,7 @@
       "Name": "Аудіовізуальні медіа",
       "Description": "Різноманітні програми для перегляду медіа файлів",
       "SingleChoice": false,
-      "UserPrograms": [
+      "Programs": [
         {
           "ProgramName": "Adobe Acrobat Reader",
           "InstallProgramName": "Adobe",
@@ -108,7 +161,7 @@
         },
         {
           "ProgramName": "K-Lite Codec Pack",
-		  "InstallProgramName": "K-Lite",
+          "InstallProgramName": "K-Lite",
           "IsFree": true,
           "DisableDefender": false,
           "Description": "K-Lite Codec Pack - це колекція аудіо та відео кодеків для Microsoft Windows DirectShow,\nяка дозволяє операційній системі та її програмному забезпеченню відтворювати різні аудіо та відео формати,\nяк правило, не підтримуються самою операційною системою.",
@@ -226,7 +279,7 @@
       "Name": "Утиліти",
       "Description": "Сервісні програми, що допомагають керувати файлами, отримувати інформацію про комп'ютер, діагностувати й усувати проблеми, забезпечувати ефективну роботу системи. Утиліти розширюють можливості ОС.",
       "SingleChoice": false,
-      "UserPrograms": [
+      "Programs": [
         {
           "ProgramName": "Unlocker",
           "InstallProgramName": "Unlocker",
@@ -277,7 +330,7 @@
         },
         {
           "ProgramName": "Total Commander 7.0",
-		  "InstallProgramName": "Total Commander",
+          "InstallProgramName": "Total Commander",
           "IsFree": false,
           "DisableDefender": true,
           "Description": "Total Commander — популярний двопанельний файловий менеджер із закритим початковим кодом для операційних систем Windows, Windows CE, Windows Mobile і Android.",
@@ -311,7 +364,7 @@
       "Name": "Office",
       "Description": "Microsoft Office — офісний пакет, створений корпорацією Microsoft для операційних систем Windows, macOS, iOS та Android.\nДо складу цього пакету входить програмне забезпечення для роботи з різними типами документів: текстами, електронними таблицями, презентаціями, базами даних тощо.\nMicrosoft Office також є сервером OLE об'єктів і його функції можуть використовуватися іншими застосунками, а також самими застосунками Microsoft Office.\nПідтримує скрипти та макроси, написані на VBA.",
       "SingleChoice": true,
-      "UserPrograms": [
+      "Programs": [
         {
           "ProgramName": "Microsoft Office 2003",
           "InstallProgramName": "версии 2003",
@@ -375,7 +428,7 @@
       "Name": "Антивірусне програмне забезпечення",
       "Description": "Антивірус - це спеціалізована програма для знаходження комп'ютерних вірусів,\nа також небажаних (шкідливих) програм загалом, та відновлення заражених (модифікованих) такими програмами файлів,\nа також для профілактики — запобігання зараженню (модифікації) файлів чи операційної системи шкідливим кодом.",
       "SingleChoice": true,
-      "UserPrograms": [
+      "Programs": [
         {
           "ProgramName": "360 Total Security",
           "InstallProgramName": "360 Total Security",
@@ -411,7 +464,7 @@
       "Name": "Report CompasPack",
       "Description": "Звіти про встановлення",
       "SingleChoice": true,
-      "UserPrograms": [
+      "Programs": [
         {
           "ProgramName": "Report Master",
           "InstallProgramName": null,
@@ -426,7 +479,7 @@
           ],
           "OnlineInstaller": null
         },
-		{
+        {
           "ProgramName": "Report Comp@s",
           "InstallProgramName": null,
           "IsFree": true,
@@ -454,7 +507,7 @@
           ],
           "OnlineInstaller": null
         },
-		{
+        {
           "ProgramName": "Report Greg_House_M_D",
           "InstallProgramName": null,
           "IsFree": true,

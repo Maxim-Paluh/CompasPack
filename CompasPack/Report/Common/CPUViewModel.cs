@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class CPUViewModel : ReportHardWareViewModelBase<CPUReportSettings>, IReportViewModel
+    public class CPUViewModel : ReportHardWareViewModelBase<CPU>, IReportViewModel
     {
         private string _name;
         private string _clock;
@@ -28,7 +28,7 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }   
-        public CPUViewModel(CPUReportSettings CPUReportSettings)
+        public CPUViewModel(CPU CPUReportSettings)
         {
             Settings = CPUReportSettings;
         }

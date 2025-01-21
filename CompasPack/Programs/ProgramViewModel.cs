@@ -10,7 +10,7 @@ using CompasPack.Service;
 
 namespace CompasPack.ViewModel
 {
-    public class UserProgramViewModel : ViewModelBase
+    public class ProgramViewModel : ViewModelBase
     {
         #region Properties
         private bool _visibilityIsInstall;
@@ -19,7 +19,7 @@ namespace CompasPack.ViewModel
         private IEventAggregator _eventAggregator;
 
         public GroupPrograms GroupProgram { get; set; }
-        public UserProgram UserProgram { get; set; }
+        public Program Program { get; set; }
         public bool Install
         {
             get{ return _install; }
@@ -51,10 +51,10 @@ namespace CompasPack.ViewModel
         #endregion
 
         #region Constructors
-        public UserProgramViewModel(UserProgram userProgram, GroupPrograms groupProgram, IEventAggregator eventAggregator)
+        public ProgramViewModel(Program program, GroupPrograms groupProgram, IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
-            UserProgram = userProgram;
+            Program = program;
             GroupProgram = groupProgram;
             SelectProgramCommand = new DelegateCommand(OnSelectProgram);
             IsInstall = false;
@@ -70,7 +70,7 @@ namespace CompasPack.ViewModel
             {
                 _eventAggregator.GetEvent<SelectSingleProgramEvent>().Publish(new SelectSingleProgramEventArgs()
                 {
-                    NameProgram = UserProgram.ProgramName,
+                    NameProgram = Program.ProgramName,
                     NameGroup = GroupProgram.Name,
                 });
             }
@@ -86,9 +86,9 @@ namespace CompasPack.ViewModel
         }
         public void CheckInstall(List<string> listPrograms)
         {
-            if (UserProgram.InstallProgramName != null)
+            if (Program.InstallProgramName != null)
             {
-                if(listPrograms.Where(x => x.Contains(UserProgram.InstallProgramName, StringComparison.InvariantCultureIgnoreCase)).Count() >= 1)
+                if(listPrograms.Where(x => x.Contains(Program.InstallProgramName, StringComparison.InvariantCultureIgnoreCase)).Count() >= 1)
                     IsInstall = true;
                 VisibilityIsInstall = true;
             }

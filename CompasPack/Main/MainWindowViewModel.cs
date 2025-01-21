@@ -65,16 +65,12 @@ namespace CompasPack.ViewModel
         }
 
         //-------------------------------------------------------------------------
-        private readonly UserPathSettingsHelper _userPathSettingsHelper;
-        private readonly UserProgramsSettingsHelper _userProgramsSettingsHelper;
-        private readonly UserPresetSettingsHelper _userPresetSettingsHelper;
+        private readonly ProgramsSettingsHelper _ProgramsSettingsHelper;
         private readonly ReportSettingsHelper _reportSettingsHelper;
         private readonly PortableProgramsSettingsHelper _portableProgramsSettingsHelper;
 
         public MainWindowViewModel(IMessageDialogService messageDialogService, IIOHelper iOHelper, IEventAggregator eventAggregator, IIndex<string, IDetailViewModel> formViewModelCreator,
-            UserPathSettingsHelper userPathSettingsHelper,
-            UserProgramsSettingsHelper userProgramsSettingsHelper,
-            UserPresetSettingsHelper userPresetSettingsHelper,
+            ProgramsSettingsHelper ProgramsSettingsHelper,
             ReportSettingsHelper reportSettingsHelper,
             PortableProgramsSettingsHelper portableProgramsSettingsHelper,
             Func<MainSettingsView> MainSettingsViewCreator)
@@ -82,9 +78,7 @@ namespace CompasPack.ViewModel
             _messageDialogService = messageDialogService;
             _iOHelper = iOHelper;
             _formViewModelCreator = formViewModelCreator;
-            _userPathSettingsHelper = userPathSettingsHelper;
-            _userProgramsSettingsHelper = userProgramsSettingsHelper;
-            _userPresetSettingsHelper = userPresetSettingsHelper;
+            _ProgramsSettingsHelper = ProgramsSettingsHelper;
             _reportSettingsHelper = reportSettingsHelper;
             _portableProgramsSettingsHelper = portableProgramsSettingsHelper;
             _mainSettingsViewCreator = MainSettingsViewCreator;
@@ -109,7 +103,7 @@ namespace CompasPack.ViewModel
             tempLoad.Message = "Завантаження налаштувань...";
             FormViewModel = tempLoad;
             
-            await _userPresetSettingsHelper.LoadFromFile();
+
             
             await _portableProgramsSettingsHelper.LoadFromFile();
             PortableIsEnabled = _portableProgramsSettingsHelper.IsLoad;
@@ -125,19 +119,11 @@ namespace CompasPack.ViewModel
                 }
             }
 
-            await _userProgramsSettingsHelper.LoadFromFile();
-            ProgramsIsEnabled = _userProgramsSettingsHelper.IsLoad;
+            await _ProgramsSettingsHelper.LoadFromFile();
+            ProgramsIsEnabled = _ProgramsSettingsHelper.IsLoad;
 
             await _reportSettingsHelper.LoadFromFile();
             ReportIsEnabled = _reportSettingsHelper.IsLoad;
-
-            await _userPathSettingsHelper.LoadFromFile();
-            if (!_userPathSettingsHelper.IsLoad)
-            {
-                PortableIsEnabled = false;
-                ProgramsIsEnabled = false;
-                ReportIsEnabled = false;
-            }
             
             if (ProgramsIsEnabled)
             {

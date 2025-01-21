@@ -11,7 +11,7 @@ using CompasPack.Service;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorMainViewModel : ReportHardWareViewModelBase<MonitorReportSettings>, IReportViewModel, IDataErrorInfo
+    public class MonitorMainViewModel : ReportHardWareViewModelBase<Monitor>, IReportViewModel, IDataErrorInfo
     {
         private string _brand;
         private string _model;
@@ -56,7 +56,7 @@ namespace CompasPack.ViewModel
             }
         }
         public string Error => throw new NotImplementedException();
-        public MonitorMainViewModel(MonitorReportSettings monitorReportSettings, XDocument xDocument)
+        public MonitorMainViewModel(Monitor monitorReportSettings, XDocument xDocument)
         {
             Settings = monitorReportSettings;
             Document = xDocument;

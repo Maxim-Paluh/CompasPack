@@ -34,7 +34,7 @@
                                     <Label Content="{Binding GroupProgram.Description, Mode=OneTime}"></Label>
                                 </Button.ToolTip>
                             </Button>
-                            <ItemsControl  Grid.Row="1" Visibility="{Binding IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding UserProgramViewModels}">
+                            <ItemsControl  Grid.Row="1" Visibility="{Binding IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding ProgramViewModels}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Button Margin="3" 
@@ -59,16 +59,16 @@
                                                     <RowDefinition Height="16"></RowDefinition>
                                                     <RowDefinition Height="16"></RowDefinition>
                                                 </Grid.RowDefinitions>
-                                                <Image Grid.Column="0" Width="48" Height="48" Grid.RowSpan="3" Source="{Binding UserProgram.FileImage, Mode=OneTime}"></Image>
+                                                <Image Grid.Column="0" Width="48" Height="48" Grid.RowSpan="3" Source="{Binding Program.FileImage, Mode=OneTime}"></Image>
 
-                                                <TextBlock  Height="16" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding UserProgram.ProgramName, Mode=OneTime}"></TextBlock>
+                                                <TextBlock  Height="16" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Program.ProgramName, Mode=OneTime}"></TextBlock>
                                                 <TextBlock  Height="16" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock">
                                                             <Setter Property="Text" Value="Paid" />
                                                             <Setter Property="Foreground" Value="Red" />
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding UserProgram.IsFree, Mode=OneTime}" Value="True">
+                                                                <DataTrigger Binding="{Binding Program.IsFree, Mode=OneTime}" Value="True">
                                                                     <Setter Property="Text" Value="Free" />
                                                                     <Setter Property="Foreground" Value="Green" />
                                                                 </DataTrigger>
@@ -88,18 +88,18 @@
                                                         </Grid.RowDefinitions>
                                                         <Grid.ColumnDefinitions>
                                                         </Grid.ColumnDefinitions>
-                                                        <Label Grid.Row="1" Content="{Binding UserProgram.Description, Mode=OneTime}"></Label>
+                                                        <Label Grid.Row="1" Content="{Binding Program.Description, Mode=OneTime}"></Label>
                                                         <StackPanel Grid.Row="2" Orientation="Horizontal">
                                                             <Label Content="Path Folder:"></Label>
-                                                            <Label Content="{Binding UserProgram.PathFolder, Mode=OneTime}"></Label>
+                                                            <Label Content="{Binding Program.PathFolder, Mode=OneTime}"></Label>
                                                         </StackPanel>
                                                         <StackPanel Grid.Row="3" Orientation="Horizontal">
                                                             <Label Content="File Name:"></Label>
-                                                            <Label Content="{Binding UserProgram.FileName, Mode=OneTime}"></Label>
+                                                            <Label Content="{Binding Program.FileName, Mode=OneTime}"></Label>
                                                         </StackPanel>
                                                         <StackPanel Grid.Row="4">
                                                             <Label Content="Arguments:"></Label>
-                                                            <ItemsControl Margin="10 0 0 0" ItemsSource="{Binding UserProgram.Arguments, Mode=OneTime}"/>
+                                                            <ItemsControl Margin="10 0 0 0" ItemsSource="{Binding Program.Arguments, Mode=OneTime}"/>
                                                         </StackPanel>
                                                     </Grid>
                                                 </Grid.ToolTip>
@@ -150,13 +150,13 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Grid.Row="0"  Margin="0 0 3 0" Text="Шаблон:" FontWeight="Bold" VerticalAlignment="Top" Height="19.96"></TextBlock>
                 <ComboBox Grid.Column="1" Grid.Row="0" IsEnabled="{Binding IsEnabled}"  Width="auto" Height="22"
-                ItemsSource="{Binding UserPresetPrograms}"
+                ItemsSource="{Binding ProgramsSets}"
                 DisplayMemberPath="Name"
                 SelectedValuePath="Name"
-                SelectedValue="{Binding SelectedUserPreset, Mode=TwoWay}">
+                SelectedValue="{Binding SelectedProgramsSet, Mode=TwoWay}">
 
                     <i:Interaction.Behaviors>
-                        <Service:ClickComboBoxBehavior Command="{Binding SelectUserPresetCommand}" />
+                        <Service:ClickComboBoxBehavior Command="{Binding SelectProgramsSetCommand}" />
                     </i:Interaction.Behaviors>
                 </ComboBox>
                 <Button Template="{DynamicResource RoundedButton}" Grid.Column="2" IsEnabled="{Binding IsEnabled}" Margin="5 0 5 0"  Width="75" Command="{Binding OnlyFreeCommand}"  Content="Only Free"></Button>
@@ -189,8 +189,8 @@
                 </WrapPanel>
                 <WrapPanel Grid.Row="2" Grid.ColumnSpan="2" >
                     <TextBlock Margin="0 0 14 0" Text="Захищені програми:" ToolTip="Програми котрі захищені від запуску з вбудованим антивірусом Windows, також передбачена інтегрована процедура відновлення втрачених файлів шляхом розпакування захищеного архіву" FontWeight="Bold" Height="19.96" VerticalAlignment="Top"></TextBlock>
-                    <Button Template="{DynamicResource RoundedButton}" Content="KMSAuto" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenKMSAutoCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
-                    <Button Template="{DynamicResource RoundedButton}" Content="Temp" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Width="75"></Button>
+                    <!--<Button Template="{DynamicResource RoundedButton}" Content="KMSAuto" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenKMSAutoCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
+                    <Button Template="{DynamicResource RoundedButton}" Content="Temp" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Width="75"></Button>-->
                 </WrapPanel>
                 <WrapPanel Grid.Row="3" Grid.ColumnSpan="2">
                     <TextBlock Margin="0 0 5 0" Text="Антивірусна програма:" ToolTip="Для ручного керування вбудованим в Windows антивірусом" FontWeight="Bold" Height="19.96" VerticalAlignment="Top" FontSize="11.4"></TextBlock>

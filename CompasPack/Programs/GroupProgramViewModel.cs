@@ -10,7 +10,7 @@ namespace CompasPack.ViewModel
         #region Properties
         private bool _isVisibility;
         public GroupPrograms GroupProgram { get; set; }
-        public ObservableCollection<UserProgramViewModel> UserProgramViewModels { get; set; }
+        public ObservableCollection<ProgramViewModel> ProgramViewModels { get; set; }
         public bool IsVisibility
         {
             get { return _isVisibility; }
@@ -23,11 +23,11 @@ namespace CompasPack.ViewModel
         #endregion
         
         #region Constructors
-        public GroupProgramViewModel(GroupPrograms groupProgram, ObservableCollection<UserProgramViewModel> userProgramViewModels)
+        public GroupProgramViewModel(GroupPrograms groupProgram, ObservableCollection<ProgramViewModel> programViewModels)
         {
             SetVisibilityCommand = new DelegateCommand(OnSetVisibility);
             GroupProgram = groupProgram;
-            UserProgramViewModels = userProgramViewModels;
+            ProgramViewModels = programViewModels;
             _isVisibility = true;
         }
         #endregion

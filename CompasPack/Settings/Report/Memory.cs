@@ -6,5 +6,9 @@ using System.Threading.Tasks;
 
 namespace CompasPack.Settings
 {
-    public class LaptopBatteryReportSettings : ReportBase { }
+    public class Memory
+    {
+        public MemoryType MemoryType { get; set; }
+        public MemoryFrequency MemoryFrequency { get; set; }
+    }
 }

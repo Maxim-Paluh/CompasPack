@@ -91,23 +91,26 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public LaptopReportViewModel(IIOHelper iOHelper, ReportSettings reportSettings, UserPath userPath, XDocument xDocument, IMessageDialogService messageDialogService) :
-            base(iOHelper, reportSettings, userPath, xDocument, messageDialogService)
+        
+        public LaptopReportViewModel(IIOHelper iOHelper, ReportSettings reportSettings, XDocument xDocument, IMessageDialogService messageDialogService) :
+            base(iOHelper, reportSettings, xDocument, messageDialogService,
+                reportSettings.ReportPaths.LaptopReportPath,
+                reportSettings.ReportPaths.LaptopPricePath,
+                reportSettings.ReportPaths.LogInstallRPF)
         {
-            ReportPath = userPath.ReportPathSettings.LaptopReportPath;
-            ReportPricePath = userPath.ReportPathSettings.LaptopPricePath;
-            RPFFilePath = _userPath.ReportPathSettings.LogInstallRPF;
+
         }
+
         public async Task LoadAsync(int? Id)
         {
             LaptopMainViewModel = new LaptopMainViewModel(_reportSettings.LaptopsBrandAndModel);
-            MonitorDiagonalViewModel = new MonitorDiagonalViewModel(_reportSettings.MonitorReportSettings, _xDocument);
-            CPUViewModel = new CPUViewModel(_reportSettings.CPUReportSettings);
-            MemoryViewModel = new MemoryViewModel(_reportSettings.MemoryReportSettings, _xDocument);
-            VideoControllerViewModel = new VideoControllerViewModel(_reportSettings.VideoControllerReportSettings);
+            MonitorDiagonalViewModel = new MonitorDiagonalViewModel(_reportSettings.Monitor, _xDocument);
+            CPUViewModel = new CPUViewModel(_reportSettings.CPU);
+            MemoryViewModel = new MemoryViewModel(_reportSettings.Memory, _xDocument);
+            VideoControllerViewModel = new VideoControllerViewModel(_reportSettings.VideoController);
             PhysicalDiskViewModel = new PhysicalDiskViewModel(_xDocument);
             LaptopOtherViewModel = new LaptopOtherViewModel(_reportSettings.LaptopHardWares, _xDocument);
-            LaptopBatteryViewModel = new LaptopBatteryViewModel(_reportSettings.LaptopBatteryReportSettings, _xDocument);
+            LaptopBatteryViewModel = new LaptopBatteryViewModel(_reportSettings.LaptopBattery, _xDocument);
 
             await Task.Factory.StartNew(() =>
             {
@@ -120,7 +123,6 @@ namespace CompasPack.ViewModel
                 LaptopOtherViewModel.Load();
             });
 
-            IndexReport = GetLastReport(ReportPath) + 1;
             IsEnable = true;
         }
 

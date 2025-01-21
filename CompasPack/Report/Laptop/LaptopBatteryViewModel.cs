@@ -10,7 +10,7 @@ using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    class LaptopBatteryViewModel : ReportHardWareViewModelBase<LaptopBatteryReportSettings>, IReportViewModel
+    class LaptopBatteryViewModel : ReportHardWareViewModelBase<LaptopBattery>, IReportViewModel
     {
         private string _wearLevel;
         public string WearLevel
@@ -22,7 +22,7 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public LaptopBatteryViewModel(LaptopBatteryReportSettings laptopBatteryReportSettings, XDocument xDocument)
+        public LaptopBatteryViewModel(LaptopBattery laptopBatteryReportSettings, XDocument xDocument)
         {
             Settings = laptopBatteryReportSettings;
             Document = xDocument;

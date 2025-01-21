@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorOtherViewModel : ReportHardWareViewModelBase<MonitorReportSettings>, IReportViewModel, IDataErrorInfo
+    public class MonitorOtherViewModel : ReportHardWareViewModelBase<Monitor>, IReportViewModel, IDataErrorInfo
     {
         public string this[string columnName]
         {
@@ -26,7 +26,7 @@ namespace CompasPack.ViewModel
             }
         }
         public string Error => throw new NotImplementedException();
-        public MonitorOtherViewModel(MonitorReportSettings monitorReportSettings, XDocument xDocument)
+        public MonitorOtherViewModel(Monitor monitorReportSettings, XDocument xDocument)
         {
             Settings = monitorReportSettings;
             Document = xDocument;

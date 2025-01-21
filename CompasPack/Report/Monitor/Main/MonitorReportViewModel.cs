@@ -49,20 +49,23 @@ namespace CompasPack.ViewModel
             get { return _monitorMainViewModel; }
             set { _monitorMainViewModel = value; }
         }
-        public MonitorReportViewModel(IIOHelper iOHelper, ReportSettings reportSettings, UserPath userPath, XDocument xDocument, IMessageDialogService messageDialogService) :
-            base(iOHelper, reportSettings, userPath, xDocument, messageDialogService)
+
+        public MonitorReportViewModel(IIOHelper iOHelper, ReportSettings reportSettings, XDocument xDocument, IMessageDialogService messageDialogService) :
+            base(iOHelper, reportSettings, xDocument, messageDialogService,
+                reportSettings.ReportPaths.MonitorReportPath,
+                reportSettings.ReportPaths.MonitorPricePath,
+                reportSettings.ReportPaths.MonitorReportRPF
+                )
         {
-            ReportPath = userPath.ReportPathSettings.MonitorReportPath;
-            ReportPricePath = userPath.ReportPathSettings.MonitorPricePath;
-            RPFFilePath = _userPath.ReportPathSettings.MonitorReportRPF;
+
         }
         public async Task LoadAsync(int? Id)
         {
-            MonitorMainViewModel = new MonitorMainViewModel(_reportSettings.MonitorReportSettings, _xDocument);
-            MonitorAspectRatioViewModel = new MonitorAspectRatioViewModel(_reportSettings.MonitorReportSettings, _xDocument);
-            MonitorOtherViewModel = new MonitorOtherViewModel(_reportSettings.MonitorReportSettings, _xDocument);
-            MonitorDiagonalViewModel = new MonitorDiagonalViewModel(_reportSettings.MonitorReportSettings, _xDocument);
-            MonitorResolutionViewModel = new MonitorResolutionViewModel(_reportSettings.MonitorReportSettings, _xDocument);
+            MonitorMainViewModel = new MonitorMainViewModel(_reportSettings.Monitor, _xDocument);
+            MonitorAspectRatioViewModel = new MonitorAspectRatioViewModel(_reportSettings.Monitor, _xDocument);
+            MonitorOtherViewModel = new MonitorOtherViewModel(_reportSettings.Monitor, _xDocument);
+            MonitorDiagonalViewModel = new MonitorDiagonalViewModel(_reportSettings.Monitor, _xDocument);
+            MonitorResolutionViewModel = new MonitorResolutionViewModel(_reportSettings.Monitor, _xDocument);
 
             await Task.Factory.StartNew(() =>
             {
@@ -73,9 +76,9 @@ namespace CompasPack.ViewModel
                 MonitorResolutionViewModel.Load();
             });
 
-            IndexReport = GetLastReport(ReportPath) + 1;
             IsEnable = true;
         }
+
         protected override bool IsError()
         {
             if (string.IsNullOrWhiteSpace(MonitorMainViewModel.Brand) || string.IsNullOrWhiteSpace(MonitorOtherViewModel.Result))

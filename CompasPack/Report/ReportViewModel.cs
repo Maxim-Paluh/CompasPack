@@ -20,9 +20,8 @@ namespace CompasPack.ViewModel
         private IDetailViewModel _reportformViewModel;
         private readonly IIOHelper _iOHelper;
         private IMessageDialogService _messageDialogService;
-        private readonly ReportSettingsHelper _reportSettingsSettingsHelper;
-        private readonly UserPathSettingsHelper _userPathSettingsHelper;
-        private UserPath _userPath;
+        private readonly ReportSettingsHelper _reportSettingsHelper;
+        private ReportPaths _reportPaths;
         private XDocument _xDocument;
         private bool _isEnabled;
 
@@ -62,25 +61,26 @@ namespace CompasPack.ViewModel
             }
         }
         public bool IsChanges { get; set; } 
-        public ReportViewModel(IIOHelper iOHelper, IMessageDialogService messageDialogService, ReportSettingsHelper reportSettingsSettingsHelper, UserPathSettingsHelper userPathSettingsHelper)
+
+        public ReportViewModel(IIOHelper iOHelper, IMessageDialogService messageDialogService, ReportSettingsHelper reportSettingsHelper)
         {
             _iOHelper = iOHelper;
-            GenerateReportCommand = new DelegateCommand(OnGenerateReport);
-            SelectReportTypeCommand = new DelegateCommand(OnSelectReportType);
             _messageDialogService = messageDialogService;
-            _reportSettingsSettingsHelper = reportSettingsSettingsHelper;
-            _userPathSettingsHelper = userPathSettingsHelper;
+            _reportSettingsHelper = reportSettingsHelper;
+
             IsEnabled = true;
             IsChanges = false;
+
+            GenerateReportCommand = new DelegateCommand(OnGenerateReport);
+            SelectReportTypeCommand = new DelegateCommand(OnSelectReportType);
         }
 
         public Task LoadAsync(int? Id)
         {
-            _userPath = (UserPath)_userPathSettingsHelper.Settings.Clone();
-            PathHelper.SetRootPath(_iOHelper.PathRoot, _userPath);
+            _reportPaths = (ReportPaths)_reportSettingsHelper.Settings.ReportPaths.Clone();
+            PathHelper.SetRootPath(_iOHelper.PathRoot, _reportPaths); // TODO
             return Task.CompletedTask;
         }
-
 
         private void OnSelectReportType()
         {
@@ -119,8 +119,8 @@ namespace CompasPack.ViewModel
                 {
                     try
                     {
-                        await AidaReportHelper.GetAidaReport(_userPath.ReportPathSettings.AidaExeFilePath, Path.Combine(_iOHelper.CompasPackLog, "Report."),
-                                                                           "/XML", _userPath.ReportPathSettings.ReportRPF,120);
+                        await AidaReportHelper.GetAidaReport(_reportPaths.AidaExeFilePath, Path.Combine(_iOHelper.CompasPackLog, "Report."),
+                                                                           "/XML", _reportPaths.ReportRPF,120);
                         tempAidaReport = true;
                     }
                     catch (Exception)
@@ -133,8 +133,8 @@ namespace CompasPack.ViewModel
 #else
                     try
                     {
-                        await AidaReportHelper.GetAidaReport(_userPath.ReportPathSettings.AidaExeFilePath, Path.Combine(_iOHelper.CompasPackLog, "Report."),
-                                                                           "/XML", _userPath.ReportPathSettings.ReportRPF, 120);
+                        await AidaReportHelper.GetAidaReport(_reportPaths.AidaExeFilePath, Path.Combine(_iOHelper.CompasPackLog, "Report."),
+                                                                           "/XML", _reportPaths.ReportRPF, 120);
                         tempAidaReport = true;
                     }
                     catch (Exception)
@@ -143,7 +143,7 @@ namespace CompasPack.ViewModel
                     }         
 #endif
             }
-            
+
             if (tempAidaReport)
             {
                // Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -161,13 +161,13 @@ namespace CompasPack.ViewModel
                 switch (ReportType)
                 {
                     case TypeReport.Computer:
-                        tempReportFormViewModel = new ComputerReportViewModel(_iOHelper, _reportSettingsSettingsHelper.Settings, _userPath, _xDocument, _messageDialogService);
+                        tempReportFormViewModel = new ComputerReportViewModel(_iOHelper, _reportSettingsHelper.Settings, _xDocument, _messageDialogService);
                         break;
                     case TypeReport.Laptop:
-                        tempReportFormViewModel = new LaptopReportViewModel(_iOHelper, _reportSettingsSettingsHelper.Settings, _userPath, _xDocument, _messageDialogService);
+                        tempReportFormViewModel = new LaptopReportViewModel(_iOHelper, _reportSettingsHelper.Settings, _xDocument, _messageDialogService);
                         break;
                     case TypeReport.Monitor:
-                        tempReportFormViewModel = new MonitorReportViewModel(_iOHelper, _reportSettingsSettingsHelper.Settings, _userPath, _xDocument, _messageDialogService);
+                        tempReportFormViewModel = new MonitorReportViewModel(_iOHelper, _reportSettingsHelper.Settings, _xDocument, _messageDialogService);
                         break;
                     default:
                         tempReportFormViewModel = null;

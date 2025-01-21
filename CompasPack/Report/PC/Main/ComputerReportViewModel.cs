@@ -85,20 +85,21 @@ namespace CompasPack.ViewModel
             }
         }
 
-        public ComputerReportViewModel(IIOHelper iOHelper, ReportSettings reportSettings, UserPath userPath, XDocument xDocument, IMessageDialogService messageDialogService) :
-            base(iOHelper, reportSettings, userPath, xDocument, messageDialogService)
+        public ComputerReportViewModel(IIOHelper iOHelper, ReportSettings reportSettings, XDocument xDocument, IMessageDialogService messageDialogService) :
+            base(iOHelper, reportSettings, xDocument, messageDialogService,
+                 reportSettings.ReportPaths.PCReportPath,
+                 reportSettings.ReportPaths.PCPricePath,
+                 reportSettings.ReportPaths.LogInstallRPF)
         {
-            ReportPath = userPath.ReportPathSettings.PCReportPath;
-            ReportPricePath = userPath.ReportPathSettings.PCPricePath;
-            RPFFilePath = _userPath.ReportPathSettings.LogInstallRPF;
+
         }
         public async Task LoadAsync(int? Id)
         {
             PCCaseViewModel = new PCCaseViewModel();
-            CPUViewModel = new CPUViewModel(_reportSettings.CPUReportSettings);
-            MotherboardViewModel = new MotherboardViewModel(_reportSettings.MotherboardReportSettings, _xDocument);
-            MemoryViewModel = new MemoryViewModel(_reportSettings.MemoryReportSettings, _xDocument);
-            VideoControllerViewModel = new VideoControllerViewModel(_reportSettings.VideoControllerReportSettings);
+            CPUViewModel = new CPUViewModel(_reportSettings.CPU);
+            MotherboardViewModel = new MotherboardViewModel(_reportSettings.Motherboard, _xDocument);
+            MemoryViewModel = new MemoryViewModel(_reportSettings.Memory, _xDocument);
+            VideoControllerViewModel = new VideoControllerViewModel(_reportSettings.VideoController);
             PhysicalDiskViewModel = new PhysicalDiskViewModel(_xDocument);
             PowerSupplyViewModel = new PowerSupplyViewModel(_reportSettings.PCPowerSupply);
 
@@ -111,11 +112,9 @@ namespace CompasPack.ViewModel
                 PhysicalDiskViewModel.Load();
                 PowerSupplyViewModel.Load();
             });
-            IndexReport = GetLastReport(ReportPath) + 1;
 
             IsEnable = true;
         }
-
 
         protected override bool IsError()
         {
@@ -141,6 +140,7 @@ namespace CompasPack.ViewModel
             $"<tr><td><b>ID: {IndexReport:000} (Прийшов {DateTime.Now:dd.MM.yyyy})</b></td><td style=\"background-color: red;\">0</td><td></td><td style=\"background-color: #a0a0a4;\"/></tr>" +
             $"<tr><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"/><td style=\"background-color: #a0a0a4;\"> </td></tr></tbody></table></body></html>";
         }
+
         protected override string GetReplaceText(DocxReplaceTextEnum reportViewModelEnum)
         {
             switch (reportViewModelEnum)
@@ -157,10 +157,12 @@ namespace CompasPack.ViewModel
                     return null;
             }
         }
+
         public bool HasChanges()
         {
             return !IsEnable;
         }
+
         public void Unsubscribe()
         {
 

@@ -38,12 +38,12 @@ namespace CompasPack.Settings
 
         public async Task LoadAsync(int? Id)
         {
-            var tabUserPathSettings = _settingsViewModeCreator[nameof(UserPathSettingsTabViewModel)];
-            await tabUserPathSettings.LoadAsync();
+            //var tabUserPathSettings = _settingsViewModeCreator[nameof(UserPathSettingsTabViewModel)];
+            //await tabUserPathSettings.LoadAsync();
           
-            SettingsViewModels.Add(tabUserPathSettings);
+            //SettingsViewModels.Add(tabUserPathSettings);
 
-            SelectedSettingsViewModel = tabUserPathSettings;
+            //SelectedSettingsViewModel = tabUserPathSettings;
         }
 
         public void Unsubscribe()

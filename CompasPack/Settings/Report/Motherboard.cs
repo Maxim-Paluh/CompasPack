@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace CompasPack.Settings
 {
-    public class CPUReportSettings : ReportBase { }
+    public class Motherboard : ReportBase { }
 }
