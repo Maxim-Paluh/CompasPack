@@ -69,6 +69,18 @@ namespace CompasPack.Helper
             return true;
         }
 
+        public static void OpenWinDefenderSettings()
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = "windowsdefender://threatsettings",
+                UseShellExecute = false,
+                WindowStyle = ProcessWindowStyle.Maximized
+            };
+            Process.Start(startInfo);
+        }
+
         public static bool CheckTamperProtectionDisable()
         {
             if (!WinInfoHelper.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))

@@ -9,11 +9,16 @@ namespace CompasPack.Settings.Programs
     public class ProtectedProgram : ICloneable
     {
         public string Name { get; set; }
-        public string PathExe { get; set; }
-        public string PathRar { get; set; }
+        public ProtectedProgramPaths ProtectedProgramPaths { get; set; }
+        public ProtectedProgram() 
+        {
+            ProtectedProgramPaths = new ProtectedProgramPaths();
+        }
         public object Clone()
         {
-            return MemberwiseClone();
+            var protectedProgram = (ProtectedProgram)MemberwiseClone();
+            protectedProgram.ProtectedProgramPaths = (ProtectedProgramPaths)ProtectedProgramPaths.Clone();
+            return protectedProgram;
         }
     }
 }

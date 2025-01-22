@@ -18,14 +18,20 @@ namespace CompasPack.Settings
 
         public ProgramsSettings()
         {
+            ArchivePassword = string.Empty;
+            ProgramsPaths = new ProgramsPaths();
+            ProgramsSets = new List<ProgramsSet>();
+            ProtectedPrograms = new List<ProtectedProgram>();
             GroupsPrograms = new List<GroupPrograms>();
         }
         public object Clone()
         {
-            return new ProgramsSettings()
-            {
-                GroupsPrograms = (List<GroupPrograms>)GroupsPrograms.Clone()
-            };
+            var programsSettings = (ProgramsSettings)MemberwiseClone();
+            programsSettings.ProgramsPaths = (ProgramsPaths)ProgramsPaths.Clone();
+            programsSettings.ProgramsSets = (List<ProgramsSet>)ProgramsSets.Clone();
+            programsSettings.ProtectedPrograms = (List<ProtectedProgram>)ProtectedPrograms.Clone();
+            programsSettings.GroupsPrograms = (List<GroupPrograms>)GroupsPrograms.Clone();
+            return programsSettings;
         }
     }
 }

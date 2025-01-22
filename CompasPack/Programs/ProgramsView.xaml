@@ -189,6 +189,21 @@
                 </WrapPanel>
                 <WrapPanel Grid.Row="2" Grid.ColumnSpan="2" >
                     <TextBlock Margin="0 0 14 0" Text="Захищені програми:" ToolTip="Програми котрі захищені від запуску з вбудованим антивірусом Windows, також передбачена інтегрована процедура відновлення втрачених файлів шляхом розпакування захищеного архіву" FontWeight="Bold" Height="19.96" VerticalAlignment="Top"></TextBlock>
+                    <ItemsControl ItemsSource="{Binding ProtectedPrograms}" IsEnabled="{Binding IsEnabled}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Name}"
+                                        Command="{Binding Path=DataContext.OpenProtectedProgramCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+                                        CommandParameter="{Binding}"
+                                        Template="{DynamicResource RoundedButton}" Margin="0 0 5 5" Width="75"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
                     <!--<Button Template="{DynamicResource RoundedButton}" Content="KMSAuto" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Command="{Binding OpenKMSAutoCommand}" Width="75" Style="{StaticResource ChangeColorButton}"></Button>
                     <Button Template="{DynamicResource RoundedButton}" Content="Temp" Margin="0 0 5 5" IsEnabled="{Binding IsEnabled}" Width="75"></Button>-->
                 </WrapPanel>

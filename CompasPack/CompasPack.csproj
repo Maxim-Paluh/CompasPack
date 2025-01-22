@@ -237,6 +237,7 @@
     <Compile Include="Settings\Programs\Main\ProgramsSettingsHelper.cs" />
     <Compile Include="Settings\Programs\ProtectedProgram.cs" />
     <Compile Include="Settings\Programs\ProgramsSet.cs" />
+    <Compile Include="Settings\Programs\ProtectedProgramPaths.cs" />
     <Compile Include="Settings\Report\DocxReplaceTextEnum.cs" />
     <Compile Include="Settings\Report\HardWare.cs" />
     <Compile Include="Settings\Report\ReportBase.cs" />

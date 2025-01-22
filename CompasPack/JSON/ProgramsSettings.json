@@ -47,8 +47,17 @@
   "ProtectedPrograms": [
     {
       "Name": "KMS",
-      "PathExe": "F:\\!Portable\\!Crack\\KMSAuto\\KMSAuto Net.exe",
-      "PathRar": "F:\\!Portable\\!Crack\\KMSAuto\\KMSAuto.rar"
+      "ProtectedProgramPaths": {
+        "PathExe": "F:\\!Portable\\!Crack\\KMSAuto\\KMSAuto Net.exe",
+        "PathRar": "F:\\!Portable\\!Crack\\KMSAuto\\KMSAuto.7z"
+      }
+    },
+    {
+      "Name": "CW",
+      "ProtectedProgramPaths": {
+        "PathExe": "F:\\!Portable\\!Crack\\KMSAuto\\CW.exe",
+        "PathRar": "F:\\!Portable\\!Crack\\KMSAuto\\CW.7z"
+      }
     }
   ],
 

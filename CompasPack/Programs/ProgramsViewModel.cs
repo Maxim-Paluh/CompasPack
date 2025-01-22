@@ -34,6 +34,7 @@ namespace CompasPack.ViewModel
         private bool _isEnabled;
         public ObservableCollection<ProgramsSet> ProgramsSets { get; }
         public ObservableCollection<GroupProgramViewModel> GroupProgramViewModel { get; }
+        public ObservableCollection<ProtectedProgram> ProtectedPrograms { get; }
         public string TextConsole
         {
             get { return _textConsole; }
@@ -66,6 +67,7 @@ namespace CompasPack.ViewModel
         {
             ProgramsSets = new ObservableCollection<ProgramsSet>();
             GroupProgramViewModel = new ObservableCollection<GroupProgramViewModel>();
+            ProtectedPrograms = new ObservableCollection<ProtectedProgram>();
 
             _messageDialogService = messageDialogService;
             _eventAggregator = eventAggregator;
@@ -85,7 +87,7 @@ namespace CompasPack.ViewModel
 
             OpenAppLogCommand = new DelegateCommand(OnOpenAppLog);
             OpenExampleFileCommand = new DelegateCommand(OnOpenExampleFile);
-            //OpenKMSAutoCommand = new DelegateCommand(OpenKMSAuto);
+            OpenProtectedProgramCommand = new DelegateCommand<ProtectedProgram>(OpenProtectedProgram);
             DefaultCommand = new DelegateCommand(OnDefault);
 
             SpeedTestCommand = new DelegateCommand(OnSpeedTest);
@@ -101,23 +103,29 @@ namespace CompasPack.ViewModel
 
             ProgramsSets.Clear();
             GroupProgramViewModel.Clear();
+            ProtectedPrograms.Clear();
             
-
             _programsPaths = (ProgramsPaths)_programsSettingsHelper.Settings.ProgramsPaths.Clone();
             PathHelper.SetRootPath(_iOHelper.PathRoot, _programsPaths);
-
+            //----------------------------------------------------------------------------------------------------
             var GroupsPrograms = (List<GroupPrograms>)_programsSettingsHelper.Settings.GroupsPrograms?.Clone();
             foreach (var groupProgram in GroupsPrograms)
                 GroupProgramViewModel.Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<ProgramViewModel>(groupProgram.Programs.Select(x => new ProgramViewModel(x, groupProgram, _eventAggregator)))));
 
             ProgramsHelper.CombinePathFolderAndImage(GroupProgramViewModel, _programsPaths);
             ProgramsHelper.CheckInstallPrograms(GroupProgramViewModel); // CheckInstall
-
+            //----------------------------------------------------------------------------------------------------
             _programsSettingsHelper.Settings.ProgramsSets.ForEach(x => ProgramsSets.Add(x)); // Add ProgramsSets     
-            var tempProgramsSet = ProgramsSets.FirstOrDefault(x => x.Name.Contains(Regex.Match(WinInfoHelper.GetProductName(), @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // heck ProgramsSet
+            var tempProgramsSet = ProgramsSets.FirstOrDefault(x => x.Name.Contains(Regex.Match(WinInfoHelper.GetProductName(), @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // check ProgramsSet
             if (tempProgramsSet != null)
                 SelectedProgramsSet = tempProgramsSet.Name;
             OnSelectProgramsSet();
+            //----------------------------------------------------------------------------------------------------
+            ((List<ProtectedProgram>)_programsSettingsHelper.Settings.ProtectedPrograms.Clone()).ForEach(x=> 
+            {
+                PathHelper.SetRootPath(_iOHelper.PathRoot, x.ProtectedProgramPaths);
+                ProtectedPrograms.Add(x);
+            });
             return Task.CompletedTask;
         }
 
@@ -179,8 +187,9 @@ namespace CompasPack.ViewModel
             {
                 if (!WinDefenderHelper.CheckTamperProtectionDisable()) // Перевіряємо чи можемо ми вимкнути антивірусник
                 {
-                    _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!\n" +
-                        $"Оскільки встановлення одної з програм потребує автоматичного відключення ативірусного ПЗ!!!", "Помилка!");
+                    _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!\n" +
+                        $"Оскільки встановлення одної з програм потребує автоматичного відключення ативірусного ПЗ!", "Помилка!");
+                    WinDefenderHelper.OpenWinDefenderSettings();
                     return;
                 }
             }
@@ -192,7 +201,7 @@ namespace CompasPack.ViewModel
                 TextConsole += $"Start Install Programs: {programToInstall.Program.ProgramName}\n";
                 if (programToInstall.IsInstall) // перевіряємо чи програма встановлена
                 {
-                    TextConsole += $"Programs: {programToInstall.Program.ProgramName}, Already installed!!!\n";
+                    TextConsole += $"Programs: {programToInstall.Program.ProgramName}, Already installed!\n";
                     AddSplitter();
                     continue;
                 }
@@ -212,9 +221,9 @@ namespace CompasPack.ViewModel
             int countInstall = 0; // лічильник спроб встановити програму (всього дві спроби)
             do // цикл встановлення програми (Дві спроби)
             {
-                int countUnzipping = 0; // лічильник спроб розпакувати архів якщо інсталятор схавав антивірусник(одна спроба розпакувати на одну спробу встановити програму)
+                int countDecompress = 0; // лічильник спроб розпакувати архів якщо інсталятор схавав антивірусник(одна спроба розпакувати на одну спробу встановити програму)
                 string ExecutableFile = null;
-                do // цикл пошуку файла (цікаво зроблено, він виконується або 0.5 або на 1.5 рази завдяки if (ExecutableFile != null)  break; та if (countUnzipping >= 1)  break;)
+                do // цикл пошуку файла (цікаво зроблено, він виконується або 0.5 або на 1.5 рази завдяки if (ExecutableFile != null)  break; та if (countDecompress >= 1)  break;)
                 {
                     if (programViewMode.Program.DisableDefender && !WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це не windows 7
                     {
@@ -248,7 +257,7 @@ namespace CompasPack.ViewModel
                     else // якщо онлайн і офлайн інсталятор не знайдено
                     {
                         TextConsole += $"Not found install file in folder: {program.PathFolder}\n"; // сповіщаємо користувача, що файлу нема
-                        if (countUnzipping >= 1) // якщо ми вже спробували його розпакувати еле його досі нема
+                        if (countDecompress >= 1) // якщо ми вже спробували його розпакувати еле його досі нема
                             break; // то покидаємо цикл пошуку файлу (далі буде помилка в циклі встановлення)
                         if (program.DisableDefender) // якщо треба вимикати антивірусник і файла нема то намагаємось його добути з архіва
                         {
@@ -261,25 +270,25 @@ namespace CompasPack.ViewModel
                             var pathRar = Directory.GetFiles(program.PathFolder).Where(x => x.Contains(program.FileName, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".7z")).FirstOrDefault(); // шукаємо архів
                             if (string.IsNullOrWhiteSpace(pathRar)) // перевіряємо чи знайдено архів
                             {
-                                TextConsole += $"Error, Not Find arkhive\n"; // якщо його нема то сповіщаємо користувача
+                                TextConsole += $"Error, Not Find arkhive!\n"; // якщо його нема то сповіщаємо користувача
                                 break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі встановлення)
                             }
-                            TextConsole += $"OK!!!\n"; // сповіщаємо користувача, що архів знайдено
+                            TextConsole += $"OK!\n"; // сповіщаємо користувача, що архів знайдено
                             TextConsole += $"Start decompress, resault: ";
                             await Task.Delay(500); // дамо часу основному потоку обновити інформацію в консолі
                             switch (ArchiverHelper.Decompress(pathRar, program.PathFolder, _programsSettingsHelper.Settings.ArchivePassword, 20000)) //спробу розпакувати архів
                             {
                                 case ResultArchiver.OK:
-                                    TextConsole += $"OK!!!\n";
+                                    TextConsole += $"OK!\n";
                                     break;
                                 case ResultArchiver.TimeOut:
-                                    TextConsole += "Time out unzipping\n";
+                                    TextConsole += "Time out decompress\n";
                                     break;
                                 case ResultArchiver.Error:
-                                    TextConsole += "Error unzipping\n";
+                                    TextConsole += "Error decompress\n";
                                     break;
                             }
-                            countUnzipping++; // лічильник спроб розпакувати архів
+                            countDecompress++; // лічильник спроб розпакувати архів
                         }
                         else // якщо антивірусник не треба вимикати і файла немає то значить помилився десь користувач
                             break; //тому покидаємо цикл пошуку файлу(далі буде помилка в циклі встановлення)
@@ -288,7 +297,7 @@ namespace CompasPack.ViewModel
                 
                 if (ExecutableFile == null) // якщо файл так і не знайдено 
                 {
-                    TextConsole += $"Programs: {program.ProgramName}, not installed!!!\n"; //то сповіщаємо користувача про це
+                    TextConsole += $"Programs: {program.ProgramName}, not installed!\n"; //то сповіщаємо користувача про це
                     break; // і виходимо з циклу встановлення програми
                 }
                 else // якщо файл знайдено
@@ -321,7 +330,7 @@ namespace CompasPack.ViewModel
                     {
                         Process proc = Process.Start(StartInfo);
                         await Task.Factory.StartNew(() => proc.WaitForExit());
-                        TextConsole += $"Programs: {program.ProgramName}, Installed!!!\n";
+                        TextConsole += $"Programs: {program.ProgramName}, Installed!\n";
                         await Task.Delay(1000); // пауза для CheckInstall (щоб встиг оновитись реєстр)
                         programViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms()); // CheckInstall
                         break; // покидаємо цикл встановлення програми
@@ -366,20 +375,22 @@ namespace CompasPack.ViewModel
         {
             _iOHelper.OpenFolder(_programsPaths.PathExampleFile);
         }
-        /*private async void OpenKMSAuto()
-        {
+        private async void OpenProtectedProgram(ProtectedProgram protectedProgram)
+        {    
             if (!WinDefenderHelper.CheckTamperProtectionDisable()) // Перевіряємо чи можемо ми вимкнути антивірусник
             {
-                _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!"); // якщо ні то сповіщаємо користувача
+                _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!"); // якщо ні то сповіщаємо користувача
+                WinDefenderHelper.OpenWinDefenderSettings();
                 return; // виходимо
             }
+            
             IsEnabled = false;
             AddSplitter();
-            TextConsole += $"Start open KMSAuto\n";
-            int countOpenKMSAuto = 0;
-            do // цикл запуску KMSAuto (Дві спроби)
+            TextConsole += $"Start open {protectedProgram.Name}\n";
+            int countOpen = 0;
+            do // цикл запуску protectedProgram (Дві спроби)
             {
-                int countUnzipping = 0;
+                int countDecompress = 0;
                 string ExecutableFile = null;
                 do // цикл пошуку файла (цікаво зроблено, він виконується або 0.5 або на 1.5 рази)
                 {
@@ -396,55 +407,48 @@ namespace CompasPack.ViewModel
                             break; // виходимо з циклу
                         }
                     }
-                    if (File.Exists(_userPath.PortablePathSettings.KMSAutoPath)) // якщо KMSAuto є на свому місці
+                    if (File.Exists(protectedProgram.ProtectedProgramPaths.PathExe)) // якщо protectedProgram є на свому місці
                     {
-                        ExecutableFile = _userPath.PortablePathSettings.KMSAutoPath; // назначаємо його
+                        ExecutableFile = protectedProgram.ProtectedProgramPaths.PathExe; // назначаємо його
                         break; // покидаємо цикл пошуку файлу (внутрішній) (далі буде спроба запустити KMSAuto) 
                     }
                     else // якщо файла нема
                     {
-                        TextConsole += $"Not found KMSAuto\n"; // сповіщаємо користувача, що файлу нема
-                        if (countUnzipping >= 1) // якщо ми вже спробували його розпакувати еле його досі нема
+                        TextConsole += $"Not found {protectedProgram.Name}\n"; // сповіщаємо користувача, що файлу нема
+                        if (countDecompress >= 1) // якщо ми вже спробували його розпакувати еле його досі нема
                             break; // то покидаємо цикл пошуку файлу(далі буде помилка в циклі встановлення)
-                        if (!File.Exists("F:\\!Portable\\WinRAR\\WinRAR.exe")) //TODO FIX!!!!!!!!!!!!!!!! // перевіряємо чи на місці архіватор
+                        if (!File.Exists("7za.exe")) // перевіряємо чи на місці архіватор 
                         {
-                            TextConsole += $"Error, Not Find Rar.exe\n"; // якщо його нема то сповіщаємо користувача
-                            break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі запуска KMSAuto)
+                            TextConsole += $"Error, Not 7za.exe\n"; // якщо його нема то сповіщаємо користувача
+                            break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі запуску protectedProgram)
                         }
-                        TextConsole += $"Find arkhive {Path.GetFileName(_userPath.PortablePathSettings.KMSAutoRarPath)}, resault: ";
-                        if (!File.Exists(_userPath.PortablePathSettings.KMSAutoRarPath)) // перевіряємо чи знайдено архів
+                        TextConsole += $"Trying find archive {Path.GetFileName(protectedProgram.ProtectedProgramPaths.PathRar)}, resault: "; // сповіщаємо користувача про спробу знайти архів
+                        if (!File.Exists(protectedProgram.ProtectedProgramPaths.PathRar)) // перевіряємо чи знайдено архів
                         {
                             TextConsole += $"Error, not Find arkhive!\n"; // якщо його нема то сповіщаємо користувача
                             break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі запуска KMSAuto)
                         }
                         TextConsole += $"OK!\n";
-                        try // весь try catch це спробу розпакувати архів
-                        {
-                            ProcessStartInfo ps = new ProcessStartInfo();
-                            ps.FileName = "F:\\!Portable\\WinRAR\\WinRAR.exe"; //TODO FIX!!!!!!!!!!!!!!!!
-                            ps.Arguments = $@"x -p1234 -o- {_userPath.PortablePathSettings.KMSAutoRarPath} {Path.GetDirectoryName(_userPath.PortablePathSettings.KMSAutoRarPath)}";
-                            TextConsole += $"Start unzipping, resault: ";
-                            var proc = Process.Start(ps);
-                            if (!proc.WaitForExit(20000))
+                         TextConsole += $"Start decompress, resault: ";
+                            await Task.Delay(500); // дамо часу основному потоку обновити інформацію в консолі
+                            switch (ArchiverHelper.Decompress(protectedProgram.ProtectedProgramPaths.PathRar, Path.GetDirectoryName(protectedProgram.ProtectedProgramPaths.PathRar), _programsSettingsHelper.Settings.ArchivePassword, 20000)) //спробу розпакувати архів
                             {
-                                try { proc.Kill(); } catch (Exception) { }
-                                try { proc.Close(); } catch (Exception) { }
-
-                                TextConsole += "Time out unzipping\n";
+                                case ResultArchiver.OK:
+                                    TextConsole += $"OK!\n";
+                                    break;
+                                case ResultArchiver.TimeOut:
+                                    TextConsole += "Time out decompress\n";
+                                    break;
+                                case ResultArchiver.Error:
+                                    TextConsole += "Error decompress\n";
+                                    break;
                             }
-                            else
-                                TextConsole += $"OK!!!\n";
-                        }
-                        catch (Exception)
-                        {
-                            TextConsole += "Error unzipping\n";
-                        }
-                        countUnzipping++; // лічильник спроб розпакувати архів
+                            countDecompress++; // лічильник спроб розпакувати архів
                     }
                 } while (true);
                 if (ExecutableFile == null) // якщо KMSAuto так і не знайдено то
                 {
-                    TextConsole += $"KMSAuto is not open!!!\n"; //сповіщаємо користувача про це (далі ще раз спробуємо знайти файл якщо не вичерпано ліміт спроб)
+                    TextConsole += $"{protectedProgram.Name} is not open!\n"; //сповіщаємо користувача про це (далі ще раз спробуємо знайти файл якщо не вичерпано ліміт спроб)
                 }
                 else // якщо KMSAuto знайдено
                 {
@@ -458,28 +462,29 @@ namespace CompasPack.ViewModel
                         Process proc = Process.Start(StartInfo);
                         TextConsole += $"KMSAuto open\n";
                         AddSplitter();
-                        await Task.Run(() => proc.WaitForExit()); // очыкуэмо завершення роботи програми
-                        break; // покидаэмо цикл запуску програми
+                        await Task.Run(() => proc.WaitForExit()); // очікуємо завершення роботи програми
+                        break; // покидаємо цикл запуску програми
                     }
                     catch (Exception exp)
                     {
-                        TextConsole += $"KMSAuto error open: {exp.Message}\n"; // якщо сталась помилка сповыщаэмо про це
-                        if (countOpenKMSAuto + 1 < 2)
+                        TextConsole += $"{protectedProgram.Name} error open: {exp.Message}\n"; // якщо сталась помилка сповыщаэмо про це
+                        if (countOpen + 1 < 2)
                         {
                             TextConsole += $"Pause 20 seconds...\n";
                             await Task.Delay(20000); // пауза для того щоб антивірусник "відпустив" файл
                         }
                     }
                 }
-                countOpenKMSAuto++; // збільшуємо лічильник спроб запуску
-                if (countOpenKMSAuto >= 2) // перевіряємо кількість спроб запуску
+                countOpen++; // збільшуємо лічильник спроб запуску
+                if (countOpen >= 2) // перевіряємо кількість спроб запуску
                     break; // виходимо якщо їх було дві
                 TextConsole += $"<***************************************************************************>\n";
             } while (true);
             AddSplitter();
             IsEnabled = true;
             await WinDefenderHelper.EnableRealtimeMonitoring();
-        }*/
+            
+        }
         private void OnOpenAppLog()
         {
             _iOHelper.OpenFolder(_iOHelper.CompasPackLog);
@@ -517,7 +522,7 @@ namespace CompasPack.ViewModel
             {
                 if (!WinDefenderHelper.CheckTamperProtectionDisable())
                 {
-                    _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
+                    _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!");
                     return;
                 }
                 IsEnabled = false;
@@ -546,7 +551,7 @@ namespace CompasPack.ViewModel
             {
                 if (!WinDefenderHelper.CheckTamperProtectionDisable())
                 {
-                    _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!!!", "Помилка!");
+                    _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!");
                     return;
                 }
                 IsEnabled = false;
@@ -587,7 +592,7 @@ namespace CompasPack.ViewModel
         //****************************************************
         public ICommand DefaultCommand { get; }
         public ICommand OpenExampleFileCommand { get; }
-        //public ICommand OpenKMSAutoCommand { get; }
+        public ICommand OpenProtectedProgramCommand { get; }
         public ICommand OpenAppLogCommand { get; }
         //****************************************************
         public ICommand SpeedTestCommand { get; }
