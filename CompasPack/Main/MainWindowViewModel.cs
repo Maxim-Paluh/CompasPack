@@ -99,6 +99,12 @@ namespace CompasPack.ViewModel
         //******************************************************
         public async Task LoadAsync()
         {
+            if ((int)WinInfoHelper.WinVer < 3)
+            {
+                _messageDialogService.ShowInfoDialog($"Нічого не буде, потрібно використовувати Windows 7 або новішу версію ОС", "Помилка!");
+                System.Windows.Application.Current.Shutdown();
+            }
+
             var tempLoad = (LoadViewModel)_formViewModelCreator[typeof(LoadViewModel).Name];
             tempLoad.Message = "Завантаження налаштувань...";
             FormViewModel = tempLoad;

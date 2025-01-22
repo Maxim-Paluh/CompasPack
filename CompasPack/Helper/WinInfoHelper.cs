@@ -12,11 +12,21 @@ namespace CompasPack.Helper
         private static string DisplayVersion = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion");
         private static string EditionID = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "EditionID");
         private static string CurrentBuild = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuild");
+        private static bool isx64;
+        private static WinVerEnum winVer;
+
+        public static bool Isx64 { get { return isx64; } private set { isx64 = value; } }
+        public static WinVerEnum WinVer { get { return winVer; } private set { winVer = value; } }
+
+        static WinInfoHelper()
+        {
+            Isx64 = Environment.Is64BitOperatingSystem;
+            WinVer = GetOSVersion();
+        }
 
         public static string GetSystemInfo()
         {
-            string Type = Environment.Is64BitOperatingSystem ? "x64" : "x86";
-
+            string Type = Isx64 ? "x64" : "x86";
             return $"ProductName: {ProductName}\n" +
                    $"EditionID: {EditionID}\n" +
                    $"DisplayVersion: {DisplayVersion}\n" +
@@ -29,14 +39,59 @@ namespace CompasPack.Helper
             return HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
         }
 
-        public static bool GetIs64BitOperatingSystem()
-        { return Environment.Is64BitOperatingSystem; }
+
+        private static WinVerEnum GetOSVersion()
+        {
+            var version = Environment.OSVersion;
+            var osName = WinVerEnum.UnknownOS;
+
+            if (version.Platform == PlatformID.Win32NT)
+            {
+                switch (version.Version.Major)
+                {
+                    case 10:
+                        if (version.Version.Build >= 22000)
+                            osName = WinVerEnum.Win11;
+                        else
+                            osName = WinVerEnum.Win10;
+                        break;
+                    case 6:
+                        switch (version.Version.Minor)
+                        {
+                            case 3:
+                                osName = WinVerEnum.Win8_1;
+                                break;
+                            case 2:
+                                osName = WinVerEnum.Win8;
+                                break;
+                            case 1:
+                                osName = WinVerEnum.Win7;
+                                break;
+                            case 0:
+                                osName = WinVerEnum.WinVista;
+                                break;
+                        }
+                        break;
+                    case 5:
+                        switch (version.Version.Minor)
+                        {
+                            case 1:
+                                osName = WinVerEnum.WinXP;
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            return osName;
+        }
+
 
         private static string HKLM_GetString(string path, string key)
         {
             try
             {
-                if (GetIs64BitOperatingSystem())
+                if (Isx64)
                 {
                     RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(path);
                     if (rk == null) return "";
@@ -57,7 +112,7 @@ namespace CompasPack.Helper
         {
             List<string> programs = new List<string>();
 
-            if (GetIs64BitOperatingSystem())
+            if (Isx64)
             {
                 using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(Programs))
                 {

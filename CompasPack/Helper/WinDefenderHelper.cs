@@ -90,7 +90,7 @@ namespace CompasPack.Helper
             var key = "TamperProtection";
             try
             {
-                if (WinInfoHelper.GetIs64BitOperatingSystem())
+                if (WinInfoHelper.Isx64)
                 {
                     RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(path);
                     if (rk == null) return false;

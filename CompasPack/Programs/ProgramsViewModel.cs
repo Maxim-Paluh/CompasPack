@@ -246,7 +246,7 @@ namespace CompasPack.ViewModel
                     if (ExecutableFile == null) // якщо онлайн інсталятор не знайдено тоді шукаємо офлайн і задаємо аргументи офлайн інсталятора
                     {
                         var tempExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, program.FileName, program.PathFolder); // ортимуємо список файлів
-                        if (WinInfoHelper.GetIs64BitOperatingSystem()) // якщо наша система х64
+                        if (WinInfoHelper.Isx64) // якщо наша система х64
                             ExecutableFile = tempExecutableFile.FirstOrDefault(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)); // то намагаємось знайти файл, що містить х64 в назві
                         if (ExecutableFile == null) //якщо система не х64 або файла х64 нема
                             ExecutableFile = tempExecutableFile.LastOrDefault();  // обираємо те що є
