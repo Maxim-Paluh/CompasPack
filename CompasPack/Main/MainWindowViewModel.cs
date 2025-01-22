@@ -93,7 +93,7 @@ namespace CompasPack.ViewModel
             CheckUpdateProgramCommand = new DelegateCommand(OnCheckUpdateProgram);
             AboutProgramCommand = new DelegateCommand(OnAboutProgram);
             CreateFormCommand = new DelegateCommand<Type>(OnCreateNewFormExecute);
-            OpenProgramCommand = new DelegateCommand<PortableProgram>(OpenProgram);
+            OpenPortableProgramCommand = new DelegateCommand<PortableProgram>(OpenPortableProgram);
         }
 
         //******************************************************
@@ -102,8 +102,6 @@ namespace CompasPack.ViewModel
             var tempLoad = (LoadViewModel)_formViewModelCreator[typeof(LoadViewModel).Name];
             tempLoad.Message = "Завантаження налаштувань...";
             FormViewModel = tempLoad;
-            
-
             
             await _portableProgramsSettingsHelper.LoadFromFile();
             PortableIsEnabled = _portableProgramsSettingsHelper.IsLoad;
@@ -143,7 +141,7 @@ namespace CompasPack.ViewModel
         }
         //******************************************************
         //--------------------------------------
-        private void OpenProgram(PortableProgram  portableProgram)
+        private void OpenPortableProgram(PortableProgram  portableProgram)
         {
             if (FormViewModel != null && FormViewModel.HasChanges())
             {
@@ -211,6 +209,6 @@ namespace CompasPack.ViewModel
         public ICommand CheckUpdateProgramCommand { get; }
         public ICommand AboutProgramCommand { get; }
         public ICommand CreateFormCommand { get; set; }
-        public ICommand OpenProgramCommand { get; set; }
+        public ICommand OpenPortableProgramCommand { get; set; }
     }
 }
