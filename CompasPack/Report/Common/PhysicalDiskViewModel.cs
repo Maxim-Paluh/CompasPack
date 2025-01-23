@@ -55,7 +55,7 @@ namespace CompasPack.ViewModel
         }
         public void Load()
         {
-            if (Regex.Match(WinInfoHelper.GetProductName(), @"\d+").Value.Contains("7"))
+            if (WinInfoHelper.WinVer!= WinVerEnum.Win10 )
             {
                 Result = "Не доступно в Windows 7, заповніть поле вручну!!!";
                 return;

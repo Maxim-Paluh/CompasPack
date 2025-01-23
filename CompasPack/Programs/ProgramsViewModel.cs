@@ -116,7 +116,7 @@ namespace CompasPack.ViewModel
             ProgramsHelper.CheckInstallPrograms(GroupProgramViewModel); // CheckInstall
             //----------------------------------------------------------------------------------------------------
             _programsSettingsHelper.Settings.ProgramsSets.ForEach(x => ProgramsSets.Add(x)); // Add ProgramsSets     
-            var tempProgramsSet = ProgramsSets.FirstOrDefault(x => x.Name.Contains(Regex.Match(WinInfoHelper.GetProductName(), @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // check ProgramsSet
+            var tempProgramsSet = ProgramsSets.FirstOrDefault(x => x.Name.Contains(Regex.Match(WinInfoHelper.ProductName, @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // check ProgramsSet
             if (tempProgramsSet != null)
                 SelectedProgramsSet = tempProgramsSet.Name;
             OnSelectProgramsSet();
@@ -185,7 +185,7 @@ namespace CompasPack.ViewModel
 
             if (programsToInstall.Any(x => x.Program.DisableDefender == true && !x.IsInstall)) // якщо програма потребує вимклення антивірусника для свого встановлення і вона ще не встановлена тоді
             {
-                if (!WinDefenderHelper.CheckTamperProtectionDisable()) // Перевіряємо чи можемо ми вимкнути антивірусник
+                if (WinDefenderHelper.CheckTamperProtection() == WinDefenderEnum.Enabled) // Перевіряємо чи увімкнуто захист від підробок і відповідно чи можемо ми керувати  Windows Defender
                 {
                     _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!\n" +
                         $"Оскільки встановлення одної з програм потребує автоматичного відключення ативірусного ПЗ!", "Помилка!");
@@ -225,14 +225,14 @@ namespace CompasPack.ViewModel
                 string ExecutableFile = null;
                 do // цикл пошуку файла (цікаво зроблено, він виконується або 0.5 або на 1.5 рази завдяки if (ExecutableFile != null)  break; та if (countDecompress >= 1)  break;)
                 {
-                    if (programViewMode.Program.DisableDefender && !WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це не windows 7
+                    if (programViewMode.Program.DisableDefender && (WinInfoHelper.WinVer == WinVerEnum.Win10 || WinInfoHelper.WinVer == WinVerEnum.Win11)) // якщо треба вимкнути антивірусник і це windows 10 або 11
                     {
-                        if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник увімкнутий
+                        if (await WinDefenderHelper.CheckRealtimeMonitoring() == WinDefenderEnum.Enabled) // якщо антивірусник увімкнутий
                         {
-                            await OffDefender(true); // вимикаємо
+                            await OffDefender(); // вимикаємо
                             await Task.Delay(100); // зачекаємо вимкнення
                         }
-                        if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник досі увімкнутий
+                        if (await WinDefenderHelper.CheckRealtimeMonitoring() == WinDefenderEnum.Enabled) // якщо антивірусник досі увімкнутий
                         {
                             TextConsole += "Error: defender is not disabled\n"; // сповіщаємо про помилку
                             break; // виходимо з циклу (далі буде помилка в циклі встановлення)
@@ -348,7 +348,7 @@ namespace CompasPack.ViewModel
                     TextConsole += $"<***************************************************************************>\n";
                 }
             } while (true);
-            if (program.DisableDefender && await WinDefenderHelper.CheckDefenderDisable()) //якщо треба було вимкнути антивірусник  і він вимкнутий
+            if (program.DisableDefender && await WinDefenderHelper.CheckRealtimeMonitoring() == WinDefenderEnum.Disabled) //якщо треба було вимкнути антивірусник  і він вимкнутий
                 await WinDefenderHelper.EnableRealtimeMonitoring(); // вмикаємо назад
         }
 
@@ -369,15 +369,20 @@ namespace CompasPack.ViewModel
         //**************************************************************************************************
         private void OnDefault()
         {
-            WinSettingsHelper.OpenDefaultPrograms();
+            WinSettingsHelper.OpenDefaultPrograms(_messageDialogService);
         }
         private void OnOpenExampleFile()
         {
             _iOHelper.OpenFolder(_programsPaths.PathExampleFile);
         }
         private async void OpenProtectedProgram(ProtectedProgram protectedProgram)
-        {    
-            if (!WinDefenderHelper.CheckTamperProtectionDisable()) // Перевіряємо чи можемо ми вимкнути антивірусник
+        {
+            if ((int)WinInfoHelper.WinVer < 6) // якщо версія ОС менша Windows 10
+            {
+                _messageDialogService.ShowInfoDialog("Можна керувати Windows Defender лише з Windows 10 або Windows 11", "Помилка!");
+                return; // виходимо
+            }
+            if (WinDefenderHelper.CheckTamperProtection() == WinDefenderEnum.Enabled) // Перевіряємо чи увімкнуто захист від підробок і відповідно чи можемо ми керувати  Windows Defender
             {
                 _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!"); // якщо ні то сповіщаємо користувача
                 WinDefenderHelper.OpenWinDefenderSettings();
@@ -394,14 +399,14 @@ namespace CompasPack.ViewModel
                 string ExecutableFile = null;
                 do // цикл пошуку файла (цікаво зроблено, він виконується або 0.5 або на 1.5 рази)
                 {
-                    if (!WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase)) // якщо треба вимкнути антивірусник windows 10 і це не windows 7
+                    if ((int)WinInfoHelper.WinVer>5) //
                     {
-                        if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник увімкнутий
+                        if (await WinDefenderHelper.CheckRealtimeMonitoring() == WinDefenderEnum.Enabled) // якщо антивірусник увімкнутий
                         {
-                            await OffDefender(true); // вимикаємо
+                            await OffDefender(); // вимикаємо
                             await Task.Delay(100);
                         }
-                        if (!await WinDefenderHelper.CheckDefenderDisable()) // якщо антивірусник досі увімкнутий
+                        if (await WinDefenderHelper.CheckRealtimeMonitoring() == WinDefenderEnum.Enabled) // якщо антивірусник досі увімкнутий
                         {
                             TextConsole += "Error: defender is not disabled\n";
                             break; // виходимо з циклу
@@ -410,7 +415,7 @@ namespace CompasPack.ViewModel
                     if (File.Exists(protectedProgram.ProtectedProgramPaths.PathExe)) // якщо protectedProgram є на свому місці
                     {
                         ExecutableFile = protectedProgram.ProtectedProgramPaths.PathExe; // назначаємо його
-                        break; // покидаємо цикл пошуку файлу (внутрішній) (далі буде спроба запустити KMSAuto) 
+                        break; // покидаємо цикл пошуку файлу (внутрішній) (далі буде спроба запустити protectedProgram) 
                     }
                     else // якщо файла нема
                     {
@@ -426,7 +431,7 @@ namespace CompasPack.ViewModel
                         if (!File.Exists(protectedProgram.ProtectedProgramPaths.PathRar)) // перевіряємо чи знайдено архів
                         {
                             TextConsole += $"Error, not Find arkhive!\n"; // якщо його нема то сповіщаємо користувача
-                            break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі запуска KMSAuto)
+                            break; // зупиняємо спробу розпакувати архіві виходимо з циклу пошуку файлу (далі буде помилка в циклі запуска protectedProgram)
                         }
                         TextConsole += $"OK!\n";
                          TextConsole += $"Start decompress, resault: ";
@@ -446,11 +451,11 @@ namespace CompasPack.ViewModel
                             countDecompress++; // лічильник спроб розпакувати архів
                     }
                 } while (true);
-                if (ExecutableFile == null) // якщо KMSAuto так і не знайдено то
+                if (ExecutableFile == null) // якщо protectedProgram так і не знайдено то
                 {
                     TextConsole += $"{protectedProgram.Name} is not open!\n"; //сповіщаємо користувача про це (далі ще раз спробуємо знайти файл якщо не вичерпано ліміт спроб)
                 }
-                else // якщо KMSAuto знайдено
+                else // якщо protectedProgram знайдено
                 {
                     var StartInfo = new ProcessStartInfo // ProcessStartInfo
                     {
@@ -460,7 +465,7 @@ namespace CompasPack.ViewModel
                     try // спроба запустити
                     {
                         Process proc = Process.Start(StartInfo);
-                        TextConsole += $"KMSAuto open\n";
+                        TextConsole += $"{protectedProgram.Name} open\n";
                         AddSplitter();
                         await Task.Run(() => proc.WaitForExit()); // очікуємо завершення роботи програми
                         break; // покидаємо цикл запуску програми
@@ -483,7 +488,7 @@ namespace CompasPack.ViewModel
             AddSplitter();
             IsEnabled = true;
             await WinDefenderHelper.EnableRealtimeMonitoring();
-            
+   
         }
         private void OnOpenAppLog()
         {
@@ -514,60 +519,72 @@ namespace CompasPack.ViewModel
         }
         private async void OnOnDefender() // ✓
         {
-            await OnDefender(false);
-        }
-        private async Task OnDefender(bool OnInstall) // ✓
-        {
-            if (!OnInstall)
+            if ((int)WinInfoHelper.WinVer < 6) // якщо версія ОС менша Windows 10
             {
-                if (!WinDefenderHelper.CheckTamperProtectionDisable())
-                {
-                    _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!");
-                    return;
-                }
-                IsEnabled = false;
-                AddSplitter();
+                _messageDialogService.ShowInfoDialog("Можна керувати Windows Defender лише з Windows 10 або Windows 11", "Помилка!");
+                return; // виходимо
             }
+            if (WinDefenderHelper.CheckTamperProtection() == WinDefenderEnum.Enabled)
+            {
+                _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!"); // якщо ні то сповіщаємо користувача
+                WinDefenderHelper.OpenWinDefenderSettings();
+                return; // виходимо
+            }
+            IsEnabled = false;
+            AddSplitter();
+            await OnDefender();
+            AddSplitter();
+            IsEnabled = true;
+        }
+        private async void OnOffDefender() // ✓
+        {
+            if ((int)WinInfoHelper.WinVer < 6) // якщо версія ОС менша Windows 10
+            {
+                _messageDialogService.ShowInfoDialog("Можна керувати Windows Defender лише з Windows 10 або Windows 11", "Помилка!");
+                return;
+            }
+            if (WinDefenderHelper.CheckTamperProtection() == WinDefenderEnum.Enabled)
+            {
+                _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!"); // якщо ні то сповіщаємо користувача
+                WinDefenderHelper.OpenWinDefenderSettings();
+                return; // виходимо
+            }
+            IsEnabled = false;
+            AddSplitter();
+            await OffDefender();
+            AddSplitter();
+            IsEnabled = true;
+        }
 
+        private async Task OnDefender() // ✓
+        {
             TextConsole += $"Start on defender: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
             var ResponseDefender = (await WinDefenderHelper.EnableRealtimeMonitoring()).Trim();
             if (!string.IsNullOrWhiteSpace(ResponseDefender))
                 TextConsole += $"Response defender: {ResponseDefender}\n";
             TextConsole += $"End on defender:  \t{DateTime.Now:dd/MM hh:mm:ss}\n";
-            TextConsole += $"Defender is disable: {await WinDefenderHelper.CheckDefenderDisable()}\n";
-            if (!OnInstall)
-            {
-                AddSplitter();
-                IsEnabled = true;
-            }
+
+            var realtimeMonitoring = await WinDefenderHelper.CheckRealtimeMonitoring();
+            TextConsole += $"Defender is: \t\t{realtimeMonitoring} ";
+            if (realtimeMonitoring == WinDefenderEnum.Enabled)
+                TextConsole += $"(OK!)\n";
+            else
+                TextConsole += $"(Fail!)\n";
         }
-        private async void OnOffDefender() // ✓
+
+        private async Task OffDefender() // ✓
         {
-            await OffDefender(false);
-        }
-        private async Task OffDefender(bool OnInstall) // ✓
-        {
-            if (!OnInstall)
-            {
-                if (!WinDefenderHelper.CheckTamperProtectionDisable())
-                {
-                    _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!");
-                    return;
-                }
-                IsEnabled = false;
-                AddSplitter();
-            }
             TextConsole += $"Start off defender: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
             var ResponseDefender = (await WinDefenderHelper.DisableRealtimeMonitoring()).Trim();
             if (!string.IsNullOrWhiteSpace(ResponseDefender))
                 TextConsole += $"Response defender: {ResponseDefender}\n";
             TextConsole += $"End off defender:  \t{DateTime.Now:dd/MM hh:mm:ss}\n";
-            TextConsole += $"Defender is disable: {await WinDefenderHelper.CheckDefenderDisable()}\n";
-            if (!OnInstall)
-            {
-                AddSplitter();
-                IsEnabled = true;
-            }
+            var realtimeMonitoring = await WinDefenderHelper.CheckRealtimeMonitoring();
+            TextConsole += $"Defender is: \t\t{realtimeMonitoring} ";
+            if(realtimeMonitoring == WinDefenderEnum.Disabled)
+                TextConsole += $"(OK!)\n";
+            else
+                TextConsole += $"(Fail!)\n";
         }
         //--------------------------------------
         public void AddSplitter()

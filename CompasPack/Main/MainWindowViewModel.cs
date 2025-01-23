@@ -99,7 +99,7 @@ namespace CompasPack.ViewModel
         //******************************************************
         public async Task LoadAsync()
         {
-            if ((int)WinInfoHelper.WinVer < 3)
+            if ((int)WinInfoHelper.WinVer < 3) // якщо версія ОС нижча за Windows 7
             {
                 _messageDialogService.ShowInfoDialog($"Нічого не буде, потрібно використовувати Windows 7 або новішу версію ОС", "Помилка!");
                 System.Windows.Application.Current.Shutdown();

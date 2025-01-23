@@ -3,15 +3,40 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CompasPack.Service;
+using System.Management;
+using System.Windows;
 
 namespace CompasPack.Helper
 {
     public static class WinDefenderHelper
     {
+
+        //wmic /namespace:\\root\SecurityCenter2\ path AntivirusProduct get /value
+        public static bool IsActiveWindowsDefender()
+        {
+            try
+            {
+                using (var searcher = new ManagementObjectSearcher(@"root\SecurityCenter2", "SELECT * FROM AntivirusProduct"))
+                {
+                    foreach (var antivirus in searcher.Get())
+                    {
+                        string displayName = antivirus["displayName"]?.ToString();
+                        if (!displayName.Contains("Windows Defender", StringComparison.CurrentCultureIgnoreCase) )
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return false;
+        }
+
         public static async Task<string> DisableRealtimeMonitoring()
         {
-            if (!WinInfoHelper.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
-                return "This Command work onli Windows 10";
             var procinfo = new ProcessStartInfo()
             {
                 UseShellExecute = false,
@@ -27,8 +52,6 @@ namespace CompasPack.Helper
         
         public static async Task<string> EnableRealtimeMonitoring()
         {
-            if (!WinInfoHelper.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
-                return "This Command work onli Windows 10";
             var procinfo = new ProcessStartInfo()
             {
                 UseShellExecute = false,
@@ -41,78 +64,77 @@ namespace CompasPack.Helper
             var proc = Process.Start(procinfo);
             return await proc.StandardOutput.ReadToEndAsync();
         }
-        public static async Task<bool> CheckDefenderDisable()
+        public static async Task<WinDefenderEnum> CheckRealtimeMonitoring()
         {
-            if (!WinInfoHelper.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
-                return false;
-            Process proc = new Process
+            try
             {
-                StartInfo = new ProcessStartInfo
+                Process proc = new Process
                 {
-
-                    FileName = "powershell",
-                    Arguments = "Get-MpPreference -verbose",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    CreateNoWindow = true
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "powershell.exe",
+                        Arguments = "Get-MpPreference -verbose",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        CreateNoWindow = true
+                    }
+                };
+                proc.Start();
+                while (!proc.StandardOutput.EndOfStream)
+                {
+                    string line = await proc.StandardOutput.ReadLineAsync();
+                    if (line.StartsWith(@"DisableRealtimeMonitoring") && line.EndsWith("False"))
+                        return WinDefenderEnum.Enabled;
                 }
-            };
-            proc.Start();
-
-            while (!proc.StandardOutput.EndOfStream)
-            {
-                string line = await proc.StandardOutput.ReadLineAsync();
-                if (line.StartsWith(@"DisableRealtimeMonitoring") && line.EndsWith("False"))
-                    return false;
+                return WinDefenderEnum.Disabled;
             }
-            return true;
+            catch (Exception)
+            {
+                return WinDefenderEnum.Error;
+            }
         }
 
         public static void OpenWinDefenderSettings()
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            try
             {
-                FileName = "explorer.exe",
-                Arguments = "windowsdefender://threatsettings",
-                UseShellExecute = false,
-                WindowStyle = ProcessWindowStyle.Maximized
-            };
-            Process.Start(startInfo);
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = "windowsdefender://threatsettings",
+                    UseShellExecute = false,
+                    WindowStyle = ProcessWindowStyle.Maximized
+                };
+                Process.Start(startInfo);
+            }
+            catch (Exception)
+            {
+
+            }   
         }
 
-        public static bool CheckTamperProtectionDisable()
+        public static WinDefenderEnum CheckTamperProtection()
         {
-            if (!WinInfoHelper.GetProductName().Contains("Windows 10", StringComparison.InvariantCultureIgnoreCase))
-                return true;
-            
+            RegistryKey rk = null;
             var path = "SOFTWARE\\Microsoft\\Windows Defender\\Features";
             var key = "TamperProtection";
+
             try
             {
                 if (WinInfoHelper.Isx64)
-                {
-                    RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(path);
-                    if (rk == null) return false;
+                    rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(path);
+                else   
+                    rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(path);
 
-                    if (rk.GetValue(key).ToString() == "5")
-                        return false;
-                    else
-                        return true;
-                }
+                if (rk == null)
+                    return WinDefenderEnum.Unknown;
+                if (rk.GetValue(key).ToString() == "5")
+                    return WinDefenderEnum.Enabled;
                 else
-                {
-                    RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(path);
-                    if (rk == null) return false;
-
-                    if (rk.GetValue(key).ToString() == "5")
-                        return false;
-                    else
-                        return true;
-                }
-
+                    return WinDefenderEnum.Disabled;
             }
-            catch { return false; }
+            catch { return WinDefenderEnum.Error; }
         }
     }
 }

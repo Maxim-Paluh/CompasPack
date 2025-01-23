@@ -16,6 +16,5 @@ namespace CompasPack.Helper
         Win8_1 = 5,
         Win10 = 6,
         Win11 = 7
-
     }
 }

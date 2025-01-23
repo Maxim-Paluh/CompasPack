@@ -1,36 +1,46 @@
 ﻿using System;
 using System.Diagnostics;
 using CompasPack.Service;
+using CompasPack.View.Service;
 
 namespace CompasPack.Helper
 {
     public static class WinSettingsHelper
     {
-        public static void OpenDefaultPrograms()
+        public static void OpenDefaultPrograms(IMessageDialogService messageDialogService)
         {
             string argument = null;
             string fileName = null;
-            if (WinInfoHelper.GetProductName().Contains("7", StringComparison.InvariantCultureIgnoreCase))
+
+            switch (WinInfoHelper.WinVer)
             {
-                argument = "/name Microsoft.DefaultPrograms /page pageDefaultProgram";
-                fileName = "control.exe";
+                case WinVerEnum.Win7: case WinVerEnum.Win8: case WinVerEnum.Win8_1:
+                    argument = "/name Microsoft.DefaultPrograms /page pageDefaultProgram";
+                    fileName = "control.exe";
+                    break;
+                case WinVerEnum.Win10: case WinVerEnum.Win11:
+                    argument = "Shell:::{2559a1f7-21d7-11d4-bdaf-00c04f60b9f0}";
+                    fileName = "explorer.exe";
+                    break;
+                default:
+                    break;
+            }
+            if (argument != null && fileName != null)
+            {
+                Process proc = new Process()
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = fileName,
+                        Arguments = argument,
+                        UseShellExecute = false,
+                        WindowStyle = ProcessWindowStyle.Normal,
+                    }
+                };
+                proc.Start();
             }
             else
-            {
-                argument = "Shell:::{2559a1f7-21d7-11d4-bdaf-00c04f60b9f0}";
-                fileName = "explorer.exe";
-            }
-            Process proc = new Process()
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = fileName,
-                    Arguments = argument,
-                    UseShellExecute = false,
-                    WindowStyle = ProcessWindowStyle.Normal,
-                }
-            };
-            proc.Start();
+                messageDialogService.ShowInfoDialog("Не реалізовано для поточної операційної сситеми","Помилка!");
         }
         public static void OpenIcon()
         {

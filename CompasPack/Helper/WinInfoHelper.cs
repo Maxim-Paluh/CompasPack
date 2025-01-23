@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Management;
 
 namespace CompasPack.Helper
 {
@@ -8,15 +9,16 @@ namespace CompasPack.Helper
     {
         private static string Programs = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
 
-        private static string ProductName = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
-        private static string DisplayVersion = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion");
-        private static string EditionID = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "EditionID");
-        private static string CurrentBuild = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuild");
+        private static string _productName = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
+        private static string _displayVersion = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion");
+        private static string _editionID = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "EditionID");
+        private static string _currentBuild = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuild");
         private static bool isx64;
         private static WinVerEnum winVer;
 
         public static bool Isx64 { get { return isx64; } private set { isx64 = value; } }
         public static WinVerEnum WinVer { get { return winVer; } private set { winVer = value; } }
+        public static string ProductName {get {return _productName;} }
 
         static WinInfoHelper()
         {
@@ -27,18 +29,12 @@ namespace CompasPack.Helper
         public static string GetSystemInfo()
         {
             string Type = Isx64 ? "x64" : "x86";
-            return $"ProductName: {ProductName}\n" +
-                   $"EditionID: {EditionID}\n" +
-                   $"DisplayVersion: {DisplayVersion}\n" +
-                   $"CurrentBuild: {CurrentBuild}\n" +
+            return $"ProductName: {_productName}\n" +
+                   $"EditionID: {_editionID}\n" +
+                   $"DisplayVersion: {_displayVersion}\n" +
+                   $"CurrentBuild: {_currentBuild}\n" +
                    $"Type: {Type}\n";
         }
-
-        public static string GetProductName()
-        {
-            return HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
-        }
-
 
         private static WinVerEnum GetOSVersion()
         {
@@ -85,7 +81,6 @@ namespace CompasPack.Helper
 
             return osName;
         }
-
 
         private static string HKLM_GetString(string path, string key)
         {
