@@ -15,6 +15,7 @@ using CompasPack.Service;
 using CompasPack.Settings;
 using System.Text.RegularExpressions;
 using CompasPack.Settings.Programs;
+using System.Reflection;
 
 namespace CompasPack.ViewModel
 {
@@ -225,7 +226,7 @@ namespace CompasPack.ViewModel
                 string ExecutableFile = null;
                 do // цикл пошуку файла (цікаво зроблено, він виконується або 0.5 або на 1.5 рази завдяки if (ExecutableFile != null)  break; та if (countDecompress >= 1)  break;)
                 {
-                    if (programViewMode.Program.DisableDefender && (WinInfoHelper.WinVer == WinVerEnum.Win10 || WinInfoHelper.WinVer == WinVerEnum.Win11)) // якщо треба вимкнути антивірусник і це windows 10 або 11
+                    if (programViewMode.Program.DisableDefender) // якщо треба вимкнути антивірусник
                     {
                         if (await WinDefenderHelper.CheckRealtimeMonitoring() == WinDefenderEnum.Enabled) // якщо антивірусник увімкнутий
                         {
@@ -352,7 +353,6 @@ namespace CompasPack.ViewModel
                 await WinDefenderHelper.EnableRealtimeMonitoring(); // вмикаємо назад
         }
 
-
         //---------------------------------------------------------------------------------------------------
         private void OnAUC()
         {
@@ -377,18 +377,46 @@ namespace CompasPack.ViewModel
         }
         private async void OpenProtectedProgram(ProtectedProgram protectedProgram)
         {
-            if ((int)WinInfoHelper.WinVer < 6) // якщо версія ОС менша Windows 10
+            bool isActiveRealtimeMonitoring = false;
+            var antivirusProduct = WinDefenderHelper.GetAntivirusProduct();
+            if (antivirusProduct.Count == 0)
             {
-                _messageDialogService.ShowInfoDialog("Можна керувати Windows Defender лише з Windows 10 або Windows 11", "Помилка!");
-                return; // виходимо
+                var res = _messageDialogService.ShowYesNoDialog($"Ви використовуєте {WinInfoHelper.ProductName}.\n" +
+                    $"В системі не знайдено жодного антивірусного ПЗ.\n" +
+                    $"Якщо антивірусне ПЗ дійсно відсутнє натисніть \"Так\" для запуску \"{protectedProgram.Name}\" на свій страх та ризик!\n" +
+                    $"Якщо ви не впевнені тоді натисни \"Ні\" для зупинки запуску \"{protectedProgram.Name}\"!", "Попередження!");
+                if (res == MessageDialogResult.No)
+                    return;
             }
-            if (WinDefenderHelper.CheckTamperProtection() == WinDefenderEnum.Enabled) // Перевіряємо чи увімкнуто захист від підробок і відповідно чи можемо ми керувати  Windows Defender
+            else
             {
-                _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!"); // якщо ні то сповіщаємо користувача
-                WinDefenderHelper.OpenWinDefenderSettings();
-                return; // виходимо
+                if (WinInfoHelper.WinVer == WinVerEnum.Win10 || WinInfoHelper.WinVer == WinVerEnum.Win11) // Win10, Win11
+                {
+                    if (antivirusProduct.Count == 1)
+                    {
+                        if (!antivirusProduct.First().Contains("Windows Defender", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            _messageDialogService.ShowInfoDialog($"В системі працює посторонній: \"{antivirusProduct.First()}\", управління ними та \"{protectedProgram.Name}\" можливо лише вручну!", "Помилка!");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        _messageDialogService.ShowInfoDialog($"В системі працює посторонні антивіруси, управління ними та \"{protectedProgram.Name}\" можливо лише вручну!", "Помилка!");
+                        return;
+                    }
+                    if (IsTamperProtectionEnabled())
+                        return;
+                    isActiveRealtimeMonitoring = true;
+                }
+                else // Win8, Win8, Win8.1
+                {
+                    _messageDialogService.ShowInfoDialog($"Ви використовуєте {WinInfoHelper.ProductName}.\n" +
+                        $"В системі працює посторонні(й) антивірус(и), управління ним(и) та \"{protectedProgram.Name}\" можливо лише вручну!", "Попередження!");
+                    return;
+                }
             }
-            
+
             IsEnabled = false;
             AddSplitter();
             TextConsole += $"Start open {protectedProgram.Name}\n";
@@ -399,7 +427,7 @@ namespace CompasPack.ViewModel
                 string ExecutableFile = null;
                 do // цикл пошуку файла (цікаво зроблено, він виконується або 0.5 або на 1.5 рази)
                 {
-                    if ((int)WinInfoHelper.WinVer>5) //
+                    if (isActiveRealtimeMonitoring) // якщо це Win10 або Win11, Windows Defender знайдено і захист від підробок вимкнуто
                     {
                         if (await WinDefenderHelper.CheckRealtimeMonitoring() == WinDefenderEnum.Enabled) // якщо антивірусник увімкнутий
                         {
@@ -487,8 +515,10 @@ namespace CompasPack.ViewModel
             } while (true);
             AddSplitter();
             IsEnabled = true;
-            await WinDefenderHelper.EnableRealtimeMonitoring();
-   
+            if (isActiveRealtimeMonitoring) // якщо це Win10 або Win11, Windows Defender знайдено і захист від підробок вимкнуто
+            {
+                await WinDefenderHelper.EnableRealtimeMonitoring();
+            }
         }
         private void OnOpenAppLog()
         {
@@ -519,17 +549,12 @@ namespace CompasPack.ViewModel
         }
         private async void OnOnDefender() // ✓
         {
-            if ((int)WinInfoHelper.WinVer < 6) // якщо версія ОС менша Windows 10
-            {
-                _messageDialogService.ShowInfoDialog("Можна керувати Windows Defender лише з Windows 10 або Windows 11", "Помилка!");
-                return; // виходимо
-            }
-            if (WinDefenderHelper.CheckTamperProtection() == WinDefenderEnum.Enabled)
-            {
-                _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!"); // якщо ні то сповіщаємо користувача
-                WinDefenderHelper.OpenWinDefenderSettings();
-                return; // виходимо
-            }
+            if (!IsSupportedWindowsVersionDefender(WinInfoHelper.WinVer))
+                return;
+            if (!IsWindowsDefender())
+                return;
+            if (IsTamperProtectionEnabled())
+                return;
             IsEnabled = false;
             AddSplitter();
             await OnDefender();
@@ -538,17 +563,12 @@ namespace CompasPack.ViewModel
         }
         private async void OnOffDefender() // ✓
         {
-            if ((int)WinInfoHelper.WinVer < 6) // якщо версія ОС менша Windows 10
-            {
-                _messageDialogService.ShowInfoDialog("Можна керувати Windows Defender лише з Windows 10 або Windows 11", "Помилка!");
+            if (!IsSupportedWindowsVersionDefender(WinInfoHelper.WinVer))
                 return;
-            }
-            if (WinDefenderHelper.CheckTamperProtection() == WinDefenderEnum.Enabled)
-            {
-                _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!"); // якщо ні то сповіщаємо користувача
-                WinDefenderHelper.OpenWinDefenderSettings();
-                return; // виходимо
-            }
+            if (!IsWindowsDefender())
+                return;
+            if(IsTamperProtectionEnabled())
+                return;
             IsEnabled = false;
             AddSplitter();
             await OffDefender();
@@ -586,6 +606,56 @@ namespace CompasPack.ViewModel
             else
                 TextConsole += $"(Fail!)\n";
         }
+
+        private bool IsWindowsDefender()
+        {
+            var antivirusProduct = WinDefenderHelper.GetAntivirusProduct();
+            if (antivirusProduct.Count == 0)
+            {
+                _messageDialogService.ShowInfoDialog("Windows Defender не знайдено в системі", "Помилка!");
+                return false;
+            }
+            else if (antivirusProduct.Count == 1)
+            {
+                if (antivirusProduct.First().Contains("Windows Defender", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return true;
+                }
+                else
+                {
+                    _messageDialogService.ShowInfoDialog($"У системі працює посторонній: \"{antivirusProduct.First()}\", керуйте ним в ручну!", "Помилка!");
+                    return false;
+                }
+            }
+            else
+            {
+                _messageDialogService.ShowInfoDialog($"У системі працює кілька посторонніх антивірусів, керуйте ними в ручну!", "Помилка!");
+                return false;
+            }
+        }
+
+        private bool IsSupportedWindowsVersionDefender(WinVerEnum winVer)
+        {
+            if (!(winVer == WinVerEnum.Win10 || winVer == WinVerEnum.Win11))
+            {
+                _messageDialogService.ShowInfoDialog("Можна керувати Windows Defender лише з Windows 10 або Windows 11", "Помилка!");
+                return false;
+            }
+            return true;
+        }
+
+        private bool IsTamperProtectionEnabled()
+        {
+            if (WinDefenderHelper.CheckTamperProtection() == WinDefenderEnum.Enabled)
+            {
+                _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!"); // якщо ні то сповіщаємо користувача
+                WinDefenderHelper.OpenWinDefenderSettings();
+                return true;
+            }
+            else
+                return false;
+        }
+
         //--------------------------------------
         public void AddSplitter()
         {

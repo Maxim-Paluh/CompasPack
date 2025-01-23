@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using CompasPack.Service;
 using System.Management;
 using System.Windows;
+using System.Windows.Documents;
+using System.Collections.Generic;
 
 namespace CompasPack.Helper
 {
@@ -12,8 +14,9 @@ namespace CompasPack.Helper
     {
 
         //wmic /namespace:\\root\SecurityCenter2\ path AntivirusProduct get /value
-        public static bool IsActiveWindowsDefender()
+        public static List<string> GetAntivirusProduct()
         {
+            var antivirusProductList = new List<string>();
             try
             {
                 using (var searcher = new ManagementObjectSearcher(@"root\SecurityCenter2", "SELECT * FROM AntivirusProduct"))
@@ -21,49 +24,63 @@ namespace CompasPack.Helper
                     foreach (var antivirus in searcher.Get())
                     {
                         string displayName = antivirus["displayName"]?.ToString();
-                        if (!displayName.Contains("Windows Defender", StringComparison.CurrentCultureIgnoreCase) )
-                        {
-                            return true;
-                        }
+                        antivirusProductList.Add(displayName);
                     }
                 }
             }
             catch (Exception)
             {
-                return false;
+                return antivirusProductList;
             }
-            return false;
+            return antivirusProductList;
         }
 
         public static async Task<string> DisableRealtimeMonitoring()
         {
-            var procinfo = new ProcessStartInfo()
+            try
             {
-                UseShellExecute = false,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = true,
-                FileName = "powershell.exe",
-                Arguments = "Set-MpPreference -DisableRealtimeMonitoring $true",
-                CreateNoWindow = true
-            };
-            var proc =  Process.Start(procinfo);
-            return await proc.StandardOutput.ReadToEndAsync();
+                var procinfo = new ProcessStartInfo()
+                {
+                    UseShellExecute = false,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    RedirectStandardOutput = true,
+                    FileName = "powershell.exe",
+                    Arguments = "Set-MpPreference -DisableRealtimeMonitoring $true",
+                    CreateNoWindow = true
+                };
+                var proc = Process.Start(procinfo);
+                return await proc.StandardOutput.ReadToEndAsync();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+           
         }
         
         public static async Task<string> EnableRealtimeMonitoring()
         {
-            var procinfo = new ProcessStartInfo()
+            try
             {
-                UseShellExecute = false,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = true,
-                FileName = "powershell.exe",
-                Arguments = "Set-MpPreference -DisableRealtimeMonitoring $false",
-                CreateNoWindow = true
-            };
-            var proc = Process.Start(procinfo);
-            return await proc.StandardOutput.ReadToEndAsync();
+                var procinfo = new ProcessStartInfo()
+                {
+                    UseShellExecute = false,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    RedirectStandardOutput = true,
+                    FileName = "powershell.exe",
+                    Arguments = "Set-MpPreference -DisableRealtimeMonitoring $false",
+                    CreateNoWindow = true
+                };
+                var proc = Process.Start(procinfo);
+                return await proc.StandardOutput.ReadToEndAsync();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+           
         }
+
         public static async Task<WinDefenderEnum> CheckRealtimeMonitoring()
         {
             try
