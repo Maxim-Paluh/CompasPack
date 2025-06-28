@@ -186,13 +186,44 @@ namespace CompasPack.ViewModel
 
             if (programsToInstall.Any(x => x.Program.DisableDefender == true && !x.IsInstall)) // якщо програма потребує вимклення антивірусника для свого встановлення і вона ще не встановлена тоді
             {
-                if (WinDefenderHelper.CheckTamperProtection() == WinDefenderEnum.Enabled) // Перевіряємо чи увімкнуто захист від підробок і відповідно чи можемо ми керувати  Windows Defender
-                {
-                    _messageDialogService.ShowInfoDialog($"Нічого не буде, треба вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!\n" +
-                        $"Оскільки встановлення одної з програм потребує автоматичного відключення ативірусного ПЗ!", "Помилка!");
-                    WinDefenderHelper.OpenWinDefenderSettings();
-                    return;
-                }
+                //var antivirusProduct = WinDefenderHelper.GetAntivirusProduct();
+                //if (antivirusProduct.Count == 0)
+                //{
+                //    var res = _messageDialogService.ShowYesNoDialog($"Ви використовуєте {WinInfoHelper.ProductName}.\n" +
+                //        $"В системі не знайдено жодного антивірусного ПЗ.\n" +
+                //        $"Якщо антивірусне ПЗ дійсно відсутнє натисніть \"Так\" для запуску на свій страх та ризик!\n" +
+                //        $"Якщо ви не впевнені тоді натисни \"Ні\" для зупинки запуску \"{protectedProgram.Name}\"!", "Попередження!");
+                //    if (res == MessageDialogResult.No)
+                //        return;
+                //}
+                //else
+                //{
+                //    if (WinInfoHelper.WinVer == WinVerEnum.Win10 || WinInfoHelper.WinVer == WinVerEnum.Win11) // Win10, Win11
+                //    {
+                //        if (antivirusProduct.Count == 1)
+                //        {
+                //            if (!antivirusProduct.First().Contains("Windows Defender", StringComparison.InvariantCultureIgnoreCase))
+                //            {
+                //                _messageDialogService.ShowInfoDialog($"В системі працює посторонній: \"{antivirusProduct.First()}\", управління ними та \"{protectedProgram.Name}\" можливо лише вручну!", "Помилка!");
+                //                return;
+                //            }
+                //        }
+                //        else
+                //        {
+                //            _messageDialogService.ShowInfoDialog($"В системі працює посторонні антивіруси, управління ними та \"{protectedProgram.Name}\" можливо лише вручну!", "Помилка!");
+                //            return;
+                //        }
+                //        if (IsTamperProtectionEnabled())
+                //            return;
+                //        isActiveRealtimeMonitoring = true;
+                //    }
+                //    else // Win8, Win8, Win8.1
+                //    {
+                //        _messageDialogService.ShowInfoDialog($"Ви використовуєте {WinInfoHelper.ProductName}.\n" +
+                //            $"В системі працює посторонні(й) антивірус(и), управління ним(и) та \"{protectedProgram.Name}\" можливо лише вручну!", "Попередження!");
+                //        return;
+                //    }
+                //}
             }
             IsEnabled = false;
             if(programsToInstall.Count()!=0)

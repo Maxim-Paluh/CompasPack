@@ -455,14 +455,10 @@
     <None Include="TempCode.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Logo_2016.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Logo_2016.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CompasPack.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="CompasPack.ico" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
@@ -481,6 +477,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="7za\7za.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Defender.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
