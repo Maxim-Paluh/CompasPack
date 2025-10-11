@@ -13,7 +13,7 @@
             <RowDefinition Height="0.2*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Image  Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"  Height="150" Width="492"  Source="/Logo_2016.png"></Image>
+        <Image  Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"  Height="150" Width="492"  Source="/Image/Logo_2016.png"></Image>
         <View:ProgressRing Grid.Row="1"  Foreground="DarkSlateBlue" IsActive="{Binding IsActive, Mode=TwoWay}"/>
         <TextBlock Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" Text="{Binding Message}"></TextBlock>
     </Grid>

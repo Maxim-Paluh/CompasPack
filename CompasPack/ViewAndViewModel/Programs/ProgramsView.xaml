@@ -76,7 +76,7 @@
                                                         </Style>
                                                     </TextBlock.Style>
                                                 </TextBlock>
-                                                <Image x:Name="DefenderImage" Grid.Column="2" Grid.Row="0"  Width="16" Height="16" Margin="0 15 0 0" Grid.RowSpan="2" Source="\Defender.png" Visibility="{Binding Program.DisableDefender, Converter={StaticResource BooleanToVisibilityConverter}}"></Image>
+                                                <Image x:Name="DefenderImage" Grid.Column="2" Grid.Row="0"  Width="16" Height="16" Margin="0 15 0 0" Grid.RowSpan="2" Source="\Image\Defender.png" Visibility="{Binding Program.DisableDefender, Converter={StaticResource BooleanToVisibilityConverter}}"></Image>
                                                 <Ellipse   Height="11" Grid.Column="2" Grid.Row="2" Width="11" Fill="{Binding IsInstall, Converter={StaticResource IsInstallConverter}}" Visibility="{Binding VisibilityIsInstall, Converter={StaticResource BooleanToVisibilityConverter}}"></Ellipse>
                                                 <Grid.ToolTip>
                                                     <Grid>

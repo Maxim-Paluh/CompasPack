@@ -4,15 +4,9 @@ using System.Linq;
 
 namespace CompasPack.Service
 {
-    static class Extensions
+    static class ContainsExtensions
     {
-        public static IList<T> Clone<T>(this IList<T> listToClone) where T : ICloneable
-        {
-            return listToClone.Select(item => (T)item?.Clone()).ToList();
-        }
-
-        public static bool Contains(this String str, String substring,
-                               StringComparison comp)
+        public static bool Contains(this String str, String substring, StringComparison comp)
         {
             if (substring == null)
                 throw new ArgumentNullException("substring",

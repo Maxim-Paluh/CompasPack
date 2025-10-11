@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompasPackNet", "CompasPackNet\CompasPackNet.csproj", "{8EC870F8-9BB8-4EA6-951F-E4D4800326F1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogInstallNet", "LogInstallNet\LogInstallNet.csproj", "{F1F87225-F9D6-466D-B0DC-BFD35203AE7C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompasPack", "CompasPack\CompasPack.csproj", "{3B0B6FB9-C0F1-45BB-A139-4D499911967B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogInstall", "LogInstall\LogInstall.csproj", "{BF7FEE1A-2625-40BB-8C40-1466E32CDE72}"
@@ -17,14 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8EC870F8-9BB8-4EA6-951F-E4D4800326F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8EC870F8-9BB8-4EA6-951F-E4D4800326F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8EC870F8-9BB8-4EA6-951F-E4D4800326F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8EC870F8-9BB8-4EA6-951F-E4D4800326F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F1F87225-F9D6-466D-B0DC-BFD35203AE7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F1F87225-F9D6-466D-B0DC-BFD35203AE7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F1F87225-F9D6-466D-B0DC-BFD35203AE7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F1F87225-F9D6-466D-B0DC-BFD35203AE7C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3B0B6FB9-C0F1-45BB-A139-4D499911967B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3B0B6FB9-C0F1-45BB-A139-4D499911967B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B0B6FB9-C0F1-45BB-A139-4D499911967B}.Release|Any CPU.ActiveCfg = Release|Any CPU

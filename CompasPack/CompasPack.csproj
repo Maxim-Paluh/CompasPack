@@ -50,10 +50,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationManifest>Startup\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>CompasPack.ico</ApplicationIcon>
+    <ApplicationIcon>Image\CompasPack.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -135,292 +135,297 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="Startup\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Helper\ArchiverHelper.cs" />
-    <Compile Include="Helper\WinDefenderEnum.cs" />
-    <Compile Include="Helper\WinVerEnum.cs" />
-    <Compile Include="Report\Common\CPUView.xaml.cs">
+    <Compile Include="Helper\Extension\Clone.cs" />
+    <Compile Include="Helper\Service\ArchiverHelper.cs" />
+    <Compile Include="Helper\Service\WinDefenderEnum.cs" />
+    <Compile Include="Helper\Service\WinVerEnum.cs" />
+    <Compile Include="ViewAndViewModel\Report\Common\CPUView.xaml.cs">
       <DependentUpon>CPUView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Common\CPUViewModel.cs" />
-    <Compile Include="Report\Common\MemoryView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Common\CPUViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Common\MemoryView.xaml.cs">
       <DependentUpon>MemoryView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Common\MemoryViewModel.cs" />
-    <Compile Include="Report\Common\MonitorDiagonalView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Common\MemoryViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Common\MonitorDiagonalView.xaml.cs">
       <DependentUpon>MonitorDiagonalView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Common\MonitorDiagonalViewModel.cs" />
-    <Compile Include="Report\Common\PhysicalDiskView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Common\MonitorDiagonalViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Common\PhysicalDiskView.xaml.cs">
       <DependentUpon>PhysicalDiskView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Common\PhysicalDiskViewModel.cs" />
-    <Compile Include="Report\Common\VideoControllerView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Common\PhysicalDiskViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Common\VideoControllerView.xaml.cs">
       <DependentUpon>VideoControllerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Common\VideoControllerViewModel.cs" />
-    <Compile Include="Report\Laptop\LaptopBatteryView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Common\VideoControllerViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Laptop\LaptopBatteryView.xaml.cs">
       <DependentUpon>LaptopBatteryView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Laptop\LaptopBatteryViewModel.cs" />
-    <Compile Include="Report\Laptop\LaptopMainView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Laptop\LaptopBatteryViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Laptop\LaptopMainView.xaml.cs">
       <DependentUpon>LaptopMainView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Laptop\LaptopMainViewModel.cs" />
-    <Compile Include="Report\Laptop\LaptopOtherView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Laptop\LaptopMainViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Laptop\LaptopOtherView.xaml.cs">
       <DependentUpon>LaptopOtherView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Laptop\LaptopOtherViewModel.cs" />
-    <Compile Include="Report\Laptop\Main\LaptopReportView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Laptop\LaptopOtherViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Laptop\Main\LaptopReportView.xaml.cs">
       <DependentUpon>LaptopReportView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Laptop\Main\LaptopReportViewModel.cs" />
-    <Compile Include="Report\Monitor\Main\MonitorReportView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Laptop\Main\LaptopReportViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Monitor\Main\MonitorReportView.xaml.cs">
       <DependentUpon>MonitorReportView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Monitor\Main\MonitorReportViewModel.cs" />
-    <Compile Include="Report\Monitor\MonitorAspectRatioView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Monitor\Main\MonitorReportViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Monitor\MonitorAspectRatioView.xaml.cs">
       <DependentUpon>MonitorAspectRatioView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Monitor\MonitorAspectRatioViewModel.cs" />
-    <Compile Include="Report\Monitor\MonitorMainView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Monitor\MonitorAspectRatioViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Monitor\MonitorMainView.xaml.cs">
       <DependentUpon>MonitorMainView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Monitor\MonitorMainViewModel.cs" />
-    <Compile Include="Report\Monitor\MonitorOtherView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Monitor\MonitorMainViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Monitor\MonitorOtherView.xaml.cs">
       <DependentUpon>MonitorOtherView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Monitor\MonitorOtherViewModel.cs" />
-    <Compile Include="Report\Monitor\MonitorResolutionView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Monitor\MonitorOtherViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Monitor\MonitorResolutionView.xaml.cs">
       <DependentUpon>MonitorResolutionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\Monitor\MonitorResolutionViewModel.cs" />
-    <Compile Include="Report\PC\Main\ComputerReportView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Monitor\MonitorResolutionViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\PC\Main\ComputerReportView.xaml.cs">
       <DependentUpon>ComputerReportView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\PC\Main\ComputerReportViewModel.cs" />
-    <Compile Include="Report\PC\MotherboardView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\PC\Main\ComputerReportViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\PC\MotherboardView.xaml.cs">
       <DependentUpon>MotherboardView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\PC\MotherboardViewModel.cs" />
-    <Compile Include="Report\PC\PCCaseView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\PC\MotherboardViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\PC\PCCaseView.xaml.cs">
       <DependentUpon>PCCaseView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\PC\PCCaseViewModel.cs" />
-    <Compile Include="Report\PC\PowerSupplyView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\PC\PCCaseViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\PC\PowerSupplyView.xaml.cs">
       <DependentUpon>PowerSupplyView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\PC\PowerSupplyViewModel.cs" />
-    <Compile Include="Report\ReportsView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\PC\PowerSupplyViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\ReportsView.xaml.cs">
       <DependentUpon>ReportsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Report\ReportViewModel.cs" />
-    <Compile Include="Service\ClickComboBoxBehavior.cs" />
-    <Compile Include="Service\Converter.cs" />
-    <Compile Include="Service\Extensions.cs" />
-    <Compile Include="Service\MessageDialogService.cs" />
-    <Compile Include="Service\TextBoxUtilities.cs" />
-    <Compile Include="Settings\Common\BaseSettingsViewModel.cs" />
-    <Compile Include="Settings\Common\SettringsHelperBase.cs" />
-    <Compile Include="Settings\MainSettingsViewModel.cs" />
-    <Compile Include="Settings\MainSettingsView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\ReportViewModel.cs" />
+    <Compile Include="Helper\Attached\ClickComboBoxBehavior.cs" />
+    <Compile Include="Helper\Converter\Converter.cs" />
+    <Compile Include="Helper\Extension\Contains.cs" />
+    <Compile Include="Helper\Service\MessageDialogService.cs" />
+    <Compile Include="Helper\Attached\TextBoxUtilities.cs" />
+    <Compile Include="Model\Settings\Common\BaseSettingsViewModel.cs" />
+    <Compile Include="Model\Settings\Common\SettringsHelperBase.cs" />
+    <Compile Include="ViewAndViewModel\Settings\MainSettingsViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Settings\MainSettingsView.xaml.cs">
       <DependentUpon>MainSettingsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Settings\Portable\PortableProgram.cs" />
-    <Compile Include="Settings\Portable\Main\PortableProgramsSettings.cs" />
-    <Compile Include="Settings\Portable\Main\PortableProgramsSettingsHelper.cs" />
-    <Compile Include="Settings\Programs\GroupPrograms.cs" />
-    <Compile Include="Settings\Programs\Main\ProgramsSettings.cs" />
-    <Compile Include="Settings\Programs\ProgramsPaths.cs" />
-    <Compile Include="Settings\Programs\Program.cs" />
-    <Compile Include="Settings\Programs\Main\ProgramsSettingsHelper.cs" />
-    <Compile Include="Settings\Programs\ProtectedProgram.cs" />
-    <Compile Include="Settings\Programs\ProgramsSet.cs" />
-    <Compile Include="Settings\Programs\ProtectedProgramPaths.cs" />
-    <Compile Include="Settings\Report\DocxReplaceTextEnum.cs" />
-    <Compile Include="Settings\Report\HardWare.cs" />
-    <Compile Include="Settings\Report\ReportBase.cs" />
-    <Compile Include="Settings\Report\ReportPaths.cs" />
-    <Compile Include="Settings\Report\CPU.cs" />
-    <Compile Include="Settings\Report\MemoryFrequency.cs" />
-    <Compile Include="Settings\Report\Memory.cs" />
-    <Compile Include="Settings\Report\MemoryType.cs" />
-    <Compile Include="Settings\Report\VideoController.cs" />
-    <Compile Include="Settings\Report\LaptopBattery.cs" />
-    <Compile Include="Settings\Report\LaptopHardWare.cs" />
-    <Compile Include="Settings\Report\MonitorAspectRatio.cs" />
-    <Compile Include="Settings\Report\MonitorInterface.cs" />
-    <Compile Include="Settings\Report\MonitorModel.cs" />
-    <Compile Include="Settings\Report\MonitorName.cs" />
-    <Compile Include="Settings\Report\Monitor.cs" />
-    <Compile Include="Settings\Report\MonitorSize.cs" />
-    <Compile Include="Settings\Report\MonitorType.cs" />
-    <Compile Include="Settings\Report\Motherboard.cs" />
-    <Compile Include="Settings\Report\Main\ReportSettings.cs" />
-    <Compile Include="Settings\Report\Main\ReportSettingsHelper.cs" />
+    <Compile Include="Model\Settings\Portable\PortableProgram.cs" />
+    <Compile Include="Model\Settings\Portable\Main\PortableProgramsSettings.cs" />
+    <Compile Include="Model\Settings\Portable\Main\PortableProgramsSettingsHelper.cs" />
+    <Compile Include="Model\Settings\Programs\GroupPrograms.cs" />
+    <Compile Include="Model\Settings\Programs\Main\ProgramsSettings.cs" />
+    <Compile Include="Model\Settings\Programs\ProgramsPaths.cs" />
+    <Compile Include="Model\Settings\Programs\Program.cs" />
+    <Compile Include="Model\Settings\Programs\Main\ProgramsSettingsHelper.cs" />
+    <Compile Include="Model\Settings\Programs\ProtectedProgram.cs" />
+    <Compile Include="Model\Settings\Programs\ProgramsSet.cs" />
+    <Compile Include="Model\Settings\Programs\ProtectedProgramPaths.cs" />
+    <Compile Include="Model\Settings\Report\DocxReplaceTextEnum.cs" />
+    <Compile Include="Model\Settings\Report\HardWare.cs" />
+    <Compile Include="Model\Settings\Report\ReportBase.cs" />
+    <Compile Include="Model\Settings\Report\ReportPaths.cs" />
+    <Compile Include="Model\Settings\Report\CPU.cs" />
+    <Compile Include="Model\Settings\Report\MemoryFrequency.cs" />
+    <Compile Include="Model\Settings\Report\Memory.cs" />
+    <Compile Include="Model\Settings\Report\MemoryType.cs" />
+    <Compile Include="Model\Settings\Report\VideoController.cs" />
+    <Compile Include="Model\Settings\Report\LaptopBattery.cs" />
+    <Compile Include="Model\Settings\Report\LaptopHardWare.cs" />
+    <Compile Include="Model\Settings\Report\MonitorAspectRatio.cs" />
+    <Compile Include="Model\Settings\Report\MonitorInterface.cs" />
+    <Compile Include="Model\Settings\Report\MonitorModel.cs" />
+    <Compile Include="Model\Settings\Report\MonitorName.cs" />
+    <Compile Include="Model\Settings\Report\Monitor.cs" />
+    <Compile Include="Model\Settings\Report\MonitorSize.cs" />
+    <Compile Include="Model\Settings\Report\MonitorType.cs" />
+    <Compile Include="Model\Settings\Report\Motherboard.cs" />
+    <Compile Include="Model\Settings\Report\Main\ReportSettings.cs" />
+    <Compile Include="Model\Settings\Report\Main\ReportSettingsHelper.cs" />
     <Compile Include="Startup\Bootstrapper.cs" />
-    <Compile Include="ViewModelBase\IDetailViewModel.cs" />
-    <Compile Include="ViewModelBase\LookupItem.cs" />
-    <Compile Include="ViewModelBase\ReportHardWareViewModelBase.cs" />
-    <Compile Include="ViewModelBase\ReportViewModelBase.cs" />
-    <Compile Include="ViewModelBase\ViewModelBase.cs" />
-    <Compile Include="Wrapper\Base\ModelWrapper.cs" />
-    <Compile Include="Wrapper\Base\NotifyDataErrorInfoBase.cs" />
-    <Compile Include="Wrapper\Settings\UserPath\PortablePathSettingsWrapper.cs" />
-    <Compile Include="Wrapper\Settings\UserPath\ReportPathSettingsWrapper.cs" />
-    <Compile Include="Wrapper\Settings\UserPath\UserPathWrapper.cs" />
-    <Page Include="About\AboutView.xaml">
+    <Compile Include="ViewAndViewModel\ViewModelBase\IDetailViewModel.cs" />
+    <Compile Include="ViewAndViewModel\ViewModelBase\LookupItem.cs" />
+    <Compile Include="ViewAndViewModel\ViewModelBase\ReportHardWareViewModelBase.cs" />
+    <Compile Include="ViewAndViewModel\ViewModelBase\ReportViewModelBase.cs" />
+    <Compile Include="ViewAndViewModel\ViewModelBase\ViewModelBase.cs" />
+    <Compile Include="Model\Wrapper\Base\ModelWrapper.cs" />
+    <Compile Include="Model\Wrapper\Base\NotifyDataErrorInfoBase.cs" />
+    <Compile Include="Model\Wrapper\Settings\UserPath\PortablePathSettingsWrapper.cs" />
+    <Compile Include="Model\Wrapper\Settings\UserPath\ReportPathSettingsWrapper.cs" />
+    <Compile Include="Model\Wrapper\Settings\UserPath\UserPathWrapper.cs" />
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ViewAndViewModel\About\AboutView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Errors\ErrorsView.xaml">
+    <Page Include="ViewAndViewModel\Errors\ErrorsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="About\AboutView.xaml.cs">
+    <Compile Include="ViewAndViewModel\About\AboutView.xaml.cs">
       <DependentUpon>AboutView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="Startup\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Enum\Hardware.cs" />
-    <Compile Include="Enum\TypeReport.cs" />
-    <Compile Include="Errors\ErrorsView.xaml.cs">
+    <Compile Include="Model\Enum\Hardware.cs" />
+    <Compile Include="Model\Enum\TypeReport.cs" />
+    <Compile Include="ViewAndViewModel\Errors\ErrorsView.xaml.cs">
       <DependentUpon>ErrorsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Errors\ErrorsViewModel.cs" />
-    <Compile Include="Event\SelectSingleProgramEvent.cs" />
-    <Compile Include="Helper\AidaReportHelper.cs" />
-    <Compile Include="Helper\ClipboardHelper.cs" />
-    <Compile Include="Helper\IOHelper.cs" />
-    <Compile Include="Helper\MonitorHelper.cs" />
-    <Compile Include="Helper\NetworkHelper.cs" />
-    <Compile Include="Helper\PathHelper.cs" />
-    <Compile Include="Helper\ProgramsHelper.cs" />
-    <Compile Include="Helper\WinDefenderHelper.cs" />
-    <Compile Include="Helper\WinInfoHelper.cs" />
-    <Compile Include="Helper\WinSettingsHelper.cs" />
-    <Page Include="Main\LoadView.xaml">
+    <Compile Include="ViewAndViewModel\Errors\ErrorsViewModel.cs" />
+    <Compile Include="Helper\Event\SelectSingleProgramEvent.cs" />
+    <Compile Include="Helper\Service\AidaReportHelper.cs" />
+    <Compile Include="Helper\Service\ClipboardHelper.cs" />
+    <Compile Include="Helper\Service\IOHelper.cs" />
+    <Compile Include="Helper\Service\MonitorHelper.cs" />
+    <Compile Include="Helper\Service\NetworkHelper.cs" />
+    <Compile Include="Helper\Service\PathHelper.cs" />
+    <Compile Include="Helper\Service\ProgramsHelper.cs" />
+    <Compile Include="Helper\Service\WinDefenderHelper.cs" />
+    <Compile Include="Helper\Service\WinInfoHelper.cs" />
+    <Compile Include="Helper\Service\WinSettingsHelper.cs" />
+    <Page Include="ViewAndViewModel\Load\LoadView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Main\MainWindowView.xaml">
+    <Page Include="ViewAndViewModel\Main\MainWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Programs\ProgramsDictionary.xaml">
+    <Page Include="ViewAndViewModel\Programs\ProgramsDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Programs\ProgramsView.xaml">
+    <Page Include="ViewAndViewModel\Programs\ProgramsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Common\CPUView.xaml">
+    <Page Include="ViewAndViewModel\Report\Common\CPUView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Common\MemoryView.xaml">
+    <Page Include="ViewAndViewModel\Report\Common\MemoryView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Common\MonitorDiagonalView.xaml">
+    <Page Include="ViewAndViewModel\Report\Common\MonitorDiagonalView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Common\PhysicalDiskView.xaml">
+    <Page Include="ViewAndViewModel\Report\Common\PhysicalDiskView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Common\VideoControllerView.xaml">
+    <Page Include="ViewAndViewModel\Report\Common\VideoControllerView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Laptop\LaptopBatteryView.xaml">
+    <Page Include="ViewAndViewModel\Report\Laptop\LaptopBatteryView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Laptop\LaptopMainView.xaml">
+    <Page Include="ViewAndViewModel\Report\Laptop\LaptopMainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Laptop\LaptopOtherView.xaml">
+    <Page Include="ViewAndViewModel\Report\Laptop\LaptopOtherView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Laptop\Main\LaptopReportView.xaml">
+    <Page Include="ViewAndViewModel\Report\Laptop\Main\LaptopReportView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Monitor\Main\MonitorReportView.xaml">
+    <Page Include="ViewAndViewModel\Report\Monitor\Main\MonitorReportView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Monitor\MonitorAspectRatioView.xaml">
+    <Page Include="ViewAndViewModel\Report\Monitor\MonitorAspectRatioView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Monitor\MonitorMainView.xaml">
+    <Page Include="ViewAndViewModel\Report\Monitor\MonitorMainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Monitor\MonitorOtherView.xaml">
+    <Page Include="ViewAndViewModel\Report\Monitor\MonitorOtherView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\Monitor\MonitorResolutionView.xaml">
+    <Page Include="ViewAndViewModel\Report\Monitor\MonitorResolutionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\PC\Main\ComputerReportView.xaml">
+    <Page Include="ViewAndViewModel\Report\PC\Main\ComputerReportView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\PC\MotherboardView.xaml">
+    <Page Include="ViewAndViewModel\Report\PC\MotherboardView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\PC\PCCaseView.xaml">
+    <Page Include="ViewAndViewModel\Report\PC\PCCaseView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\PC\PowerSupplyView.xaml">
+    <Page Include="ViewAndViewModel\Report\PC\PowerSupplyView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Report\ReportsView.xaml">
+    <Page Include="ViewAndViewModel\Report\ReportsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Settings\MainSettingsView.xaml">
+    <Page Include="ViewAndViewModel\Settings\MainSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\Generic.xaml">
+    <Page Include="ViewAndViewModel\ProgressRing\ProgressRing.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Main\LoadView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Load\LoadView.xaml.cs">
       <DependentUpon>LoadView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Main\LoadViewModel.cs" />
-    <Compile Include="Main\MainWindowView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Load\LoadViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Main\MainWindowView.xaml.cs">
       <DependentUpon>MainWindowView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Main\MainWindowViewModel.cs" />
-    <Compile Include="Main\ProgressRing.cs" />
-    <Compile Include="Programs\GroupProgramViewModel.cs" />
-    <Compile Include="Programs\ProgramsView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Main\MainWindowViewModel.cs" />
+    <Compile Include="ViewAndViewModel\ProgressRing\ProgressRing.cs" />
+    <Compile Include="ViewAndViewModel\Programs\GroupProgramViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Programs\ProgramsView.xaml.cs">
       <DependentUpon>ProgramsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Programs\ProgramsViewModel.cs" />
-    <Compile Include="Programs\ProgramViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Programs\ProgramsViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Programs\ProgramViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -438,10 +443,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.manifest" />
-    <None Include="JSON\PortableProgramsSettings.json" />
-    <None Include="JSON\ReportSettings.json" />
-    <None Include="JSON\ProgramsSettings.json" />
+    <None Include="Startup\app.manifest" />
+    <None Include="Model\JSON\PortableProgramsSettings.json" />
+    <None Include="Model\JSON\ReportSettings.json" />
+    <None Include="Model\JSON\ProgramsSettings.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -449,19 +454,19 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="Startup\App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="TempCode.txt" />
+    <None Include="Temp\TempCode.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Logo_2016.png" />
+    <Resource Include="Image\Logo_2016.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CompasPack.ico" />
+    <None Include="Image\CompasPack.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\" />
+    <Folder Include="ViewAndViewModel\ViewBase\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">
@@ -479,11 +484,11 @@
     <None Include="7za\7za.exe" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Defender.png" />
+    <Resource Include="Image\Defender.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY "$(ProjectDir)JSON\" "$(TargetDir)Settings" /S /Y /I
+    <PostBuildEvent>XCOPY "$(ProjectDir)Model\JSON\" "$(TargetDir)Settings" /S /Y /I
 XCOPY "$(ProjectDir)7za\" "$(TargetDir)"  /Y
 </PostBuildEvent>
   </PropertyGroup>
