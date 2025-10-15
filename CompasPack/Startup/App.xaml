@@ -1,22 +1,33 @@
 ﻿<Application x:Class="CompasPack.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:CompasPack"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             xmlns:View="clr-namespace:CompasPack.View"
-             xmlns:Src="clr-namespace:CompasPack.View.Service"
+             
+
              Startup="Application_Startup"
-             DispatcherUnhandledException="Application_DispatcherUnhandledException">
+             DispatcherUnhandledException="Application_DispatcherUnhandledException"
+             
+             xmlns:View="clr-namespace:CompasPack.View"
+             xmlns:Service="clr-namespace:CompasPack.Helper.Service"
+             
+             xmlns:Convertor="clr-namespace:CompasPack.Helper.Converter"
+             xmlns:local="clr-namespace:CompasPack"
+             >
     <Application.Resources>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
 
-        <Src:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
-        <Src:BooleanToVisibilityConverter 
-    x:Key="BooleanToVisibilityConverter" 
-    True="Collapsed" 
-    False="Visible" />
 
-        <DataTemplate x:Key="Regexemplate">
-            <TextBlock Margin="2" Text="{Binding}"/>
+        <Convertor:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+        <Convertor:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" True="Collapsed"  False="Visible" />
+
+        <DataTemplate x:Key="RegexTemplate">
+            <TextBlock  Margin="2" Text="{Binding}"/>
         </DataTemplate>
 
         <Style x:Key="ChangeColorButton" TargetType="Button">
@@ -33,11 +44,38 @@
             </Style.Triggers>
         </Style>
 
+        <ControlTemplate x:Key="RoundedButton" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" CornerRadius="3" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="true">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                    <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+
+        </ControlTemplate>
+
         <ControlTemplate x:Key="ReportSave">
             <Border BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
                 <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" MinWidth="100"></ColumnDefinition>
                         <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="auto" MinWidth="82"></ColumnDefinition>
                         <ColumnDefinition Width="auto"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
@@ -46,24 +84,27 @@
                         <RowDefinition Height="auto"></RowDefinition>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="SaveReportAndPrice:"></TextBlock>
-                    <WrapPanel Grid.Row="0" Grid.Column="1"   Margin="4" HorizontalAlignment="Left">
-                        <TextBlock MinWidth="40" Text="{Binding ReportPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
-                        <TextBlock Text="\"></TextBlock>
-                        <TextBlock Text="Report_"></TextBlock>
-                        <xctk:IntegerUpDown Margin="5 0 5 0" FormatString="000" Minimum="0" Maximum="1000000" MinWidth="40" Value="{Binding IndexReport, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Text=".htm | .html | .docx"></TextBlock>
-                    </WrapPanel>
-                    <WrapPanel Grid.Row="0" Grid.Column="2"  Margin="4" HorizontalAlignment="Right">
-                        <TextBlock FontWeight="Bold" Text="Report: "></TextBlock>
-                        <Button Margin="5 0 0 0" Content="Save" Command="{Binding SaveReportCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"></Button>
-                        <Button Margin="5 0 0 0" Content="Open Report" Command="{Binding OpenReportCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="75"></Button>
-                        <Button Margin="5 0 0 0" Content="Open Price" Command="{Binding OpenPriceCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="70"></Button>
-                        <TextBlock Margin="5 0 0 0" FontWeight="Bold" Text="Folder:"></TextBlock>
-                        <Button Margin="5 0 0 0" Content="Open" Command="{Binding OpenFolderCommand}" Width="40"></Button>
+                    <!--Row_0-->
+                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="5 0 0 0" HorizontalAlignment="Left" FontSize="14" FontWeight="Bold" Text="Звіт:"></TextBlock>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Margin="0 5 0 5" HorizontalAlignment="Left" Text="Шлях(и):" ></TextBlock>
+
+                    <WrapPanel Grid.Row="0" Grid.Column="3" Margin="0 5 0 5" HorizontalAlignment="Left">
+                        <TextBlock FontSize="14" MinWidth="40"  Text="{Binding ReportPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+                        <TextBlock FontSize="14" Text="\"></TextBlock>
+                        <TextBlock FontSize="14" Text="Report_"></TextBlock>
+                        <xctk:IntegerUpDown Margin="5 0 5 0" FormatString="000" Minimum="0" Maximum="1000000" MinWidth="40" Height="20" Value="{Binding IndexReport, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock FontSize="14" Text=".htm | .html | .docx"></TextBlock>
                     </WrapPanel>
 
-                    <WrapPanel Margin="0 0 130 0"  HorizontalAlignment="Right" Grid.Row="1" Grid.Column="2" Visibility="{Binding IsEnable, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <WrapPanel Grid.Row="0" Grid.Column="4"  Margin="4" HorizontalAlignment="Right">
+                        <Button Template="{StaticResource RoundedButton}" Margin="5 1 0 0" Content="Зберегти" Command="{Binding SaveReportCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="78"></Button>
+                        <Button Template="{StaticResource RoundedButton}" Margin="5 1 0 0" Content="Показати звіт" Command="{Binding OpenReportCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="100"></Button>
+                        <Button Template="{StaticResource RoundedButton}" Margin="5 1 0 0" Content="Показати цінник" Command="{Binding OpenPriceCommand}" IsEnabled="{Binding IsEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="100"></Button>
+                        <Button Template="{StaticResource RoundedButton}" Margin="5 1 0 0" Content="Тека звітів" Command="{Binding OpenFolderCommand}" Width="70"></Button>
+                    </WrapPanel>
+                    
+                    <!--Row_1-->
+                    <WrapPanel Grid.Row="1" Grid.Column="4" Margin="0 0 152 0"  HorizontalAlignment="Right" VerticalAlignment="Center" Visibility="{Binding IsEnable, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <View:ProgressRing  Foreground="DarkSlateBlue" IsActive="{Binding IsEnable, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"/>
                     </WrapPanel>
                 </Grid>

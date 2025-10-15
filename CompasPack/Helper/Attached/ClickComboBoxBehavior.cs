@@ -1,17 +1,13 @@
-﻿using CompasPack.Settings;
-using CompasPack.Settings.Programs;
-using Microsoft.Xaml.Behaviors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
+using System.Windows.Controls;
 
-namespace CompasPack.Service
+using Microsoft.Xaml.Behaviors;
+
+using CompasPack.Model.Settings;
+
+namespace CompasPack.Helper.Attached
 {
     public class ClickComboBoxBehavior : Behavior<ComboBox>
     {

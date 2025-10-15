@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CompasPack.Service
+namespace CompasPack.Helper.Extension
 {
     static class CloneExtensions
     {

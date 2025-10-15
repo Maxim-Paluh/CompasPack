@@ -1,8 +1,8 @@
-﻿using CompasPack.Service;
+﻿using CompasPack.Helper.Extension;
 using System;
 using System.Collections.Generic;
 
-namespace CompasPack.Settings
+namespace CompasPack.Model.Settings
 {
     public class GroupPrograms : ICloneable
     {

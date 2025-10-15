@@ -1,13 +1,14 @@
-﻿using CompasPack.Settings;
+﻿using CompasPack.Data.Providers;
+using CompasPack.Model.Settings;
 using System;
-using System.ComponentModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorDiagonalViewModel : ReportHardWareViewModelBase<Monitor>, IReportViewModel
+    public class MonitorDiagonalViewModel : ReportHardwareViewModelBase<Monitor>
     {
         private string _laptopMonitorType;
         private string _laptopMonitorSize;
@@ -30,46 +31,25 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public MonitorDiagonalViewModel(Monitor monitorReportSettings, XDocument xDocument)
+        public MonitorDiagonalViewModel(ReportSettingsProvider reportSettingsProvider)
         {
-            Settings = monitorReportSettings;
-            Document = xDocument;
+            Settings = reportSettingsProvider.Settings.Monitor;
         }
-        public void Load()
+        public void Load(XDocument xDocument)
         {
-            var tempType = Document.XPathSelectElement(Settings.MonitorType.XPath);
-            if (tempType != null)
-                LaptopMonitorType = tempType.Value;
-            else
-                LaptopMonitorType = string.Empty;
-
-            var tempSize = Document.XPathSelectElement(Settings.MonitorSize.XPath);
-            if (tempSize != null)
-                LaptopMonitorSize = tempSize.Value;
-            else
-                LaptopMonitorSize = string.Empty;
+            LaptopMonitorType = xDocument.XPathSelectElement(Settings.MonitorType.XPath)?.Value;
+            LaptopMonitorSize = xDocument.XPathSelectElement(Settings.MonitorSize.XPath)?.Value;
 
             if (!string.IsNullOrWhiteSpace(LaptopMonitorType))
             {
-                var tempLaptopMonitorType = LaptopMonitorType;
-                foreach (var item in Settings.MonitorType.Regex)
-                    tempLaptopMonitorType = Regex.Replace(tempLaptopMonitorType, item, "");
-
-                if(!string.IsNullOrWhiteSpace(tempLaptopMonitorType))
-                    Result = $"{tempLaptopMonitorType}";
+                var tempLaptopMonitorType = Settings.MonitorType.Regex.Aggregate(LaptopMonitorType, (current, pattern) => Regex.Replace(current, pattern, ""));
+                Result = $"{tempLaptopMonitorType}";
             }
-
-            if (string.IsNullOrWhiteSpace(Result))
+            if (string.IsNullOrWhiteSpace(Result) && !string.IsNullOrWhiteSpace(LaptopMonitorSize))
             {
-                if (!string.IsNullOrWhiteSpace(LaptopMonitorSize))
-                {
-                    var tempLaptopMonitorSize = LaptopMonitorSize;
-                    foreach (var item in Settings.MonitorSize.Regex)
-                        tempLaptopMonitorSize = Regex.Replace(tempLaptopMonitorSize, item, "");
-                    Result = $"{tempLaptopMonitorSize}";
-                }
+                var tempLaptopMonitorSize = Settings.MonitorSize.Regex.Aggregate(LaptopMonitorSize, (current, pattern) => Regex.Replace(current, pattern, ""));
+                Result = $"{tempLaptopMonitorSize}";
             }
-
         }
     }
 }

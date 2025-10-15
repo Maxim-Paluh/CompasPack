@@ -1,21 +1,25 @@
-﻿using CompasPack.Event;
-using CompasPack.View.Service;
-using Prism.Commands;
-using Prism.Events;
-using System;
+﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using CompasPack.Helper;
-using System.IO;
 using System.Diagnostics;
-using CompasPack.Service;
-using CompasPack.Settings;
 using System.Text.RegularExpressions;
-using CompasPack.Settings.Programs;
-using System.Reflection;
+
+using Prism.Commands;
+using Prism.Events;
+
+using CompasPack.Model.Enum;
+using CompasPack.Helper.Event;
+using CompasPack.Helper.Service;
+using CompasPack.Model.Settings;
+using CompasPack.Helper.Extension;
+using CompasPack.Data.Providers;
+using CompasPack.Data.Providers.API;
+
+
 
 namespace CompasPack.ViewModel
 {
@@ -23,13 +27,16 @@ namespace CompasPack.ViewModel
     {
         string TextConsole { get; set; }
     }
-    public class ProgramsViewModel : ViewModelBase, IDetailViewModel, ITextConsole
+    public class ProgramsViewModel : ViewModelBase, IViewModel, ITextConsole
     {
         private IMessageDialogService _messageDialogService;
         private IEventAggregator _eventAggregator;
-        private readonly ProgramsSettingsHelper _programsSettingsHelper;
+        private readonly ProgramsSettingsProvider _programsSettingsProvider;
+        private readonly IWinInfoProvider _winInfoProvider;
         private ProgramsPaths _programsPaths;
-        private readonly IIOHelper _iOHelper;
+        private readonly IFileSystemReaderWriter _fileSystemReaderWriter;
+        private readonly IFileSystemNavigator _fileSystemNavigator;
+        private readonly IFileArchiver _fileArchiver;
         private string _selectedProgramsSets;
         private string _textConsole;
         private bool _isEnabled;
@@ -63,17 +70,24 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public ProgramsViewModel(IMessageDialogService messageDialogService, IIOHelper iOHelper, IEventAggregator eventAggregator,
-            ProgramsSettingsHelper ProgramsSettingsHelper)
+        public ProgramsViewModel(IEventAggregator eventAggregator,
+            IMessageDialogService messageDialogService, 
+            IFileSystemReaderWriter fileSystemReaderWriter, IFileSystemNavigator fileSystemNavigator, IFileArchiver fileArchiver,
+            ProgramsSettingsProvider programsSettingsProvider, IWinInfoProvider winInfoProvider)
         {
             ProgramsSets = new ObservableCollection<ProgramsSet>();
             GroupProgramViewModel = new ObservableCollection<GroupProgramViewModel>();
             ProtectedPrograms = new ObservableCollection<ProtectedProgram>();
 
-            _messageDialogService = messageDialogService;
             _eventAggregator = eventAggregator;
-            _programsSettingsHelper = ProgramsSettingsHelper;
-            _iOHelper = iOHelper;
+
+            _messageDialogService = messageDialogService;
+            
+            _programsSettingsProvider = programsSettingsProvider;
+            _winInfoProvider = winInfoProvider;
+            _fileSystemReaderWriter = fileSystemReaderWriter;
+            _fileSystemNavigator = fileSystemNavigator;
+            _fileArchiver = fileArchiver;
             IsEnabled = true;
 
 
@@ -98,33 +112,33 @@ namespace CompasPack.ViewModel
             _eventAggregator.GetEvent<SelectSingleProgramEvent>().Subscribe(SelectSingleProgram);
         }
         //*****************************************************************************************
-        public Task LoadAsync(int? Id)
+        public Task LoadAsync()
         {
-            TextConsole = WinInfoHelper.GetSystemInfo();
+            TextConsole = _winInfoProvider.ToString();
 
             ProgramsSets.Clear();
             GroupProgramViewModel.Clear();
             ProtectedPrograms.Clear();
             
-            _programsPaths = (ProgramsPaths)_programsSettingsHelper.Settings.ProgramsPaths.Clone();
-            PathHelper.SetRootPath(_iOHelper.PathRoot, _programsPaths);
+            _programsPaths = (ProgramsPaths)_programsSettingsProvider.Settings.ProgramsPaths.Clone();
+            ProgramsHelper.SetRootPath(_fileSystemReaderWriter.PathRoot, _programsPaths);
             //----------------------------------------------------------------------------------------------------
-            var GroupsPrograms = (List<GroupPrograms>)_programsSettingsHelper.Settings.GroupsPrograms?.Clone();
+            var GroupsPrograms = (List<GroupPrograms>)_programsSettingsProvider.Settings.GroupsPrograms?.Clone();
             foreach (var groupProgram in GroupsPrograms)
                 GroupProgramViewModel.Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<ProgramViewModel>(groupProgram.Programs.Select(x => new ProgramViewModel(x, groupProgram, _eventAggregator)))));
 
             ProgramsHelper.CombinePathFolderAndImage(GroupProgramViewModel, _programsPaths);
-            ProgramsHelper.CheckInstallPrograms(GroupProgramViewModel); // CheckInstall
+            ProgramsHelper.CheckInstallPrograms(GroupProgramViewModel, _winInfoProvider.WinArchitecture); // CheckInstall
             //----------------------------------------------------------------------------------------------------
-            _programsSettingsHelper.Settings.ProgramsSets.ForEach(x => ProgramsSets.Add(x)); // Add ProgramsSets     
-            var tempProgramsSet = ProgramsSets.FirstOrDefault(x => x.Name.Contains(Regex.Match(WinInfoHelper.ProductName, @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // check ProgramsSet
+            _programsSettingsProvider.Settings.ProgramsSets.ForEach(x => ProgramsSets.Add(x)); // Add ProgramsSets     
+            var tempProgramsSet = ProgramsSets.FirstOrDefault(x => x.Name.Contains(Regex.Match(_winInfoProvider.ProductName, @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // check ProgramsSet
             if (tempProgramsSet != null)
                 SelectedProgramsSet = tempProgramsSet.Name;
             OnSelectProgramsSet();
             //----------------------------------------------------------------------------------------------------
-            ((List<ProtectedProgram>)_programsSettingsHelper.Settings.ProtectedPrograms.Clone()).ForEach(x=> 
+            ((List<ProtectedProgram>)_programsSettingsProvider.Settings.ProtectedPrograms.Clone()).ForEach(x=> 
             {
-                PathHelper.SetRootPath(_iOHelper.PathRoot, x.ProtectedProgramPaths);
+                ProgramsHelper.SetRootPath(_fileSystemReaderWriter.PathRoot, x.ProtectedProgramPaths);
                 ProtectedPrograms.Add(x);
             });
             return Task.CompletedTask;
@@ -151,7 +165,7 @@ namespace CompasPack.ViewModel
         //***************************************************************************************************
         private void OnClearConsole()
         {
-            TextConsole = WinInfoHelper.GetSystemInfo();
+            TextConsole = _winInfoProvider.ToString();
         }
         //---------------------------------------------------------------------------------------------------
         private void OnSelectProgramsSet()
@@ -272,13 +286,13 @@ namespace CompasPack.ViewModel
                     }
                     if (tryOnlineInstall) // якщо є онлайн інсталятор намагаємось його знайти і задаємо аргумент онлайн інсталятора
                     {
-                        ExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, program.OnlineInstaller.FileName, program.PathFolder).FirstOrDefault();
+                        ExecutableFile = ProgramsHelper.GetExeMsiFile(_fileSystemReaderWriter, program.OnlineInstaller.FileName, program.PathFolder).FirstOrDefault();
                         arguments = string.Join(" ", program.OnlineInstaller.Arguments);
                     }
                     if (ExecutableFile == null) // якщо онлайн інсталятор не знайдено тоді шукаємо офлайн і задаємо аргументи офлайн інсталятора
                     {
-                        var tempExecutableFile = ProgramsHelper.GetExeMsiFile(_iOHelper, program.FileName, program.PathFolder); // ортимуємо список файлів
-                        if (WinInfoHelper.Isx64) // якщо наша система х64
+                        var tempExecutableFile = ProgramsHelper.GetExeMsiFile(_fileSystemReaderWriter, program.FileName, program.PathFolder); // ортимуємо список файлів
+                        if (_winInfoProvider.WinArchitecture == WinArchitectureEnum.x64) // якщо наша система х64
                             ExecutableFile = tempExecutableFile.FirstOrDefault(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)); // то намагаємось знайти файл, що містить х64 в назві
                         if (ExecutableFile == null) //якщо система не х64 або файла х64 нема
                             ExecutableFile = tempExecutableFile.LastOrDefault();  // обираємо те що є
@@ -308,15 +322,15 @@ namespace CompasPack.ViewModel
                             TextConsole += $"OK!\n"; // сповіщаємо користувача, що архів знайдено
                             TextConsole += $"Start decompress, resault: ";
                             await Task.Delay(500); // дамо часу основному потоку обновити інформацію в консолі
-                            switch (ArchiverHelper.Decompress(pathRar, program.PathFolder, _programsSettingsHelper.Settings.ArchivePassword, 20000)) //спробу розпакувати архів
+                            switch (_fileArchiver.Decompress(pathRar, program.PathFolder, _programsSettingsProvider.Settings.ArchivePassword, 20000)) //спробу розпакувати архів
                             {
-                                case ResultArchiver.OK:
+                                case ResultArchiverEnum.OK:
                                     TextConsole += $"OK!\n";
                                     break;
-                                case ResultArchiver.TimeOut:
+                                case ResultArchiverEnum.TimeOut:
                                     TextConsole += "Time out decompress\n";
                                     break;
-                                case ResultArchiver.Error:
+                                case ResultArchiverEnum.Error:
                                     TextConsole += "Error decompress\n";
                                     break;
                             }
@@ -364,7 +378,7 @@ namespace CompasPack.ViewModel
                         await Task.Factory.StartNew(() => proc.WaitForExit());
                         TextConsole += $"Programs: {program.ProgramName}, Installed!\n";
                         await Task.Delay(1000); // пауза для CheckInstall (щоб встиг оновитись реєстр)
-                        programViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms()); // CheckInstall
+                        programViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms(_winInfoProvider.WinArchitecture)); // CheckInstall
                         break; // покидаємо цикл встановлення програми
                     }
                     catch (Exception exp)
@@ -400,11 +414,11 @@ namespace CompasPack.ViewModel
         //**************************************************************************************************
         private void OnDefault()
         {
-            WinSettingsHelper.OpenDefaultPrograms(_messageDialogService);
+            WinSettingsHelper.OpenDefaultPrograms(_messageDialogService, _winInfoProvider.WinVer);
         }
         private void OnOpenExampleFile()
         {
-            _iOHelper.OpenFolder(_programsPaths.PathExampleFile);
+            _fileSystemNavigator.OpenFolder(_programsPaths.PathExampleFile);
         }
         private async void OpenProtectedProgram(ProtectedProgram protectedProgram)
         {
@@ -412,16 +426,16 @@ namespace CompasPack.ViewModel
             var antivirusProduct = WinDefenderHelper.GetAntivirusProduct();
             if (antivirusProduct.Count == 0)
             {
-                var res = _messageDialogService.ShowYesNoDialog($"Ви використовуєте {WinInfoHelper.ProductName}.\n" +
+                var res = _messageDialogService.ShowYesNoDialog($"Ви використовуєте {_winInfoProvider.ProductName}.\n" +
                     $"В системі не знайдено жодного антивірусного ПЗ.\n" +
                     $"Якщо антивірусне ПЗ дійсно відсутнє натисніть \"Так\" для запуску \"{protectedProgram.Name}\" на свій страх та ризик!\n" +
                     $"Якщо ви не впевнені тоді натисни \"Ні\" для зупинки запуску \"{protectedProgram.Name}\"!", "Попередження!");
-                if (res == MessageDialogResult.No)
+                if (res == MessageDialogResultEnum.No)
                     return;
             }
             else
             {
-                if (WinInfoHelper.WinVer == WinVerEnum.Win10 || WinInfoHelper.WinVer == WinVerEnum.Win11) // Win10, Win11
+                if (_winInfoProvider.WinVer == WinVersionEnum.Win_10 || _winInfoProvider.WinVer == WinVersionEnum.Win_11) // Win10, Win11
                 {
                     if (antivirusProduct.Count == 1)
                     {
@@ -442,7 +456,7 @@ namespace CompasPack.ViewModel
                 }
                 else // Win8, Win8, Win8.1
                 {
-                    _messageDialogService.ShowInfoDialog($"Ви використовуєте {WinInfoHelper.ProductName}.\n" +
+                    _messageDialogService.ShowInfoDialog($"Ви використовуєте {_winInfoProvider.ProductName}.\n" +
                         $"В системі працює посторонні(й) антивірус(и), управління ним(и) та \"{protectedProgram.Name}\" можливо лише вручну!", "Попередження!");
                     return;
                 }
@@ -495,15 +509,15 @@ namespace CompasPack.ViewModel
                         TextConsole += $"OK!\n";
                          TextConsole += $"Start decompress, resault: ";
                             await Task.Delay(500); // дамо часу основному потоку обновити інформацію в консолі
-                            switch (ArchiverHelper.Decompress(protectedProgram.ProtectedProgramPaths.PathRar, Path.GetDirectoryName(protectedProgram.ProtectedProgramPaths.PathRar), _programsSettingsHelper.Settings.ArchivePassword, 20000)) //спробу розпакувати архів
+                            switch (_fileArchiver.Decompress(protectedProgram.ProtectedProgramPaths.PathRar, Path.GetDirectoryName(protectedProgram.ProtectedProgramPaths.PathRar), _programsSettingsProvider.Settings.ArchivePassword, 20000)) //спробу розпакувати архів
                             {
-                                case ResultArchiver.OK:
+                                case ResultArchiverEnum.OK:
                                     TextConsole += $"OK!\n";
                                     break;
-                                case ResultArchiver.TimeOut:
+                                case ResultArchiverEnum.TimeOut:
                                     TextConsole += "Time out decompress\n";
                                     break;
-                                case ResultArchiver.Error:
+                                case ResultArchiverEnum.Error:
                                     TextConsole += "Error decompress\n";
                                     break;
                             }
@@ -553,7 +567,7 @@ namespace CompasPack.ViewModel
         }
         private void OnOpenAppLog()
         {
-            _iOHelper.OpenFolder(_iOHelper.CompasPackLog);
+            _fileSystemNavigator.OpenFolder(_fileSystemReaderWriter.CompasPackLog);
         }
         //**************************************************************************************************
         private async void OnSpeedTest() // ✓
@@ -568,7 +582,7 @@ namespace CompasPack.ViewModel
                 AddSplitter();
             }
             TextConsole += $"Start speed test: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
-            var speed = await NetworkHelper.SpeedTest();
+            var speed = await NetworkService.SpeedTest("\"https://github.com/Maxim-Paluh/SpeedTest/raw/main/10MB\"");
             TextConsole += $"End speed test: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
             TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
             if (!OnInstall)
@@ -580,7 +594,7 @@ namespace CompasPack.ViewModel
         }
         private async void OnOnDefender() // ✓
         {
-            if (!IsSupportedWindowsVersionDefender(WinInfoHelper.WinVer))
+            if (!IsSupportedWindowsVersionDefender(_winInfoProvider.WinVer))
                 return;
             if (!IsWindowsDefender())
                 return;
@@ -594,7 +608,7 @@ namespace CompasPack.ViewModel
         }
         private async void OnOffDefender() // ✓
         {
-            if (!IsSupportedWindowsVersionDefender(WinInfoHelper.WinVer))
+            if (!IsSupportedWindowsVersionDefender(_winInfoProvider.WinVer))
                 return;
             if (!IsWindowsDefender())
                 return;
@@ -665,9 +679,9 @@ namespace CompasPack.ViewModel
             }
         }
 
-        private bool IsSupportedWindowsVersionDefender(WinVerEnum winVer)
+        private bool IsSupportedWindowsVersionDefender(WinVersionEnum winVer)
         {
-            if (!(winVer == WinVerEnum.Win10 || winVer == WinVerEnum.Win11))
+            if (!(winVer == WinVersionEnum.Win_10 || winVer == WinVersionEnum.Win_11))
             {
                 _messageDialogService.ShowInfoDialog("Можна керувати Windows Defender лише з Windows 10 або Windows 11", "Помилка!");
                 return false;
@@ -677,7 +691,7 @@ namespace CompasPack.ViewModel
 
         private bool IsTamperProtectionEnabled()
         {
-            if (WinDefenderHelper.CheckTamperProtection() == WinDefenderEnum.Enabled)
+            if (WinDefenderHelper.CheckTamperProtection(_winInfoProvider.WinArchitecture) == WinDefenderEnum.Enabled)
             {
                 _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!"); // якщо ні то сповіщаємо користувача
                 WinDefenderHelper.OpenWinDefenderSettings();

@@ -29,7 +29,7 @@ namespace CompasPack.Settings
         }
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await _mainSettingsViewModel.LoadAsync(null);
+            await _mainSettingsViewModel.LoadAsync();
         }
     }
 }

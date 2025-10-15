@@ -1,14 +1,14 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
+using System.Management;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using CompasPack.Service;
-using System.Management;
-using System.Windows;
-using System.Windows.Documents;
 using System.Collections.Generic;
 
-namespace CompasPack.Helper
+using Microsoft.Win32;
+
+using CompasPack.Model.Enum;
+
+namespace CompasPack.Helper.Service
 {
     public static class WinDefenderHelper
     {
@@ -131,7 +131,7 @@ namespace CompasPack.Helper
             }   
         }
 
-        public static WinDefenderEnum CheckTamperProtection()
+        public static WinDefenderEnum CheckTamperProtection(WinArchitectureEnum winArchitecture)
         {
             RegistryKey rk = null;
             var path = "SOFTWARE\\Microsoft\\Windows Defender\\Features";
@@ -139,7 +139,7 @@ namespace CompasPack.Helper
 
             try
             {
-                if (WinInfoHelper.Isx64)
+                if (winArchitecture == WinArchitectureEnum.x64)
                     rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(path);
                 else   
                     rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(path);

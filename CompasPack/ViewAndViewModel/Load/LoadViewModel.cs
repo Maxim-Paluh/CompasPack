@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class LoadViewModel : ViewModelBase, IDetailViewModel
+    public class LoadViewModel : ViewModelBase, IViewModel, IViewModelReport
     {
         private string _message;
 
@@ -36,14 +37,19 @@ namespace CompasPack.ViewModel
             throw new NotImplementedException();
         }
 
-        public Task LoadAsync(int? Id)
+        public Task LoadAsync()
         {
-            return Task.CompletedTask;
+            throw new NotImplementedException();
+        }
+
+        public Task LoadAsync(XDocument _xDocument)
+        {
+            throw new NotImplementedException();
         }
 
         public void Unsubscribe()
         {
-           
+            throw new NotImplementedException();
         }
     }
 }

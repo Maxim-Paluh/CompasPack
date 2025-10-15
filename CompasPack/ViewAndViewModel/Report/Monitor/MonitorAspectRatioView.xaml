@@ -5,11 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CompasPack.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="820">
+    <UserControl.Resources>
+        <Style TargetType="ToolTip">
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Border  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"  MinWidth="100"></ColumnDefinition>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
@@ -17,22 +23,38 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
                 <!--Row_0-->
-                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="AspectRatio:"></TextBlock>
-                <WrapPanel Grid.Row="0" Grid.Column="1" Margin="4" HorizontalAlignment="Left">
-                    <TextBlock Text="XPath:"></TextBlock>
-                    <TextBox IsReadOnly="True" Background="LightGray" MinWidth="150" MaxWidth="200" Margin="5 0 0 0" Text="{Binding Settings.MonitorAspectRatio.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                </WrapPanel>
-                <WrapPanel  Grid.Row="0" Grid.Column="2"  Margin="4" >
-                    <TextBlock  Width="70"  Text="AspectRatio:"></TextBlock>
-                    <TextBox IsReadOnly="True" Background="LightGray" MinWidth="40" Text="{Binding MonitorAspectRatio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                </WrapPanel>
-                <WrapPanel Grid.Row="0" Grid.Column="3"  Grid.RowSpan="3" Margin="4" HorizontalAlignment="Right">
-                    <TextBlock  FontWeight="Bold" Text="Resault:"></TextBlock>
-                    <TextBox Margin="5 0 0 0" MinWidth="300" Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="5 0 0 0" HorizontalAlignment="Left" FontSize="14" FontWeight="Bold" Text="Пропорція:"></TextBlock>
+
+                <TextBlock Grid.Row="0" Grid.Column="1" Margin="0 5 0 5" HorizontalAlignment="Left" Text="Відношення сторін:" ></TextBlock>
+                <Image     Grid.Row="0" Grid.Column="2" Margin="0 0 0 0" HorizontalAlignment="Center" Height="20" Width="20"  Source="/Image/Info.png">
+                    <Image.ToolTip>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                            </Grid.ColumnDefinitions>
+                            <WrapPanel Grid.Row="0" Grid.Column="0"   Margin="4" HorizontalAlignment="Left">
+                                <TextBlock Text="XPath:"></TextBlock>
+                                <TextBox IsReadOnly="True" Background="LightGray" Margin="5 0 0 0" TextWrapping="Wrap" MinWidth="150" MaxWidth="500" Text="{Binding Settings.MonitorAspectRatio.XPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                            </WrapPanel>
+                            <WrapPanel Grid.Row="1" Grid.Column="0" Margin="4">
+                                <TextBlock Text="Regex:"></TextBlock>
+                                <ScrollViewer HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl Margin="5 0 0 0" MinWidth="40" ItemsSource="{Binding Settings.MonitorAspectRatio.Regex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource RegexTemplate}"/>
+                                </ScrollViewer>
+                            </WrapPanel>
+                        </Grid>
+                    </Image.ToolTip>
+                </Image>
+                <TextBox   Grid.Row="0" Grid.Column="3" Margin="4 4 4 4" HorizontalAlignment="Left" MinWidth="200" IsReadOnly="True" Background="LightGray" Text="{Binding MonitorAspectRatio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+
+                <WrapPanel Grid.Row="0" Grid.Column="4" Margin="4 4 4 4" HorizontalAlignment="Right">
+                    <TextBlock  FontWeight="Bold" Text="Результат:"></TextBlock>
+                    <TextBox Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" MaxWidth="300"></TextBox>
                 </WrapPanel>
             </Grid>
         </Border>

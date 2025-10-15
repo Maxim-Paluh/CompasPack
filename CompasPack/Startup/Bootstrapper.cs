@@ -1,10 +1,12 @@
 ﻿using Autofac;
-using CompasPack.View.Service;
+using CompasPack.Data.Providers;
+using CompasPack.Data.Providers.API;
+using CompasPack.Helper.Service;
+using CompasPack.Settings;
 using CompasPack.ViewModel;
 using Prism.Events;
-using CompasPack.Settings;
-using CompasPack.Helper;
-using CompasPack.Settings.Portable;
+using System;
+
 
 namespace CompasPack.Startup
 {
@@ -13,45 +15,72 @@ namespace CompasPack.Startup
         public IContainer Bootstrap()
         {
             var builder = new ContainerBuilder();
-            /////////////////////////////////////////////////////////////////////////////////
-            // Register View Model
+
+            var winInfoProvider = new WinInfoProvider();
+            builder.RegisterInstance(winInfoProvider).As<IWinInfoProvider>().SingleInstance();
+
+            // Register View Model -----------------------------------------------------------------------------------------------------------------------------
             builder.RegisterType<MainWindowView>().AsSelf();
             builder.RegisterType<MainWindowViewModel>().AsSelf();
 
-            builder.RegisterType<LoadViewModel>().Keyed<IDetailViewModel>(nameof(LoadViewModel));
+            builder.RegisterType<LoadViewModel>().Keyed<IViewModel>(nameof(LoadViewModel));
+            builder.RegisterType<ProgramsViewModel>().Keyed<IViewModel>(nameof(ProgramsViewModel));
+            builder.RegisterType<ReportViewModel>().Keyed<IViewModel>(nameof(ReportViewModel));
 
-            builder.RegisterType<ProgramsViewModel>().Keyed<IDetailViewModel>(nameof(ProgramsViewModel));
-            builder.RegisterType<ReportViewModel>().Keyed<IDetailViewModel>(nameof(ReportViewModel));
-            
+            builder.RegisterType<LoadViewModel>().Keyed<IViewModelReport>(nameof(LoadViewModel));
+            builder.RegisterType<LaptopReportViewModel>().Keyed<IViewModelReport>(nameof(LaptopReportViewModel));
+            builder.RegisterType<MonitorReportViewModel>().Keyed<IViewModelReport>(nameof(MonitorReportViewModel));
+            builder.RegisterType<ComputerReportViewModel>().Keyed<IViewModelReport>(nameof(ComputerReportViewModel));
+
+            //Common Hardwares ViewModel
+            builder.RegisterType<CPUViewModel>().AsSelf();
+            builder.RegisterType<MemoryViewModel>().AsSelf();
+            builder.RegisterType<MonitorDiagonalViewModel>().AsSelf();
+            builder.RegisterType<PhysicalDiskViewModel>().AsSelf();
+            builder.RegisterType<VideoControllerViewModel>().AsSelf();
+            //Laptop Hardwares ViewModel
+            builder.RegisterType<LaptopBatteryViewModel>().AsSelf();
+            builder.RegisterType<LaptopMainViewModel>().AsSelf();
+            builder.RegisterType<LaptopOtherViewModel>().AsSelf();
+            //Monitor Hardwares ViewModel
+            builder.RegisterType<MonitorAspectRatioViewModel>().AsSelf();
+            builder.RegisterType<MonitorMainViewModel>().AsSelf();
+            builder.RegisterType<MonitorOtherViewModel>().AsSelf();
+            builder.RegisterType<MonitorResolutionViewModel>().AsSelf();
+            //PC Hardwares ViewModel
+            builder.RegisterType<MotherboardViewModel>().AsSelf();
+            builder.RegisterType<PCCaseViewModel>().AsSelf();
+            builder.RegisterType<PowerSupplyViewModel>().AsSelf();
+
             builder.RegisterType<MainSettingsView>().AsSelf();
             builder.RegisterType<MainSettingsViewModel>().AsSelf();
 
-
-            /////////////////////////////////////////////////////////////////////////////////
-            // Register Event Aggregator
+            // Register Event Aggregator -----------------------------------------------------------------------------------------------------------------------
             builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance();
-            /////////////////////////////////////////////////////////////////////////////////
-            // Register classes for working with data
 
-            //builder.RegisterType<Context>().AsSelf().ExternallyOwned();
-            //builder.RegisterType<LookupDataService>().AsImplementedInterfaces();
+            // Register classes for working with data-----------------------------------------------------------------------------------------------------------
+            builder.RegisterType<ProgramsSettingsProvider>().AsSelf().SingleInstance();
+            builder.RegisterType<ReportSettingsProvider>().AsSelf().SingleInstance();
+            builder.RegisterType<PortableProgramsSettingsProvider>().AsSelf().SingleInstance();
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // Register Controller
-            builder.RegisterType<IOHelper>().As<IIOHelper>().SingleInstance();
-            /////////////////////////////////////////////////////////////////////////////////
-            // Register API
+            builder.RegisterType(GetHardwareProviderType(winInfoProvider)).As<IHardwareInfoProvider>().SingleInstance();
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // Register Service and Helper
+            // Register Helper/Service
+            builder.RegisterType<FileSystemReaderWriter>().As<IFileSystemReaderWriter>().SingleInstance();
+            builder.RegisterType<FileSystemNavigator>().As<IFileSystemNavigator>().SingleInstance();
+            builder.RegisterType<FileArchiver>().As<IFileArchiver>().SingleInstance();
             builder.RegisterType<MessageDialogService>().As<IMessageDialogService>();
-            
-            
-            builder.RegisterType<ProgramsSettingsHelper>().AsSelf().SingleInstance();
-            builder.RegisterType<ReportSettingsHelper>().AsSelf().SingleInstance();
-            builder.RegisterType<PortableProgramsSettingsHelper>().AsSelf().SingleInstance();
+
+
             return builder.Build();
-            //.ExternallyOwned()
+        }
+
+        private Type GetHardwareProviderType(WinInfoProvider winInfoProvider)
+        {
+            if (winInfoProvider.WinVer >= Model.Enum.WinVersionEnum.Win_8)
+                return typeof(HardwareInfoProviderWin8);
+            else
+                return typeof(HardwareInfoProviderWin7);
         }
     }
 }

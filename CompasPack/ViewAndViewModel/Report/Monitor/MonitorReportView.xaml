@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="CompasPack.View.MonitorReportView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             
+             d:DesignHeight="150" d:DesignWidth="900"
+             
+             xmlns:ViewModel="clr-namespace:CompasPack.ViewModel"
+             xmlns:View="clr-namespace:CompasPack.View"
+             xmlns:Service="clr-namespace:CompasPack.Helper.Service"
+             xmlns:Convertor="clr-namespace:CompasPack.Helper.Converter"
+             >
+    <UserControl.Resources>
+        <Convertor:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+        <Convertor:BooleanToVisibilityConverter 
+            x:Key="BooleanToVisibilityConverter" 
+            True="Collapsed" 
+            False="Visible" />
+
+        <DataTemplate DataType="{x:Type ViewModel:MonitorMainViewModel}">
+            <View:MonitorMainView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:MonitorOtherViewModel}">
+            <View:MonitorOtherView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:MonitorAspectRatioViewModel}">
+            <View:MonitorAspectRatioView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:MonitorDiagonalViewModel}">
+            <View:MonitorDiagonalView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModel:MonitorResolutionViewModel}">
+            <View:MonitorResolutionView/>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Border  BorderBrush="DarkBlue" Margin="2"  BorderThickness="1" CornerRadius="3">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Color="AliceBlue" Offset="0.0" />
+                <GradientStop Color="LightCyan" Offset="0.5" />
+                <GradientStop Color="AliceBlue" Offset="1.0" />
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <ContentControl  Grid.Row="0"  Content="{Binding MonitorMainViewModel}"/>
+            <ContentControl  Grid.Row="1"  Content="{Binding MonitorDiagonalViewModel}"/>
+            <ContentControl  Grid.Row="2"  Content="{Binding MonitorAspectRatioViewModel}"/>
+            <ContentControl  Grid.Row="3"  Content="{Binding MonitorResolutionViewModel}"/>
+            <ContentControl  Grid.Row="4"  Content="{Binding MonitorOtherViewModel}"/>
+
+            <ContentControl Grid.Row="8"  Template="{StaticResource ReportSave}"/>
+
+        </Grid>
+    </Border>
+</UserControl>

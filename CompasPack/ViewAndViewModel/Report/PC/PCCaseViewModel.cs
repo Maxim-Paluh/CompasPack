@@ -1,10 +1,11 @@
-﻿using CompasPack.Settings;
-using System;
+﻿using System;
 using System.ComponentModel;
+
+using CompasPack.Model.Settings;
 
 namespace CompasPack.ViewModel
 {
-    public class PCCaseViewModel : ReportHardWareViewModelBase<ReportSettings>, IDataErrorInfo
+    public class PCCaseViewModel : ReportHardwareViewModelBase<ReportSettings>, IDataErrorInfo
     {
         private string _name;
         public string Name

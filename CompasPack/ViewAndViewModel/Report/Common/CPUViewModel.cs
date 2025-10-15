@@ -1,51 +1,36 @@
-﻿using CompasPack.Settings;
+﻿using System;
 using System.Linq;
-using System.Management;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
+
+using CompasPack.Data.Providers;
+using CompasPack.Model.Settings;
+using CompasPack.Model.ViewAndViewModel;
 
 namespace CompasPack.ViewModel
 {
-    public class CPUViewModel : ReportHardWareViewModelBase<CPU>, IReportViewModel
+    public class CPUViewModel : ReportHardwareViewModelBase<CPU>
     {
-        private string _name;
-        private string _clock;
-        public string Name
+        private CPUInfo _cPUInfo;
+        private readonly IHardwareInfoProvider _hardwareInfoProvider;
+
+        public CPUInfo CPUInfo
         {
-            get { return _name; }
-            set
-            {
-                _name = value;
-                OnPropertyChanged();
-            }
+            get { return _cPUInfo; }
+            set { _cPUInfo = value; OnPropertyChanged(); }
         }
-        public string Clock
+
+        public CPUViewModel(IHardwareInfoProvider hardwareInfoProvider)
         {
-            get { return _clock; }
-            set
-            {
-                _clock = value;
-                OnPropertyChanged();
-            }
-        }   
-        public CPUViewModel(CPU CPUReportSettings)
+            _hardwareInfoProvider = hardwareInfoProvider;
+        }
+
+        public void Load(CPU CPUReportSettings)
         {
             Settings = CPUReportSettings;
-        }
-        public void Load()
-        {
-            ManagementObjectSearcher processors = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
-            var processor = processors.Get().Cast<ManagementObject>().First();
-            Name += processor["Name"];
-            var temp = processor["MaxClockSpeed"];
-            if (temp != null)
-                Clock += $"{(double.Parse(temp.ToString()) / 1000).ToString().Replace(',', '.')}GHz";
+            CPUInfo = _hardwareInfoProvider.GetCPUInfo();
+            var tempName = Settings.Regex.Aggregate(CPUInfo.Name, (current, pattern) => Regex.Replace(current, pattern, ""));
 
-            var tempName = Name;
-            foreach (var item in Settings.Regex)
-                tempName = Regex.Replace(tempName, item, "");
-
-            Result = tempName + " " + Clock;
+            Result = tempName + " " + CPUInfo.Clock;
         }
     }
 }

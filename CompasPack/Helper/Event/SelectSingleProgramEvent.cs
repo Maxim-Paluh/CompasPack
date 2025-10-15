@@ -1,6 +1,6 @@
 ﻿using Prism.Events;
 
-namespace CompasPack.Event
+namespace CompasPack.Helper.Event
 {
     public class SelectSingleProgramEvent : PubSubEvent<SelectSingleProgramEventArgs>
     {

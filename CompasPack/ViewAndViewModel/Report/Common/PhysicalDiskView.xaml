@@ -7,13 +7,17 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-
+        <Style TargetType="ToolTip">
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
     </UserControl.Resources>
     <Border BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
         <Grid>
 
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"  MinWidth="100"></ColumnDefinition>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="auto" MinWidth="82"></ColumnDefinition>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
@@ -21,12 +25,13 @@
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="PhysicalDisk:"></TextBlock>
-            
-            <ItemsControl Grid.Row="0" Grid.Column="1" MaxWidth="800" HorizontalAlignment="Left"  ItemsSource="{Binding Disks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <!--Row_0-->
+            <TextBlock    Grid.Row="0" Grid.Column="0" Margin="5 0 0 0" HorizontalAlignment="Left" FontSize="13" FontWeight="Bold" Text="Накопичувач:"></TextBlock>
+            <TextBlock    Grid.Row="0" Grid.Column="1" Margin="0 5 0 5" HorizontalAlignment="Left" Text="Список:" ></TextBlock>
+            <ItemsControl Grid.Row="0" Grid.Column="3" MaxWidth="700"   HorizontalAlignment="Left"  ItemsSource="{Binding DiskInfos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
+                        <Border  BorderBrush="DarkBlue" Margin="5" MinWidth="200" BorderThickness="1" CornerRadius="3">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"></RowDefinition>
@@ -49,10 +54,10 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
-            
-            <WrapPanel Grid.Row="0" Grid.Column="2" Margin="4" HorizontalAlignment="Right">
-                <TextBlock FontWeight="Bold" Text="Resault:"></TextBlock>
-                <TextBox Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" ></TextBox>
+
+            <WrapPanel Grid.Row="0" Grid.Column="4" Margin="4 4 4 4" HorizontalAlignment="Right">
+                <TextBlock  FontWeight="Bold" Text="Результат:"></TextBlock>
+                <TextBox Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" MaxWidth="300"></TextBox>
             </WrapPanel>
         </Grid>
     </Border>

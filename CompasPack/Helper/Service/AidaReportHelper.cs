@@ -1,15 +1,8 @@
-﻿using CompasPack.Settings;
-using CompasPack.View.Service;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace CompasPack.Helper
+namespace CompasPack.Helper.Service
 {
     public static class AidaReportHelper
     {

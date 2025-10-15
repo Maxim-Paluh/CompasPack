@@ -1,7 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Windows;
 
-using System;
 
 /// <summary>
 /// Helper to encode and set HTML fragment to clipboard.<br/>

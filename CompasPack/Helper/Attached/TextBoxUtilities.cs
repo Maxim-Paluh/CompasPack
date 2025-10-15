@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows;
 
-namespace CompasPack.View.Service
+namespace CompasPack.Helper.Attached
 {
     public class TextBoxUtilities
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CompasPack.Settings.Programs
+namespace CompasPack.Model.Settings
 {
     public class ProtectedProgram : ICloneable
     {

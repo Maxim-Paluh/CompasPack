@@ -1,4 +1,5 @@
-﻿using CompasPack.Settings;
+﻿using CompasPack.Data.Providers;
+using CompasPack.Model.Settings;
 using Prism.Commands;
 using System;
 using System.ComponentModel;
@@ -8,7 +9,7 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorOtherViewModel : ReportHardWareViewModelBase<Monitor>, IReportViewModel, IDataErrorInfo
+    public class MonitorOtherViewModel : ReportHardwareViewModelBase<Monitor>, IDataErrorInfo
     {
         public string this[string columnName]
         {
@@ -26,10 +27,9 @@ namespace CompasPack.ViewModel
             }
         }
         public string Error => throw new NotImplementedException();
-        public MonitorOtherViewModel(Monitor monitorReportSettings, XDocument xDocument)
+        public MonitorOtherViewModel(ReportSettingsProvider reportSettingsProvider )
         {
-            Settings = monitorReportSettings;
-            Document = xDocument;
+            Settings = reportSettingsProvider.Settings.Monitor;
             SelectInterfaceCommand = new DelegateCommand(OnSelectInterface);
         }
         public void Load()

@@ -1,4 +1,6 @@
-﻿using CompasPack.Settings;
+﻿using CompasPack.Data.Providers;
+using CompasPack.Model.Settings;
+using CompasPack.Model.ViewAndViewModel;
 using Prism.Commands;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,63 +11,43 @@ using System.Windows.Input;
 
 namespace CompasPack.ViewModel
 {
-    public class VideoControllerViewModel : ReportHardWareViewModelBase<VideoController>, IReportViewModel
+    public class VideoControllerViewModel : ReportHardwareViewModelBase<VideoController>
     {
-        private VideoAdapter _selectedVideoAdapter;
-        private static object _lock = new object();
-        public ObservableCollection<VideoAdapter> VideoAdapters { get; set; }
-        public VideoAdapter SelectedVideoAdapter
+        private VideoControllerInfo _selectedVideoController;
+        public VideoControllerInfo SelectedVideoController
         {
-            get { return _selectedVideoAdapter; }
+            get { return _selectedVideoController; }
             set
             {
-                _selectedVideoAdapter = value;
+                _selectedVideoController = value;
                 OnPropertyChanged();
             }
         }
-        public VideoControllerViewModel(VideoController videoControllerReportSettings)
+        public ObservableCollection<VideoControllerInfo> videoControllerInfos { get; set; }
+        private IHardwareInfoProvider _hardwareInfoProvider;
+        public VideoControllerViewModel(ReportSettingsProvider reportSettingsProvider, IHardwareInfoProvider hardwareInfoProvider)
         {
-            Settings = videoControllerReportSettings;
-            VideoAdapters = new ObservableCollection<VideoAdapter>();
-            SelectVideoAdapterCommand = new DelegateCommand(OnSelectVideoAdapter);
-            BindingOperations.EnableCollectionSynchronization(VideoAdapters, _lock);
+            Settings = reportSettingsProvider.Settings.VideoController;
+            _hardwareInfoProvider = hardwareInfoProvider;
+
+            videoControllerInfos = new ObservableCollection<VideoControllerInfo>();
+            SelectVideoControllerCommand = new DelegateCommand(OnSelectVideoController);
         }
         public void Load()
         {
-            VideoAdapters.Clear();
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController");
-            foreach (ManagementObject mo in searcher.Get())
-            {
-                var tempVideoControllerName = string.Empty;
-                var tempVideoControllerSize = string.Empty;
-
-                var tempDescription = mo["Description"];
-                var tempAdapterRAM = mo["AdapterRAM"];
-                if (tempDescription != null)
-                    tempVideoControllerName += tempDescription.ToString();
-                else
-                    tempVideoControllerSize = "Not found";
-                if (tempAdapterRAM != null)
-                    tempVideoControllerSize += $"({double.Parse(tempAdapterRAM.ToString()) / 1073741824}Gb)";
-                else
-                    tempVideoControllerSize = "Not found";
-                VideoAdapters.Add(new VideoAdapter() { Name = tempVideoControllerName, Size = tempVideoControllerSize });
-            }
-            SelectedVideoAdapter = VideoAdapters.First();
-            OnSelectVideoAdapter();
+            videoControllerInfos.Clear();
+            var tempListVideoController = _hardwareInfoProvider.GetVideoControllers();
+            foreach (var videoController in tempListVideoController) videoControllerInfos.Add(videoController);
+            if(videoControllerInfos.Count!=0)
+                SelectedVideoController = videoControllerInfos.First();
+            OnSelectVideoController();
         }
-        private void OnSelectVideoAdapter()
+        private void OnSelectVideoController()
         {
-            var tempVideoAdapter = SelectedVideoAdapter.Name;
-            foreach (var item in Settings.Regex)
-                tempVideoAdapter = Regex.Replace(tempVideoAdapter, item, "");
-            Result = $"{tempVideoAdapter} {SelectedVideoAdapter.Size}";
+            var tempVideoAdapter = Settings.Regex.Aggregate(SelectedVideoController.Name, (current, pattern) => Regex.Replace(current, pattern, ""));
+            Result = $"{tempVideoAdapter} {SelectedVideoController.MemorySize}";
         }
-        public ICommand SelectVideoAdapterCommand { get; }
+        public ICommand SelectVideoControllerCommand { get; }
     }
-    public class VideoAdapter
-    {
-        public string Name { get; set; }
-        public string Size { get; set; }
-    }
+    
 }

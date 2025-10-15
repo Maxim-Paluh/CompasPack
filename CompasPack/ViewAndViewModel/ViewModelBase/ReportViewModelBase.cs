@@ -1,30 +1,31 @@
-﻿using CompasPack.Helper;
-using CompasPack.Settings;
-using CompasPack.View.Service;
-using Prism.Commands;
-using System.Diagnostics;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml.Linq;
+using System.Collections.Generic;
+
+using Prism.Commands;
 using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
-using System.Threading;
+
 using CompasPack.View;
-using System.Collections.Generic;
-using System.Windows.Controls;
+using CompasPack.Model.Enum;
+using CompasPack.Helper.Service;
+using CompasPack.Model.Settings;
+using CompasPack.Data.Providers;
 
 namespace CompasPack.ViewModel
 {
     public abstract class ReportViewModelBase : ViewModelBase
     {
         protected readonly ReportSettings _reportSettings;
-        protected XDocument _xDocument;
-        protected IIOHelper _iOHelper;
         protected IMessageDialogService _messageDialogService;
+        protected IFileSystemReaderWriter _fileSystemReaderWriter;
+        protected IFileSystemNavigator _fileSystemNavigator;
+
         private bool _isEnable;
         private int _indexReport;
 
@@ -49,13 +50,13 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public ReportViewModelBase(IIOHelper iOHelper, ReportSettings reportSettings, XDocument xDocument, IMessageDialogService messageDialogService,
+        public ReportViewModelBase(IFileSystemReaderWriter fileSystemReaderWriter, IFileSystemNavigator fileSystemNavigator, ReportSettingsProvider reportSettingsProvider, IMessageDialogService messageDialogService,
             string reportPath, string reportPricePath, string rPFFilePath)
         {
             IsEnable = false;
-            _iOHelper = iOHelper;
-            _reportSettings = reportSettings;
-            _xDocument = xDocument;
+            _fileSystemReaderWriter = fileSystemReaderWriter;
+            _fileSystemNavigator = fileSystemNavigator;
+            _reportSettings = reportSettingsProvider.Settings;
             _messageDialogService = messageDialogService;
 
             ReportPath = reportPath;
@@ -94,7 +95,7 @@ namespace CompasPack.ViewModel
                     listFile += $"{reportPricePath}\n";
 
                 var res = _messageDialogService.ShowYesNoDialog($"В папці призначення вже є файл(и):\n\n{listFile}\nВи хочете замінити його(їх)\n\n(Це невідворотня дія, зробіть їх копію!)", "Попередження!");
-                if (res == MessageDialogResult.No || res == MessageDialogResult.Cancel)
+                if (res == MessageDialogResultEnum.No || res == MessageDialogResultEnum.Cancel)
                 { return; }
             }
             IsEnable = false;
@@ -144,7 +145,7 @@ namespace CompasPack.ViewModel
         {
             var html = GetHTML();
             ClipboardHelper.CopyToClipboard(html, "");
-            await _iOHelper.WriteAllTextAsync(path, html);
+            await _fileSystemReaderWriter.WriteAllTextAsync(path, html);
         }
         protected async Task WriteDOCX(string reportPricePath)
         {
@@ -191,7 +192,7 @@ namespace CompasPack.ViewModel
         protected abstract string GetReplaceText(DocxReplaceTextEnum reportViewModelEnum);
         private int GetLastReport(string paht)
         {
-            var lastString = _iOHelper.GetListFile(paht).Select(x => x = Regex.Match(x, "\\d+").Value).OrderBy(x => x).LastOrDefault();
+            var lastString = _fileSystemReaderWriter.GetListFile(paht).Select(x => x = Regex.Match(x, "\\d+").Value).OrderBy(x => x).LastOrDefault();
             if (lastString != null)
             {
                 if (int.TryParse(lastString, out int last))
@@ -206,17 +207,17 @@ namespace CompasPack.ViewModel
         {
             if (!File.Exists($"{ReportPath}\\Report_{IndexReport:000}.html"))
                 _messageDialogService.ShowInfoDialog("Такого файлу нема!", "Помилка!");
-            _iOHelper.OpenFolderAndSelectFile($"{ReportPath}\\Report_{IndexReport:000}.html");
+            _fileSystemNavigator.OpenFolderAndSelectFile($"{ReportPath}\\Report_{IndexReport:000}.html");
         }
         protected void OnOpenPrice()
         {
             if (!File.Exists($"{ReportPath}\\Report_{IndexReport:000}.docx"))
                 _messageDialogService.ShowInfoDialog("Такого файлу нема!", "Помилка!");
-            _iOHelper.OpenFolderAndSelectFile($"{ReportPath}\\Report_{IndexReport:000}.docx");
+            _fileSystemNavigator.OpenFolderAndSelectFile($"{ReportPath}\\Report_{IndexReport:000}.docx");
         }
         protected void OnOpenFolder()
         {
-            _iOHelper.OpenCreateFolder(ReportPath);
+            _fileSystemNavigator.OpenCreateFolder(ReportPath);
         }
         public ICommand SaveReportCommand { get; set; }
         public ICommand OpenReportCommand { get; set; }

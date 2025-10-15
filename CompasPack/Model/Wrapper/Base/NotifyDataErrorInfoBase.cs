@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
+using System.Collections;
+using System.ComponentModel;
+using System.Collections.Generic;
+
+using CompasPack.ViewModel;
 
 namespace CompasPack.Wrapper
 {

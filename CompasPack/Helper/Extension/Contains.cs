@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CompasPack.Service
+namespace CompasPack.Helper.Extension
 {
     static class ContainsExtensions
     {

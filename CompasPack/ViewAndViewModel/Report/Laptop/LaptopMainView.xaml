@@ -6,58 +6,59 @@
              xmlns:local="clr-namespace:CompasPack.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="ToolTip">
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Border Grid.Row="3"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                    <ColumnDefinition Width="auto" MinWidth="100"></ColumnDefinition>
+                    <ColumnDefinition Width="auto" MinWidth="127"></ColumnDefinition>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
                 <!--Row_0-->
-                <TextBlock Grid.Row="0"  Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="Main:"></TextBlock>
-                <WrapPanel Grid.Row="0"  Grid.Column="1"  Margin="4" HorizontalAlignment="Left">
-                    <TextBlock Width="55" Text="Brand:" FontSize="18"></TextBlock>
-                    <ComboBox   MinWidth="100"
-                                ItemsSource="{Binding Settings}" 
-                                DisplayMemberPath="Key"
-                                SelectedItem="{Binding Lines, UpdateSourceTrigger=PropertyChanged}"
-                                IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True">
-                        <ComboBox.Text>
-                            <Binding Path="Brand" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <DataErrorValidationRule />
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </ComboBox.Text>
-                    </ComboBox>
-                    <TextBlock  Width="40" Margin="5 0 0 0" Text="Line:" FontSize="18"></TextBlock>
-                    <ComboBox   MinWidth="100"
-                                ItemsSource="{Binding Lines.Value}"
-                                IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True"
-                                Text="{Binding Line, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    </ComboBox>
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="5 0 0 0" HorizontalAlignment="Left" FontSize="14" FontWeight="Bold" Text="Назва:"></TextBlock>
+                <TextBlock Grid.Row="0" Grid.Column="1" Margin="0 5 0 5" HorizontalAlignment="Left" Text="Бренд | Серія:" ></TextBlock>
+
+
+                <ComboBox   Grid.Row="0" Grid.Column="2" Margin="4 4 4 4" HorizontalAlignment="Left" MinWidth="200" MaxWidth="200" ItemsSource="{Binding Settings}"  DisplayMemberPath="Key"
+                            IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True" >
+                    <ComboBox.Text>
+                        <Binding Path="Brand" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.Text>
+                </ComboBox>
+
+                <ComboBox   Grid.Row="0" Grid.Column="3" Margin="4 4 4 4" HorizontalAlignment="Left" MinWidth="200" MaxWidth="200" ItemsSource="{Binding Lines}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True" 
+                            Text="{Binding Line, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                </ComboBox>
+
+                <WrapPanel  Grid.Row="0" Grid.Column="4" Margin="4 4 4 4" HorizontalAlignment="Right">
+                    <TextBlock  FontWeight="Bold" Text="Результат:"></TextBlock>
+                    <TextBox  IsReadOnly="True" Background="LightGray" Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" MaxWidth="300"></TextBox>
                 </WrapPanel>
-                <WrapPanel Grid.Row="0" Grid.Column="2"  Margin="4" Grid.RowSpan="2">
-                    <TextBlock Margin="5 0 5 0"  Width="40" Text="Model:"></TextBlock>
-                    <TextBox Margin="5 0 5 0" Height="22"  MinWidth="100">
-                        <TextBox.Text>
-                            <Binding Path="Model" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <DataErrorValidationRule />
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-                </WrapPanel>
-                <WrapPanel Grid.Row="0" Grid.Column="3"   Margin="4" HorizontalAlignment="Right">
-                    <TextBlock  FontWeight="Bold" Text="Resault:"></TextBlock>
-                    <TextBox IsReadOnly="True" Background="LightGray" Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" ></TextBox>
-                </WrapPanel>
+                <!--Row_1-->
+                <TextBlock  Grid.Row="1" Grid.Column="1" Margin="0 5 0 5" HorizontalAlignment="Left" Text="Модель:"></TextBlock>
+                <TextBox    Grid.Row="1" Grid.Column="2" Margin="4 4 4 4" HorizontalAlignment="Left" MinWidth="200" Height="20">
+                    <TextBox.Text>
+                        <Binding Path="Model" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
             </Grid>
         </Border>
     </Grid>

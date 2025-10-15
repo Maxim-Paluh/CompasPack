@@ -1,14 +1,14 @@
-﻿using Autofac.Features.Indexed;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+
+using Autofac.Features.Indexed;
+
+using CompasPack.ViewModel;
 
 namespace CompasPack.Settings
 {
-    public class MainSettingsViewModel : ViewModelBase, IDetailViewModel
+    public class MainSettingsViewModel : ViewModelBase, IViewModel
     {
 
         private ISettingsViewModel _selectedSettingsViewModel;
@@ -36,14 +36,15 @@ namespace CompasPack.Settings
             throw new NotImplementedException();
         }
 
-        public async Task LoadAsync(int? Id)
+        public Task LoadAsync()
         {
             //var tabUserPathSettings = _settingsViewModeCreator[nameof(UserPathSettingsTabViewModel)];
             //await tabUserPathSettings.LoadAsync();
-          
+
             //SettingsViewModels.Add(tabUserPathSettings);
 
             //SelectedSettingsViewModel = tabUserPathSettings;
+            return Task.CompletedTask;
         }
 
         public void Unsubscribe()

@@ -1,12 +1,14 @@
-﻿using CompasPack.Event;
-using Prism.Commands;
-using Prism.Events;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Windows.Input;
-using CompasPack.Settings;
-using CompasPack.Service;
+using System.Collections.Generic;
+
+using Prism.Commands;
+using Prism.Events;
+
+using CompasPack.Helper.Event;
+using CompasPack.Model.Settings;
+using CompasPack.Helper.Extension;
 
 namespace CompasPack.ViewModel
 {

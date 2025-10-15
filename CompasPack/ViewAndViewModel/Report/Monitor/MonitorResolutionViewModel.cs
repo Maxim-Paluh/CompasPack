@@ -1,11 +1,15 @@
-﻿using CompasPack.Helper;
-using CompasPack.Settings;
+﻿using System;
 using System.Xml.Linq;
+
+using CompasPack.Model.Settings;
+using CompasPack.Data.Providers;
+using CompasPack.Data.Constants;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorResolutionViewModel : ReportHardWareViewModelBase<Monitor>, IReportViewModel
+    public class MonitorResolutionViewModel : ReportHardwareViewModelBase<Monitor>
     {
+        private readonly IHardwareInfoProvider _hardwareInfoProvider;
         private string _monitorResolution;
         public string MonitorResolution
         {
@@ -16,18 +20,18 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public MonitorResolutionViewModel(Monitor monitorReportSettings, XDocument xDocument)
+        public MonitorResolutionViewModel(ReportSettingsProvider reportSettingsProvider, IHardwareInfoProvider hardwareInfoProvider)
         {
-            Settings = monitorReportSettings;
-            Document = xDocument;
+            Settings = reportSettingsProvider.Settings.Monitor;
+            _hardwareInfoProvider = hardwareInfoProvider;
         }
-        public void Load()
+        public void Load(XDocument xDocument)
         {
-            var resolution = MonitorHelper.GetOptimalScreenResolution();
+            var resolution = _hardwareInfoProvider.GetScreenResolution();
 
             MonitorResolution = $"{resolution.Width}x{resolution.Height}";
 
-            var nameResolution = string.Join(", ", MonitorHelper.GetNameResolution(resolution));
+            var nameResolution = string.Join(", ", ResolutionNameList.GetNameResolution(resolution));
             if (!string.IsNullOrWhiteSpace(nameResolution))
                 MonitorResolution += $" {nameResolution}";
 

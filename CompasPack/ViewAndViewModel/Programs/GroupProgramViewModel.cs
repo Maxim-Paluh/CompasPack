@@ -1,7 +1,7 @@
 ﻿using Prism.Commands;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using CompasPack.Settings;
+using CompasPack.Model.Settings;
 
 namespace CompasPack.ViewModel
 {

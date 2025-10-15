@@ -1,19 +1,20 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using Autofac.Features.Indexed;
+using CompasPack.Data.Providers;
+using CompasPack.Data.Providers.API;
+using CompasPack.Helper.Extension;
+using CompasPack.Helper.Service;
+using CompasPack.Model.Settings;
+using CompasPack.Settings;
+using CompasPack.View;
+using DocumentFormat.OpenXml.Packaging;
 using Prism.Commands;
 using Prism.Events;
+using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using CompasPack.View.Service;
-using CompasPack.View;
-using Autofac.Features.Indexed;
-using CompasPack.Settings;
-using CompasPack.Helper;
-using CompasPack.Settings.Portable;
-using System.Collections.ObjectModel;
-using CompasPack.Service;
-using DocumentFormat.OpenXml.Packaging;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CompasPack.ViewModel
 {
@@ -21,9 +22,10 @@ namespace CompasPack.ViewModel
     {
         private IMessageDialogService _messageDialogService;
         private readonly Func<MainSettingsView> _mainSettingsViewCreator;
-        private readonly IIOHelper _iOHelper;
-        private IDetailViewModel _formViewModel;
-        private readonly IIndex<string, IDetailViewModel> _formViewModelCreator;
+        private readonly IFileSystemReaderWriter _fileSystemReaderWriter;
+        private readonly IWinInfoProvider _winInfoProvider;
+        private IViewModel _formViewModel;
+        private readonly IIndex<string, IViewModel> _formViewModelCreator;
         private bool _programsIsEnabled;
         private bool _reportIsEnabled;
         private bool _portableIsEnabled;
@@ -54,7 +56,7 @@ namespace CompasPack.ViewModel
             }
         }
         public ObservableCollection<PortableProgram> PortablePrograms { get; private set; }
-        public IDetailViewModel FormViewModel
+        public IViewModel FormViewModel
         {
             get { return _formViewModel; }
             private set
@@ -65,22 +67,24 @@ namespace CompasPack.ViewModel
         }
 
         //-------------------------------------------------------------------------
-        private readonly ProgramsSettingsHelper _ProgramsSettingsHelper;
-        private readonly ReportSettingsHelper _reportSettingsHelper;
-        private readonly PortableProgramsSettingsHelper _portableProgramsSettingsHelper;
+        private readonly ProgramsSettingsProvider _ProgramsSettingsProvider;
+        private readonly ReportSettingsProvider _reportSettingsProvider;
+        private readonly PortableProgramsSettingsProvider _portableProgramsSettingsProvider;
 
-        public MainWindowViewModel(IMessageDialogService messageDialogService, IIOHelper iOHelper, IEventAggregator eventAggregator, IIndex<string, IDetailViewModel> formViewModelCreator,
-            ProgramsSettingsHelper ProgramsSettingsHelper,
-            ReportSettingsHelper reportSettingsHelper,
-            PortableProgramsSettingsHelper portableProgramsSettingsHelper,
+        public MainWindowViewModel(IMessageDialogService messageDialogService, IFileSystemReaderWriter fileSystemReaderWriter, IEventAggregator eventAggregator, IIndex<string, IViewModel> formViewModelCreator,
+            ProgramsSettingsProvider programsSettingsProvider,
+            ReportSettingsProvider reportSettingsProvider,
+            IWinInfoProvider winInfoProvider,
+            PortableProgramsSettingsProvider portableProgramsSettingsProvider,
             Func<MainSettingsView> MainSettingsViewCreator)
         {
             _messageDialogService = messageDialogService;
-            _iOHelper = iOHelper;
+            _fileSystemReaderWriter = fileSystemReaderWriter;
+            _winInfoProvider = winInfoProvider;
             _formViewModelCreator = formViewModelCreator;
-            _ProgramsSettingsHelper = ProgramsSettingsHelper;
-            _reportSettingsHelper = reportSettingsHelper;
-            _portableProgramsSettingsHelper = portableProgramsSettingsHelper;
+            _ProgramsSettingsProvider = programsSettingsProvider;
+            _reportSettingsProvider = reportSettingsProvider;
+            _portableProgramsSettingsProvider = portableProgramsSettingsProvider;
             _mainSettingsViewCreator = MainSettingsViewCreator;
             //--------------------------------------------------------------------
             ProgramsIsEnabled = true;
@@ -99,7 +103,7 @@ namespace CompasPack.ViewModel
         //******************************************************
         public async Task LoadAsync()
         {
-            if ((int)WinInfoHelper.WinVer < 3) // якщо версія ОС нижча за Windows 7
+            if ((int)_winInfoProvider.WinVer < 3) // якщо версія ОС нижча за Windows 7
             {
                 _messageDialogService.ShowInfoDialog($"Нічого не буде, потрібно використовувати Windows 7 або новішу версію ОС", "Помилка!");
                 System.Windows.Application.Current.Shutdown();
@@ -109,25 +113,25 @@ namespace CompasPack.ViewModel
             tempLoad.Message = "Завантаження налаштувань...";
             FormViewModel = tempLoad;
             
-            await _portableProgramsSettingsHelper.LoadFromFile();
-            PortableIsEnabled = _portableProgramsSettingsHelper.IsLoad;
+            await _portableProgramsSettingsProvider.LoadFromFile();
+            PortableIsEnabled = _portableProgramsSettingsProvider.IsLoad;
             if(PortableIsEnabled)
             {
-                var portablePrograms = _portableProgramsSettingsHelper.Settings.PortableProgramsList.Clone();
+                var portablePrograms = _portableProgramsSettingsProvider.Settings.PortableProgramsList.Clone();
                 foreach (var portableProgram in portablePrograms)
                 {
                     if (portableProgram != null && !string.IsNullOrWhiteSpace(portableProgram.Path))
-                        portableProgram.Path = Path.Combine(_iOHelper.PathRoot, portableProgram.Path); // якщо path2 повний, то буде використано його (повний шлях), інакше буде використано відносний шлях
+                        portableProgram.Path = Path.Combine(_fileSystemReaderWriter.PathRoot, portableProgram.Path); // якщо path2 повний, то буде використано його (повний шлях), інакше буде використано відносний шлях
 
                     PortablePrograms.Add(portableProgram);
                 }
             }
 
-            await _ProgramsSettingsHelper.LoadFromFile();
-            ProgramsIsEnabled = _ProgramsSettingsHelper.IsLoad;
+            await _ProgramsSettingsProvider.LoadFromFile();
+            ProgramsIsEnabled = _ProgramsSettingsProvider.IsLoad;
 
-            await _reportSettingsHelper.LoadFromFile();
-            ReportIsEnabled = _reportSettingsHelper.IsLoad;
+            await _reportSettingsProvider.LoadFromFile();
+            ReportIsEnabled = _reportSettingsProvider.IsLoad;
             
             if (ProgramsIsEnabled)
             {
@@ -137,7 +141,7 @@ namespace CompasPack.ViewModel
                 await Task.Delay(1000);// show logo comp@s   
 #endif
                 var tempPrograms = _formViewModelCreator[typeof(ProgramsViewModel).Name];
-                await tempPrograms.LoadAsync(null);
+                await tempPrograms.LoadAsync();
                 FormViewModel = tempPrograms;
             }
             else
@@ -206,7 +210,7 @@ namespace CompasPack.ViewModel
             else
             {
                 FormViewModel = _formViewModelCreator[viewModelType.Name];
-                FormViewModel.LoadAsync(null);
+                FormViewModel.LoadAsync();
             }
         }
         //--------------------------------------

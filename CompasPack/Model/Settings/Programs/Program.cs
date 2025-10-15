@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CompasPack.Settings
+namespace CompasPack.Model.Settings
 {
     public class Program : ICloneable
     {

@@ -3,22 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:CompasPack.View"
-             xmlns:Service="clr-namespace:CompasPack.Service"
              mc:Ignorable="d" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:Src="clr-namespace:CompasPack.View.Service"
-             d:DesignHeight="450" d:DesignWidth="1500">
+             
+             d:DesignHeight="450" d:DesignWidth="1500"
+             
+             xmlns:View="clr-namespace:CompasPack.View"
+             xmlns:Service="clr-namespace:CompasPack.Helper.Service"
+             xmlns:Convertor="clr-namespace:CompasPack.Helper.Converter"
+             xmlns:Attached ="clr-namespace:CompasPack.Helper.Attached"
+             >
     <UserControl.Resources>
 
         <ResourceDictionary>
-            <!-- Підключення вашого ResourceDictionary -->
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ProgramsDictionary.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-            <!-- Інші ресурси тут, якщо потрібно -->
-            <Src:InstallConverter x:Key="InstallConvertor"/>
-            <Src:IsInstallConverter x:Key="IsInstallConverter"/>
+            <Convertor:InstallConverter x:Key="InstallConvertor"/>
+            <Convertor:IsInstallConverter x:Key="IsInstallConverter"/>
+            
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
             <DataTemplate x:Key="GroupProgram">
@@ -157,7 +157,7 @@
                 SelectedValue="{Binding SelectedProgramsSet, Mode=TwoWay}">
 
                     <i:Interaction.Behaviors>
-                        <Service:ClickComboBoxBehavior Command="{Binding SelectProgramsSetCommand}" />
+                        <Attached:ClickComboBoxBehavior Command="{Binding SelectProgramsSetCommand}" />
                     </i:Interaction.Behaviors>
                 </ComboBox>
                 <Button Template="{DynamicResource RoundedButton}" Grid.Column="2" IsEnabled="{Binding IsEnabled}" Margin="5 0 5 0"  Width="75" Command="{Binding OnlyFreeCommand}"  Content="Only Free"></Button>
@@ -219,7 +219,7 @@
             <Button     Grid.Row="2" Margin="0 0 0 5" Content="Встановти" IsEnabled="{Binding IsEnabled}" Command="{Binding InstallCommand}"></Button>
 
             <TextBox    Grid.Row="3" Background="Blue" Foreground="Yellow" Text="{Binding TextConsole, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-                        AcceptsReturn="True" TextWrapping="NoWrap"  VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" Src:TextBoxUtilities.AlwaysScrollToEnd="True"  IsReadOnly="True">
+                        AcceptsReturn="True" TextWrapping="NoWrap"  VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" Attached:TextBoxUtilities.AlwaysScrollToEnd="True"  IsReadOnly="True">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDoubleClick">
                         <i:InvokeCommandAction Command="{Binding ClearConsoleCommand}"/>

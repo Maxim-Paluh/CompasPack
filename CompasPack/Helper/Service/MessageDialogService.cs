@@ -1,29 +1,31 @@
 ﻿using System.Windows;
 
-namespace CompasPack.View.Service
+using CompasPack.Model.Enum;
+
+namespace CompasPack.Helper.Service
 {
     public interface IMessageDialogService
     {
-        MessageDialogResult ShowOkCancelDialog(string text, string title);
-        MessageDialogResult ShowYesNoDialog(string text, string title);
+        MessageDialogResultEnum ShowOkCancelDialog(string text, string title);
+        MessageDialogResultEnum ShowYesNoDialog(string text, string title);
         void ShowInfoDialog(string text, string header);
     }
     public class MessageDialogService : IMessageDialogService
     {
-        public MessageDialogResult ShowOkCancelDialog(string text, string title)
+        public MessageDialogResultEnum ShowOkCancelDialog(string text, string title)
         {
             var result = MessageBox.Show(text, title, MessageBoxButton.OKCancel);
             return result == MessageBoxResult.OK
-              ? MessageDialogResult.OK
-              : MessageDialogResult.Cancel;
+              ? MessageDialogResultEnum.OK
+              : MessageDialogResultEnum.Cancel;
         }
         
-        public MessageDialogResult ShowYesNoDialog(string text, string title)
+        public MessageDialogResultEnum ShowYesNoDialog(string text, string title)
         {
             var result = MessageBox.Show(text, title, MessageBoxButton.YesNo);
             return result == MessageBoxResult.Yes
-              ? MessageDialogResult.Yes
-              : MessageDialogResult.No;
+              ? MessageDialogResultEnum.Yes
+              : MessageDialogResultEnum.No;
         }
 
         public void ShowInfoDialog(string text, string header)
@@ -31,11 +33,5 @@ namespace CompasPack.View.Service
             MessageBox.Show(text, header);
         }
     }
-    public enum MessageDialogResult
-    {
-        OK,
-        Cancel,
-        Yes,
-        No
-    }
+
 }

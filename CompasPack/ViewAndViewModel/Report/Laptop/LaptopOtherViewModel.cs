@@ -1,6 +1,8 @@
-﻿using CompasPack.Enum;
-using CompasPack.Helper;
-using CompasPack.Settings;
+﻿using CompasPack.Data.Constants;
+using CompasPack.Data.Providers;
+using CompasPack.Helper.Service;
+using CompasPack.Model.Enum;
+using CompasPack.Model.Settings;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -13,11 +15,12 @@ using System.Xml.Linq;
 
 namespace CompasPack.ViewModel
 {
-    class LaptopOtherViewModel : ReportHardWareViewModelBase<List<LaptopHardWare>>, IReportViewModel, IDataErrorInfo
+    class LaptopOtherViewModel : ReportHardwareViewModelBase<LaptopInterface>, IDataErrorInfo
     {
-        private Hardware? _webCam;
-        private Hardware? _microphone;
+        private HardwareStatusEnum? _webCam;
+        private HardwareStatusEnum? _microphone;
         private string _laptopMonitorResolution; 
+        private readonly IHardwareInfoProvider _hardwareInfoProvider;
         public string LaptopMonitorResolution
         {
             get { return _laptopMonitorResolution; }
@@ -27,7 +30,7 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public Hardware? WebCam
+        public HardwareStatusEnum? WebCam
         {
             get { return _webCam; }
             set
@@ -36,7 +39,7 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public Hardware? Microphone
+        public HardwareStatusEnum? Microphone
         {
             get { return _microphone; }
             set
@@ -45,11 +48,11 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public IEnumerable<Hardware> HardwareValues
+        public IEnumerable<HardwareStatusEnum> HardwareStatusValues
         {
             get
             {
-                return System.Enum.GetValues(typeof(Hardware)).Cast<Hardware>();
+                return System.Enum.GetValues(typeof(HardwareStatusEnum)).Cast<HardwareStatusEnum>();
             }
         }
         public string this[string columnName]
@@ -72,10 +75,10 @@ namespace CompasPack.ViewModel
             }
         }
         public string Error => throw new NotImplementedException();
-        public LaptopOtherViewModel(List<LaptopHardWare> laptopHardWares, XDocument xDocument)
+        public LaptopOtherViewModel(ReportSettingsProvider reportSettingsProvider, IHardwareInfoProvider hardwareInfoProvider)
         {
-            Settings = laptopHardWares;
-            Document = xDocument;
+            Settings = reportSettingsProvider.Settings.LaptopInterface;
+            _hardwareInfoProvider = hardwareInfoProvider;
 
             TestWebCamCommand = new DelegateCommand(OnTestWebCam);
             TestMicrophoneCommand = new DelegateCommand(OnTestMicrophone);
@@ -83,61 +86,28 @@ namespace CompasPack.ViewModel
         }
         public void Load()
         {
-            var resolution = MonitorHelper.GetOptimalScreenResolution();
+            var resolution = _hardwareInfoProvider.GetScreenResolution();
+            var nameResolution = string.Join(", ", ResolutionNameList.GetNameResolution(resolution));
 
-            LaptopMonitorResolution = $"{resolution.Width}x{resolution.Height}";
+            LaptopMonitorResolution = $"{resolution.Width}x{resolution.Height}" + (string.IsNullOrWhiteSpace(nameResolution) ? string.Empty : $" {nameResolution}");
 
-            var nameResolution = string.Join(", ", MonitorHelper.GetNameResolution(resolution));
-            if (!string.IsNullOrWhiteSpace(nameResolution))
-                LaptopMonitorResolution += $" {nameResolution}";
-
-            if (!string.IsNullOrWhiteSpace(LaptopMonitorResolution))
-                Result = $"{LaptopMonitorResolution}, {string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name))}";
-            else
-                Result = string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name));
+            OnChangeHardware();
         }
         private void OnChangeHardware()
         {
-            if (!string.IsNullOrWhiteSpace(LaptopMonitorResolution))
-                Result = $"{LaptopMonitorResolution}, {string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name))}";
-            else
-                Result = string.Join(", ", Settings.Where(x => x.IsSelect).Select(c => c.Name));
+            Result = string.Join(", ", new[] { LaptopMonitorResolution }
+                            .Concat(Settings.LaptopPorts.Where(x => x.IsSelect).Select(c => c.Name))
+                            .Where(s => !string.IsNullOrWhiteSpace(s)))+".";
         }
         private void OnTestMicrophone()
         {
-            OpenUrl("https://webcammictest.com/check-mic.html");
+            NetworkService.OpenUrl(Settings.TestMicrophoneURL);
         }
         private void OnTestWebCam()
         {
-            OpenUrl("https://webcammictest.com");
+            NetworkService.OpenUrl(Settings.TestWebCamURL);
         }
-        private void OpenUrl(string url)
-        {
-            try
-            {
-                Process.Start(url);
-            }
-            catch
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    Process.Start("xdg-open", url);
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    Process.Start("open", url);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
+        
         public ICommand TestWebCamCommand { get; set; }
         public ICommand TestMicrophoneCommand { get; set; }
         public ICommand ChangeHardwareCommand { get; set; }

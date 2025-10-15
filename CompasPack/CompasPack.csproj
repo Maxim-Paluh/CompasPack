@@ -139,10 +139,37 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Data\Constants\PhysicalDiskTypeList.cs" />
+    <Compile Include="Data\Providers\API\HardwareInfoProviderWin7.cs" />
+    <Compile Include="Data\Providers\API\HardwareInfoProviderWin8.cs" />
+    <Compile Include="Data\Providers\API\HardwareInfoProviderBase.cs" />
+    <Compile Include="Data\Providers\API\IHardwareInfoProvider.cs" />
+    <Compile Include="Data\Providers\API\IWinInfoProvider.cs" />
+    <Compile Include="Data\Providers\API\WinInfoProvider.cs" />
+    <Compile Include="Data\Providers\API\WinKernelVersionProvider.cs" />
+    <Compile Include="Data\Providers\API\WinRegistryProvider.cs" />
+    <Compile Include="Model\Enum\WinArchitectureEnum.cs" />
+    <Compile Include="Model\Settings\Report\LaptopPort.cs" />
+    <Compile Include="Model\ViewAndViewModel\CPUInfo.cs" />
+    <Compile Include="Model\ViewAndViewModel\DiskInfo.cs" />
+    <Compile Include="Model\ViewAndViewModel\MemoryInfo.cs" />
+    <Compile Include="Model\ViewAndViewModel\ResolutionName.cs" />
+    <Compile Include="Data\Constants\ResolutionNameList.cs" />
+    <Compile Include="Helper\Converter\BooleanConverter.cs" />
+    <Compile Include="Helper\Converter\InstallConverter.cs" />
+    <Compile Include="Helper\Converter\InverseBooleanConverter.cs" />
+    <Compile Include="Helper\Converter\IsInstallConverter.cs" />
     <Compile Include="Helper\Extension\Clone.cs" />
-    <Compile Include="Helper\Service\ArchiverHelper.cs" />
-    <Compile Include="Helper\Service\WinDefenderEnum.cs" />
-    <Compile Include="Helper\Service\WinVerEnum.cs" />
+    <Compile Include="Helper\Service\FileArchiver\FileArchiver.cs" />
+    <Compile Include="Helper\Service\FileArchiver\IFileArchiver.cs" />
+    <Compile Include="Helper\Service\IO\FileSystemNavigator.cs" />
+    <Compile Include="Helper\Service\IO\IFileSystemNavigator.cs" />
+    <Compile Include="Helper\Service\IO\IFileSystemReaderWriter.cs" />
+    <Compile Include="Model\Enum\MessageDialogResultEnum.cs" />
+    <Compile Include="Model\Enum\ResultArchiverEnum.cs" />
+    <Compile Include="Model\Enum\WinDefenderEnum.cs" />
+    <Compile Include="Model\Enum\WinVersionEnum.cs" />
+    <Compile Include="Model\ViewAndViewModel\VideoControllerInfo.cs" />
     <Compile Include="ViewAndViewModel\Report\Common\CPUView.xaml.cs">
       <DependentUpon>CPUView.xaml</DependentUpon>
     </Compile>
@@ -175,14 +202,14 @@
       <DependentUpon>LaptopOtherView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewAndViewModel\Report\Laptop\LaptopOtherViewModel.cs" />
-    <Compile Include="ViewAndViewModel\Report\Laptop\Main\LaptopReportView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Laptop\LaptopReportView.xaml.cs">
       <DependentUpon>LaptopReportView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewAndViewModel\Report\Laptop\Main\LaptopReportViewModel.cs" />
-    <Compile Include="ViewAndViewModel\Report\Monitor\Main\MonitorReportView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\Laptop\LaptopReportViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Monitor\MonitorReportView.xaml.cs">
       <DependentUpon>MonitorReportView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewAndViewModel\Report\Monitor\Main\MonitorReportViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\Monitor\MonitorReportViewModel.cs" />
     <Compile Include="ViewAndViewModel\Report\Monitor\MonitorAspectRatioView.xaml.cs">
       <DependentUpon>MonitorAspectRatioView.xaml</DependentUpon>
     </Compile>
@@ -199,10 +226,10 @@
       <DependentUpon>MonitorResolutionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewAndViewModel\Report\Monitor\MonitorResolutionViewModel.cs" />
-    <Compile Include="ViewAndViewModel\Report\PC\Main\ComputerReportView.xaml.cs">
+    <Compile Include="ViewAndViewModel\Report\PC\ComputerReportView.xaml.cs">
       <DependentUpon>ComputerReportView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewAndViewModel\Report\PC\Main\ComputerReportViewModel.cs" />
+    <Compile Include="ViewAndViewModel\Report\PC\ComputerReportViewModel.cs" />
     <Compile Include="ViewAndViewModel\Report\PC\MotherboardView.xaml.cs">
       <DependentUpon>MotherboardView.xaml</DependentUpon>
     </Compile>
@@ -220,29 +247,29 @@
     </Compile>
     <Compile Include="ViewAndViewModel\Report\ReportViewModel.cs" />
     <Compile Include="Helper\Attached\ClickComboBoxBehavior.cs" />
-    <Compile Include="Helper\Converter\Converter.cs" />
+    <Compile Include="Helper\Converter\BooleanToVisibilityConverter.cs" />
     <Compile Include="Helper\Extension\Contains.cs" />
     <Compile Include="Helper\Service\MessageDialogService.cs" />
     <Compile Include="Helper\Attached\TextBoxUtilities.cs" />
-    <Compile Include="Model\Settings\Common\BaseSettingsViewModel.cs" />
-    <Compile Include="Model\Settings\Common\SettringsHelperBase.cs" />
+    <Compile Include="ViewAndViewModel\ViewModelBase\SettingsViewModelBase.cs" />
+    <Compile Include="Data\Providers\JsonFile\SettingsFileProviderBase.cs" />
     <Compile Include="ViewAndViewModel\Settings\MainSettingsViewModel.cs" />
     <Compile Include="ViewAndViewModel\Settings\MainSettingsView.xaml.cs">
       <DependentUpon>MainSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Settings\Portable\PortableProgram.cs" />
-    <Compile Include="Model\Settings\Portable\Main\PortableProgramsSettings.cs" />
-    <Compile Include="Model\Settings\Portable\Main\PortableProgramsSettingsHelper.cs" />
+    <Compile Include="Model\Settings\Portable\PortableProgramsSettings.cs" />
+    <Compile Include="Data\Providers\JsonFile\PortableProgramsSettingsProvider.cs" />
     <Compile Include="Model\Settings\Programs\GroupPrograms.cs" />
-    <Compile Include="Model\Settings\Programs\Main\ProgramsSettings.cs" />
+    <Compile Include="Model\Settings\Programs\ProgramsSettings.cs" />
     <Compile Include="Model\Settings\Programs\ProgramsPaths.cs" />
     <Compile Include="Model\Settings\Programs\Program.cs" />
-    <Compile Include="Model\Settings\Programs\Main\ProgramsSettingsHelper.cs" />
+    <Compile Include="Data\Providers\JsonFile\ProgramsSettingsProvider.cs" />
     <Compile Include="Model\Settings\Programs\ProtectedProgram.cs" />
     <Compile Include="Model\Settings\Programs\ProgramsSet.cs" />
     <Compile Include="Model\Settings\Programs\ProtectedProgramPaths.cs" />
-    <Compile Include="Model\Settings\Report\DocxReplaceTextEnum.cs" />
-    <Compile Include="Model\Settings\Report\HardWare.cs" />
+    <Compile Include="Model\Enum\DocxReplaceTextEnum.cs" />
+    <Compile Include="Model\Settings\Report\Interface.cs" />
     <Compile Include="Model\Settings\Report\ReportBase.cs" />
     <Compile Include="Model\Settings\Report\ReportPaths.cs" />
     <Compile Include="Model\Settings\Report\CPU.cs" />
@@ -251,21 +278,21 @@
     <Compile Include="Model\Settings\Report\MemoryType.cs" />
     <Compile Include="Model\Settings\Report\VideoController.cs" />
     <Compile Include="Model\Settings\Report\LaptopBattery.cs" />
-    <Compile Include="Model\Settings\Report\LaptopHardWare.cs" />
+    <Compile Include="Model\Settings\Report\LaptopInterface.cs" />
     <Compile Include="Model\Settings\Report\MonitorAspectRatio.cs" />
-    <Compile Include="Model\Settings\Report\MonitorInterface.cs" />
+    <Compile Include="Model\Settings\Report\MonitorPort.cs" />
     <Compile Include="Model\Settings\Report\MonitorModel.cs" />
     <Compile Include="Model\Settings\Report\MonitorName.cs" />
     <Compile Include="Model\Settings\Report\Monitor.cs" />
     <Compile Include="Model\Settings\Report\MonitorSize.cs" />
     <Compile Include="Model\Settings\Report\MonitorType.cs" />
     <Compile Include="Model\Settings\Report\Motherboard.cs" />
-    <Compile Include="Model\Settings\Report\Main\ReportSettings.cs" />
-    <Compile Include="Model\Settings\Report\Main\ReportSettingsHelper.cs" />
+    <Compile Include="Model\Settings\Report\ReportSettings.cs" />
+    <Compile Include="Data\Providers\JsonFile\ReportSettingsProvider.cs" />
     <Compile Include="Startup\Bootstrapper.cs" />
-    <Compile Include="ViewAndViewModel\ViewModelBase\IDetailViewModel.cs" />
-    <Compile Include="ViewAndViewModel\ViewModelBase\LookupItem.cs" />
-    <Compile Include="ViewAndViewModel\ViewModelBase\ReportHardWareViewModelBase.cs" />
+    <Compile Include="ViewAndViewModel\ViewModelBase\IViewModel.cs" />
+    <Compile Include="ViewAndViewModel\ViewModelBase\IViewModelReport.cs" />
+    <Compile Include="ViewAndViewModel\ViewModelBase\ReportHardwareViewModelBase.cs" />
     <Compile Include="ViewAndViewModel\ViewModelBase\ReportViewModelBase.cs" />
     <Compile Include="ViewAndViewModel\ViewModelBase\ViewModelBase.cs" />
     <Compile Include="Model\Wrapper\Base\ModelWrapper.cs" />
@@ -292,8 +319,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\Enum\Hardware.cs" />
-    <Compile Include="Model\Enum\TypeReport.cs" />
+    <Compile Include="Model\Enum\HardwareStatusEnum.cs" />
+    <Compile Include="Model\Enum\TypeReportEnum.cs" />
     <Compile Include="ViewAndViewModel\Errors\ErrorsView.xaml.cs">
       <DependentUpon>ErrorsView.xaml</DependentUpon>
     </Compile>
@@ -301,10 +328,8 @@
     <Compile Include="Helper\Event\SelectSingleProgramEvent.cs" />
     <Compile Include="Helper\Service\AidaReportHelper.cs" />
     <Compile Include="Helper\Service\ClipboardHelper.cs" />
-    <Compile Include="Helper\Service\IOHelper.cs" />
-    <Compile Include="Helper\Service\MonitorHelper.cs" />
-    <Compile Include="Helper\Service\NetworkHelper.cs" />
-    <Compile Include="Helper\Service\PathHelper.cs" />
+    <Compile Include="Helper\Service\IO\FileSystemReaderWriter.cs" />
+    <Compile Include="Helper\Service\NetworkService.cs" />
     <Compile Include="Helper\Service\ProgramsHelper.cs" />
     <Compile Include="Helper\Service\WinDefenderHelper.cs" />
     <Compile Include="Helper\Service\WinInfoHelper.cs" />
@@ -316,10 +341,6 @@
     <Page Include="ViewAndViewModel\Main\MainWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ViewAndViewModel\Programs\ProgramsDictionary.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ViewAndViewModel\Programs\ProgramsView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -357,11 +378,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ViewAndViewModel\Report\Laptop\Main\LaptopReportView.xaml">
+    <Page Include="ViewAndViewModel\Report\Laptop\LaptopReportView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ViewAndViewModel\Report\Monitor\Main\MonitorReportView.xaml">
+    <Page Include="ViewAndViewModel\Report\Monitor\MonitorReportView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -381,7 +402,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ViewAndViewModel\Report\PC\Main\ComputerReportView.xaml">
+    <Page Include="ViewAndViewModel\Report\PC\ComputerReportView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -444,9 +465,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Startup\app.manifest" />
-    <None Include="Model\JSON\PortableProgramsSettings.json" />
-    <None Include="Model\JSON\ReportSettings.json" />
-    <None Include="Model\JSON\ProgramsSettings.json" />
+    <None Include="Data\TestData\JsonSettings\PortableProgramsSettings.json" />
+    <None Include="Data\TestData\JsonSettings\ReportSettings.json" />
+    <None Include="Data\TestData\JsonSettings\ProgramsSettings.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -466,6 +487,7 @@
     <None Include="Image\CompasPack.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Data\Repositories\" />
     <Folder Include="ViewAndViewModel\ViewBase\" />
   </ItemGroup>
   <ItemGroup>
@@ -486,9 +508,12 @@
   <ItemGroup>
     <Resource Include="Image\Defender.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\Info.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY "$(ProjectDir)Model\JSON\" "$(TargetDir)Settings" /S /Y /I
+    <PostBuildEvent>XCOPY "$(ProjectDir)Data\TestData\JsonSettings\" "$(TargetDir)Settings" /S /Y /I
 XCOPY "$(ProjectDir)7za\" "$(TargetDir)"  /Y
 </PostBuildEvent>
   </PropertyGroup>

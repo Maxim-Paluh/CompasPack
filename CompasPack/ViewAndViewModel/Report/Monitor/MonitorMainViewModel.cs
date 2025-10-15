@@ -1,17 +1,16 @@
-﻿using CompasPack.Settings;
+﻿using CompasPack.Data.Providers;
+using CompasPack.Helper.Extension;
+using CompasPack.Model.Settings;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using CompasPack.Service;
 
 namespace CompasPack.ViewModel
 {
-    public class MonitorMainViewModel : ReportHardWareViewModelBase<Monitor>, IReportViewModel, IDataErrorInfo
+    public class MonitorMainViewModel : ReportHardwareViewModelBase<Monitor>, IDataErrorInfo
     {
         private string _brand;
         private string _model;
@@ -56,38 +55,27 @@ namespace CompasPack.ViewModel
             }
         }
         public string Error => throw new NotImplementedException();
-        public MonitorMainViewModel(Monitor monitorReportSettings, XDocument xDocument)
+        public MonitorMainViewModel(ReportSettingsProvider reportSettingsProvider)
         {
-            Settings = monitorReportSettings;
-            Document = xDocument;
+            Settings = reportSettingsProvider.Settings.Monitor;
         }
-        public void Load()
+        public void Load(XDocument xDocument)
         {
-            var tempName = Document.XPathSelectElement(Settings.MonitorName.XPath);
-            if (tempName != null)
-                Name = tempName.Value;
-            else
-                Name = string.Empty;
-            
-            var tempModel = Document.XPathSelectElement(Settings.MonitorModel.XPath);
-            if (tempModel != null)
-                Model = tempModel.Value;
-            else
-                Model = string.Empty;
-
+            Name = xDocument.XPathSelectElement(Settings.MonitorName.XPath)?.Value ?? string.Empty;
+            Model = xDocument.XPathSelectElement(Settings.MonitorModel.XPath)?.Value ?? string.Empty;
 
             if (!string.IsNullOrWhiteSpace(Name))
-                Brand = Settings.MonitorsBrand.FirstOrDefault(x => Name.Contains(x, StringComparison.InvariantCultureIgnoreCase));
+                Brand = Settings.MonitorsBrand.FirstOrDefault(x => Name.Contains(x, StringComparison.InvariantCultureIgnoreCase)); // шукаємо бренд в Name, якщо Name не пустий
 
-            if(string.IsNullOrWhiteSpace(Brand))
-                if(!string.IsNullOrWhiteSpace(Model))
+            if (string.IsNullOrWhiteSpace(Brand)) // ідемо далі лише якщо не знайшли модель
+                if (!string.IsNullOrWhiteSpace(Model)) // шукаємо бренд в Model, якщо Model не пустий
                     Brand = Settings.MonitorsBrand.FirstOrDefault(x => Model.Contains(x, StringComparison.InvariantCultureIgnoreCase));
 
-            if(!string.IsNullOrWhiteSpace(Brand))
-            if (Model.Contains(Brand))
+            if (!string.IsNullOrWhiteSpace(Brand) && Model.Contains(Brand)) // якщо в Model міститься назва бренду то ми її видалимо, щоб не дублювати цю інформацію в Result
                 Model = Model.Replace(Brand, "").Trim();
 
             Result = $"{Brand} {Model}".Trim();
+
         }
     }
 }

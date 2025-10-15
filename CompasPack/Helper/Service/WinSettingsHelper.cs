@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Diagnostics;
-using CompasPack.Service;
-using CompasPack.View.Service;
 
-namespace CompasPack.Helper
+using CompasPack.Model.Enum;
+
+namespace CompasPack.Helper.Service
 {
     public static class WinSettingsHelper
     {
-        public static void OpenDefaultPrograms(IMessageDialogService messageDialogService)
+        public static void OpenDefaultPrograms(IMessageDialogService messageDialogService, WinVersionEnum winVersionEnum)
         {
             string argument = null;
             string fileName = null;
 
-            switch (WinInfoHelper.WinVer)
+            switch (winVersionEnum)
             {
-                case WinVerEnum.Win7: case WinVerEnum.Win8: case WinVerEnum.Win8_1:
+                case WinVersionEnum.Win_7: case WinVersionEnum.Win_8: case WinVersionEnum.Win_8_1:
                     argument = "/name Microsoft.DefaultPrograms /page pageDefaultProgram";
                     fileName = "control.exe";
                     break;
-                case WinVerEnum.Win10: case WinVerEnum.Win11:
+                case WinVersionEnum.Win_10: case WinVersionEnum.Win_11:
                     argument = "Shell:::{2559a1f7-21d7-11d4-bdaf-00c04f60b9f0}";
                     fileName = "explorer.exe";
                     break;

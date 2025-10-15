@@ -1,14 +1,9 @@
 ﻿using System.Xml.Linq;
 
-namespace CompasPack
+namespace CompasPack.ViewModel
 {
-    public interface IReportViewModel
+    public class ReportHardwareViewModelBase<T> : ViewModelBase
     {
-        void Load();
-    }
-    public class ReportHardWareViewModelBase<T> : ViewModelBase
-    {
-        private XDocument _document;
         private T _settings;
         private string _result;
         public T Settings
@@ -17,15 +12,6 @@ namespace CompasPack
             set
             {
                 _settings = value;
-                OnPropertyChanged();
-            }
-        }
-        public XDocument Document
-        {
-            get { return _document; }
-            set
-            {
-                _document = value;
                 OnPropertyChanged();
             }
         }

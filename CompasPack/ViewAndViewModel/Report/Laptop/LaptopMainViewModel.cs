@@ -1,35 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace CompasPack.ViewModel
 {
-    class LaptopMainViewModel : ReportHardWareViewModelBase<Dictionary<string, List<string>>>, IReportViewModel, IDataErrorInfo
+    class LaptopMainViewModel : ReportHardwareViewModelBase<Dictionary<string, List<string>>>, IDataErrorInfo
     {
         private string _brand;
-        private string _model;
         private string _line;
-        private KeyValuePair<string, List<string>> _lines;
-        public KeyValuePair<string, List<string>> Lines
+        private string _model;
+
+        private List<string> _lines;
+        public List<string> Lines
         {
-            get { return _lines; }
+            get => _lines;
             set
             {
                 _lines = value;
                 OnPropertyChanged();
-            }
-        }
-        public string Line
-        {
-            get { return _line; }
-            set
-            {
-                _line = value;
-                OnPropertyChanged();
-                if (!string.IsNullOrWhiteSpace(_line))
-                    Result = $"{_brand} {_line} {_model}";
-                else
-                    Result = $"{_brand} {_model}";
             }
         }
         public string Brand
@@ -39,10 +28,28 @@ namespace CompasPack.ViewModel
             {
                 _brand = value;
                 OnPropertyChanged();
-                if (!string.IsNullOrWhiteSpace(_line))
-                    Result = $"{_brand} {_line} {_model}";
-                else
-                    Result = $"{_brand} {_model}";
+                UpdateLines();
+                SetResult();
+            }
+        }
+        public string Line
+        {
+            get { return _line; }
+            set
+            {
+                _line = value;
+                OnPropertyChanged();
+                SetResult();
+            }
+        }
+        public string Model
+        {
+            get { return _model; }
+            set
+            {
+                _model = value;
+                OnPropertyChanged();
+                SetResult();
             }
         }
         public string this[string columnName]
@@ -64,26 +71,20 @@ namespace CompasPack.ViewModel
                 return error;
             }
         }
-        public string Model
-        {
-            get { return _model; }
-            set
-            {
-                _model = value;
-                OnPropertyChanged();
-                if (!string.IsNullOrWhiteSpace(_line))
-                    Result = $"{_brand} {_line} {_model}";
-                else
-                    Result = $"{_brand} {_model}";
-            }
-        }
         public string Error => throw new NotImplementedException();
-        public LaptopMainViewModel(Dictionary<string, List<string>> laptopsBrandAndModel)
+        
+        public void Load(Dictionary<string, List<string>> laptopsBrandAndModel)
         {
             Settings = laptopsBrandAndModel;
         }
-        public void Load()
+        private void SetResult() 
         {
+            Result = string.Join(" ", new[] { _brand, _line, _model }.Where(s => !string.IsNullOrWhiteSpace(s)));
+        }
+        private void UpdateLines()
+        {
+            Settings.TryGetValue(_brand, out var list);
+            Lines = list ?? new List<string>();
         }
     }
 }

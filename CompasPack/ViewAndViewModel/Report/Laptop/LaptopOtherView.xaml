@@ -6,11 +6,17 @@
              xmlns:local="clr-namespace:CompasPack.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="900">
+    <UserControl.Resources>
+        <Style TargetType="ToolTip">
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Border  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                    <ColumnDefinition Width="auto" MinWidth="100"></ColumnDefinition>
+                    <ColumnDefinition Width="auto" MinWidth="124"></ColumnDefinition>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
@@ -19,27 +25,72 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <!--Row_0-->
-                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="LaptopOther:"></TextBlock>
-                <WrapPanel Grid.Row="0" Grid.Column="1" Margin="4" HorizontalAlignment="Left">
-                    <TextBlock Margin="5 0 5 0" Text="Test:"></TextBlock>
-                    <Button Margin="5 0 5 0" Content="Web Cam" Command="{Binding TestWebCamCommand}" Style="{StaticResource ChangeColorButton}"></Button>
-                    <Button Margin="5 0 5 0" Content="Microphone" Command="{Binding TestMicrophoneCommand}" Style="{StaticResource ChangeColorButton}"></Button>
+                <TextBlock    Grid.Row="0" Grid.Column="0" Margin="5 0 0 0" HorizontalAlignment="Left" FontSize="14" FontWeight="Bold" Text="Інтерфейси:"></TextBlock>
+                <TextBlock    Grid.Row="0" Grid.Column="1" Margin="0 3 5 3" HorizontalAlignment="Left" Text="Матриця:" ></TextBlock>
+                <TextBox      Grid.Row="0" Grid.Column="2" Margin="5 3 0 3" HorizontalAlignment="Left" IsReadOnly="True" Background="LightGray" MinWidth="150" MaxWidth="150" Height="20" Text="{Binding LaptopMonitorResolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <ItemsControl Grid.Row="0" Grid.Column="3" Grid.RowSpan="3" MaxWidth="480" Margin="5 0 0 0" HorizontalAlignment="Left"  ItemsSource="{Binding Settings.LaptopPorts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox  Margin="2 3 2 3"
+                           Content="{Binding Name}"
+                           Command="{Binding Path=DataContext.ChangeHardwareCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+                           IsChecked="{Binding IsSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            </CheckBox>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+                <WrapPanel Grid.Row="0" Grid.Column="4" Margin="4 4 4 4" Grid.RowSpan="4" HorizontalAlignment="Right">
+                    <TextBlock FontWeight="Bold" Text="Результат:"></TextBlock>
+                    <TextBox Margin="5 0 0 0" MinWidth="300" MaxWidth="300" TextWrapping="Wrap" Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                </WrapPanel>
+                <!--Row_1-->
+                <Button    Grid.Row="1" Grid.Column="1" Margin="0 3 5 3" HorizontalAlignment="Left" Content="Камера:" Width="80" Command="{Binding TestWebCamCommand}" Template="{StaticResource RoundedButton}" Style="{StaticResource ChangeColorButton}"></Button>
+                <ComboBox  Grid.Row="1" Grid.Column="2" Margin="5 3 0 3" HorizontalAlignment="Left"  MinWidth="150" MaxWidth="150" Height="22" ItemsSource="{Binding HardwareStatusValues}">
+                    <ComboBox.SelectedItem>
+                        <Binding Path="WebCam" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.SelectedItem>
+                </ComboBox>
+                <!--Row_2-->
+                <Button    Grid.Row="2" Grid.Column="1" Margin="0 3 5 3" HorizontalAlignment="Left" Content="Мікрофон:" Width="80" Command="{Binding TestMicrophoneCommand}" Template="{StaticResource RoundedButton}" Style="{StaticResource ChangeColorButton}"></Button>
+                <ComboBox  Grid.Row="2" Grid.Column="2" Margin="5 3 0 3" HorizontalAlignment="Left"  MinWidth="150" MaxWidth="150" Height="22" ItemsSource="{Binding HardwareStatusValues}">
+                    <ComboBox.SelectedItem>
+                        <Binding Path="Microphone" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.SelectedItem>
+                </ComboBox>
+
+                <!--<WrapPanel Grid.Row="0" Grid.Column="1" Margin="4" HorizontalAlignment="Left">
+                    
+                    
+                    <Button Margin="5 0 5 0" Content="Microphone" Command="{Binding }" Style="{StaticResource ChangeColorButton}"></Button>
                 </WrapPanel>
                 <WrapPanel Grid.Row="0" Grid.Column="2" Margin="4" >
                     <TextBlock Width="45" Text="Display:"></TextBlock>
-                    <TextBox IsReadOnly="True" Background="LightGray" MinWidth="80"  Text="{Binding LaptopMonitorResolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    
                 </WrapPanel>
-                <WrapPanel Grid.Row="0" Grid.Column="3" Margin="4" HorizontalAlignment="Right">
+                <WrapPanel Grid.Row="0" Grid.Column="3" Margin="4" Grid.RowSpan="4" HorizontalAlignment="Right">
                     <TextBlock FontWeight="Bold" Text="Resault:"></TextBlock>
-                    <TextBox Margin="5 0 0 0" MinWidth="300" Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <TextBox Margin="5 0 0 0" MinWidth="300" MaxWidth="300" TextWrapping="Wrap" Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </WrapPanel>
                 
-                <!--Row_1-->
+                --><!--Row_1--><!--
                 <TextBlock Grid.Row="1" Grid.Column="1"  Margin="9 0 5 0" Text="Result:"></TextBlock>
-                <ItemsControl Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" MaxWidth="350" HorizontalAlignment="Left"  ItemsSource="{Binding Settings, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" MaxWidth="350" HorizontalAlignment="Left"  ItemsSource="{Binding Settings.LaptopPorts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <CheckBox  Margin="5"
@@ -55,11 +106,11 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
-                <!--Row_2-->
+                --><!--Row_2--><!--
                 <WrapPanel Grid.Row="2" Grid.Column="1" Margin="4" HorizontalAlignment="Left">
                     <TextBlock Margin="5 0 5 0" Width="70" Text="Web Cam:"></TextBlock>
                     <ComboBox Margin="5 0 5 0"  MinWidth="87" 
-                              ItemsSource="{Binding HardwareValues}">
+                              ItemsSource="{Binding HardwareStatusValues}">
                         <ComboBox.SelectedItem>
                             <Binding Path="WebCam" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
@@ -69,11 +120,11 @@
                         </ComboBox.SelectedItem>
                     </ComboBox>
                 </WrapPanel>
-                <!--Row_3-->
+                --><!--Row_3--><!--
                 <WrapPanel Grid.Row="3" Grid.Column="1" Margin="4" HorizontalAlignment="Left">
                     <TextBlock Margin="5 0 5 0" Width="70" Text="Microphone:"></TextBlock>
                     <ComboBox Margin="5 0 5 0"  MinWidth="87" 
-                              ItemsSource="{Binding HardwareValues}">
+                              ItemsSource="{Binding HardwareStatusValues}">
                         <ComboBox.SelectedItem>
                             <Binding Path="Microphone" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
@@ -82,7 +133,7 @@
                             </Binding>
                         </ComboBox.SelectedItem>
                     </ComboBox>
-                </WrapPanel>
+                </WrapPanel>-->
             </Grid>
         </Border>
     </Grid>

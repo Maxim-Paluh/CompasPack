@@ -1,31 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using System.Xml.Linq;
-using CompasPack.Enum;
-using CompasPack.Helper;
-using CompasPack.Settings;
-using CompasPack.View.Service;
+using System.Windows.Input;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
 using Prism.Commands;
+
+using CompasPack.Model.Enum;
+using Autofac.Features.Indexed;
+using CompasPack.Helper.Service;
+using CompasPack.Model.Settings;
+using CompasPack.Data.Providers;
 
 namespace CompasPack.ViewModel
 {
-    public class ReportViewModel : ViewModelBase, IDetailViewModel
+    public class ReportViewModel : ViewModelBase, IViewModel
     {
-        private TypeReport _reportType;
-        private IDetailViewModel _reportformViewModel;
-        private readonly IIOHelper _iOHelper;
+        private TypeReportEnum _reportType;
+        private IViewModelReport _reportformViewModel;
+        private readonly IFileSystemReaderWriter _fileSystemReaderWriter;
+        private readonly IFileSystemNavigator _fileSystemNavigator;
         private IMessageDialogService _messageDialogService;
-        private readonly ReportSettingsHelper _reportSettingsHelper;
+        private readonly ReportSettingsProvider _reportSettingsProvider;
+        private readonly IIndex<string, IViewModelReport> _formViewModelCreator;
         private ReportPaths _reportPaths;
         private XDocument _xDocument;
         private bool _isEnabled;
 
-        public TypeReport ReportType
+        public TypeReportEnum ReportType
         {
             get { return _reportType; }
             set
@@ -35,14 +40,14 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public IEnumerable<TypeReport> ReportTypeValues
+        public IEnumerable<TypeReportEnum> ReportTypeValues
         {
             get
             {
-                return System.Enum.GetValues(typeof(TypeReport)).Cast<TypeReport>();
+                return System.Enum.GetValues(typeof(TypeReportEnum)).Cast<TypeReportEnum>();
             }
         }
-        public IDetailViewModel ReportFormViewModel
+        public IViewModelReport ReportFormViewModel
         {
             get { return _reportformViewModel; }
             private set
@@ -62,11 +67,14 @@ namespace CompasPack.ViewModel
         }
         public bool IsChanges { get; set; } 
 
-        public ReportViewModel(IIOHelper iOHelper, IMessageDialogService messageDialogService, ReportSettingsHelper reportSettingsHelper)
+        public ReportViewModel(IFileSystemReaderWriter fileSystemReaderWriter, IFileSystemNavigator fileSystemNavigator,  IMessageDialogService messageDialogService, ReportSettingsProvider reportSettingsProvider,
+             IIndex<string, IViewModelReport> formViewModelCreator)
         {
-            _iOHelper = iOHelper;
+            _fileSystemReaderWriter = fileSystemReaderWriter;
+            _fileSystemNavigator = fileSystemNavigator;
             _messageDialogService = messageDialogService;
-            _reportSettingsHelper = reportSettingsHelper;
+            _reportSettingsProvider = reportSettingsProvider;
+            _formViewModelCreator = formViewModelCreator;
 
             IsEnabled = true;
             IsChanges = false;
@@ -75,10 +83,10 @@ namespace CompasPack.ViewModel
             SelectReportTypeCommand = new DelegateCommand(OnSelectReportType);
         }
 
-        public Task LoadAsync(int? Id)
+        public Task LoadAsync()
         {
-            _reportPaths = (ReportPaths)_reportSettingsHelper.Settings.ReportPaths.Clone();
-            PathHelper.SetRootPath(_iOHelper.PathRoot, _reportPaths); // TODO
+            _reportPaths = (ReportPaths)_reportSettingsProvider.Settings.ReportPaths.Clone();
+            ProgramsHelper.SetRootPath(_fileSystemReaderWriter.PathRoot, _reportPaths); // TODO
             return Task.CompletedTask;
         }
 
@@ -86,15 +94,15 @@ namespace CompasPack.ViewModel
         {
             switch (ReportType)
             {
-                case TypeReport.Computer:
+                case TypeReportEnum.Computer:
                     if (ReportFormViewModel is ComputerReportViewModel)
                         IsEnabled = false;
                     break;
-                case TypeReport.Laptop:
+                case TypeReportEnum.Laptop:
                     if (ReportFormViewModel is LaptopReportViewModel)
                         IsEnabled = false;
                     break;
-                case TypeReport.Monitor:
+                case TypeReportEnum.Monitor:
                     if (ReportFormViewModel is MonitorReportViewModel)
                         IsEnabled = false;
                     break;
@@ -107,7 +115,9 @@ namespace CompasPack.ViewModel
         {
             IsEnabled = false;
             IsChanges = true;
-            var tempLoad = new LoadViewModel { Message = "Генерування та завантаження звіту Aida..." };
+            var tempLoad = (LoadViewModel)_formViewModelCreator[typeof(LoadViewModel).Name];
+            tempLoad.Message = "Генерування та завантаження звіту Aida...";
+
             ReportFormViewModel = tempLoad;
 
             bool tempAidaReport = false;
@@ -115,11 +125,11 @@ namespace CompasPack.ViewModel
             {
                
 #if DEBUG
-                if (!File.Exists(Path.Combine(_iOHelper.CompasPackLog, "Report.xml")))
+                if (!File.Exists(Path.Combine(_fileSystemReaderWriter.CompasPackLog, "Report.xml")))
                 {
                     try
                     {
-                        await AidaReportHelper.GetAidaReport(_reportPaths.AidaExeFilePath, Path.Combine(_iOHelper.CompasPackLog, "Report."),
+                        await AidaReportHelper.GetAidaReport(_reportPaths.AidaExeFilePath, Path.Combine(_fileSystemReaderWriter.CompasPackLog, "Report."),
                                                                            "/XML", _reportPaths.ReportRPF,120);
                         tempAidaReport = true;
                     }
@@ -133,7 +143,7 @@ namespace CompasPack.ViewModel
 #else
                     try
                     {
-                        await AidaReportHelper.GetAidaReport(_reportPaths.AidaExeFilePath, Path.Combine(_iOHelper.CompasPackLog, "Report."),
+                        await AidaReportHelper.GetAidaReport(_reportPaths.AidaExeFilePath, Path.Combine(_fileSystemReaderWriter.CompasPackLog, "Report."),
                                                                            "/XML", _reportPaths.ReportRPF, 120);
                         tempAidaReport = true;
                     }
@@ -147,7 +157,7 @@ namespace CompasPack.ViewModel
             if (tempAidaReport)
             {
                // Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                using (var stream = new StreamReader($"{Path.Combine(_iOHelper.CompasPackLog, "Report.xml")}", Encoding.GetEncoding("windows-1251")))
+                using (var stream = new StreamReader($"{Path.Combine(_fileSystemReaderWriter.CompasPackLog, "Report.xml")}", Encoding.GetEncoding("windows-1251")))
                 {
 
                     _xDocument = await Task.Factory.StartNew(() => XDocument.Load(stream, LoadOptions.PreserveWhitespace));
@@ -156,25 +166,25 @@ namespace CompasPack.ViewModel
 
             if (_xDocument != null)
             {
-                IDetailViewModel tempReportFormViewModel;
+                IViewModelReport tempReportFormViewModel;
                 tempLoad.Message = "Побудова звіту...";
                 switch (ReportType)
                 {
-                    case TypeReport.Computer:
-                        tempReportFormViewModel = new ComputerReportViewModel(_iOHelper, _reportSettingsHelper.Settings, _xDocument, _messageDialogService);
+                    case TypeReportEnum.Computer:
+                        tempReportFormViewModel = _formViewModelCreator[typeof(ComputerReportViewModel).Name];
                         break;
-                    case TypeReport.Laptop:
-                        tempReportFormViewModel = new LaptopReportViewModel(_iOHelper, _reportSettingsHelper.Settings, _xDocument, _messageDialogService);
+                    case TypeReportEnum.Laptop:
+                        tempReportFormViewModel = _formViewModelCreator[typeof(LaptopReportViewModel).Name];
                         break;
-                    case TypeReport.Monitor:
-                        tempReportFormViewModel = new MonitorReportViewModel(_iOHelper, _reportSettingsHelper.Settings, _xDocument, _messageDialogService);
+                    case TypeReportEnum.Monitor:
+                        tempReportFormViewModel = _formViewModelCreator[typeof(MonitorReportViewModel).Name];
                         break;
                     default:
                         tempReportFormViewModel = null;
                         break;
                 }
                 if(tempReportFormViewModel != null)
-                    await tempReportFormViewModel.LoadAsync(null);
+                    await tempReportFormViewModel.LoadAsync(_xDocument);
 
                 ReportFormViewModel = tempReportFormViewModel;
             }

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using CompasPack.Data.Providers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
 namespace CompasPack.ViewModel
 {
-    public class PowerSupplyViewModel : ReportHardWareViewModelBase<List<string>>, IReportViewModel, IDataErrorInfo
+    public class PowerSupplyViewModel : ReportHardwareViewModelBase<List<string>>, IDataErrorInfo
     {
         private string _name;
         private string _power;
@@ -16,7 +17,10 @@ namespace CompasPack.ViewModel
             {
                 _name = value;
                 OnPropertyChanged();
-                Result = $"{_name}-{_power}W";
+                if (!string.IsNullOrWhiteSpace(_power))
+                    Result = $"{_name}-{_power}W";
+                else
+                    Result = $"{_name}";
             }
         }
         public string Power
@@ -26,7 +30,10 @@ namespace CompasPack.ViewModel
             {
                 _power = value;
                 OnPropertyChanged();
-                Result = $"{_name}-{_power}W";
+                if(!string.IsNullOrWhiteSpace(_power))
+                    Result = $"{_name}-{_power}W";
+                else
+                    Result = $"{_name}";
             }
         }
         public string this[string columnName]
@@ -51,9 +58,9 @@ namespace CompasPack.ViewModel
             }
         }
         public string Error => throw new NotImplementedException();
-        public PowerSupplyViewModel(List<string> PCPowerSupply)
+        public PowerSupplyViewModel(ReportSettingsProvider reportSettingsProvider)
         {
-            Settings = PCPowerSupply;
+            Settings = reportSettingsProvider.Settings.PCPowerSupply;
 
         }
         public void Load()

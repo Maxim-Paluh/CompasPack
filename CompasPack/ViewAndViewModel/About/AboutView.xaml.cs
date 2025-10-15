@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 
+using CompasPack.ViewModel;
+
 namespace CompasPack.View
 {
     /// <summary>

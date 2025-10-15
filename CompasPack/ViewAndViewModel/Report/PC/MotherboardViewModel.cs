@@ -1,11 +1,13 @@
-﻿using CompasPack.Settings;
+﻿using CompasPack.Data.Providers;
+using CompasPack.Model.Settings;
+using System;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    public class MotherboardViewModel : ReportHardWareViewModelBase<Motherboard>, IReportViewModel
+    public class MotherboardViewModel : ReportHardwareViewModelBase<Motherboard>
     {
         private string _name;
         public string Name
@@ -17,14 +19,13 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public MotherboardViewModel(Motherboard motherboardReportSettings, XDocument xDocument)
+        public MotherboardViewModel(ReportSettingsProvider reportSettingsProvider)
         {
-            Settings = motherboardReportSettings;
-            Document = xDocument;
+            Settings = reportSettingsProvider.Settings.Motherboard;
         }
-        public void Load()
+        public void Load(XDocument xDocument)
         {
-            var tempName = Document.XPathSelectElement(Settings.XPath);
+            var tempName = xDocument.XPathSelectElement(Settings.XPath);
             if (tempName != null)
                 Name = tempName.Value;
             else

@@ -1,16 +1,13 @@
-﻿using CompasPack.Settings;
-using System;
-using System.Collections.Generic;
+﻿using CompasPack.Data.Providers;
+using CompasPack.Model.Settings;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
 namespace CompasPack.ViewModel
 {
-    class LaptopBatteryViewModel : ReportHardWareViewModelBase<LaptopBattery>, IReportViewModel
+    class LaptopBatteryViewModel : ReportHardwareViewModelBase<LaptopBattery>
     {
         private string _wearLevel;
         public string WearLevel
@@ -22,27 +19,20 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public LaptopBatteryViewModel(LaptopBattery laptopBatteryReportSettings, XDocument xDocument)
+        public LaptopBatteryViewModel(ReportSettingsProvider reportSettingsProvider)
         {
-            Settings = laptopBatteryReportSettings;
-            Document = xDocument;
+            Settings = reportSettingsProvider.Settings.LaptopBattery;
         }
-        public void Load()
+        public void Load(XDocument xDocument)
         {
-            var tempWear = Document.XPathSelectElement(Settings.XPath);
-            if (tempWear != null)
-                WearLevel = tempWear.Value;
-            else
-                WearLevel = string.Empty;
+            WearLevel = xDocument.XPathSelectElement(Settings.XPath)?.Value ?? string.Empty;
 
             if (!string.IsNullOrWhiteSpace(WearLevel))
             {
-                var tempLaptopWearLevel = WearLevel;
-                foreach (var item in Settings.Regex)
-                    tempLaptopWearLevel = Regex.Replace(tempLaptopWearLevel, item, "");
+                var tempLaptopWearLevel = Settings.Regex.Aggregate(WearLevel, (current, pattern) => Regex.Replace(current, pattern, ""));
 
-                if(int.TryParse(tempLaptopWearLevel, out int temp))
-                    Result = $"{100-temp}%";
+                if (int.TryParse(tempLaptopWearLevel, out int tempLaptopWearLevelInt))
+                    Result = $"{100 - tempLaptopWearLevelInt}%";
                 else
                     Result = "0%";
             }

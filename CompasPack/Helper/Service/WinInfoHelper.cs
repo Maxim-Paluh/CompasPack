@@ -1,113 +1,21 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Management;
 
-namespace CompasPack.Helper
+using Microsoft.Win32;
+
+using CompasPack.Model.Enum;
+
+namespace CompasPack.Helper.Service
 {
     public static class WinInfoHelper
     {
+
         private static string Programs = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
-
-        private static string _productName = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
-        private static string _displayVersion = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion");
-        private static string _editionID = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "EditionID");
-        private static string _currentBuild = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuild");
-        private static bool isx64;
-        private static WinVerEnum winVer;
-
-        public static bool Isx64 { get { return isx64; } private set { isx64 = value; } }
-        public static WinVerEnum WinVer { get { return winVer; } private set { winVer = value; } }
-        public static string ProductName {get {return _productName;} }
-
-        static WinInfoHelper()
-        {
-            Isx64 = Environment.Is64BitOperatingSystem;
-            WinVer = GetOSVersion();
-        }
-
-        public static string GetSystemInfo()
-        {
-            string Type = Isx64 ? "x64" : "x86";
-            return $"ProductName: {_productName}\n" +
-                   $"EditionID: {_editionID}\n" +
-                   $"DisplayVersion: {_displayVersion}\n" +
-                   $"CurrentBuild: {_currentBuild}\n" +
-                   $"Type: {Type}\n";
-        }
-
-        private static WinVerEnum GetOSVersion()
-        {
-            var version = Environment.OSVersion;
-            var osName = WinVerEnum.UnknownOS;
-
-            if (version.Platform == PlatformID.Win32NT)
-            {
-                switch (version.Version.Major)
-                {
-                    case 10:
-                        if (version.Version.Build >= 22000)
-                            osName = WinVerEnum.Win11;
-                        else
-                            osName = WinVerEnum.Win10;
-                        break;
-                    case 6:
-                        switch (version.Version.Minor)
-                        {
-                            case 3:
-                                osName = WinVerEnum.Win8_1;
-                                break;
-                            case 2:
-                                osName = WinVerEnum.Win8;
-                                break;
-                            case 1:
-                                osName = WinVerEnum.Win7;
-                                break;
-                            case 0:
-                                osName = WinVerEnum.WinVista;
-                                break;
-                        }
-                        break;
-                    case 5:
-                        switch (version.Version.Minor)
-                        {
-                            case 1:
-                                osName = WinVerEnum.WinXP;
-                                break;
-                        }
-                        break;
-                }
-            }
-
-            return osName;
-        }
-
-        private static string HKLM_GetString(string path, string key)
-        {
-            try
-            {
-                if (Isx64)
-                {
-                    RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(path);
-                    if (rk == null) return "";
-                    return (string)rk.GetValue(key);
-                }
-                else
-                {
-                    RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(path);
-                    if (rk == null) return "";
-                    return (string)rk.GetValue(key);
-                }
-
-            }
-            catch { return ""; }
-        }
-
-        public static List<string> ListInstallPrograms()
+        public static List<string> ListInstallPrograms(WinArchitectureEnum winArchitecture)
         {
             List<string> programs = new List<string>();
 
-            if (Isx64)
+            if (winArchitecture == WinArchitectureEnum.x64)
             {
                 using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(Programs))
                 {

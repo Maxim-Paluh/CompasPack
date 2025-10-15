@@ -5,12 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CompasPack.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="150" d:DesignWidth="1000">
+    <UserControl.Resources>
+        <Style TargetType="ToolTip">
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Border Grid.Row="3"  BorderBrush="DarkBlue" Margin="5" BorderThickness="1" CornerRadius="3">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" MinWidth="100"></ColumnDefinition>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
+                    <ColumnDefinition Width="auto" MinWidth="70"></ColumnDefinition>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
@@ -19,36 +26,36 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
                 <!--Row_0-->
-                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold"  Text="PowerSupply:"></TextBlock>
-                <WrapPanel Grid.Row="0" Grid.Column="1" Margin="4" HorizontalAlignment="Left">
-                    <TextBlock Width="40" Text="Name:"></TextBlock>
-                    <ComboBox   MinWidth="150"
-                                ItemsSource="{Binding Settings}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True">
-                        <ComboBox.Text>
-                            <Binding Path="Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <DataErrorValidationRule />
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </ComboBox.Text>
-                    </ComboBox>
-                </WrapPanel>
-                <WrapPanel Grid.Row="0" Grid.Column="2"  Margin="4" Grid.RowSpan="2">
-                    <TextBlock Margin="5 0 5 0"  Width="40" Text="Power:"></TextBlock>
-                    <TextBox Margin="5 0 5 0"  Width="40">
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="5 0 0 0" HorizontalAlignment="Left" FontSize="14" FontWeight="Bold" Text="Живлення:"></TextBlock>
+                <TextBlock Grid.Row="0" Grid.Column="1" Margin="0 5 0 5" HorizontalAlignment="Left" Text="Назва БЖ:" ></TextBlock>
+                <ComboBox  Grid.Row="0" Grid.Column="3" Margin="4 4 4 4" HorizontalAlignment="Left" MinWidth="200" MaxWidth="200" ItemsSource="{Binding Settings}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True">
+                    <ComboBox.Text>
+                        <Binding Path="Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.Text>
+                </ComboBox>
+                
+                <WrapPanel Grid.Row="0" Grid.Column="4" Margin="4 0 4 0">
+                    <TextBlock  Margin="5 5 5 0" HorizontalAlignment="Left" Text="Потужність:" ></TextBlock>
+                    <TextBox    Margin="4 5 4 0" HorizontalAlignment="Left" MinWidth="50" MaxWidth="100" Height="20">
                         <TextBox.Text>
                             <Binding Path="Power" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
-                                    <DataErrorValidationRule />
+                                    <DataErrorValidationRule/>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox.Text>
                     </TextBox>
                 </WrapPanel>
-                <WrapPanel  Grid.Row="0" Grid.Column="3"   Margin="4" HorizontalAlignment="Right">
-                    <TextBlock FontWeight="Bold" Text="Resault:"></TextBlock>
-                    <TextBox Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" ></TextBox>
+
+                <WrapPanel Grid.Row="0" Grid.Column="5" Margin="4 4 4 4" HorizontalAlignment="Right">
+                    <TextBlock  FontWeight="Bold" Text="Результат:"></TextBlock>
+                    <TextBox IsReadOnly="True" Background="LightGray" Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" MaxWidth="300"></TextBox>
                 </WrapPanel>
+               
             </Grid>
         </Border>
     </Grid>
