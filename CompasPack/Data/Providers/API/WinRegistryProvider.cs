@@ -14,21 +14,51 @@ namespace CompasPack.Data.Providers.API
         {
             try
             {
-                if (winArchitecture == WinArchitectureEnum.x64)
-                {
-                    RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(path);
-                    if (rk == null) return "";
-                    return (string)rk.GetValue(key);
-                }
-                else
-                {
-                    RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(path);
-                    if (rk == null) return "";
-                    return (string)rk.GetValue(key);
-                }
+                var view = winArchitecture == WinArchitectureEnum.x64
+                    ? RegistryView.Registry64
+                    : RegistryView.Registry32;
 
+                using (var baseKey = RegistryKey.OpenBaseKey(registryHive, view))
+                using (var subKey = baseKey.OpenSubKey(path))
+                    return subKey?.GetValue(key)?.ToString() ?? string.Empty;
             }
-            catch { return ""; }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        public static List<string> GetValues(RegistryHive registryHive, WinArchitectureEnum winArchitecture, string parentPath, string valueName)
+        {
+            var result = new List<string>();
+            try
+            {
+                var view = winArchitecture == WinArchitectureEnum.x64
+                    ? RegistryView.Registry64
+                    : RegistryView.Registry32;
+
+                using (var baseKey = RegistryKey.OpenBaseKey(registryHive, view))
+                using (var parentKey = baseKey.OpenSubKey(parentPath))
+                {
+                    if (parentKey == null)
+                        return result;
+
+                    string[] subKeyNames;
+                    try { subKeyNames = parentKey.GetSubKeyNames(); } catch { return result;}
+
+                    foreach (var subKeyName in subKeyNames)
+                    {
+                        using (var subKey = parentKey.OpenSubKey(subKeyName))
+                        {
+                            var value = subKey?.GetValue(valueName);
+                            if (value != null)
+                                result.Add(value.ToString());
+                        }
+                    }
+                }
+            }
+            catch { }
+            return result;
         }
     }
 }

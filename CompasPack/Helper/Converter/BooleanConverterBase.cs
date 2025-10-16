@@ -5,9 +5,9 @@ using System.Windows.Data;
 
 namespace CompasPack.Helper.Converter
 {
-    public class BooleanConverter<T> : IValueConverter
+    public class BooleanConverterBase<T> : IValueConverter
     {
-        public BooleanConverter(T trueValue, T falseValue)
+        public BooleanConverterBase(T trueValue, T falseValue)
         {
             True = trueValue;
             False = falseValue;

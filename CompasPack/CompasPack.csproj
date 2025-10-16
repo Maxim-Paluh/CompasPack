@@ -140,22 +140,29 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Data\Constants\PhysicalDiskTypeList.cs" />
-    <Compile Include="Data\Providers\API\HardwareInfoProviderWin7.cs" />
-    <Compile Include="Data\Providers\API\HardwareInfoProviderWin8.cs" />
+    <Compile Include="Data\Providers\API\HardwareInfoProviderWin8Plus.cs" />
     <Compile Include="Data\Providers\API\HardwareInfoProviderBase.cs" />
     <Compile Include="Data\Providers\API\IHardwareInfoProvider.cs" />
     <Compile Include="Data\Providers\API\IWinInfoProvider.cs" />
+    <Compile Include="Data\Providers\API\SoftwareInfoProvider.cs" />
     <Compile Include="Data\Providers\API\WinInfoProvider.cs" />
     <Compile Include="Data\Providers\API\WinKernelVersionProvider.cs" />
     <Compile Include="Data\Providers\API\WinRegistryProvider.cs" />
+    <Compile Include="Helper\Service\Antivirus\IWinAntivirus.cs" />
+    <Compile Include="Helper\Service\Antivirus\IWinAntivirusBase.cs" />
+    <Compile Include="Helper\Service\Win\IWinSettingsLauncher.cs" />
+    <Compile Include="Helper\Service\Win\WinSettingsLauncherBase.cs" />
+    <Compile Include="Helper\Service\Win\WinSettingsLauncherWin10Plus.cs" />
     <Compile Include="Model\Enum\WinArchitectureEnum.cs" />
     <Compile Include="Model\Settings\Report\LaptopPort.cs" />
+    <Compile Include="Model\ViewAndViewModel\AntivirusInfo.cs" />
+    <Compile Include="Model\ViewAndViewModel\AntivirusStatus.cs" />
     <Compile Include="Model\ViewAndViewModel\CPUInfo.cs" />
     <Compile Include="Model\ViewAndViewModel\DiskInfo.cs" />
     <Compile Include="Model\ViewAndViewModel\MemoryInfo.cs" />
     <Compile Include="Model\ViewAndViewModel\ResolutionName.cs" />
     <Compile Include="Data\Constants\ResolutionNameList.cs" />
-    <Compile Include="Helper\Converter\BooleanConverter.cs" />
+    <Compile Include="Helper\Converter\BooleanConverterBase.cs" />
     <Compile Include="Helper\Converter\InstallConverter.cs" />
     <Compile Include="Helper\Converter\InverseBooleanConverter.cs" />
     <Compile Include="Helper\Converter\IsInstallConverter.cs" />
@@ -167,7 +174,7 @@
     <Compile Include="Helper\Service\IO\IFileSystemReaderWriter.cs" />
     <Compile Include="Model\Enum\MessageDialogResultEnum.cs" />
     <Compile Include="Model\Enum\ResultArchiverEnum.cs" />
-    <Compile Include="Model\Enum\WinDefenderEnum.cs" />
+    <Compile Include="Model\Enum\AntivirusStatusEnum.cs" />
     <Compile Include="Model\Enum\WinVersionEnum.cs" />
     <Compile Include="Model\ViewAndViewModel\VideoControllerInfo.cs" />
     <Compile Include="ViewAndViewModel\Report\Common\CPUView.xaml.cs">
@@ -329,11 +336,9 @@
     <Compile Include="Helper\Service\AidaReportHelper.cs" />
     <Compile Include="Helper\Service\ClipboardHelper.cs" />
     <Compile Include="Helper\Service\IO\FileSystemReaderWriter.cs" />
-    <Compile Include="Helper\Service\NetworkService.cs" />
+    <Compile Include="Helper\Service\Net\NetworkService.cs" />
     <Compile Include="Helper\Service\ProgramsHelper.cs" />
-    <Compile Include="Helper\Service\WinDefenderHelper.cs" />
-    <Compile Include="Helper\Service\WinInfoHelper.cs" />
-    <Compile Include="Helper\Service\WinSettingsHelper.cs" />
+    <Compile Include="Helper\Service\Antivirus\WinDefenderWin10Plus.cs" />
     <Page Include="ViewAndViewModel\Load\LoadView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

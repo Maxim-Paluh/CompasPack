@@ -55,7 +55,10 @@ namespace CompasPack.Data.Providers
 
             return new Size(maxHResolution, maxVResolution);
         }
-        public abstract List<DiskInfo> GetDiskInfos();
+        public virtual List<DiskInfo> GetDiskInfos()
+        {
+            return new List<DiskInfo>();
+        }
 
         public List<VideoControllerInfo> GetVideoControllers()
         {

@@ -41,6 +41,11 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
+        /// <summary>
+        /// Використовується для приховування чи відображення IsInstall, залежно від поля "InstallProgramName" в класі Program.
+        /// Якщо string.IsNullOrWhiteSpace(Program.InstallProgramName) то іконка встановлення буде прихована, інакше буде показано статус (дивись поле Install)
+        /// Цей параметр може бути зміненим лише в методі CheckInstall()
+        /// </summary>
         public bool VisibilityIsInstall
         {
             get { return _visibilityIsInstall; }
@@ -49,7 +54,7 @@ namespace CompasPack.ViewModel
                 _visibilityIsInstall = value;
                 OnPropertyChanged();
             }
-        }
+        } 
         #endregion
 
         #region Constructors
@@ -88,7 +93,7 @@ namespace CompasPack.ViewModel
         }
         public void CheckInstall(List<string> listPrograms)
         {
-            if (Program.InstallProgramName != null)
+            if (!string.IsNullOrWhiteSpace(Program.InstallProgramName))
             {
                 if(listPrograms.Where(x => x.Contains(Program.InstallProgramName, StringComparison.InvariantCultureIgnoreCase)).Count() >= 1)
                     IsInstall = true;

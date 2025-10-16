@@ -33,6 +33,7 @@ namespace CompasPack.ViewModel
         private IEventAggregator _eventAggregator;
         private readonly ProgramsSettingsProvider _programsSettingsProvider;
         private readonly IWinInfoProvider _winInfoProvider;
+        private readonly IWinSettingsLauncher _winSettingsLauncher;
         private ProgramsPaths _programsPaths;
         private readonly IFileSystemReaderWriter _fileSystemReaderWriter;
         private readonly IFileSystemNavigator _fileSystemNavigator;
@@ -73,7 +74,7 @@ namespace CompasPack.ViewModel
         public ProgramsViewModel(IEventAggregator eventAggregator,
             IMessageDialogService messageDialogService, 
             IFileSystemReaderWriter fileSystemReaderWriter, IFileSystemNavigator fileSystemNavigator, IFileArchiver fileArchiver,
-            ProgramsSettingsProvider programsSettingsProvider, IWinInfoProvider winInfoProvider)
+            ProgramsSettingsProvider programsSettingsProvider, IWinInfoProvider winInfoProvider, IWinSettingsLauncher winSettingsLauncher)
         {
             ProgramsSets = new ObservableCollection<ProgramsSet>();
             GroupProgramViewModel = new ObservableCollection<GroupProgramViewModel>();
@@ -85,6 +86,7 @@ namespace CompasPack.ViewModel
             
             _programsSettingsProvider = programsSettingsProvider;
             _winInfoProvider = winInfoProvider;
+            _winSettingsLauncher = winSettingsLauncher;
             _fileSystemReaderWriter = fileSystemReaderWriter;
             _fileSystemNavigator = fileSystemNavigator;
             _fileArchiver = fileArchiver;
@@ -273,12 +275,12 @@ namespace CompasPack.ViewModel
                 {
                     if (programViewMode.Program.DisableDefender) // якщо треба вимкнути антивірусник
                     {
-                        if (await WinDefenderHelper.CheckRealtimeMonitoring() == WinDefenderEnum.Enabled) // якщо антивірусник увімкнутий
+                        if (await WinDefenderWin10Plus.CheckRealtimeMonitoring() == AntivirusStatusEnum.Enabled) // якщо антивірусник увімкнутий
                         {
                             await OffDefender(); // вимикаємо
                             await Task.Delay(100); // зачекаємо вимкнення
                         }
-                        if (await WinDefenderHelper.CheckRealtimeMonitoring() == WinDefenderEnum.Enabled) // якщо антивірусник досі увімкнутий
+                        if (await WinDefenderWin10Plus.CheckRealtimeMonitoring() == AntivirusStatusEnum.Enabled) // якщо антивірусник досі увімкнутий
                         {
                             TextConsole += "Error: defender is not disabled\n"; // сповіщаємо про помилку
                             break; // виходимо з циклу (далі буде помилка в циклі встановлення)
@@ -378,7 +380,7 @@ namespace CompasPack.ViewModel
                         await Task.Factory.StartNew(() => proc.WaitForExit());
                         TextConsole += $"Programs: {program.ProgramName}, Installed!\n";
                         await Task.Delay(1000); // пауза для CheckInstall (щоб встиг оновитись реєстр)
-                        programViewMode.CheckInstall(WinInfoHelper.ListInstallPrograms(_winInfoProvider.WinArchitecture)); // CheckInstall
+                        programViewMode.CheckInstall(SoftwareInfoProvider.GetInstallPrograms(_winInfoProvider.WinArchitecture)); // CheckInstall
                         break; // покидаємо цикл встановлення програми
                     }
                     catch (Exception exp)
@@ -394,27 +396,27 @@ namespace CompasPack.ViewModel
                     TextConsole += $"<***************************************************************************>\n";
                 }
             } while (true);
-            if (program.DisableDefender && await WinDefenderHelper.CheckRealtimeMonitoring() == WinDefenderEnum.Disabled) //якщо треба було вимкнути антивірусник  і він вимкнутий
-                await WinDefenderHelper.EnableRealtimeMonitoring(); // вмикаємо назад
+            if (program.DisableDefender && await WinDefenderWin10Plus.CheckRealtimeMonitoring() == AntivirusStatusEnum.Disabled) //якщо треба було вимкнути антивірусник  і він вимкнутий
+                await WinDefenderWin10Plus.EnableRealtimeMonitoring(); // вмикаємо назад
         }
 
         //---------------------------------------------------------------------------------------------------
         private void OnAUC()
         {
-            WinSettingsHelper.OpenAUC();
+            _winSettingsLauncher.OpenAUCSettings();
         }
         private void OnIcon()
         {
-            WinSettingsHelper.OpenIcon();
+            _winSettingsLauncher.OpenIconSettings();
         }
         private void OnOpenDesktopIconSettings()
         {
-            WinSettingsHelper.OpenDesktopIconSettings();
+            _winSettingsLauncher.OpenDesktopIconSettings();
         }
         //**************************************************************************************************
         private void OnDefault()
         {
-            WinSettingsHelper.OpenDefaultPrograms(_messageDialogService, _winInfoProvider.WinVer);
+            _winSettingsLauncher.OpenDefaultProgramsSettings();
         }
         private void OnOpenExampleFile()
         {
@@ -423,7 +425,7 @@ namespace CompasPack.ViewModel
         private async void OpenProtectedProgram(ProtectedProgram protectedProgram)
         {
             bool isActiveRealtimeMonitoring = false;
-            var antivirusProduct = WinDefenderHelper.GetAntivirusProduct();
+            var antivirusProduct = SoftwareInfoProvider.GetAntivirusProducts();
             if (antivirusProduct.Count == 0)
             {
                 var res = _messageDialogService.ShowYesNoDialog($"Ви використовуєте {_winInfoProvider.ProductName}.\n" +
@@ -439,7 +441,7 @@ namespace CompasPack.ViewModel
                 {
                     if (antivirusProduct.Count == 1)
                     {
-                        if (!antivirusProduct.First().Contains("Windows Defender", StringComparison.InvariantCultureIgnoreCase))
+                        if (!antivirusProduct.First().DisplayName.Contains("Windows Defender", StringComparison.InvariantCultureIgnoreCase))
                         {
                             _messageDialogService.ShowInfoDialog($"В системі працює посторонній: \"{antivirusProduct.First()}\", управління ними та \"{protectedProgram.Name}\" можливо лише вручну!", "Помилка!");
                             return;
@@ -474,12 +476,12 @@ namespace CompasPack.ViewModel
                 {
                     if (isActiveRealtimeMonitoring) // якщо це Win10 або Win11, Windows Defender знайдено і захист від підробок вимкнуто
                     {
-                        if (await WinDefenderHelper.CheckRealtimeMonitoring() == WinDefenderEnum.Enabled) // якщо антивірусник увімкнутий
+                        if (await WinDefenderWin10Plus.CheckRealtimeMonitoring() == AntivirusStatusEnum.Enabled) // якщо антивірусник увімкнутий
                         {
                             await OffDefender(); // вимикаємо
                             await Task.Delay(100);
                         }
-                        if (await WinDefenderHelper.CheckRealtimeMonitoring() == WinDefenderEnum.Enabled) // якщо антивірусник досі увімкнутий
+                        if (await WinDefenderWin10Plus.CheckRealtimeMonitoring() == AntivirusStatusEnum.Enabled) // якщо антивірусник досі увімкнутий
                         {
                             TextConsole += "Error: defender is not disabled\n";
                             break; // виходимо з циклу
@@ -562,7 +564,7 @@ namespace CompasPack.ViewModel
             IsEnabled = true;
             if (isActiveRealtimeMonitoring) // якщо це Win10 або Win11, Windows Defender знайдено і захист від підробок вимкнуто
             {
-                await WinDefenderHelper.EnableRealtimeMonitoring();
+                await WinDefenderWin10Plus.EnableRealtimeMonitoring();
             }
         }
         private void OnOpenAppLog()
@@ -624,14 +626,14 @@ namespace CompasPack.ViewModel
         private async Task OnDefender() // ✓
         {
             TextConsole += $"Start on defender: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
-            var ResponseDefender = (await WinDefenderHelper.EnableRealtimeMonitoring()).Trim();
+            var ResponseDefender = (await WinDefenderWin10Plus.EnableRealtimeMonitoring()).Trim();
             if (!string.IsNullOrWhiteSpace(ResponseDefender))
                 TextConsole += $"Response defender: {ResponseDefender}\n";
             TextConsole += $"End on defender:  \t{DateTime.Now:dd/MM hh:mm:ss}\n";
 
-            var realtimeMonitoring = await WinDefenderHelper.CheckRealtimeMonitoring();
+            var realtimeMonitoring = await WinDefenderWin10Plus.CheckRealtimeMonitoring();
             TextConsole += $"Defender is: \t\t{realtimeMonitoring} ";
-            if (realtimeMonitoring == WinDefenderEnum.Enabled)
+            if (realtimeMonitoring == AntivirusStatusEnum.Enabled)
                 TextConsole += $"(OK!)\n";
             else
                 TextConsole += $"(Fail!)\n";
@@ -640,13 +642,13 @@ namespace CompasPack.ViewModel
         private async Task OffDefender() // ✓
         {
             TextConsole += $"Start off defender: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
-            var ResponseDefender = (await WinDefenderHelper.DisableRealtimeMonitoring()).Trim();
+            var ResponseDefender = (await WinDefenderWin10Plus.DisableRealtimeMonitoring()).Trim();
             if (!string.IsNullOrWhiteSpace(ResponseDefender))
                 TextConsole += $"Response defender: {ResponseDefender}\n";
             TextConsole += $"End off defender:  \t{DateTime.Now:dd/MM hh:mm:ss}\n";
-            var realtimeMonitoring = await WinDefenderHelper.CheckRealtimeMonitoring();
+            var realtimeMonitoring = await WinDefenderWin10Plus.CheckRealtimeMonitoring();
             TextConsole += $"Defender is: \t\t{realtimeMonitoring} ";
-            if(realtimeMonitoring == WinDefenderEnum.Disabled)
+            if(realtimeMonitoring == AntivirusStatusEnum.Disabled)
                 TextConsole += $"(OK!)\n";
             else
                 TextConsole += $"(Fail!)\n";
@@ -654,7 +656,7 @@ namespace CompasPack.ViewModel
 
         private bool IsWindowsDefender()
         {
-            var antivirusProduct = WinDefenderHelper.GetAntivirusProduct();
+            var antivirusProduct = SoftwareInfoProvider.GetAntivirusProducts();
             if (antivirusProduct.Count == 0)
             {
                 _messageDialogService.ShowInfoDialog("Windows Defender не знайдено в системі", "Помилка!");
@@ -662,7 +664,7 @@ namespace CompasPack.ViewModel
             }
             else if (antivirusProduct.Count == 1)
             {
-                if (antivirusProduct.First().Contains("Windows Defender", StringComparison.InvariantCultureIgnoreCase))
+                if (antivirusProduct.First().DisplayName.Contains("Windows Defender", StringComparison.InvariantCultureIgnoreCase))
                 {
                     return true;
                 }
@@ -691,10 +693,10 @@ namespace CompasPack.ViewModel
 
         private bool IsTamperProtectionEnabled()
         {
-            if (WinDefenderHelper.CheckTamperProtection(_winInfoProvider.WinArchitecture) == WinDefenderEnum.Enabled)
+            if (WinDefenderWin10Plus.CheckTamperProtection(_winInfoProvider.WinArchitecture) == AntivirusStatusEnum.Enabled)
             {
                 _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!"); // якщо ні то сповіщаємо користувача
-                WinDefenderHelper.OpenWinDefenderSettings();
+                WinDefenderWin10Plus.OpenSettings();
                 return true;
             }
             else

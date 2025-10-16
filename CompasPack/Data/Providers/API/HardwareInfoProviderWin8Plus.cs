@@ -8,17 +8,13 @@ using System.Windows;
 
 namespace CompasPack.Data.Providers
 {
-    public class HardwareInfoProviderWin8 : HardwareInfoProviderBase
+    public class HardwareInfoProviderWin8Plus : HardwareInfoProviderBase
     {
         public override List<DiskInfo> GetDiskInfos()
         {
             var tempListDisk = new List<DiskInfo>();
 
-            var scope = new ManagementScope(@"\\.\root\microsoft\windows\storage");
-            scope.Connect();
-
-            var searcher = new ManagementObjectSearcher("SELECT * FROM MSFT_PhysicalDisk");
-            searcher.Scope = scope;
+            var searcher = new ManagementObjectSearcher(@"\\.\root\microsoft\windows\storage", "SELECT * FROM MSFT_PhysicalDisk");
 
             foreach (var drive in searcher.Get())
             {

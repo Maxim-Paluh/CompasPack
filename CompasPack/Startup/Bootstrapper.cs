@@ -2,6 +2,7 @@
 using CompasPack.Data.Providers;
 using CompasPack.Data.Providers.API;
 using CompasPack.Helper.Service;
+using CompasPack.Helper.Service.Win;
 using CompasPack.Settings;
 using CompasPack.ViewModel;
 using Prism.Events;
@@ -16,7 +17,7 @@ namespace CompasPack.Startup
         {
             var builder = new ContainerBuilder();
 
-            var winInfoProvider = new WinInfoProvider();
+            var winInfoProvider = new WinInfoProvider();    
             builder.RegisterInstance(winInfoProvider).As<IWinInfoProvider>().SingleInstance();
 
             // Register View Model -----------------------------------------------------------------------------------------------------------------------------
@@ -63,24 +64,34 @@ namespace CompasPack.Startup
             builder.RegisterType<ReportSettingsProvider>().AsSelf().SingleInstance();
             builder.RegisterType<PortableProgramsSettingsProvider>().AsSelf().SingleInstance();
 
-            builder.RegisterType(GetHardwareProviderType(winInfoProvider)).As<IHardwareInfoProvider>().SingleInstance();
+            builder.RegisterType(GetHardwareInfoProviderType(winInfoProvider)).As<IHardwareInfoProvider>().SingleInstance();
+            builder.RegisterType(GetWinSettingsLauncherType(winInfoProvider)).As<IWinSettingsLauncher>().SingleInstance();
 
             // Register Helper/Service
             builder.RegisterType<FileSystemReaderWriter>().As<IFileSystemReaderWriter>().SingleInstance();
             builder.RegisterType<FileSystemNavigator>().As<IFileSystemNavigator>().SingleInstance();
             builder.RegisterType<FileArchiver>().As<IFileArchiver>().SingleInstance();
             builder.RegisterType<MessageDialogService>().As<IMessageDialogService>();
+            
+            builder.RegisterType<WinDefenderWin10Plus>().Keyed<IWinAntivirus>(nameof(WinDefenderWin10Plus));
 
 
             return builder.Build();
         }
 
-        private Type GetHardwareProviderType(WinInfoProvider winInfoProvider)
+        private Type GetHardwareInfoProviderType(WinInfoProvider winInfoProvider)
         {
             if (winInfoProvider.WinVer >= Model.Enum.WinVersionEnum.Win_8)
-                return typeof(HardwareInfoProviderWin8);
+                return typeof(HardwareInfoProviderWin8Plus);
             else
-                return typeof(HardwareInfoProviderWin7);
+                return typeof(HardwareInfoProviderBase);
+        }
+        private Type GetWinSettingsLauncherType(WinInfoProvider winInfoProvider)
+        {
+            if (winInfoProvider.WinVer >= Model.Enum.WinVersionEnum.Win_10)
+                return typeof(WinSettingsLauncherWin10Plus);
+            else
+                return typeof(WinSettingsLauncherBase);
         }
     }
 }

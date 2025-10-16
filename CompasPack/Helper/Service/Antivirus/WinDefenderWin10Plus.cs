@@ -1,41 +1,25 @@
-﻿using System;
-using System.Management;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
-using Microsoft.Win32;
-
+﻿using CompasPack.Data.Providers.API;
 using CompasPack.Model.Enum;
+using CompasPack.Model.ViewAndViewModel;
+using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Management;
+using System.Threading.Tasks;
 
 namespace CompasPack.Helper.Service
 {
-    public static class WinDefenderHelper
+    public  class WinDefenderWin10Plus
     {
+        public bool IsControlled { get { return true; } }
 
-        //wmic /namespace:\\root\SecurityCenter2\ path AntivirusProduct get /value
-        public static List<string> GetAntivirusProduct()
+        private readonly IWinInfoProvider _winInfoProvider;
+        public WinDefenderWin10Plus(IWinInfoProvider winInfoProvider)
         {
-            var antivirusProductList = new List<string>();
-            try
-            {
-                using (var searcher = new ManagementObjectSearcher(@"root\SecurityCenter2", "SELECT * FROM AntivirusProduct"))
-                {
-                    foreach (var antivirus in searcher.Get())
-                    {
-                        string displayName = antivirus["displayName"]?.ToString();
-                        antivirusProductList.Add(displayName);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return antivirusProductList;
-            }
-            return antivirusProductList;
+            _winInfoProvider = winInfoProvider;
         }
-
-        public static async Task<string> DisableRealtimeMonitoring()
+        public async Task<AntivirusStatusEnum> DisableRealTimeMonitoring()
         {
             try
             {
@@ -49,16 +33,17 @@ namespace CompasPack.Helper.Service
                     CreateNoWindow = true
                 };
                 var proc = Process.Start(procinfo);
-                return await proc.StandardOutput.ReadToEndAsync();
+                await proc.StandardOutput.ReadToEndAsync();
+                return AntivirusStatusEnum.Unknown;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return ex.Message;
+                return AntivirusStatusEnum.Error;
             }
-           
+            
         }
         
-        public static async Task<string> EnableRealtimeMonitoring()
+        public async Task<AntivirusStatusEnum> EnableRealTimeMonitoring()
         {
             try
             {
@@ -72,16 +57,25 @@ namespace CompasPack.Helper.Service
                     CreateNoWindow = true
                 };
                 var proc = Process.Start(procinfo);
-                return await proc.StandardOutput.ReadToEndAsync();
+                await proc.StandardOutput.ReadToEndAsync();
+                return AntivirusStatusEnum.Unknown;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return ex.Message;
+                return AntivirusStatusEnum.Error;
             }
            
         }
 
-        public static async Task<WinDefenderEnum> CheckRealtimeMonitoring()
+        public async Task<AntivirusStatus> CheckStatus()
+        {
+            AntivirusStatus result = new AntivirusStatus();
+            result.TamperProtectionStatus = GetTamperProtectionStatus();
+            result.RealtimeMonitoringStatus = await GetRealTimeMonitoringStatus();
+            return result;
+        }
+
+        public async Task<AntivirusStatusEnum> GetRealTimeMonitoringStatus()
         {
             try
             {
@@ -102,17 +96,32 @@ namespace CompasPack.Helper.Service
                 {
                     string line = await proc.StandardOutput.ReadLineAsync();
                     if (line.StartsWith(@"DisableRealtimeMonitoring") && line.EndsWith("False"))
-                        return WinDefenderEnum.Enabled;
+                        return AntivirusStatusEnum.Enabled;
                 }
-                return WinDefenderEnum.Disabled;
+                return AntivirusStatusEnum.Disabled;
             }
             catch (Exception)
             {
-                return WinDefenderEnum.Error;
+                return AntivirusStatusEnum.Error;
             }
         }
 
-        public static void OpenWinDefenderSettings()
+        public AntivirusStatusEnum GetTamperProtectionStatus()
+        {
+            try
+            {
+                var tamperProtectionStatus = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, _winInfoProvider.WinArchitecture, "SOFTWARE\\Microsoft\\Windows Defender\\Features", "TamperProtection");
+                if (string.IsNullOrWhiteSpace(tamperProtectionStatus))
+                    return AntivirusStatusEnum.Unknown;
+                if(tamperProtectionStatus == "5")
+                    return AntivirusStatusEnum.Enabled;
+                else
+                    return AntivirusStatusEnum.Disabled;
+            }
+            catch { return AntivirusStatusEnum.Error; }
+        }
+
+        public void OpenSettings()
         {
             try
             {
@@ -128,30 +137,7 @@ namespace CompasPack.Helper.Service
             catch (Exception)
             {
 
-            }   
-        }
-
-        public static WinDefenderEnum CheckTamperProtection(WinArchitectureEnum winArchitecture)
-        {
-            RegistryKey rk = null;
-            var path = "SOFTWARE\\Microsoft\\Windows Defender\\Features";
-            var key = "TamperProtection";
-
-            try
-            {
-                if (winArchitecture == WinArchitectureEnum.x64)
-                    rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(path);
-                else   
-                    rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(path);
-
-                if (rk == null)
-                    return WinDefenderEnum.Unknown;
-                if (rk.GetValue(key).ToString() == "5")
-                    return WinDefenderEnum.Enabled;
-                else
-                    return WinDefenderEnum.Disabled;
             }
-            catch { return WinDefenderEnum.Error; }
         }
     }
 }

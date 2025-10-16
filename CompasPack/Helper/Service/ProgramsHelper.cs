@@ -1,12 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
-
-using CompasPack.ViewModel;
-using CompasPack.Model.Settings;
+﻿using CompasPack.Data.Providers.API;
 using CompasPack.Helper.Extension;
 using CompasPack.Model.Enum;
+using CompasPack.Model.Settings;
+using CompasPack.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace CompasPack.Helper.Service
 {
@@ -41,7 +41,7 @@ namespace CompasPack.Helper.Service
 
         public static void CheckInstallPrograms(IList<GroupProgramViewModel> groupProgramViewModels, WinArchitectureEnum winArchitecture)
         {
-            var tempListPrograms = WinInfoHelper.ListInstallPrograms(winArchitecture);
+            var tempListPrograms = SoftwareInfoProvider.GetInstallPrograms(winArchitecture);
             foreach (var program in groupProgramViewModels.SelectMany(group => group.ProgramViewModels))
                 program.CheckInstall(tempListPrograms);
         }
