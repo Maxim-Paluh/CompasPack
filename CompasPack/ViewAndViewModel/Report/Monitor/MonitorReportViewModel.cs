@@ -12,15 +12,15 @@ namespace CompasPack.ViewModel
     public class MonitorReportViewModel : ReportViewModelBase, IViewModelReport
     {
         private MonitorMainViewModel _monitorMainViewModel;
-        private MonitorOtherViewModel _monitorOtherViewModel;
-        private MonitorAspectRatioViewModel _MonitorAspectRatioViewModel;
         private MonitorDiagonalViewModel _monitorDiagonalViewModel;
+        private MonitorAspectRatioViewModel _MonitorAspectRatioViewModel;
         private MonitorResolutionViewModel _monitorResolutionViewModel;
+        private MonitorOtherViewModel _monitorOtherViewModel;
 
-        public MonitorResolutionViewModel MonitorResolutionViewModel
+        public MonitorMainViewModel MonitorMainViewModel
         {
-            get { return _monitorResolutionViewModel; }
-            set { _monitorResolutionViewModel = value; }
+            get { return _monitorMainViewModel; }
+            set { _monitorMainViewModel = value; }
         }
         public MonitorDiagonalViewModel MonitorDiagonalViewModel
         {
@@ -36,16 +36,16 @@ namespace CompasPack.ViewModel
             get { return _MonitorAspectRatioViewModel; }
             set { _MonitorAspectRatioViewModel = value; }
         }
+        public MonitorResolutionViewModel MonitorResolutionViewModel
+        {
+            get { return _monitorResolutionViewModel; }
+            set { _monitorResolutionViewModel = value; }
+        }
         public MonitorOtherViewModel MonitorOtherViewModel
         {
             get { return _monitorOtherViewModel; }
             set { _monitorOtherViewModel = value; }
-        }
-        public MonitorMainViewModel MonitorMainViewModel
-        {
-            get { return _monitorMainViewModel; }
-            set { _monitorMainViewModel = value; }
-        }
+        }      
 
         public MonitorReportViewModel(IFileSystemReaderWriter fileSystemReaderWriter, IFileSystemNavigator fileSystemNavigator, ReportSettingsProvider reportSettingsProvider, IMessageDialogService messageDialogService,
             MonitorMainViewModel mMVM, MonitorAspectRatioViewModel mARVM, MonitorOtherViewModel mOVM, MonitorDiagonalViewModel mDVM, MonitorResolutionViewModel mRVM) :
@@ -73,7 +73,6 @@ namespace CompasPack.ViewModel
             });
             IsEnable = true;
         }
-
         protected override bool IsError()
         {
             if (string.IsNullOrWhiteSpace(MonitorMainViewModel.Brand) || string.IsNullOrWhiteSpace(MonitorOtherViewModel.Result))

@@ -28,7 +28,7 @@
                 <!--Row_0-->
                 <TextBlock Grid.Row="0" Grid.Column="0" Margin="5 0 0 0" HorizontalAlignment="Left" FontSize="14" FontWeight="Bold" Text="Живлення:"></TextBlock>
                 <TextBlock Grid.Row="0" Grid.Column="1" Margin="0 5 0 5" HorizontalAlignment="Left" Text="Назва БЖ:" ></TextBlock>
-                <ComboBox  Grid.Row="0" Grid.Column="3" Margin="4 4 4 4" HorizontalAlignment="Left" MinWidth="200" MaxWidth="200" ItemsSource="{Binding Settings}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True">
+                <ComboBox  Grid.Row="0" Grid.Column="3" Margin="4 3 4 3" HorizontalAlignment="Left" MinWidth="200" MaxWidth="200" ItemsSource="{Binding Settings}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True">
                     <ComboBox.Text>
                         <Binding Path="Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
@@ -38,9 +38,9 @@
                     </ComboBox.Text>
                 </ComboBox>
                 
-                <WrapPanel Grid.Row="0" Grid.Column="4" Margin="4 0 4 0">
-                    <TextBlock  Margin="5 5 5 0" HorizontalAlignment="Left" Text="Потужність:" ></TextBlock>
-                    <TextBox    Margin="4 5 4 0" HorizontalAlignment="Left" MinWidth="50" MaxWidth="100" Height="20">
+                <WrapPanel Grid.Row="0" Grid.Column="4" Margin="0 0 0 0">
+                    <TextBlock  Margin="4 5 4 3" HorizontalAlignment="Left" Text="Потужність:" ></TextBlock>
+                    <TextBox    Margin="4 4 4 3" HorizontalAlignment="Left" MinWidth="50" MaxWidth="100" Height="20">
                         <TextBox.Text>
                             <Binding Path="Power" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>

@@ -90,7 +90,6 @@ namespace CompasPack.ViewModel
             var nameResolution = string.Join(", ", ResolutionNameList.GetNameResolution(resolution));
 
             LaptopMonitorResolution = $"{resolution.Width}x{resolution.Height}" + (string.IsNullOrWhiteSpace(nameResolution) ? string.Empty : $" {nameResolution}");
-
             OnChangeHardware();
         }
         private void OnChangeHardware()

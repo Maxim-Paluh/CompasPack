@@ -49,7 +49,7 @@
                         </Grid>
                     </Image.ToolTip>
                 </Image>
-                <TextBox   Grid.Row="0" Grid.Column="3" Margin="4 4 4 4" HorizontalAlignment="Left" MinWidth="200" MaxWidth="300" TextWrapping="Wrap" IsReadOnly="True" Background="LightGray" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <TextBox   Grid.Row="0" Grid.Column="3" Margin="4 3 4 3" HorizontalAlignment="Left" MinWidth="200" MaxWidth="300" TextWrapping="Wrap" IsReadOnly="True" Background="LightGray" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 <WrapPanel Grid.Row="0" Grid.Column="4" Margin="4 4 4 4" HorizontalAlignment="Right">
                     <TextBlock  FontWeight="Bold" Text="Результат:"></TextBlock>
                     <TextBox Text="{Binding Result, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 0 0" MinWidth="300" MaxWidth="300"></TextBox>

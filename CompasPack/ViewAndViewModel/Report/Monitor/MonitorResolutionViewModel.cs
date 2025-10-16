@@ -28,15 +28,10 @@ namespace CompasPack.ViewModel
         public void Load(XDocument xDocument)
         {
             var resolution = _hardwareInfoProvider.GetScreenResolution();
-
-            MonitorResolution = $"{resolution.Width}x{resolution.Height}";
-
             var nameResolution = string.Join(", ", ResolutionNameList.GetNameResolution(resolution));
-            if (!string.IsNullOrWhiteSpace(nameResolution))
-                MonitorResolution += $" {nameResolution}";
 
-            if (!string.IsNullOrWhiteSpace(MonitorResolution))
-                Result = MonitorResolution;
+            MonitorResolution = $"{resolution.Width}x{resolution.Height}" + (string.IsNullOrWhiteSpace(nameResolution) ? string.Empty : $" {nameResolution}");
+            Result = string.IsNullOrWhiteSpace(MonitorResolution) ? string.Empty : MonitorResolution;
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using CompasPack.Data.Providers;
 using CompasPack.Model.Settings;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -25,17 +27,8 @@ namespace CompasPack.ViewModel
         }
         public void Load(XDocument xDocument)
         {
-            var tempName = xDocument.XPathSelectElement(Settings.XPath);
-            if (tempName != null)
-                Name = tempName.Value;
-            else
-                Name = "Not found";
-
-            var tempResault = Name;
-            foreach (var item in Settings.Regex)
-                tempResault = Regex.Replace(tempResault, item, "");
-
-            Result = tempResault.Trim();
+            Name = xDocument.XPathSelectElement(Settings.XPath)?.Value ?? "Not found";
+            Result = Settings.Regex.Aggregate(Name, (current, pattern) => Regex.Replace(current, pattern, "")).Trim();
         }
     }
 }

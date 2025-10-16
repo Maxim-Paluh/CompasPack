@@ -19,7 +19,6 @@ namespace CompasPack.ViewModel
         private LaptopBatteryViewModel _laptopBatteryViewModel;
         private LaptopOtherViewModel _laptopOtherViewModel;
 
-
         public LaptopMainViewModel LaptopMainViewModel
         {
             get { return _laptopMainViewModel; }
@@ -73,8 +72,7 @@ namespace CompasPack.ViewModel
                 _physicalDiskViewModel = value;
                 OnPropertyChanged();
             }
-        }
-        
+        }     
         public LaptopBatteryViewModel LaptopBatteryViewModel
         {
             get { return _laptopBatteryViewModel; }

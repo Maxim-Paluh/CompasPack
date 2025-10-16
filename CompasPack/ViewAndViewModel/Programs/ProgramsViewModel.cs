@@ -582,7 +582,7 @@ namespace CompasPack.ViewModel
                 AddSplitter();
             }
             TextConsole += $"Start speed test: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
-            var speed = await NetworkService.SpeedTest("\"https://github.com/Maxim-Paluh/SpeedTest/raw/main/10MB\"");
+            var speed = await NetworkService.SpeedTest("https://github.com/Maxim-Paluh/SpeedTest/raw/main/10MB");
             TextConsole += $"End speed test: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
             TextConsole += $"Speed: {Math.Round(speed, 2)} Mbyte/s\n";
             if (!OnInstall)

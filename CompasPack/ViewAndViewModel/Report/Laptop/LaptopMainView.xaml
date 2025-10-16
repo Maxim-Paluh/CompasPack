@@ -29,7 +29,7 @@
                 <TextBlock Grid.Row="0" Grid.Column="1" Margin="0 5 0 5" HorizontalAlignment="Left" Text="Бренд | Серія:" ></TextBlock>
 
 
-                <ComboBox   Grid.Row="0" Grid.Column="2" Margin="4 4 4 4" HorizontalAlignment="Left" MinWidth="200" MaxWidth="200" ItemsSource="{Binding Settings}"  DisplayMemberPath="Key"
+                <ComboBox   Grid.Row="0" Grid.Column="2" Margin="4 3 4 3" HorizontalAlignment="Left" MinWidth="200" MaxWidth="200" ItemsSource="{Binding Settings}"  DisplayMemberPath="Key"
                             IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True" >
                     <ComboBox.Text>
                         <Binding Path="Brand" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
@@ -40,7 +40,7 @@
                     </ComboBox.Text>
                 </ComboBox>
 
-                <ComboBox   Grid.Row="0" Grid.Column="3" Margin="4 4 4 4" HorizontalAlignment="Left" MinWidth="200" MaxWidth="200" ItemsSource="{Binding Lines}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True" 
+                <ComboBox   Grid.Row="0" Grid.Column="3" Margin="4 3 4 3" HorizontalAlignment="Left" MinWidth="200" MaxWidth="200" ItemsSource="{Binding Lines}" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" IsEditable="True" 
                             Text="{Binding Line, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 </ComboBox>
 
@@ -50,7 +50,7 @@
                 </WrapPanel>
                 <!--Row_1-->
                 <TextBlock  Grid.Row="1" Grid.Column="1" Margin="0 5 0 5" HorizontalAlignment="Left" Text="Модель:"></TextBlock>
-                <TextBox    Grid.Row="1" Grid.Column="2" Margin="4 4 4 4" HorizontalAlignment="Left" MinWidth="200" Height="20">
+                <TextBox    Grid.Row="1" Grid.Column="2" Margin="4 3 4 3" HorizontalAlignment="Left" MinWidth="200" Height="20">
                     <TextBox.Text>
                         <Binding Path="Model" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>

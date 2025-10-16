@@ -51,7 +51,7 @@
                         </Grid>
                     </Image.ToolTip>
                 </Image>
-                <ComboBox  Grid.Row="0" Grid.Column="3" Margin="4 4 4 4" HorizontalAlignment="Left" MinWidth="200" ItemsSource="{Binding videoControllerInfos}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedVideoController, Mode=TwoWay}">
+                <ComboBox  Grid.Row="0" Grid.Column="3" Margin="4 3 4 3" HorizontalAlignment="Left" MinWidth="200" ItemsSource="{Binding videoControllerInfos}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedVideoController, Mode=TwoWay}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
                             <i:InvokeCommandAction Command="{Binding SelectVideoControllerCommand}"/>
@@ -65,7 +65,7 @@
 
                 <!--Row_1-->
                 <TextBlock  Grid.Row="1" Grid.Column="1" Margin="0 5 0 5" HorizontalAlignment="Left"   Text="Об'єм пам'яті:"></TextBlock>
-                <TextBox    Grid.Row="1" Grid.Column="3" Margin="4 4 4 4" HorizontalAlignment="Left"  MinWidth="200" Height="20"  IsReadOnly="True" Background="LightGray"  Text="{Binding SelectedVideoController.MemorySize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <TextBox    Grid.Row="1" Grid.Column="3" Margin="4 3 4 3" HorizontalAlignment="Left"  MinWidth="200" Height="20"  IsReadOnly="True" Background="LightGray"  Text="{Binding SelectedVideoController.MemorySize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
             </Grid>
         </Border>
     </Grid>

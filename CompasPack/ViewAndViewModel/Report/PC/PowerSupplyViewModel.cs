@@ -61,10 +61,10 @@ namespace CompasPack.ViewModel
         public PowerSupplyViewModel(ReportSettingsProvider reportSettingsProvider)
         {
             Settings = reportSettingsProvider.Settings.PCPowerSupply;
-
         }
         public void Load()
         {
+
         }
     }
 }
