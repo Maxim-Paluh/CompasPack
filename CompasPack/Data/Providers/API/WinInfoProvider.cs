@@ -1,39 +1,27 @@
-﻿using System;
+﻿using CompasPack.Model.Enum;
+using CompasPack.Model.Support;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-
-using CompasPack.Model.Enum;
-using Microsoft.Win32;
 
 namespace CompasPack.Data.Providers.API
 {
     public class WinInfoProvider : IWinInfoProvider
     {
-        private string _productName;
-        private string _displayVersion;
-        private string _editionID;
-        private string _currentBuild;
-        private WinArchitectureEnum _currentArchitecture;
-        private WinVersionEnum _winVersion;
-
-        public string ProductName { get {return _productName; } set { _productName = value; } }
-        public string DisplayVersion { get { return _displayVersion; } set { _displayVersion = value; } }
-        public string EditionID { get { return _editionID; } set { _editionID = value; } }
-        public string CurrentBuild { get { return _currentBuild; } set { _currentBuild = value; } }
-        public WinArchitectureEnum WinArchitecture { get { return _currentArchitecture; } set { _currentArchitecture = value; } }
-        public WinVersionEnum WinVer { get { return _winVersion; } private set { _winVersion = value; } }
-        public WinInfoProvider()
+        public WinInfo GetWinInfo()
         {
-            WinArchitecture = Environment.Is64BitOperatingSystem ? WinArchitectureEnum.x64 : WinArchitectureEnum.x86;
-            _productName = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, WinArchitecture, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
-            _displayVersion = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, WinArchitecture, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion");
-            _editionID = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, WinArchitecture, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "EditionID");
-            _currentBuild = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, WinArchitecture, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuild");
-            WinVer = GetOSVersion();
+            var winArchitecture = Environment.Is64BitOperatingSystem ? WinArchitectureEnum.x64 : WinArchitectureEnum.x86;
+            var productName = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, winArchitecture, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
+            var displayVersion = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, winArchitecture, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion");
+            var editionID = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, winArchitecture, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "EditionID");
+            var currentBuild = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, winArchitecture, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuild");
+            var winVer = GetOSVersion();
+            return new WinInfo(productName, displayVersion, editionID, currentBuild, winArchitecture, winVer);
         }
-
         private WinVersionEnum GetOSVersion()
         {
             var version = WinKernelVersionProvider.GetKernelVersion();
@@ -73,19 +61,7 @@ namespace CompasPack.Data.Providers.API
                     }
                     break;
             }
-
-
             return osName;
         }
-        public override string ToString()
-        {
-            return $"ProductName: {_productName}\n" +
-                   $"EditionID: {_editionID}\n" +
-                   $"DisplayVersion: {_displayVersion}\n" +
-                   $"CurrentBuild: {_currentBuild}\n" +
-                   $"Type: {WinArchitecture}\n";
-        }
-
-
     }
 }

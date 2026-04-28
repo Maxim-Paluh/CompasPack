@@ -4,6 +4,7 @@ using CompasPack.Data.Providers.API;
 using CompasPack.Helper.Extension;
 using CompasPack.Helper.Service;
 using CompasPack.Model.Entities.Portable;
+using CompasPack.Model.Support;
 using CompasPack.Settings;
 using CompasPack.View;
 using DocumentFormat.OpenXml.Packaging;
@@ -23,7 +24,7 @@ namespace CompasPack.ViewModel
         private IMessageDialogService _messageDialogService;
         private readonly Func<MainSettingsView> _mainSettingsViewCreator;
         private readonly IFileSystemReaderWriter _fileSystemReaderWriter;
-        private readonly IWinInfoProvider _winInfoProvider;
+        private readonly WinInfo _winInfo;
         private IViewModel _formViewModel;
         private readonly IIndex<string, IViewModel> _formViewModelCreator;
         private bool _programsIsEnabled;
@@ -74,13 +75,13 @@ namespace CompasPack.ViewModel
         public MainWindowViewModel(IMessageDialogService messageDialogService, IFileSystemReaderWriter fileSystemReaderWriter, IEventAggregator eventAggregator, IIndex<string, IViewModel> formViewModelCreator,
             ProgramsSettingsProvider programsSettingsProvider,
             ReportSettingsProvider reportSettingsProvider,
-            IWinInfoProvider winInfoProvider,
+            WinInfo winInfo,
             PortableProgramsSettingsProvider portableProgramsSettingsProvider,
             Func<MainSettingsView> MainSettingsViewCreator)
         {
             _messageDialogService = messageDialogService;
             _fileSystemReaderWriter = fileSystemReaderWriter;
-            _winInfoProvider = winInfoProvider;
+            _winInfo = winInfo;
             _formViewModelCreator = formViewModelCreator;
             _ProgramsSettingsProvider = programsSettingsProvider;
             _reportSettingsProvider = reportSettingsProvider;
@@ -103,7 +104,7 @@ namespace CompasPack.ViewModel
         //******************************************************
         public async Task LoadAsync()
         {
-            if ((int)_winInfoProvider.WinVer < 3) // якщо версія ОС нижча за Windows 7
+            if ((int)_winInfo.WinVer < 3) // якщо версія ОС нижча за Windows 7
             {
                 _messageDialogService.ShowInfoDialog($"Нічого не буде, потрібно використовувати Windows 7 або новішу версію ОС", "Помилка!");
                 System.Windows.Application.Current.Shutdown();

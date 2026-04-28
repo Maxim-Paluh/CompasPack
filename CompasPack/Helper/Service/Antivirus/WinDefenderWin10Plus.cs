@@ -14,10 +14,10 @@ namespace CompasPack.Helper.Service
     {
         public override bool IsControlled { get { return true; } }
 
-        private readonly IWinInfoProvider _winInfoProvider;
-        public WinDefenderWin10Plus(AntivirusInfo antivirusInfo, IWinInfoProvider winInfoProvider) : base (antivirusInfo)
+        private readonly WinInfo _winInfo;
+        public WinDefenderWin10Plus(AntivirusInfo antivirusInfo, WinInfo winInfo) : base (antivirusInfo)
         {
-            _winInfoProvider = winInfoProvider;
+            _winInfo = winInfo;
         }
         public override async Task<AntivirusStatusEnum> DisableRealTimeMonitoring()
         {
@@ -110,7 +110,7 @@ namespace CompasPack.Helper.Service
         {
             try
             {
-                var tamperProtectionStatus = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, _winInfoProvider.WinArchitecture, "SOFTWARE\\Microsoft\\Windows Defender\\Features", "TamperProtection");
+                var tamperProtectionStatus = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, _winInfo.WinArchitecture, "SOFTWARE\\Microsoft\\Windows Defender\\Features", "TamperProtection");
                 if (string.IsNullOrWhiteSpace(tamperProtectionStatus))
                     return AntivirusStatusEnum.Unknown;
                 if(tamperProtectionStatus == "5")

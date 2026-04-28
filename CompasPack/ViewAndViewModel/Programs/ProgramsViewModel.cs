@@ -8,6 +8,7 @@ using CompasPack.Helper.Service.Antivirus;
 using CompasPack.Model.Enum;
 using CompasPack.Model.Entities.Programs;
 using CompasPack.Model.Wrapper;
+using CompasPack.Model.Support;
 using CompasPack.Startup;
 using Prism.Commands;
 using Prism.Events;
@@ -35,7 +36,7 @@ namespace CompasPack.ViewModel
         private IEventAggregator _eventAggregator;
         private readonly IAntivirusFactory _antivirusFactory;
         private readonly ProgramsSettingsProvider _programsSettingsProvider;
-        private readonly IWinInfoProvider _winInfoProvider;
+        private readonly WinInfo _winInfo;
         private readonly IWinSettingsLauncher _winSettingsLauncher;
         private ProgramsPaths _programsPaths;
         private readonly IFileSystemReaderWriter _fileSystemReaderWriter;
@@ -78,7 +79,7 @@ namespace CompasPack.ViewModel
         public ProgramsViewModel(IEventAggregator eventAggregator, IAntivirusFactory antivirusFactory,
             IMessageDialogService messageDialogService, 
             IFileSystemReaderWriter fileSystemReaderWriter, IFileSystemNavigator fileSystemNavigator, IFileArchiver fileArchiver,
-            ProgramsSettingsProvider programsSettingsProvider, IWinInfoProvider winInfoProvider, IWinSettingsLauncher winSettingsLauncher)
+            ProgramsSettingsProvider programsSettingsProvider, WinInfo winInfo, IWinSettingsLauncher winSettingsLauncher)
         {
             ProgramsSets = new ObservableCollection<ProgramsSet>();
             GroupProgramsWrappers = new ObservableCollection<GroupProgramsWrapper>();
@@ -91,7 +92,7 @@ namespace CompasPack.ViewModel
             _messageDialogService = messageDialogService;
             
             _programsSettingsProvider = programsSettingsProvider;
-            _winInfoProvider = winInfoProvider;
+            _winInfo = winInfo;
             _winSettingsLauncher = winSettingsLauncher;
             _fileSystemReaderWriter = fileSystemReaderWriter;
             _fileSystemNavigator = fileSystemNavigator;
@@ -122,7 +123,7 @@ namespace CompasPack.ViewModel
         //*****************************************************************************************
         public Task LoadAsync()
         {
-            TextConsole = _winInfoProvider.ToString();
+            TextConsole = _winInfo.ToString();
 
             ProgramsSets.Clear();
             GroupProgramsWrappers.Clear();
@@ -137,10 +138,10 @@ namespace CompasPack.ViewModel
                 GroupProgramsWrappers.Add(new GroupProgramsWrapper(groupProgram, new ObservableCollection<ProgramWrapper>(groupProgram.Programs.Select(x => new ProgramWrapper(x, groupProgram, _eventAggregator)))));
 
             ProgramsHelper.CombinePathFolderAndImage(GroupProgramsWrappers, _programsPaths);
-            ProgramsHelper.CheckInstallPrograms(GroupProgramsWrappers, _winInfoProvider.WinArchitecture); // CheckInstall
+            ProgramsHelper.CheckInstallPrograms(GroupProgramsWrappers, _winInfo.WinArchitecture); // CheckInstall
             //----------------------------------------------------------------------------------------------------
             _programsSettingsProvider.Settings.ProgramsSets.ForEach(x => ProgramsSets.Add(x)); // Add ProgramsSets     
-            var tempProgramsSet = ProgramsSets.FirstOrDefault(x => x.Name.Contains(Regex.Match(_winInfoProvider.ProductName, @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // check ProgramsSet
+            var tempProgramsSet = ProgramsSets.FirstOrDefault(x => x.Name.Contains(Regex.Match(_winInfo.ProductName, @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // check ProgramsSet
             if (tempProgramsSet != null)
                 SelectedProgramsSet = tempProgramsSet.Name;
             OnSelectProgramsSet();
@@ -178,7 +179,7 @@ namespace CompasPack.ViewModel
         //***************************************************************************************************
         private void OnClearConsole()
         {
-            TextConsole = _winInfoProvider.ToString();
+            TextConsole = _winInfo.ToString();
         }
         //---------------------------------------------------------------------------------------------------
         private void OnSelectProgramsSet()
@@ -305,7 +306,7 @@ namespace CompasPack.ViewModel
                     if (ExecutableFile == null) // якщо онлайн інсталятор не знайдено тоді шукаємо офлайн і задаємо аргументи офлайн інсталятора
                     {
                         var tempExecutableFile = ProgramsHelper.GetExeMsiFile(_fileSystemReaderWriter, program.FileName, program.PathFolder); // ортимуємо список файлів
-                        if (_winInfoProvider.WinArchitecture == WinArchitectureEnum.x64) // якщо наша система х64
+                        if (_winInfo.WinArchitecture == WinArchitectureEnum.x64) // якщо наша система х64
                             ExecutableFile = tempExecutableFile.FirstOrDefault(x => x.Contains("x64", StringComparison.InvariantCultureIgnoreCase)); // то намагаємось знайти файл, що містить х64 в назві
                         if (ExecutableFile == null) //якщо система не х64 або файла х64 нема
                             ExecutableFile = tempExecutableFile.LastOrDefault();  // обираємо те що є
@@ -391,7 +392,7 @@ namespace CompasPack.ViewModel
                         await Task.Factory.StartNew(() => proc.WaitForExit());
                         TextConsole += $"Programs: {program.ProgramName}, Installed!\n";
                         await Task.Delay(1000); // пауза для CheckInstall (щоб встиг оновитись реєстр)
-                        programViewMode.CheckInstall(SoftwareInfoProvider.GetInstallPrograms(_winInfoProvider.WinArchitecture)); // CheckInstall
+                        programViewMode.CheckInstall(SoftwareInfoProvider.GetInstallPrograms(_winInfo.WinArchitecture)); // CheckInstall
                         break; // покидаємо цикл встановлення програми
                     }
                     catch (Exception exp)
@@ -439,7 +440,7 @@ namespace CompasPack.ViewModel
             var antivirusProduct = SoftwareInfoProvider.GetAntivirusProducts();
             if (antivirusProduct.Count == 0)
             {
-                var res = _messageDialogService.ShowYesNoDialog($"Ви використовуєте {_winInfoProvider.ProductName}.\n" +
+                var res = _messageDialogService.ShowYesNoDialog($"Ви використовуєте {_winInfo.ProductName}.\n" +
                     $"В системі не знайдено жодного антивірусного ПЗ.\n" +
                     $"Якщо антивірусне ПЗ дійсно відсутнє натисніть \"Так\" для запуску \"{protectedProgram.Name}\" на свій страх та ризик!\n" +
                     $"Якщо ви не впевнені тоді натисни \"Ні\" для зупинки запуску \"{protectedProgram.Name}\"!", "Попередження!");
@@ -448,7 +449,7 @@ namespace CompasPack.ViewModel
             }
             else
             {
-                if (_winInfoProvider.WinVer == WinVersionEnum.Win_10 || _winInfoProvider.WinVer == WinVersionEnum.Win_11) // Win10, Win11
+                if (_winInfo.WinVer == WinVersionEnum.Win_10 || _winInfo.WinVer == WinVersionEnum.Win_11) // Win10, Win11
                 {
                     if (antivirusProduct.Count == 1)
                     {
@@ -469,7 +470,7 @@ namespace CompasPack.ViewModel
                 }
                 else // Win8, Win8, Win8.1
                 {
-                    _messageDialogService.ShowInfoDialog($"Ви використовуєте {_winInfoProvider.ProductName}.\n" +
+                    _messageDialogService.ShowInfoDialog($"Ви використовуєте {_winInfo.ProductName}.\n" +
                         $"В системі працює посторонні(й) антивірус(и), управління ним(и) та \"{protectedProgram.Name}\" можливо лише вручну!", "Попередження!");
                     return;
                 }
@@ -607,7 +608,7 @@ namespace CompasPack.ViewModel
         }
         private async void OnOnDefender() // ✓
         {
-            if (!IsSupportedWindowsVersionDefender(_winInfoProvider.WinVer))
+            if (!IsSupportedWindowsVersionDefender(_winInfo.WinVer))
                 return;
             if (!IsWindowsDefender())
                 return;
@@ -621,7 +622,7 @@ namespace CompasPack.ViewModel
         }
         private async void OnOffDefender() // ✓
         {
-            if (!IsSupportedWindowsVersionDefender(_winInfoProvider.WinVer))
+            if (!IsSupportedWindowsVersionDefender(_winInfo.WinVer))
                 return;
             if (!IsWindowsDefender())
                 return;

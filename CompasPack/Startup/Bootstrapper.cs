@@ -21,8 +21,9 @@ namespace CompasPack.Startup
         {
             var builder = new ContainerBuilder();
 
-            var winInfoProvider = new WinInfoProvider();    
-            builder.RegisterInstance(winInfoProvider).As<IWinInfoProvider>().SingleInstance();
+            builder.RegisterType<WinInfoProvider>().As<IWinInfoProvider>().SingleInstance();
+            // Register WinInfo Instance
+            builder.Register(c => c.Resolve<IWinInfoProvider>().GetWinInfo()).AsSelf().SingleInstance();
 
             // Register View Model -----------------------------------------------------------------------------------------------------------------------------
             builder.RegisterType<MainWindowView>().AsSelf();
@@ -67,9 +68,18 @@ namespace CompasPack.Startup
             builder.RegisterType<ProgramsSettingsProvider>().AsSelf().SingleInstance();
             builder.RegisterType<ReportSettingsProvider>().AsSelf().SingleInstance();
             builder.RegisterType<PortableProgramsSettingsProvider>().AsSelf().SingleInstance();
+            // тут спосіб отримати вміст контейнера (WinInfo через c.Resolve<WinInfo>()) до виконання Build через лямбда вираз в методі Register
+            builder.Register<IHardwareInfoProvider>(c =>
+            {
+                var type = GetHardwareInfoProviderType(c.Resolve<WinInfo>());
+                return (IHardwareInfoProvider)Activator.CreateInstance(type);
+            }).SingleInstance();
 
-            builder.RegisterType(GetHardwareInfoProviderType(winInfoProvider)).As<IHardwareInfoProvider>().SingleInstance();
-            builder.RegisterType(GetWinSettingsLauncherType(winInfoProvider)).As<IWinSettingsLauncher>().SingleInstance();
+            builder.Register<IWinSettingsLauncher>(c =>
+            {
+                var type = GetWinSettingsLauncherType(c.Resolve<WinInfo>());
+                return (IWinSettingsLauncher)Activator.CreateInstance(type);
+            }).SingleInstance();
 
             // Register Helper/Service
             builder.RegisterType<FileSystemReaderWriter>().As<IFileSystemReaderWriter>().SingleInstance();
@@ -84,14 +94,14 @@ namespace CompasPack.Startup
             return builder.Build();
         }
 
-        private static Type GetHardwareInfoProviderType(WinInfoProvider winInfoProvider)
+        private static Type GetHardwareInfoProviderType(WinInfo winInfoProvider)
         {
             if (winInfoProvider.WinVer >= Model.Enum.WinVersionEnum.Win_8)
                 return typeof(HardwareInfoProviderWin8Plus);
             else
                 return typeof(HardwareInfoProviderBase);
         }
-        private static Type GetWinSettingsLauncherType(WinInfoProvider winInfoProvider)
+        private static Type GetWinSettingsLauncherType(WinInfo winInfoProvider)
         {
             if (winInfoProvider.WinVer >= Model.Enum.WinVersionEnum.Win_10)
                 return typeof(WinSettingsLauncherWin10Plus);

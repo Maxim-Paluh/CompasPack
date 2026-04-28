@@ -180,6 +180,7 @@
     <Compile Include="Model\Enum\AntivirusStatusEnum.cs" />
     <Compile Include="Model\Enum\WinVersionEnum.cs" />
     <Compile Include="Model\Support\VideoControllerInfo.cs" />
+    <Compile Include="Model\Support\WinInfo.cs" />
     <Compile Include="ViewAndViewModel\Report\Common\CPUView.xaml.cs">
       <DependentUpon>CPUView.xaml</DependentUpon>
     </Compile>
