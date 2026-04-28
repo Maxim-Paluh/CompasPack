@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using Prism.Commands;
 
 using CompasPack.ViewModel;
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Programs;
 
 
 namespace CompasPack.Model.Wrapper

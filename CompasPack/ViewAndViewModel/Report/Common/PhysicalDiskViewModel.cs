@@ -2,8 +2,8 @@
 using CompasPack.Data.Providers;
 using CompasPack.Helper.Service;
 using CompasPack.Model.Enum;
-using CompasPack.Model.Settings;
-using CompasPack.Model.ViewAndViewModel;
+using CompasPack.Model.Support;
+using CompasPack.Model.Entities.Report;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;

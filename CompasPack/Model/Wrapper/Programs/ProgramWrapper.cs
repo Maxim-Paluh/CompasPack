@@ -7,7 +7,7 @@ using Prism.Commands;
 using Prism.Events;
 
 using CompasPack.Helper.Event;
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Programs;
 using CompasPack.Helper.Extension;
 
 namespace CompasPack.ViewModel

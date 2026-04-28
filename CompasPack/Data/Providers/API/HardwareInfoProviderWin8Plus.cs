@@ -1,5 +1,5 @@
 ﻿using CompasPack.Data.Constants;
-using CompasPack.Model.ViewAndViewModel;
+using CompasPack.Model.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;

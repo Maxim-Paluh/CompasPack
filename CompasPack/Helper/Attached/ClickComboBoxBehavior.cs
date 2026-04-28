@@ -5,7 +5,7 @@ using System.Windows.Controls;
 
 using Microsoft.Xaml.Behaviors;
 
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Programs;
 
 namespace CompasPack.Helper.Attached
 {

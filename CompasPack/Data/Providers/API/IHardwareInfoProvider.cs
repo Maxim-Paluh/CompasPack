@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Collections.Generic;
 
-using CompasPack.Model.ViewAndViewModel;
+using CompasPack.Model.Support;
 
 namespace CompasPack.Data.Providers
 {

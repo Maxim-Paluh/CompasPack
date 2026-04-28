@@ -1,6 +1,6 @@
 ﻿using CompasPack.Data.Providers;
 using CompasPack.Helper.Extension;
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Report;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.ComponentModel;

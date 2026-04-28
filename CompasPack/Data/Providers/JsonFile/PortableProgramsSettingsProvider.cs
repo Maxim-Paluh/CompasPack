@@ -1,6 +1,6 @@
 ﻿using System;
 
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Portable;
 using CompasPack.Helper.Service;
 
 namespace CompasPack.Data.Providers

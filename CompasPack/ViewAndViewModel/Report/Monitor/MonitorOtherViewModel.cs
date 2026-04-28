@@ -1,5 +1,5 @@
 ﻿using CompasPack.Data.Providers;
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Report;
 using Prism.Commands;
 using System;
 using System.ComponentModel;

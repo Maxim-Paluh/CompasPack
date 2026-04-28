@@ -1,5 +1,5 @@
 ﻿using CompasPack.Data.Providers;
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Report;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;

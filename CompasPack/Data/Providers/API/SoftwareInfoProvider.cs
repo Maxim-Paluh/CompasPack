@@ -1,5 +1,5 @@
 ﻿using CompasPack.Model.Enum;
-using CompasPack.Model.ViewAndViewModel;
+using CompasPack.Model.Support;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;

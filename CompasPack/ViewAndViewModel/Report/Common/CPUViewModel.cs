@@ -3,8 +3,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 using CompasPack.Data.Providers;
-using CompasPack.Model.Settings;
-using CompasPack.Model.ViewAndViewModel;
+using CompasPack.Model.Entities.Report;
+using CompasPack.Model.Support;
 
 namespace CompasPack.ViewModel
 {

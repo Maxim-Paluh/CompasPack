@@ -12,7 +12,7 @@ using Prism.Commands;
 using CompasPack.Model.Enum;
 using Autofac.Features.Indexed;
 using CompasPack.Helper.Service;
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Report;
 using CompasPack.Data.Providers;
 
 namespace CompasPack.ViewModel

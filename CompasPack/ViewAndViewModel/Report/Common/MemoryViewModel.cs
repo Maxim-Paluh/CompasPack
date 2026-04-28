@@ -1,6 +1,6 @@
 ﻿using CompasPack.Data.Providers;
-using CompasPack.Model.Settings;
-using CompasPack.Model.ViewAndViewModel;
+using CompasPack.Model.Support;
+using CompasPack.Model.Entities.Report;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;

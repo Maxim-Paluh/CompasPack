@@ -1,6 +1,6 @@
 ﻿using CompasPack.Helper.Service;
 using CompasPack.Model.Enum;
-using CompasPack.Model.ViewAndViewModel;
+using CompasPack.Model.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;

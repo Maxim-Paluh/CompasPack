@@ -3,7 +3,7 @@ using CompasPack.Data.Providers;
 using CompasPack.Data.Providers.API;
 using CompasPack.Helper.Extension;
 using CompasPack.Helper.Service;
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Portable;
 using CompasPack.Settings;
 using CompasPack.View;
 using DocumentFormat.OpenXml.Packaging;

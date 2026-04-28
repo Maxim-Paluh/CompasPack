@@ -1,6 +1,6 @@
 ﻿using CompasPack.Data.Providers;
-using CompasPack.Model.Settings;
-using CompasPack.Model.ViewAndViewModel;
+using CompasPack.Model.Entities.Report;
+using CompasPack.Model.Support;
 using Prism.Commands;
 using System.Collections.ObjectModel;
 using System.Linq;

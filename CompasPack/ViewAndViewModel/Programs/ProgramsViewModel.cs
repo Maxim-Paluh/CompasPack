@@ -6,7 +6,7 @@ using CompasPack.Helper.Extension;
 using CompasPack.Helper.Service;
 using CompasPack.Helper.Service.Antivirus;
 using CompasPack.Model.Enum;
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Programs;
 using CompasPack.Model.Wrapper;
 using CompasPack.Startup;
 using Prism.Commands;

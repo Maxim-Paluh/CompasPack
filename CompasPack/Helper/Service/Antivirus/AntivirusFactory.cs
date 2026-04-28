@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using CompasPack.Data.Providers.API;
 using CompasPack.Helper.Service.Win;
-using CompasPack.Model.ViewAndViewModel;
+using CompasPack.Model.Support;
 using CompasPack.Startup;
 using System;
 using System.Collections.Generic;

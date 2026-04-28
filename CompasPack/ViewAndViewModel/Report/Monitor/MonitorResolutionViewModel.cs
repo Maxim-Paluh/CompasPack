@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Report;
 using CompasPack.Data.Providers;
 using CompasPack.Data.Constants;
 

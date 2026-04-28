@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Report;
 
 namespace CompasPack.ViewModel
 {

@@ -1,7 +1,7 @@
 ﻿using CompasPack.Data.Providers.API;
 using CompasPack.Helper.Extension;
 using CompasPack.Model.Enum;
-using CompasPack.Model.Settings;
+using CompasPack.Model.Entities.Programs;
 using CompasPack.Model.Wrapper;
 using System;
 using System.Collections.Generic;
