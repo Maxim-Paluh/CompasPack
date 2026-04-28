@@ -13,7 +13,7 @@ namespace CompasPack.Helper.Service.Antivirus
     {
         public override bool IsControlled => false;
 
-        public UnmanagedAntivirus(AntivirusInfo info) : base(info) { }
+        public UnmanagedAntivirus(AntivirusInfo antivirusInfo) : base(antivirusInfo) { }
 
         public override Task<AntivirusStatus> CheckStatus() =>
             Task.FromResult(new AntivirusStatus { RealtimeMonitoringStatus = AntivirusStatusEnum.Error, TamperProtectionStatus = AntivirusStatusEnum.Error });

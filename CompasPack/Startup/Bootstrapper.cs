@@ -10,6 +10,7 @@ using CompasPack.Settings;
 using CompasPack.ViewModel;
 using Prism.Events;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 
 
@@ -87,9 +88,23 @@ namespace CompasPack.Startup
             builder.RegisterType<FileArchiver>().As<IFileArchiver>().SingleInstance();
             builder.RegisterType<MessageDialogService>().As<IMessageDialogService>();
 
-            builder.RegisterType<WinDefenderWin10Plus>().Keyed<IAntivirus>(nameof(WinDefenderWin10Plus));
-            builder.RegisterType<UnmanagedAntivirus>().Keyed<IAntivirus>(nameof(UnmanagedAntivirus));
-            builder.RegisterType<AntivirusFactory>().As<IAntivirusFactory>().SingleInstance();
+            builder.RegisterType<WinDefenderWin10Plus>();
+            builder.RegisterType<UnmanagedAntivirus>();
+            
+            builder.Register(c =>
+            {
+                var antiviruses = new List<IAntivirus>();
+
+                foreach (var info in SoftwareInfoProvider.GetAntivirusProducts())
+                {
+                    var antivirusType = GetAntivirusType(info);
+
+                    var avInstance = (IAntivirus)c.Resolve(antivirusType, new TypedParameter(typeof(AntivirusInfo), info));
+                    antiviruses.Add(avInstance);
+                }
+
+                return antiviruses;
+            }).As<IEnumerable<IAntivirus>>().SingleInstance();
 
             return builder.Build();
         }
@@ -107,6 +122,14 @@ namespace CompasPack.Startup
                 return typeof(WinSettingsLauncherWin10Plus);
             else
                 return typeof(WinSettingsLauncherBase);
+        }
+
+        private static Type GetAntivirusType(AntivirusInfo info)
+        {
+            if (info.DisplayName.Contains("Windows Defender"))
+                return typeof(WinDefenderWin10Plus);
+            else
+                return typeof(UnmanagedAntivirus);
         }
     }
 }

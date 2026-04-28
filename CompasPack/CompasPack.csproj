@@ -148,10 +148,8 @@
     <Compile Include="Data\Providers\API\WinInfoProvider.cs" />
     <Compile Include="Data\Providers\API\WinKernelVersionProvider.cs" />
     <Compile Include="Data\Providers\API\WinRegistryProvider.cs" />
-    <Compile Include="Helper\Service\Antivirus\AntivirusFactory.cs" />
     <Compile Include="Helper\Service\Antivirus\IAntivirus.cs" />
     <Compile Include="Helper\Service\Antivirus\AntivirusBase.cs" />
-    <Compile Include="Helper\Service\Antivirus\IAntivirusFactory.cs" />
     <Compile Include="Helper\Service\Antivirus\UnmanagedAntivirus.cs" />
     <Compile Include="Helper\Service\Win\IWinSettingsLauncher.cs" />
     <Compile Include="Helper\Service\Win\WinSettingsLauncherBase.cs" />

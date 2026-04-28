@@ -34,7 +34,7 @@ namespace CompasPack.ViewModel
     {
         private IMessageDialogService _messageDialogService;
         private IEventAggregator _eventAggregator;
-        private readonly IAntivirusFactory _antivirusFactory;
+        private readonly IEnumerable<IAntivirus> _antiviruses;
         private readonly ProgramsSettingsProvider _programsSettingsProvider;
         private readonly WinInfo _winInfo;
         private readonly IWinSettingsLauncher _winSettingsLauncher;
@@ -76,7 +76,7 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public ProgramsViewModel(IEventAggregator eventAggregator, IAntivirusFactory antivirusFactory,
+        public ProgramsViewModel(IEventAggregator eventAggregator, IEnumerable<IAntivirus> antiviruses,
             IMessageDialogService messageDialogService, 
             IFileSystemReaderWriter fileSystemReaderWriter, IFileSystemNavigator fileSystemNavigator, IFileArchiver fileArchiver,
             ProgramsSettingsProvider programsSettingsProvider, WinInfo winInfo, IWinSettingsLauncher winSettingsLauncher)
@@ -87,7 +87,7 @@ namespace CompasPack.ViewModel
             Antiviruses = new List<IAntivirus>();
 
             _eventAggregator = eventAggregator;
-            _antivirusFactory = antivirusFactory;
+            _antiviruses = antiviruses;
 
             _messageDialogService = messageDialogService;
             
@@ -152,8 +152,10 @@ namespace CompasPack.ViewModel
                 ProtectedPrograms.Add(x);
             });
 
-            foreach (var antivirusInfo in SoftwareInfoProvider.GetAntivirusProducts())
-                Antiviruses.Add(_antivirusFactory.Create(antivirusInfo));
+            foreach (var antivirus in _antiviruses)
+            {
+                var t = antivirus.AntivirusInfo.DisplayName;
+            }
 
             return Task.CompletedTask;
         }
