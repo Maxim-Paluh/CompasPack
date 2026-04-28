@@ -34,7 +34,7 @@
                                     <Label Content="{Binding GroupProgram.Description, Mode=OneTime}"></Label>
                                 </Button.ToolTip>
                             </Button>
-                            <ItemsControl  Grid.Row="1" Visibility="{Binding IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding ProgramViewModels}">
+                            <ItemsControl  Grid.Row="1" Visibility="{Binding IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding ProgramWrappers}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Button Margin="3" 
@@ -131,7 +131,7 @@
             <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <ScrollViewer Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility = "Disabled" VerticalScrollBarVisibility="Auto">
-            <ItemsControl  ItemsSource="{Binding GroupProgramViewModel}"
+            <ItemsControl  ItemsSource="{Binding GroupProgramsWrappers}"
                               ItemTemplate="{StaticResource GroupProgram}" FontSize="11"/>
         </ScrollViewer>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" />

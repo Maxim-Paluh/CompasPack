@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace CompasPack.Helper.Service
 {
-    public  class WinDefenderWin10Plus
+    public  class WinDefenderWin10Plus : AntivirusBase
     {
-        public bool IsControlled { get { return true; } }
+        public override bool IsControlled { get { return true; } }
 
         private readonly IWinInfoProvider _winInfoProvider;
-        public WinDefenderWin10Plus(IWinInfoProvider winInfoProvider)
+        public WinDefenderWin10Plus(AntivirusInfo antivirusInfo, IWinInfoProvider winInfoProvider) : base (antivirusInfo)
         {
             _winInfoProvider = winInfoProvider;
         }
-        public async Task<AntivirusStatusEnum> DisableRealTimeMonitoring()
+        public override async Task<AntivirusStatusEnum> DisableRealTimeMonitoring()
         {
             try
             {
@@ -43,7 +43,7 @@ namespace CompasPack.Helper.Service
             
         }
         
-        public async Task<AntivirusStatusEnum> EnableRealTimeMonitoring()
+        public override async Task<AntivirusStatusEnum> EnableRealTimeMonitoring()
         {
             try
             {
@@ -67,7 +67,7 @@ namespace CompasPack.Helper.Service
            
         }
 
-        public async Task<AntivirusStatus> CheckStatus()
+        public override async Task<AntivirusStatus> CheckStatus()
         {
             AntivirusStatus result = new AntivirusStatus();
             result.TamperProtectionStatus = GetTamperProtectionStatus();
@@ -75,7 +75,7 @@ namespace CompasPack.Helper.Service
             return result;
         }
 
-        public async Task<AntivirusStatusEnum> GetRealTimeMonitoringStatus()
+        public override async Task<AntivirusStatusEnum> GetRealTimeMonitoringStatus()
         {
             try
             {
@@ -106,7 +106,7 @@ namespace CompasPack.Helper.Service
             }
         }
 
-        public AntivirusStatusEnum GetTamperProtectionStatus()
+        public override AntivirusStatusEnum GetTamperProtectionStatus()
         {
             try
             {
@@ -121,7 +121,7 @@ namespace CompasPack.Helper.Service
             catch { return AntivirusStatusEnum.Error; }
         }
 
-        public void OpenSettings()
+        public override void OpenSettings()
         {
             try
             {

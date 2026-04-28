@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CompasPack.Data.Constants
 {
-    public static class PhysicalDiskTypeList
+    public static class PhysicalDiskTypeDictionary
     {
         public static readonly Dictionary<ushort, string> BusTypeMap = new Dictionary<ushort, string>()
         {

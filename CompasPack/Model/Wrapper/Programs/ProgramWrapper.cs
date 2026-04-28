@@ -12,7 +12,7 @@ using CompasPack.Helper.Extension;
 
 namespace CompasPack.ViewModel
 {
-    public class ProgramViewModel : ViewModelBase
+    public class ProgramWrapper : ViewModelBase
     {
         #region Properties
         private bool _visibilityIsInstall;
@@ -58,7 +58,7 @@ namespace CompasPack.ViewModel
         #endregion
 
         #region Constructors
-        public ProgramViewModel(Program program, GroupPrograms groupProgram, IEventAggregator eventAggregator)
+        public ProgramWrapper(Program program, GroupPrograms groupProgram, IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
             Program = program;

@@ -1,12 +1,16 @@
 ﻿using Autofac;
+using Autofac.Core;
 using CompasPack.Data.Providers;
 using CompasPack.Data.Providers.API;
 using CompasPack.Helper.Service;
+using CompasPack.Helper.Service.Antivirus;
 using CompasPack.Helper.Service.Win;
+using CompasPack.Model.ViewAndViewModel;
 using CompasPack.Settings;
 using CompasPack.ViewModel;
 using Prism.Events;
 using System;
+using System.Windows;
 
 
 namespace CompasPack.Startup
@@ -72,21 +76,22 @@ namespace CompasPack.Startup
             builder.RegisterType<FileSystemNavigator>().As<IFileSystemNavigator>().SingleInstance();
             builder.RegisterType<FileArchiver>().As<IFileArchiver>().SingleInstance();
             builder.RegisterType<MessageDialogService>().As<IMessageDialogService>();
-            
-            builder.RegisterType<WinDefenderWin10Plus>().Keyed<IWinAntivirus>(nameof(WinDefenderWin10Plus));
 
+            builder.RegisterType<WinDefenderWin10Plus>().Keyed<IAntivirus>(nameof(WinDefenderWin10Plus));
+            builder.RegisterType<UnmanagedAntivirus>().Keyed<IAntivirus>(nameof(UnmanagedAntivirus));
+            builder.RegisterType<AntivirusFactory>().As<IAntivirusFactory>().SingleInstance();
 
             return builder.Build();
         }
 
-        private Type GetHardwareInfoProviderType(WinInfoProvider winInfoProvider)
+        private static Type GetHardwareInfoProviderType(WinInfoProvider winInfoProvider)
         {
             if (winInfoProvider.WinVer >= Model.Enum.WinVersionEnum.Win_8)
                 return typeof(HardwareInfoProviderWin8Plus);
             else
                 return typeof(HardwareInfoProviderBase);
         }
-        private Type GetWinSettingsLauncherType(WinInfoProvider winInfoProvider)
+        private static Type GetWinSettingsLauncherType(WinInfoProvider winInfoProvider)
         {
             if (winInfoProvider.WinVer >= Model.Enum.WinVersionEnum.Win_10)
                 return typeof(WinSettingsLauncherWin10Plus);

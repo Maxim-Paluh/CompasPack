@@ -1,23 +1,25 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-
-using Prism.Commands;
-using Prism.Events;
-
-using CompasPack.Model.Enum;
-using CompasPack.Helper.Event;
-using CompasPack.Helper.Service;
-using CompasPack.Model.Settings;
-using CompasPack.Helper.Extension;
+﻿using Autofac.Features.Indexed;
 using CompasPack.Data.Providers;
 using CompasPack.Data.Providers.API;
+using CompasPack.Helper.Event;
+using CompasPack.Helper.Extension;
+using CompasPack.Helper.Service;
+using CompasPack.Helper.Service.Antivirus;
+using CompasPack.Model.Enum;
+using CompasPack.Model.Settings;
+using CompasPack.Model.Wrapper;
+using CompasPack.Startup;
+using Prism.Commands;
+using Prism.Events;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 
 
@@ -31,6 +33,7 @@ namespace CompasPack.ViewModel
     {
         private IMessageDialogService _messageDialogService;
         private IEventAggregator _eventAggregator;
+        private readonly IAntivirusFactory _antivirusFactory;
         private readonly ProgramsSettingsProvider _programsSettingsProvider;
         private readonly IWinInfoProvider _winInfoProvider;
         private readonly IWinSettingsLauncher _winSettingsLauncher;
@@ -42,8 +45,9 @@ namespace CompasPack.ViewModel
         private string _textConsole;
         private bool _isEnabled;
         public ObservableCollection<ProgramsSet> ProgramsSets { get; }
-        public ObservableCollection<GroupProgramViewModel> GroupProgramViewModel { get; }
-        public ObservableCollection<ProtectedProgram> ProtectedPrograms { get; }
+        public ObservableCollection<GroupProgramsWrapper> GroupProgramsWrappers { get; }
+        public ObservableCollection<ProtectedProgram> ProtectedPrograms { get; }       
+        public List<IAntivirus> Antiviruses { get; }
         public string TextConsole
         {
             get { return _textConsole; }
@@ -71,16 +75,18 @@ namespace CompasPack.ViewModel
                 OnPropertyChanged();
             }
         }
-        public ProgramsViewModel(IEventAggregator eventAggregator,
+        public ProgramsViewModel(IEventAggregator eventAggregator, IAntivirusFactory antivirusFactory,
             IMessageDialogService messageDialogService, 
             IFileSystemReaderWriter fileSystemReaderWriter, IFileSystemNavigator fileSystemNavigator, IFileArchiver fileArchiver,
             ProgramsSettingsProvider programsSettingsProvider, IWinInfoProvider winInfoProvider, IWinSettingsLauncher winSettingsLauncher)
         {
             ProgramsSets = new ObservableCollection<ProgramsSet>();
-            GroupProgramViewModel = new ObservableCollection<GroupProgramViewModel>();
+            GroupProgramsWrappers = new ObservableCollection<GroupProgramsWrapper>();
             ProtectedPrograms = new ObservableCollection<ProtectedProgram>();
+            Antiviruses = new List<IAntivirus>();
 
             _eventAggregator = eventAggregator;
+            _antivirusFactory = antivirusFactory;
 
             _messageDialogService = messageDialogService;
             
@@ -119,18 +125,19 @@ namespace CompasPack.ViewModel
             TextConsole = _winInfoProvider.ToString();
 
             ProgramsSets.Clear();
-            GroupProgramViewModel.Clear();
+            GroupProgramsWrappers.Clear();
             ProtectedPrograms.Clear();
-            
+            Antiviruses.Clear();
+
             _programsPaths = (ProgramsPaths)_programsSettingsProvider.Settings.ProgramsPaths.Clone();
             ProgramsHelper.SetRootPath(_fileSystemReaderWriter.PathRoot, _programsPaths);
             //----------------------------------------------------------------------------------------------------
             var GroupsPrograms = (List<GroupPrograms>)_programsSettingsProvider.Settings.GroupsPrograms?.Clone();
             foreach (var groupProgram in GroupsPrograms)
-                GroupProgramViewModel.Add(new GroupProgramViewModel(groupProgram, new ObservableCollection<ProgramViewModel>(groupProgram.Programs.Select(x => new ProgramViewModel(x, groupProgram, _eventAggregator)))));
+                GroupProgramsWrappers.Add(new GroupProgramsWrapper(groupProgram, new ObservableCollection<ProgramWrapper>(groupProgram.Programs.Select(x => new ProgramWrapper(x, groupProgram, _eventAggregator)))));
 
-            ProgramsHelper.CombinePathFolderAndImage(GroupProgramViewModel, _programsPaths);
-            ProgramsHelper.CheckInstallPrograms(GroupProgramViewModel, _winInfoProvider.WinArchitecture); // CheckInstall
+            ProgramsHelper.CombinePathFolderAndImage(GroupProgramsWrappers, _programsPaths);
+            ProgramsHelper.CheckInstallPrograms(GroupProgramsWrappers, _winInfoProvider.WinArchitecture); // CheckInstall
             //----------------------------------------------------------------------------------------------------
             _programsSettingsProvider.Settings.ProgramsSets.ForEach(x => ProgramsSets.Add(x)); // Add ProgramsSets     
             var tempProgramsSet = ProgramsSets.FirstOrDefault(x => x.Name.Contains(Regex.Match(_winInfoProvider.ProductName, @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // check ProgramsSet
@@ -143,12 +150,16 @@ namespace CompasPack.ViewModel
                 ProgramsHelper.SetRootPath(_fileSystemReaderWriter.PathRoot, x.ProtectedProgramPaths);
                 ProtectedPrograms.Add(x);
             });
+
+            foreach (var antivirusInfo in SoftwareInfoProvider.GetAntivirusProducts())
+                Antiviruses.Add(_antivirusFactory.Create(antivirusInfo));
+
             return Task.CompletedTask;
         }
 
         private void SelectSingleProgram(SelectSingleProgramEventArgs obj)
         {
-            foreach (var programViewModel in GroupProgramViewModel.Single(x => x.GroupProgram.Name == obj.NameGroup).ProgramViewModels)
+            foreach (var programViewModel in GroupProgramsWrappers.Single(x => x.GroupProgram.Name == obj.NameGroup).ProgramWrappers)
             {
                 if (programViewModel.Program.ProgramName != obj.NameProgram)
                 {
@@ -175,7 +186,7 @@ namespace CompasPack.ViewModel
             if (ProgramsSets.Count != 0)
             {
                 var Preset = ProgramsSets.Single(x => x.Name == SelectedProgramsSet);
-                foreach (var program in GroupProgramViewModel.SelectMany(group => group.ProgramViewModels))
+                foreach (var program in GroupProgramsWrappers.SelectMany(group => group.ProgramWrappers))
                 {
                     if (Preset.InstallProgramName.Contains(program.Program.ProgramName))
                     {
@@ -189,7 +200,7 @@ namespace CompasPack.ViewModel
         }
         private void OnOnlyFree()
         {
-            foreach (var program in GroupProgramViewModel.SelectMany(group => group.ProgramViewModels))
+            foreach (var program in GroupProgramsWrappers.SelectMany(group => group.ProgramWrappers))
             {
                 if(program.Install == true && program.Program.IsFree==false)
                     program.NotSelectProgram();
@@ -198,7 +209,7 @@ namespace CompasPack.ViewModel
         //---------------------------------------------------------------------------------------------------
         private async void OnInstall()
         {
-            var programsToInstall = GroupProgramViewModel.SelectMany(group => group.ProgramViewModels).Where(x => x.Install == true);
+            var programsToInstall = GroupProgramsWrappers.SelectMany(group => group.ProgramWrappers).Where(x => x.Install == true);
 
             if (programsToInstall.Any(x => x.Program.DisableDefender == true && !x.IsInstall)) // якщо програма потребує вимклення антивірусника для свого встановлення і вона ще не встановлена тоді
             {
@@ -261,7 +272,7 @@ namespace CompasPack.ViewModel
             }
             IsEnabled = true;
         }
-        private async Task InstallProgram(ProgramViewModel programViewMode, bool tryOnlineInstall)
+        private async Task InstallProgram(ProgramWrapper programViewMode, bool tryOnlineInstall)
         {
             var program = programViewMode.Program;
             
@@ -275,12 +286,12 @@ namespace CompasPack.ViewModel
                 {
                     if (programViewMode.Program.DisableDefender) // якщо треба вимкнути антивірусник
                     {
-                        if (await WinDefenderWin10Plus.CheckRealtimeMonitoring() == AntivirusStatusEnum.Enabled) // якщо антивірусник увімкнутий
+                        if (await Antiviruses.First().GetRealTimeMonitoringStatus() == AntivirusStatusEnum.Enabled) // якщо антивірусник увімкнутий
                         {
                             await OffDefender(); // вимикаємо
                             await Task.Delay(100); // зачекаємо вимкнення
                         }
-                        if (await WinDefenderWin10Plus.CheckRealtimeMonitoring() == AntivirusStatusEnum.Enabled) // якщо антивірусник досі увімкнутий
+                        if (await Antiviruses.First().GetRealTimeMonitoringStatus() == AntivirusStatusEnum.Enabled) // якщо антивірусник досі увімкнутий
                         {
                             TextConsole += "Error: defender is not disabled\n"; // сповіщаємо про помилку
                             break; // виходимо з циклу (далі буде помилка в циклі встановлення)
@@ -396,8 +407,8 @@ namespace CompasPack.ViewModel
                     TextConsole += $"<***************************************************************************>\n";
                 }
             } while (true);
-            if (program.DisableDefender && await WinDefenderWin10Plus.CheckRealtimeMonitoring() == AntivirusStatusEnum.Disabled) //якщо треба було вимкнути антивірусник  і він вимкнутий
-                await WinDefenderWin10Plus.EnableRealtimeMonitoring(); // вмикаємо назад
+            if (program.DisableDefender && await Antiviruses.First().GetRealTimeMonitoringStatus() == AntivirusStatusEnum.Disabled) //якщо треба було вимкнути антивірусник  і він вимкнутий
+                await Antiviruses.First().EnableRealTimeMonitoring(); // вмикаємо назад
         }
 
         //---------------------------------------------------------------------------------------------------
@@ -476,12 +487,12 @@ namespace CompasPack.ViewModel
                 {
                     if (isActiveRealtimeMonitoring) // якщо це Win10 або Win11, Windows Defender знайдено і захист від підробок вимкнуто
                     {
-                        if (await WinDefenderWin10Plus.CheckRealtimeMonitoring() == AntivirusStatusEnum.Enabled) // якщо антивірусник увімкнутий
+                        if (await Antiviruses.First().GetRealTimeMonitoringStatus() == AntivirusStatusEnum.Enabled) // якщо антивірусник увімкнутий
                         {
                             await OffDefender(); // вимикаємо
                             await Task.Delay(100);
                         }
-                        if (await WinDefenderWin10Plus.CheckRealtimeMonitoring() == AntivirusStatusEnum.Enabled) // якщо антивірусник досі увімкнутий
+                        if (await Antiviruses.First().GetRealTimeMonitoringStatus() == AntivirusStatusEnum.Enabled) // якщо антивірусник досі увімкнутий
                         {
                             TextConsole += "Error: defender is not disabled\n";
                             break; // виходимо з циклу
@@ -564,7 +575,7 @@ namespace CompasPack.ViewModel
             IsEnabled = true;
             if (isActiveRealtimeMonitoring) // якщо це Win10 або Win11, Windows Defender знайдено і захист від підробок вимкнуто
             {
-                await WinDefenderWin10Plus.EnableRealtimeMonitoring();
+                await Antiviruses.First().EnableRealTimeMonitoring();
             }
         }
         private void OnOpenAppLog()
@@ -626,12 +637,11 @@ namespace CompasPack.ViewModel
         private async Task OnDefender() // ✓
         {
             TextConsole += $"Start on defender: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
-            var ResponseDefender = (await WinDefenderWin10Plus.EnableRealtimeMonitoring()).Trim();
-            if (!string.IsNullOrWhiteSpace(ResponseDefender))
+            var ResponseDefender = await Antiviruses.First().EnableRealTimeMonitoring();
                 TextConsole += $"Response defender: {ResponseDefender}\n";
             TextConsole += $"End on defender:  \t{DateTime.Now:dd/MM hh:mm:ss}\n";
 
-            var realtimeMonitoring = await WinDefenderWin10Plus.CheckRealtimeMonitoring();
+            var realtimeMonitoring = await Antiviruses.First().GetRealTimeMonitoringStatus();
             TextConsole += $"Defender is: \t\t{realtimeMonitoring} ";
             if (realtimeMonitoring == AntivirusStatusEnum.Enabled)
                 TextConsole += $"(OK!)\n";
@@ -642,11 +652,10 @@ namespace CompasPack.ViewModel
         private async Task OffDefender() // ✓
         {
             TextConsole += $"Start off defender: \t{DateTime.Now:dd/MM hh:mm:ss}\n";
-            var ResponseDefender = (await WinDefenderWin10Plus.DisableRealtimeMonitoring()).Trim();
-            if (!string.IsNullOrWhiteSpace(ResponseDefender))
+            var ResponseDefender = await Antiviruses.First().DisableRealTimeMonitoring();
                 TextConsole += $"Response defender: {ResponseDefender}\n";
             TextConsole += $"End off defender:  \t{DateTime.Now:dd/MM hh:mm:ss}\n";
-            var realtimeMonitoring = await WinDefenderWin10Plus.CheckRealtimeMonitoring();
+            var realtimeMonitoring = await Antiviruses.First().GetRealTimeMonitoringStatus();
             TextConsole += $"Defender is: \t\t{realtimeMonitoring} ";
             if(realtimeMonitoring == AntivirusStatusEnum.Disabled)
                 TextConsole += $"(OK!)\n";
@@ -693,10 +702,10 @@ namespace CompasPack.ViewModel
 
         private bool IsTamperProtectionEnabled()
         {
-            if (WinDefenderWin10Plus.CheckTamperProtection(_winInfoProvider.WinArchitecture) == AntivirusStatusEnum.Enabled)
+            if (Antiviruses.First().GetTamperProtectionStatus() == AntivirusStatusEnum.Enabled)
             {
                 _messageDialogService.ShowInfoDialog($"Потрібно вимкнути: \"Захист від підробок\" в налаштуваннях Windows Defender!", "Помилка!"); // якщо ні то сповіщаємо користувача
-                WinDefenderWin10Plus.OpenSettings();
+                Antiviruses.First().OpenSettings();
                 return true;
             }
             else

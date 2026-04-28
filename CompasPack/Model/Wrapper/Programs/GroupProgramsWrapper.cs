@@ -1,16 +1,21 @@
-﻿using Prism.Commands;
-using System.Collections.ObjectModel;
+﻿using System;
 using System.Windows.Input;
+using System.Collections.ObjectModel;
+
+using Prism.Commands;
+
+using CompasPack.ViewModel;
 using CompasPack.Model.Settings;
 
-namespace CompasPack.ViewModel
+
+namespace CompasPack.Model.Wrapper
 {
-    public class GroupProgramViewModel : ViewModelBase
+    public class GroupProgramsWrapper : ViewModelBase
     {
         #region Properties
         private bool _isVisibility;
         public GroupPrograms GroupProgram { get; set; }
-        public ObservableCollection<ProgramViewModel> ProgramViewModels { get; set; }
+        public ObservableCollection<ProgramWrapper> ProgramWrappers { get; set; }
         public bool IsVisibility
         {
             get { return _isVisibility; }
@@ -23,11 +28,11 @@ namespace CompasPack.ViewModel
         #endregion
         
         #region Constructors
-        public GroupProgramViewModel(GroupPrograms groupProgram, ObservableCollection<ProgramViewModel> programViewModels)
+        public GroupProgramsWrapper(GroupPrograms groupProgram, ObservableCollection<ProgramWrapper> programWrappers)
         {
             SetVisibilityCommand = new DelegateCommand(OnSetVisibility);
             GroupProgram = groupProgram;
-            ProgramViewModels = programViewModels;
+            ProgramWrappers = programWrappers;
             _isVisibility = true;
         }
         #endregion

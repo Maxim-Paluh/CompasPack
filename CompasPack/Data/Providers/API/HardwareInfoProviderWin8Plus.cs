@@ -45,10 +45,10 @@ namespace CompasPack.Data.Providers
 
 
                 if (busBuff == 17) //NVMe
-                    tempListDisk.Add(new DiskInfo() { Name = model, Size = Size, Type = PhysicalDiskTypeList.BusTypeMap[busBuff], IsSelect = true, Order = 0 });
+                    tempListDisk.Add(new DiskInfo() { Name = model, Size = Size, Type = PhysicalDiskTypeDictionary.BusTypeMap[busBuff], IsSelect = true, Order = 0 });
                 else if (busBuff == 3 || busBuff == 8 || busBuff == 11) //ATA RAID SATA
                 {
-                    var temp = new DiskInfo() { Name = model, Size = Size, Type = PhysicalDiskTypeList.MediaTypeMap[mediaBuff], IsSelect = true };
+                    var temp = new DiskInfo() { Name = model, Size = Size, Type = PhysicalDiskTypeDictionary.MediaTypeMap[mediaBuff], IsSelect = true };
                     if (mediaBuff == 4) // SSD
                         temp.Order = 1;
                     if (mediaBuff == 3) // HDD
@@ -56,7 +56,7 @@ namespace CompasPack.Data.Providers
                     tempListDisk.Add(temp);
                 }
                 else //Other
-                    tempListDisk.Add(new DiskInfo() { Name = model, Size = Size, Type = $"{PhysicalDiskTypeList.BusTypeMap[busBuff]} {PhysicalDiskTypeList.MediaTypeMap[mediaBuff]}", IsSelect = false, Order = 3 });
+                    tempListDisk.Add(new DiskInfo() { Name = model, Size = Size, Type = $"{PhysicalDiskTypeDictionary.BusTypeMap[busBuff]} {PhysicalDiskTypeDictionary.MediaTypeMap[mediaBuff]}", IsSelect = false, Order = 3 });
             }
 
             return tempListDisk;

@@ -8,14 +8,15 @@ using System.Threading.Tasks;
 
 namespace CompasPack.Helper.Service
 {
-    internal interface IWinAntivirus
+    public interface IAntivirus
     {
         bool IsControlled { get; }
+        AntivirusInfo AntivirusInfo { get; }
         Task<AntivirusStatusEnum> DisableRealTimeMonitoring();
         Task<AntivirusStatusEnum> EnableRealTimeMonitoring();
         Task<AntivirusStatus> CheckStatus();
         Task<AntivirusStatusEnum> GetRealTimeMonitoringStatus();
         AntivirusStatusEnum GetTamperProtectionStatus();
-
+        void OpenSettings();
     }
 }

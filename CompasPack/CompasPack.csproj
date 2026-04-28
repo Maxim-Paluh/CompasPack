@@ -139,7 +139,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Data\Constants\PhysicalDiskTypeList.cs" />
+    <Compile Include="Data\Constants\PhysicalDiskTypeDictionary.cs" />
     <Compile Include="Data\Providers\API\HardwareInfoProviderWin8Plus.cs" />
     <Compile Include="Data\Providers\API\HardwareInfoProviderBase.cs" />
     <Compile Include="Data\Providers\API\IHardwareInfoProvider.cs" />
@@ -148,8 +148,11 @@
     <Compile Include="Data\Providers\API\WinInfoProvider.cs" />
     <Compile Include="Data\Providers\API\WinKernelVersionProvider.cs" />
     <Compile Include="Data\Providers\API\WinRegistryProvider.cs" />
-    <Compile Include="Helper\Service\Antivirus\IWinAntivirus.cs" />
-    <Compile Include="Helper\Service\Antivirus\IWinAntivirusBase.cs" />
+    <Compile Include="Helper\Service\Antivirus\AntivirusFactory.cs" />
+    <Compile Include="Helper\Service\Antivirus\IAntivirus.cs" />
+    <Compile Include="Helper\Service\Antivirus\AntivirusBase.cs" />
+    <Compile Include="Helper\Service\Antivirus\IAntivirusFactory.cs" />
+    <Compile Include="Helper\Service\Antivirus\UnmanagedAntivirus.cs" />
     <Compile Include="Helper\Service\Win\IWinSettingsLauncher.cs" />
     <Compile Include="Helper\Service\Win\WinSettingsLauncherBase.cs" />
     <Compile Include="Helper\Service\Win\WinSettingsLauncherWin10Plus.cs" />
@@ -446,12 +449,12 @@
     </Compile>
     <Compile Include="ViewAndViewModel\Main\MainWindowViewModel.cs" />
     <Compile Include="ViewAndViewModel\ProgressRing\ProgressRing.cs" />
-    <Compile Include="ViewAndViewModel\Programs\GroupProgramViewModel.cs" />
+    <Compile Include="Model\Wrapper\Programs\GroupProgramsWrapper.cs" />
     <Compile Include="ViewAndViewModel\Programs\ProgramsView.xaml.cs">
       <DependentUpon>ProgramsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewAndViewModel\Programs\ProgramsViewModel.cs" />
-    <Compile Include="ViewAndViewModel\Programs\ProgramViewModel.cs" />
+    <Compile Include="Model\Wrapper\Programs\ProgramWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

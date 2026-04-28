@@ -2,7 +2,7 @@
 using CompasPack.Helper.Extension;
 using CompasPack.Model.Enum;
 using CompasPack.Model.Settings;
-using CompasPack.ViewModel;
+using CompasPack.Model.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,11 +27,11 @@ namespace CompasPack.Helper.Service
             }
         }
 
-        public static void CombinePathFolderAndImage(IList<GroupProgramViewModel> groupPrograms, ProgramsPaths programsPaths)
+        public static void CombinePathFolderAndImage(IList<GroupProgramsWrapper> groupPrograms, ProgramsPaths programsPaths)
         {
             if (programsPaths.PathFolderPrograms != null && programsPaths.PathFolderImageProgram != null)
             {
-                foreach (var item in groupPrograms.SelectMany(group => group.ProgramViewModels))
+                foreach (var item in groupPrograms.SelectMany(group => group.ProgramWrappers))
                 {
                     item.Program.PathFolder = Path.Combine(programsPaths.PathFolderPrograms, item.Program.PathFolder);
                     item.Program.FileImage = Path.Combine(programsPaths.PathFolderImageProgram, item.Program.FileImage);
@@ -39,10 +39,10 @@ namespace CompasPack.Helper.Service
             }
         }
 
-        public static void CheckInstallPrograms(IList<GroupProgramViewModel> groupProgramViewModels, WinArchitectureEnum winArchitecture)
+        public static void CheckInstallPrograms(IList<GroupProgramsWrapper> groupProgramViewModels, WinArchitectureEnum winArchitecture)
         {
             var tempListPrograms = SoftwareInfoProvider.GetInstallPrograms(winArchitecture);
-            foreach (var program in groupProgramViewModels.SelectMany(group => group.ProgramViewModels))
+            foreach (var program in groupProgramViewModels.SelectMany(group => group.ProgramWrappers))
                 program.CheckInstall(tempListPrograms);
         }
 
