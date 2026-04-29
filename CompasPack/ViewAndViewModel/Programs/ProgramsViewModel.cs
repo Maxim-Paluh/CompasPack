@@ -152,11 +152,6 @@ namespace CompasPack.ViewModel
                 ProtectedPrograms.Add(x);
             });
 
-            foreach (var antivirus in _antiviruses)
-            {
-                var t = antivirus.AntivirusInfo.DisplayName;
-            }
-
             return Task.CompletedTask;
         }
 
@@ -210,55 +205,73 @@ namespace CompasPack.ViewModel
             }
         }
         //---------------------------------------------------------------------------------------------------
+        void CancelProblematicPrograms(ref List<ProgramWrapper> selected, List<ProgramWrapper> problematic)
+        {
+            problematic.ForEach(p => p.Install = false);
+            selected = selected.Except(problematic).ToList();
+        }
+        void ShowConflictDialog(List<ProgramWrapper> progs, List<IAntivirus> avs, string reason)
+        {
+            var pNames = progs.Select(p => p.Program.ProgramName).ToList();
+            var aNames = avs.Select(av => av.AntivirusInfo.DisplayName).ToList();
+
+            var message = $"Ви обрали {(pNames.Count > 1 ? "програми" : "програму")}, для яких треба вимкнути захист:\n" +
+                          $"{string.Join(";\n", pNames)}.\n\n" +
+                          $"Антивіруси ({reason}):\n" +
+                          $"{string.Join(";\n", aNames)}.\n\n" +
+                          "Ці програми буде пропущено!";
+
+            _messageDialogService.ShowInfoDialog(message, "Увага");
+        }
         private async void OnInstall()
         {
-            var programsToInstall = GroupProgramsWrappers.SelectMany(group => group.ProgramWrappers).Where(x => x.Install == true);
+            var selectedPrograms = GroupProgramsWrappers.SelectMany(group => group.ProgramWrappers).Where(x => x.Install == true).ToList();
+            var problematicPrograms = selectedPrograms.Where(p => p.Program.DisableDefender /*&& !p.IsInstall*/).ToList();
 
-            if (programsToInstall.Any(x => x.Program.DisableDefender == true && !x.IsInstall)) // якщо програма потребує вимклення антивірусника для свого встановлення і вона ще не встановлена тоді
+            if (problematicPrograms.Any())
             {
-                //var antivirusProduct = WinDefenderHelper.GetAntivirusProduct();
-                //if (antivirusProduct.Count == 0)
-                //{
-                //    var res = _messageDialogService.ShowYesNoDialog($"Ви використовуєте {WinInfoHelper.ProductName}.\n" +
-                //        $"В системі не знайдено жодного антивірусного ПЗ.\n" +
-                //        $"Якщо антивірусне ПЗ дійсно відсутнє натисніть \"Так\" для запуску на свій страх та ризик!\n" +
-                //        $"Якщо ви не впевнені тоді натисни \"Ні\" для зупинки запуску \"{protectedProgram.Name}\"!", "Попередження!");
-                //    if (res == MessageDialogResult.No)
-                //        return;
-                //}
-                //else
-                //{
-                //    if (WinInfoHelper.WinVer == WinVerEnum.Win10 || WinInfoHelper.WinVer == WinVerEnum.Win11) // Win10, Win11
-                //    {
-                //        if (antivirusProduct.Count == 1)
-                //        {
-                //            if (!antivirusProduct.First().Contains("Windows Defender", StringComparison.InvariantCultureIgnoreCase))
-                //            {
-                //                _messageDialogService.ShowInfoDialog($"В системі працює посторонній: \"{antivirusProduct.First()}\", управління ними та \"{protectedProgram.Name}\" можливо лише вручну!", "Помилка!");
-                //                return;
-                //            }
-                //        }
-                //        else
-                //        {
-                //            _messageDialogService.ShowInfoDialog($"В системі працює посторонні антивіруси, управління ними та \"{protectedProgram.Name}\" можливо лише вручну!", "Помилка!");
-                //            return;
-                //        }
-                //        if (IsTamperProtectionEnabled())
-                //            return;
-                //        isActiveRealtimeMonitoring = true;
-                //    }
-                //    else // Win8, Win8, Win8.1
-                //    {
-                //        _messageDialogService.ShowInfoDialog($"Ви використовуєте {WinInfoHelper.ProductName}.\n" +
-                //            $"В системі працює посторонні(й) антивірус(и), управління ним(и) та \"{protectedProgram.Name}\" можливо лише вручну!", "Попередження!");
-                //        return;
-                //    }
-                //}
+                var unManualAntiviruses = _antiviruses.Where(av => !av.IsControlled).ToList();
+                
+                if (unManualAntiviruses.Any())
+                {
+                    ShowConflictDialog(problematicPrograms, unManualAntiviruses, "не керуються програмно");
+                    CancelProblematicPrograms(ref selectedPrograms, problematicPrograms);
+                }
+                else
+                {
+                    bool checkAgain = true;
+                    while (checkAgain)
+                    {
+                        var tamperProtectionAntiviruses = _antiviruses.Where(av => av.IsControlled && av.GetTamperProtectionStatus() != AntivirusStatusEnum.Disabled).ToList();
+
+                        if (!tamperProtectionAntiviruses.Any())
+                        {
+                            checkAgain = false;
+                            continue;
+                        }
+
+                        var result = _messageDialogService.ShowYesNoDialog(
+                            $"Для встановлення деяких програм потрібно вимкнути 'Захист від підробки' (Tamper Protection) у налаштуваннях {(tamperProtectionAntiviruses.Count > 1 ? "антивірусів" : "антивірусу")}.\n" +
+                            "Відкрити налаштування зараз?", "Необхідна дія");
+
+                        if (result == MessageDialogResultEnum.Yes)
+                        {
+                            tamperProtectionAntiviruses.ForEach(x => x.OpenSettings());
+                            _messageDialogService.ShowInfoDialog("Натисніть 'ОК' ПІСЛЯ того, як вимкнете захист у налаштуваннях.", "Очікування");
+                        }
+                        else
+                        {
+                            ShowConflictDialog(problematicPrograms, tamperProtectionAntiviruses, "захищені від змін");
+                            CancelProblematicPrograms(ref selectedPrograms, problematicPrograms);
+                            checkAgain = false;
+                        }
+                    }
+                }
             }
             IsEnabled = false;
-            if(programsToInstall.Count()!=0)
+            if(selectedPrograms.Count()!=0)
                 AddSplitter();
-            foreach (var programToInstall in programsToInstall)
+            foreach (var programToInstall in selectedPrograms)
             {
                 TextConsole += $"Start Install Programs: {programToInstall.Program.ProgramName}\n";
                 if (programToInstall.IsInstall) // перевіряємо чи програма встановлена
@@ -390,8 +403,8 @@ namespace CompasPack.ViewModel
 
                     try // намагаємось встановити програму і очікуємо завершення її встановлення
                     {
-                        Process proc = Process.Start(StartInfo);
-                        await Task.Factory.StartNew(() => proc.WaitForExit());
+                        //Process proc = Process.Start(StartInfo);
+                        //await Task.Factory.StartNew(() => proc.WaitForExit());
                         TextConsole += $"Programs: {program.ProgramName}, Installed!\n";
                         await Task.Delay(1000); // пауза для CheckInstall (щоб встиг оновитись реєстр)
                         programViewMode.CheckInstall(SoftwareInfoProvider.GetInstallPrograms(_winInfo.WinArchitecture)); // CheckInstall

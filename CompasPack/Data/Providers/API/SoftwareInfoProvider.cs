@@ -65,7 +65,8 @@ namespace CompasPack.Data.Providers.API
                     // пропускаємо, якщо namespace недоступний
                 }
             }
-
+            //result.Add(new AntivirusInfo() { DisplayName = "MyAnt1", PathToExe = "MyAnt1.exe", ProductState = "1" });
+            //result.Add(new AntivirusInfo() { DisplayName = "MyAnt2", PathToExe = "MyAnt2.exe", ProductState = "2" });
             return result;
         }
         /*public static List<string> GetAntivirusProduct()
