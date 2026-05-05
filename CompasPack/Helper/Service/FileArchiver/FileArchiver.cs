@@ -6,13 +6,13 @@ namespace CompasPack.Helper.Service
 {
     public class FileArchiver : IFileArchiver
     {
-        public  ResultArchiverEnum Decompress(string pathRar, string pathFolder, string password, int timeOut = 10000 )
+        public  ResultArchiverEnum Decompress(string pathArchiv, string pathFolder, string password, int timeOut = 10000 )
         {
             try
             {
                 ProcessStartInfo ps = new ProcessStartInfo();
                 ps.FileName = "7za.exe";
-                ps.Arguments = $"x \"{pathRar}\" -o\"{pathFolder}\" -p{password} -aoa";  //-aoa Overwrite All existing files without prompt. 
+                ps.Arguments = $"x \"{pathArchiv}\" -o\"{pathFolder}\" -p{password} -aoa";  //-aoa Overwrite All existing files without prompt. 
                 
                 var proc = Process.Start(ps);
                 if (!proc.WaitForExit(timeOut))

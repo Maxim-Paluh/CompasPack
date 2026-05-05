@@ -148,9 +148,15 @@
     <Compile Include="Data\Providers\API\WinInfoProvider.cs" />
     <Compile Include="Data\Providers\API\WinKernelVersionProvider.cs" />
     <Compile Include="Data\Providers\API\WinRegistryProvider.cs" />
+    <Compile Include="Helper\Extension\String.cs" />
+    <Compile Include="Helper\Extension\WhereAsync.cs" />
     <Compile Include="Helper\Service\Antivirus\IAntivirus.cs" />
     <Compile Include="Helper\Service\Antivirus\AntivirusBase.cs" />
     <Compile Include="Helper\Service\Antivirus\UnmanagedAntivirus.cs" />
+    <Compile Include="Helper\Service\Common\PathService.cs" />
+    <Compile Include="Helper\Service\Programs\ConsoleBuffer.cs" />
+    <Compile Include="Helper\Service\Programs\IConsoleBuffer.cs" />
+    <Compile Include="Helper\Service\Programs\IProgramsService.cs" />
     <Compile Include="Helper\Service\Win\IWinSettingsLauncher.cs" />
     <Compile Include="Helper\Service\Win\WinSettingsLauncherBase.cs" />
     <Compile Include="Helper\Service\Win\WinSettingsLauncherWin10Plus.cs" />
@@ -258,7 +264,7 @@
     <Compile Include="Helper\Attached\ClickComboBoxBehavior.cs" />
     <Compile Include="Helper\Converter\BooleanToVisibilityConverter.cs" />
     <Compile Include="Helper\Extension\Contains.cs" />
-    <Compile Include="Helper\Service\MessageDialogService.cs" />
+    <Compile Include="Helper\Service\Common\MessageDialogService.cs" />
     <Compile Include="Helper\Attached\TextBoxUtilities.cs" />
     <Compile Include="ViewAndViewModel\ViewModelBase\SettingsViewModelBase.cs" />
     <Compile Include="Data\Providers\JsonFile\SettingsFileProviderBase.cs" />
@@ -334,12 +340,11 @@
       <DependentUpon>ErrorsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewAndViewModel\Errors\ErrorsViewModel.cs" />
-    <Compile Include="Helper\Event\SelectSingleProgramEvent.cs" />
-    <Compile Include="Helper\Service\AidaReportHelper.cs" />
-    <Compile Include="Helper\Service\ClipboardHelper.cs" />
+    <Compile Include="Helper\Service\Report\AidaReportService.cs" />
+    <Compile Include="Helper\Service\Report\ClipboardService.cs" />
     <Compile Include="Helper\Service\IO\FileSystemReaderWriter.cs" />
     <Compile Include="Helper\Service\Net\NetworkService.cs" />
-    <Compile Include="Helper\Service\ProgramsHelper.cs" />
+    <Compile Include="Helper\Service\Programs\ProgramsService.cs" />
     <Compile Include="Helper\Service\Antivirus\WinDefenderWin10Plus.cs" />
     <Page Include="ViewAndViewModel\Load\LoadView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -495,6 +500,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Repositories\" />
+    <Folder Include="Helper\Event\" />
     <Folder Include="ViewAndViewModel\ViewBase\" />
   </ItemGroup>
   <ItemGroup>

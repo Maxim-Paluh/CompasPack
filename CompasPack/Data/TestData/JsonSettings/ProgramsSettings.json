@@ -1,5 +1,6 @@
 {
   "ArchivePassword": "1234",
+  "SpeedTestURL": "http://speed.cloudflare.com/__down?bytes=10000000",
   "ProgramsPaths": {
     "PathFolderPrograms": "F:\\!Install",
     "PathFolderImageProgram": "F:\\!Install\\!Sample\\Icon",
@@ -47,16 +48,16 @@
   "ProtectedPrograms": [
     {
       "Name": "KMS",
+      "FileName": "KMSAuto",
       "ProtectedProgramPaths": {
-        "PathExe": "F:\\!Portable\\!Crack\\KMSAuto\\KMSAuto Net.exe",
-        "PathRar": "F:\\!Portable\\!Crack\\KMSAuto\\KMSAuto.7z"
+        "PathFolder": "F:\\!Portable\\!Crack\\KMSAuto"
       }
     },
     {
       "Name": "CW",
+      "FileName": "CW",
       "ProtectedProgramPaths": {
-        "PathExe": "F:\\!Portable\\!Crack\\KMSAuto\\CW.exe",
-        "PathRar": "F:\\!Portable\\!Crack\\KMSAuto\\CW.7z"
+        "PathFolder": "F:\\!Portable\\!Crack\\CW"
       }
     }
   ],

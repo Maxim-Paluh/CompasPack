@@ -9,6 +9,7 @@ namespace CompasPack.Model.Entities.Programs
     public class ProtectedProgram : ICloneable
     {
         public string Name { get; set; }
+        public string FileName { get; set; }
         public ProtectedProgramPaths ProtectedProgramPaths { get; set; }
         public ProtectedProgram() 
         {

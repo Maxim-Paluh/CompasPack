@@ -86,7 +86,7 @@ namespace CompasPack.ViewModel
         public Task LoadAsync()
         {
             _reportPaths = (ReportPaths)_reportSettingsProvider.Settings.ReportPaths.Clone();
-            ProgramsHelper.SetRootPath(_fileSystemReaderWriter.PathRoot, _reportPaths); // TODO
+            PathService.SetRootPath(_fileSystemReaderWriter.PathRoot, _reportPaths);
             return Task.CompletedTask;
         }
 
@@ -129,7 +129,7 @@ namespace CompasPack.ViewModel
                 {
                     try
                     {
-                        await AidaReportHelper.GetAidaReport(_reportPaths.AidaExeFilePath, Path.Combine(_fileSystemReaderWriter.CompasPackLog, "Report."),
+                        await AidaReportService.GetAidaReport(_reportPaths.AidaExeFilePath, Path.Combine(_fileSystemReaderWriter.CompasPackLog, "Report."),
                                                                            "/XML", _reportPaths.ReportRPF,120);
                         tempAidaReport = true;
                     }

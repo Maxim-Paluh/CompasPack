@@ -9,6 +9,6 @@ namespace CompasPack.Helper.Service
 {
     public interface IFileArchiver
     {
-        ResultArchiverEnum Decompress(string pathRar, string pathFolder, string password, int timeOut);
+        ResultArchiverEnum Decompress(string pathArchiv, string pathFolder, string password, int timeOut);
     }
 }

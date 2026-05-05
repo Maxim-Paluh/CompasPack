@@ -8,8 +8,7 @@ namespace CompasPack.Model.Entities.Programs
 {
     public class ProtectedProgramPaths : ICloneable
     {
-        public string PathExe { get; set; }
-        public string PathRar { get; set; }
+        public string PathFolder { get; set; }
 
         public object Clone()
         {

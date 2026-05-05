@@ -1,14 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Windows.Input;
-using System.Collections.Generic;
-
+﻿using CompasPack.Helper.Extension;
+using CompasPack.Model.Entities.Programs;
+using CompasPack.Model.Wrapper;
 using Prism.Commands;
 using Prism.Events;
-
-using CompasPack.Helper.Event;
-using CompasPack.Model.Entities.Programs;
-using CompasPack.Helper.Extension;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Input;
 
 namespace CompasPack.ViewModel
 {
@@ -18,9 +16,8 @@ namespace CompasPack.ViewModel
         private bool _visibilityIsInstall;
         private bool _install;
         private bool _isInstall;
-        private IEventAggregator _eventAggregator;
 
-        public GroupPrograms GroupProgram { get; set; }
+        public GroupProgramsWrapper GroupProgramsWrapper { get; set; }
         public Program Program { get; set; }
         public bool Install
         {
@@ -58,11 +55,10 @@ namespace CompasPack.ViewModel
         #endregion
 
         #region Constructors
-        public ProgramWrapper(Program program, GroupPrograms groupProgram, IEventAggregator eventAggregator)
+        public ProgramWrapper(Program program, GroupProgramsWrapper groupProgramsWrapper)
         {
-            _eventAggregator = eventAggregator;
             Program = program;
-            GroupProgram = groupProgram;
+            GroupProgramsWrapper = groupProgramsWrapper;
             SelectProgramCommand = new DelegateCommand(OnSelectProgram);
             IsInstall = false;
             VisibilityIsInstall = false;
@@ -73,14 +69,8 @@ namespace CompasPack.ViewModel
         private void OnSelectProgram()
         {
             Install = !Install;
-            if (GroupProgram.SingleChoice)
-            {
-                _eventAggregator.GetEvent<SelectSingleProgramEvent>().Publish(new SelectSingleProgramEventArgs()
-                {
-                    NameProgram = Program.ProgramName,
-                    NameGroup = GroupProgram.Name,
-                });
-            }
+            if (GroupProgramsWrapper.GroupProgram.SingleChoice)
+                GroupProgramsWrapper.SelectSingleProgram(Program.ProgramName);
         }
         public void SelectProgram()
         {
@@ -95,7 +85,7 @@ namespace CompasPack.ViewModel
         {
             if (!string.IsNullOrWhiteSpace(Program.InstallProgramName))
             {
-                if(listPrograms.Where(x => x.Contains(Program.InstallProgramName, StringComparison.InvariantCultureIgnoreCase)).Count() >= 1)
+                if(listPrograms.Where(x => x.Contains(Program.InstallProgramName, StringComparison.InvariantCultureIgnoreCase)).Any())
                     IsInstall = true;
                 VisibilityIsInstall = true;
             }

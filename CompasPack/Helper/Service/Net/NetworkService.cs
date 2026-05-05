@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Threading.Tasks;
@@ -15,23 +16,35 @@ namespace CompasPack.Helper.Service
             try
             {
                 var watch = new Stopwatch();
-
-                watch.Start();
+                byte[] buffer = new byte[8192];
+                long totalReceivedBytes = 0;
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uRL);
                 request.Timeout = 10000;
-                WebResponse response = await request.GetResponseAsync();
-                using (Stream stream = response.GetResponseStream())
+
+                using (WebResponse response = await request.GetResponseAsync())
                 {
-                    using (StreamReader reader = new StreamReader(stream))
+                    using (Stream stream = response.GetResponseStream())
                     {
-                        request.Timeout = 10000;
-                        await reader.ReadToEndAsync();
+                        watch.Start();
+
+                        int bytesRead;
+                        while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                        {
+                            totalReceivedBytes += bytesRead;
+                        }
+
+                        watch.Stop();
                     }
                 }
 
-                watch.Stop();
-                return 10485760 / 1024 / 1024 / watch.Elapsed.TotalSeconds;
+                double seconds = watch.Elapsed.TotalSeconds;
+                if (seconds > 0)
+                {
+                    return (totalReceivedBytes * 8) / (seconds * 1000000);
+                }
+                else { return 0; }
+
             }
             catch (Exception)
             {

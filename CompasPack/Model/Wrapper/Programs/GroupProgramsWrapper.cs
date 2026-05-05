@@ -28,16 +28,25 @@ namespace CompasPack.Model.Wrapper
         #endregion
         
         #region Constructors
-        public GroupProgramsWrapper(GroupPrograms groupProgram, ObservableCollection<ProgramWrapper> programWrappers)
+        public GroupProgramsWrapper(GroupPrograms groupProgram)
         {
             SetVisibilityCommand = new DelegateCommand(OnSetVisibility);
             GroupProgram = groupProgram;
-            ProgramWrappers = programWrappers;
             _isVisibility = true;
+
+            ProgramWrappers = new ObservableCollection<ProgramWrapper>();
+            foreach (var program in groupProgram.Programs)
+                ProgramWrappers.Add(new ProgramWrapper(program, this));
         }
         #endregion
 
         #region Motods
+        public void SelectSingleProgram(string programName)
+        {
+            foreach (var programWrapper in ProgramWrappers)
+                if (programWrapper.Program.ProgramName != programName)
+                    programWrapper.NotSelectProgram();
+        }
         private void OnSetVisibility()
         {
             IsVisibility = !IsVisibility;

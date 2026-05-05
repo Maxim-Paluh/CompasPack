@@ -109,7 +109,7 @@ namespace CompasPack.ViewModel
             }
             try
             {
-                await AidaReportHelper.GetAidaReport(_reportSettings.ReportPaths.AidaExeFilePath, System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}."), "/HML", RPFFilePath, 240);
+                await AidaReportService.GetAidaReport(_reportSettings.ReportPaths.AidaExeFilePath, System.IO.Path.Combine(ReportPath, $"Report_{IndexReport:000}."), "/HML", RPFFilePath, 240);
             }
             catch (Exception exception)
             {
@@ -144,7 +144,7 @@ namespace CompasPack.ViewModel
         protected async Task WriteHTML(string path)
         {
             var html = GetHTML();
-            ClipboardHelper.CopyToClipboard(html, "");
+            ClipboardService.CopyToClipboard(html, "");
             await _fileSystemReaderWriter.WriteAllTextAsync(path, html);
         }
         protected async Task WriteDOCX(string reportPricePath)

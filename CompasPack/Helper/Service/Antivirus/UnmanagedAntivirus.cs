@@ -1,5 +1,4 @@
-﻿using CompasPack.Helper.Service;
-using CompasPack.Model.Enum;
+﻿using CompasPack.Model.Enum;
 using CompasPack.Model.Support;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CompasPack.Helper.Service.Antivirus
+namespace CompasPack.Helper.Service
 {
     public class UnmanagedAntivirus : AntivirusBase
     {

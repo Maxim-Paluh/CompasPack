@@ -3,7 +3,6 @@ using Autofac.Core;
 using CompasPack.Data.Providers;
 using CompasPack.Data.Providers.API;
 using CompasPack.Helper.Service;
-using CompasPack.Helper.Service.Antivirus;
 using CompasPack.Helper.Service.Win;
 using CompasPack.Model.Support;
 using CompasPack.Settings;
@@ -83,10 +82,12 @@ namespace CompasPack.Startup
             }).SingleInstance();
 
             // Register Helper/Service
+            builder.RegisterType<ProgramsService>().As<IProgramsService>();
             builder.RegisterType<FileSystemReaderWriter>().As<IFileSystemReaderWriter>().SingleInstance();
             builder.RegisterType<FileSystemNavigator>().As<IFileSystemNavigator>().SingleInstance();
             builder.RegisterType<FileArchiver>().As<IFileArchiver>().SingleInstance();
-            builder.RegisterType<MessageDialogService>().As<IMessageDialogService>();
+            builder.RegisterType<ConsoleBuffer>().As<IConsoleBuffer>().SingleInstance();
+            builder.RegisterType<MessageDialogService>().As<IMessageDialogService>().SingleInstance();
 
             builder.RegisterType<WinDefenderWin10Plus>();
             builder.RegisterType<UnmanagedAntivirus>();
@@ -95,11 +96,11 @@ namespace CompasPack.Startup
             {
                 var antiviruses = new List<IAntivirus>();
 
-                foreach (var info in SoftwareInfoProvider.GetAntivirusProducts())
+                foreach (var antivirusinfo in SoftwareInfoProvider.GetAntivirusProducts())
                 {
-                    var antivirusType = GetAntivirusType(info);
+                    var antivirusType = GetAntivirusType(antivirusinfo);
 
-                    var avInstance = (IAntivirus)c.Resolve(antivirusType, new TypedParameter(typeof(AntivirusInfo), info));
+                    var avInstance = (IAntivirus)c.Resolve(antivirusType, new TypedParameter(typeof(AntivirusInfo), antivirusinfo));
                     antiviruses.Add(avInstance);
                 }
 
@@ -124,9 +125,9 @@ namespace CompasPack.Startup
                 return typeof(WinSettingsLauncherBase);
         }
 
-        private static Type GetAntivirusType(AntivirusInfo info)
+        private static Type GetAntivirusType(AntivirusInfo antivirusinfo)
         {
-            if (info.DisplayName.Contains("Windows Defender"))
+            if (antivirusinfo.DisplayName.Contains("Windows Defender"))
                 return typeof(WinDefenderWin10Plus);
             else
                 return typeof(UnmanagedAntivirus);

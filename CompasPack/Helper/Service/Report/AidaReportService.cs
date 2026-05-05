@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CompasPack.Helper.Service
 {
-    public static class AidaReportHelper
+    public static class AidaReportService
     {
         public static async Task GetAidaReport(string aidaExeFilePath, string reportPath, string type, string rpfPath, int secondswait)
         {
