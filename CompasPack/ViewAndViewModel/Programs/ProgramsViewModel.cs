@@ -27,10 +27,8 @@ namespace CompasPack.ViewModel
         private readonly IProgramsService _programsService;
         private readonly WinInfo _winInfo;
         private readonly IEnumerable<IAntivirus> _antiviruses;
-        private readonly IMessageDialogService _messageDialogService;
         private readonly IFileSystemReaderWriter _fileSystemReaderWriter;
         private readonly IFileSystemNavigator _fileSystemNavigator;
-        private readonly IFileArchiver _fileArchiver;
         private readonly ProgramsSettingsProvider _programsSettingsProvider;
         private readonly IWinSettingsLauncher _winSettingsLauncher;
 
@@ -64,8 +62,8 @@ namespace CompasPack.ViewModel
         #region Constructors
         public ProgramsViewModel(IProgramsService programsService,
                                  WinInfo winInfo, IEnumerable<IAntivirus> antiviruses, 
-                                 IConsoleBuffer consoleBuffer, IMessageDialogService messageDialogService, 
-                                 IFileSystemReaderWriter fileSystemReaderWriter, IFileSystemNavigator fileSystemNavigator, IFileArchiver fileArchiver,
+                                 IConsoleBuffer consoleBuffer, 
+                                 IFileSystemReaderWriter fileSystemReaderWriter, IFileSystemNavigator fileSystemNavigator,
                                  ProgramsSettingsProvider programsSettingsProvider, IWinSettingsLauncher winSettingsLauncher)
         {
             ProgramsSets = new ObservableCollection<ProgramsSet>();
@@ -78,11 +76,9 @@ namespace CompasPack.ViewModel
             _antiviruses = antiviruses;
 
             ConsoleBuffer = consoleBuffer;
-            _messageDialogService = messageDialogService;
             
             _fileSystemReaderWriter = fileSystemReaderWriter;
             _fileSystemNavigator = fileSystemNavigator;
-            _fileArchiver = fileArchiver;
 
             _programsSettingsProvider = programsSettingsProvider;
             _winSettingsLauncher = winSettingsLauncher;
@@ -132,7 +128,7 @@ namespace CompasPack.ViewModel
                 GroupProgramsWrappers.Add(new GroupProgramsWrapper(groupProgram));
 
             _programsService.CombinePath(GroupProgramsWrappers, _programsPaths);
-            //ProgramsHelper.CheckInstallPrograms(GroupProgramsWrappers, _winInfo.WinArchitecture); // CheckInstall
+            //_programsService.CheckInstallPrograms(GroupProgramsWrappers, _winInfo.WinArchitecture); // CheckInstall
             //----------------------------------------------------------------------------------------------------
             _programsSettingsProvider.Settings.ProgramsSets.ForEach(x => ProgramsSets.Add(x)); // Add ProgramsSets     
             var tempProgramsSet = ProgramsSets.FirstOrDefault(x => x.Name.Contains(Regex.Match(_winInfo.ProductName, @"\d+").Value, StringComparison.InvariantCultureIgnoreCase)); // check ProgramsSet
@@ -230,9 +226,9 @@ namespace CompasPack.ViewModel
             ConsoleBuffer.AddSplitter();
             foreach (var unManualAntivirus in _antiviruses.Where(av => !av.IsControlled))
                 ConsoleBuffer.WriteLine($"{unManualAntivirus.AntivirusInfo.DisplayName}: UnManual (Fail!)\n");
-            foreach (var tamperProtectionAntivirus in _antiviruses.Where(av => av.IsControlled && av.GetTamperProtectionStatus() != AntivirusStatusEnum.Disabled))
+            foreach (var tamperProtectionAntivirus in (await _antiviruses.WhereAsync(async av => av.IsControlled && await av.GetTamperProtectionStatus() != AntivirusStatusEnum.Disabled)).ToList())
                 ConsoleBuffer.WriteLine($"{tamperProtectionAntivirus.AntivirusInfo.DisplayName}: TamperProtection (Fail!)\n");
-            await _programsService.OnAntiviruses(_antiviruses.Where(av => av.IsControlled && av.GetTamperProtectionStatus() == AntivirusStatusEnum.Disabled).ToList());
+            await _programsService.OnAntiviruses((await _antiviruses.WhereAsync(async av => av.IsControlled && await av.GetTamperProtectionStatus() == AntivirusStatusEnum.Disabled)).ToList());
             ConsoleBuffer.AddSplitter();
             IsEnabled = true;
         }
@@ -242,9 +238,9 @@ namespace CompasPack.ViewModel
             ConsoleBuffer.AddSplitter();
             foreach (var unManualAntivirus in _antiviruses.Where(av => !av.IsControlled))
                 ConsoleBuffer.WriteLine($"{unManualAntivirus.AntivirusInfo.DisplayName}: UnManual (Fail!)\n");
-            foreach (var tamperProtectionAntivirus in _antiviruses.Where(av => av.IsControlled && av.GetTamperProtectionStatus() != AntivirusStatusEnum.Disabled))
+            foreach (var tamperProtectionAntivirus in (await _antiviruses.WhereAsync(async av => av.IsControlled && await av.GetTamperProtectionStatus() != AntivirusStatusEnum.Disabled)).ToList())
                 ConsoleBuffer.WriteLine($"{tamperProtectionAntivirus.AntivirusInfo.DisplayName}: TamperProtection (Fail!)\n");
-            await _programsService.OffAntiviruses(_antiviruses.Where(av => av.IsControlled && av.GetTamperProtectionStatus() == AntivirusStatusEnum.Disabled).ToList());
+            await _programsService.OffAntiviruses((await _antiviruses.WhereAsync(async av => av.IsControlled && await av.GetTamperProtectionStatus() == AntivirusStatusEnum.Disabled)).ToList());
             ConsoleBuffer.AddSplitter();
             IsEnabled = true;
         }

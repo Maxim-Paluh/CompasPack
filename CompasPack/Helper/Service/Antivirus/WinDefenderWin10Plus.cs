@@ -70,7 +70,7 @@ namespace CompasPack.Helper.Service
         public override async Task<AntivirusStatus> CheckStatus()
         {
             AntivirusStatus result = new AntivirusStatus();
-            result.TamperProtectionStatus = GetTamperProtectionStatus();
+            result.TamperProtectionStatus = await GetTamperProtectionStatus();
             result.RealtimeMonitoringStatus = await GetRealTimeMonitoringStatus();
             return result;
         }
@@ -106,19 +106,22 @@ namespace CompasPack.Helper.Service
             }
         }
 
-        public override AntivirusStatusEnum GetTamperProtectionStatus()
+        public override async Task<AntivirusStatusEnum> GetTamperProtectionStatus()
         {
-            try
-            {
-                var tamperProtectionStatus = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, _winInfo.WinArchitecture, "SOFTWARE\\Microsoft\\Windows Defender\\Features", "TamperProtection");
-                if (string.IsNullOrWhiteSpace(tamperProtectionStatus))
-                    return AntivirusStatusEnum.Unknown;
-                if(tamperProtectionStatus == "5")
-                    return AntivirusStatusEnum.Enabled;
-                else
-                    return AntivirusStatusEnum.Disabled;
-            }
-            catch { return AntivirusStatusEnum.Error; }
+            return await Task.Run(() =>
+             {
+                 try
+                 {
+                     var tamperProtectionStatus = WinRegistryProvider.GetValue(RegistryHive.LocalMachine, _winInfo.WinArchitecture, "SOFTWARE\\Microsoft\\Windows Defender\\Features", "TamperProtection");
+                     if (string.IsNullOrWhiteSpace(tamperProtectionStatus))
+                         return AntivirusStatusEnum.Unknown;
+                     if (tamperProtectionStatus == "5")
+                         return AntivirusStatusEnum.Enabled;
+                     else
+                         return AntivirusStatusEnum.Disabled;
+                 }
+                 catch { return AntivirusStatusEnum.Error; }
+             }).ConfigureAwait(false);
         }
 
         public override void OpenSettings()

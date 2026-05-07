@@ -16,7 +16,7 @@ namespace CompasPack.Helper.Service
         Task<AntivirusStatusEnum> EnableRealTimeMonitoring();
         Task<AntivirusStatus> CheckStatus();
         Task<AntivirusStatusEnum> GetRealTimeMonitoringStatus();
-        AntivirusStatusEnum GetTamperProtectionStatus();
+        Task<AntivirusStatusEnum> GetTamperProtectionStatus();
         void OpenSettings();
     }
 }

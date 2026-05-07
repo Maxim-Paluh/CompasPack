@@ -22,7 +22,7 @@ namespace CompasPack.Helper.Service
         public abstract Task<AntivirusStatusEnum> DisableRealTimeMonitoring();
         public abstract Task<AntivirusStatusEnum> EnableRealTimeMonitoring();
         public abstract Task<AntivirusStatusEnum> GetRealTimeMonitoringStatus();
-        public abstract AntivirusStatusEnum GetTamperProtectionStatus();
+        public abstract Task<AntivirusStatusEnum> GetTamperProtectionStatus();
         public abstract void OpenSettings();
     }
 }

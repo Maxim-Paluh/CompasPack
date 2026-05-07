@@ -18,8 +18,8 @@ namespace CompasPack.Helper.Service
         void CheckInstallPrograms(IList<GroupProgramsWrapper> groupProgramViewModels, WinArchitectureEnum winArchitecture);
 
         Task<double> SpeedTest();
-        Task OnAntiviruses(List<IAntivirus> antiviruses);
-        Task OffAntiviruses(List<IAntivirus> antiviruses);
+        Task OnAntiviruses(IList<IAntivirus> antiviruses);
+        Task OffAntiviruses(IList<IAntivirus> antiviruses);
 
         Task InstallPrograms(IList<ProgramWrapper> selectedPrograms);
         Task OpenProtectedProgram(ProtectedProgram protectedProgram);

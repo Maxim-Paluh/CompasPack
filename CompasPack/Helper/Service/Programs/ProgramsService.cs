@@ -66,7 +66,7 @@ namespace CompasPack.Helper.Service
             ConsoleBuffer.WriteLine($"{Math.Round(speed, 2)} Mbit/s\n");
             return speed;
         }
-        public async Task OnAntiviruses(List<IAntivirus> antiviruses)
+        public async Task OnAntiviruses(IList<IAntivirus> antiviruses)
         {
             foreach (var antivirus in antiviruses)
             {
@@ -81,7 +81,7 @@ namespace CompasPack.Helper.Service
                     ConsoleBuffer.WriteLine($"(Fail!)\n");
             }
         }
-        public async Task OffAntiviruses(List<IAntivirus> antiviruses)
+        public async Task OffAntiviruses(IList<IAntivirus> antiviruses)
         {
             foreach (var antivirus in antiviruses)
             {
@@ -96,47 +96,11 @@ namespace CompasPack.Helper.Service
                     ConsoleBuffer.WriteLine($"(Fail!)\n");
             }
         }
-        
-        public async Task OpenProtectedProgram(ProtectedProgram protectedProgram) 
+
+        public async Task OpenProtectedProgram(ProtectedProgram protectedProgram)
         {
-            var unManualAntiviruses = _antiviruses.Where(av => !av.IsControlled).ToList();
-
-            if (unManualAntiviruses.Any())
-            {
-                ShowConflictDialog(protectedProgram, unManualAntiviruses, $"не {(unManualAntiviruses.Count > 1 ? "керуються" : "керується")} програмно");
+            if (!await IsAllAntivirusManual(new[] { protectedProgram }.Select(p => p.Name).ToList(), UserActionEnum.Open))
                 return;
-            }
-            else
-            {
-                bool checkAgain = true;
-                while (checkAgain)
-                {
-                    var tamperProtectionAntiviruses = _antiviruses.Where(av => av.IsControlled && av.GetTamperProtectionStatus() != AntivirusStatusEnum.Disabled).ToList();
-
-                    if (!tamperProtectionAntiviruses.Any())
-                    {
-                        checkAgain = false;
-                        continue;
-                    }
-
-                    var result = _messageDialogService.ShowYesNoDialog(
-                        $"Для запуску {protectedProgram.Name} потрібно вимкнути 'Захист від підробки' (Tamper Protection) у налаштуваннях {(tamperProtectionAntiviruses.Count > 1 ? "антивірусів" : "антивірусу")}.\n" +
-                        "Відкрити налаштування зараз?", "Необхідна дія");
-
-                    if (result == MessageDialogResultEnum.Yes)
-                    {
-                        tamperProtectionAntiviruses.ForEach(x => x.OpenSettings());
-                        _messageDialogService.ShowInfoDialog("Натисніть 'ОК' ПІСЛЯ того, як вимкнете захист у налаштуваннях.", "Очікування");
-                    }
-                    else
-                    {
-                        ShowConflictDialog(protectedProgram, tamperProtectionAntiviruses, $"{(tamperProtectionAntiviruses.Count > 1 ? "захищені" : "захищений")} від змін");
-                        return;
-                    }
-                }
-            }
-
-
 
             ConsoleBuffer.AddSplitter();
             ConsoleBuffer.WriteLine($"Start open {protectedProgram.Name}\n");
@@ -148,15 +112,16 @@ namespace CompasPack.Helper.Service
                 do // цикл пошуку файла (цікаво зроблено, він виконується або 0.5 або на 1.5 рази)
                 {
 
-                    var activeAntiviruses = (await _antiviruses.WhereAsync(async av => av.IsControlled && await av.GetRealTimeMonitoringStatus() != AntivirusStatusEnum.Disabled)).ToList();
+                    var activeAntiviruses = (await _antiviruses.WhereAsync(async av => await av.GetRealTimeMonitoringStatus() != AntivirusStatusEnum.Disabled)).ToList();
 
                     if (activeAntiviruses.Any()) // якщо антивірус(и) увімк-нутий (нені)
                     {
                         await OffAntiviruses(activeAntiviruses); // вимикаємо
                         await Task.Delay(500); // зачекаємо вимкнення
                     }
-                    bool isStillActive = (await Task.WhenAll(activeAntiviruses.Select(async av => await av.GetRealTimeMonitoringStatus() != AntivirusStatusEnum.Disabled)))
-                                                                              .Any(isActive => isActive);
+                    //bool isStillActive = (await Task.WhenAll(activeAntiviruses.Select(async av => await av.GetRealTimeMonitoringStatus() != AntivirusStatusEnum.Disabled)))
+                    //                                                          .Any(isActive => isActive);
+                    bool isStillActive = (await activeAntiviruses.WhereAsync(async av => await av.GetRealTimeMonitoringStatus() != AntivirusStatusEnum.Disabled)).Any();
 
                     if (isStillActive) // якщо антивірусник досі увімкнутий
                     {
@@ -243,7 +208,7 @@ namespace CompasPack.Helper.Service
                     break; // виходимо якщо їх було дві
                 ConsoleBuffer.WriteLine($"<***************************************************************************>\n");
             } while (true);
-            await OnAntiviruses(_antiviruses.Where(av => av.IsControlled && av.GetTamperProtectionStatus() == AntivirusStatusEnum.Disabled).ToList());
+            await OnAntiviruses((await _antiviruses.WhereAsync(async av => av.IsControlled && await av.GetTamperProtectionStatus() == AntivirusStatusEnum.Disabled)).ToList());
             ConsoleBuffer.AddSplitter();
         }
         public async Task InstallPrograms(IList<ProgramWrapper> selectedPrograms)
@@ -251,45 +216,10 @@ namespace CompasPack.Helper.Service
             var antiVirusSensitivePrograms = selectedPrograms.Where(p => p.Program.DisableDefender && !p.IsInstall).ToList();
 
             if (antiVirusSensitivePrograms.Any()) // якщо є програми встановлення яких чутливе до антивірусів
-            {
-                var unManualAntiviruses = _antiviruses.Where(av => !av.IsControlled).ToList();
+                if (!await IsAllAntivirusManual(antiVirusSensitivePrograms.Select(x => x.Program.ProgramName).ToList(), UserActionEnum.Install)) // якщо є антивіруси якими не можна керувати
+                    CancelProblematicPrograms(ref selectedPrograms, antiVirusSensitivePrograms); // вимикаємо програми встановлення яких чутливе до антивірусів 
 
-                if (unManualAntiviruses.Any())
-                {
-                    ShowConflictDialog(antiVirusSensitivePrograms, unManualAntiviruses, "не керуються програмно");
-                    CancelProblematicPrograms(ref selectedPrograms, antiVirusSensitivePrograms);
-                }
-                else
-                {
-                    bool checkAgain = true;
-                    while (checkAgain)
-                    {
-                        var tamperProtectionAntiviruses = _antiviruses.Where(av => av.IsControlled && av.GetTamperProtectionStatus() != AntivirusStatusEnum.Disabled).ToList();
 
-                        if (!tamperProtectionAntiviruses.Any())
-                        {
-                            checkAgain = false;
-                            continue;
-                        }
-
-                        var result = _messageDialogService.ShowYesNoDialog(
-                            $"Для встановлення деяких програм потрібно вимкнути 'Захист від підробки' (Tamper Protection) у налаштуваннях {(tamperProtectionAntiviruses.Count > 1 ? "антивірусів" : "антивірусу")}.\n" +
-                            "Відкрити налаштування зараз?", "Необхідна дія");
-
-                        if (result == MessageDialogResultEnum.Yes)
-                        {
-                            tamperProtectionAntiviruses.ForEach(x => x.OpenSettings());
-                            _messageDialogService.ShowInfoDialog("Натисніть 'ОК' ПІСЛЯ того, як вимкнете захист у налаштуваннях.", "Очікування");
-                        }
-                        else
-                        {
-                            ShowConflictDialog(antiVirusSensitivePrograms, tamperProtectionAntiviruses, "захищені від змін");
-                            CancelProblematicPrograms(ref selectedPrograms, antiVirusSensitivePrograms);
-                            checkAgain = false;
-                        }
-                    }
-                }
-            }
             if (selectedPrograms.Count() != 0)
                 ConsoleBuffer.AddSplitter();
             foreach (var programToInstall in selectedPrograms)
@@ -303,18 +233,14 @@ namespace CompasPack.Helper.Service
                     await Task.Delay(500);
                     continue;
                 }
-                if (programToInstall.Program.OnlineInstaller != null && await SpeedTest() >= 5) // якщо є онлайн інсталятор і інтернет
-                    await InstallProgram(programToInstall, true); // встановлюємо онлайн 
-                else
-                    await InstallProgram(programToInstall, false); // встановлюємо офлайн
+                await InstallProgram(programToInstall); // встановлюємо офлайн
                 ConsoleBuffer.AddSplitter();
             }
             if (selectedPrograms.Where(p => p.Program.DisableDefender && !p.IsInstall).Any()) ////якщо треба було вимкнути антивірусники то вмикаємо
-                await OnAntiviruses(_antiviruses.Where(av => av.IsControlled && av.GetTamperProtectionStatus() == AntivirusStatusEnum.Disabled).ToList());
+                await OnAntiviruses((await _antiviruses.WhereAsync(async av => av.IsControlled && await av.GetTamperProtectionStatus() == AntivirusStatusEnum.Disabled)).ToList());
             ConsoleBuffer.AddSplitter();
         }
-
-        private async Task InstallProgram(ProgramWrapper programViewMode, bool tryOnlineInstall)
+        private async Task InstallProgram(ProgramWrapper programViewMode)
         {
             var program = programViewMode.Program;
 
@@ -334,8 +260,9 @@ namespace CompasPack.Helper.Service
                             await OffAntiviruses(activeAntiviruses); // вимикаємо
                             await Task.Delay(500); // зачекаємо вимкнення
                         }
-                        bool isStillActive = (await Task.WhenAll(activeAntiviruses.Select(async av => await av.GetRealTimeMonitoringStatus() != AntivirusStatusEnum.Disabled)))
-                                                                                  .Any(isActive => isActive);
+                        //bool isStillActive = (await Task.WhenAll(activeAntiviruses.Select(async av => await av.GetRealTimeMonitoringStatus() != AntivirusStatusEnum.Disabled)))
+                        //                                                          .Any(isActive => isActive);
+                        bool isStillActive = (await activeAntiviruses.WhereAsync(async av => await av.GetRealTimeMonitoringStatus() != AntivirusStatusEnum.Disabled)).Any();
 
                         if (isStillActive) // якщо антивірусник досі увімкнутий
                         {
@@ -343,10 +270,13 @@ namespace CompasPack.Helper.Service
                             break; // виходимо з циклу (далі буде помилка в циклі встановлення)
                         }
                     }
-                    if (tryOnlineInstall) // якщо є онлайн інсталятор намагаємось його знайти і задаємо аргумент онлайн інсталятора
+                    if (program.OnlineInstaller != null) // якщо є онлайн інсталятор намагаємось його знайти і задаємо аргумент онлайн інсталятора
                     {
-                        ExecutableFile = GetExeMsiFile(program.OnlineInstaller.FileName, program.PathFolder).FirstOrDefault();
-                        arguments = string.Join(" ", program.OnlineInstaller.Arguments);
+                        if (await SpeedTest() >= 5)
+                        {
+                            ExecutableFile = GetExeMsiFile(program.OnlineInstaller.FileName, program.PathFolder).FirstOrDefault();
+                            arguments = string.Join(" ", program.OnlineInstaller.Arguments);
+                        }
                     }
                     if (ExecutableFile == null) // якщо онлайн інсталятор не знайдено тоді шукаємо офлайн і задаємо аргументи офлайн інсталятора
                     {
@@ -457,38 +387,109 @@ namespace CompasPack.Helper.Service
                 }
             } while (true);
         }
-        private string[] GetExeMsiFile(string fileName, string folderPath)
+
+
+        private enum UserActionEnum
         {
-            return _fileSystemReaderWriter.GetListFile(folderPath).Where(x => x.Contains(fileName, StringComparison.InvariantCultureIgnoreCase))
-                .Where(x => x.Contains("exe", StringComparison.InvariantCultureIgnoreCase) || x.Contains("msi", StringComparison.InvariantCultureIgnoreCase)).ToArray();
+            Open,
+            Install,
+        }
+        private enum ReasonAntivirusConflictEnum
+        {
+            unManual,
+            tamperProtection
         }
         private void CancelProblematicPrograms(ref IList<ProgramWrapper> selected, List<ProgramWrapper> problematic)
         {
             problematic.ForEach(p => p.Install = false);
             selected = selected.Except(problematic).ToList();
         }
-        private void ShowConflictDialog(List<ProgramWrapper> programs, List<IAntivirus> antiviruses, string reason)
+        private void ShowAntivirusConflictDialog(List<string> prograsmNames, List<string> antivirusesNames, UserActionEnum userAction, ReasonAntivirusConflictEnum reasonAntivirusConflict)
         {
-            var pNames = programs.Select(p => p.Program.ProgramName).ToList();
-            var aNames = antiviruses.Select(av => av.AntivirusInfo.DisplayName).ToList();
+            if (prograsmNames == null || !prograsmNames.Any() || antivirusesNames == null || !antivirusesNames.Any())
+                return;
 
-            var message = $"Ви обрали {(pNames.Count > 1 ? "програми" : "програму")}, для {(pNames.Count > 1 ? "яких" : "якої")} треба вимкнути захист:\n" +
-                          $"{string.Join(";\n", pNames)}.\n\n" +
-                          $"{(aNames.Count > 1 ? "Антивіруси" : "Антивірус")} ({reason}):\n" +
-                          $"{string.Join(";\n", aNames)}.\n\n" +
-                          "Ці програми буде пропущено!";
+            // 1. Блок програми
+            bool isSinglePrograsm = prograsmNames.Count == 1;
+            string programPart = string.Empty;
+            switch (userAction)
+            {
+                case UserActionEnum.Open:
+                    programPart = $"Запуск {prograsmNames.First()} неможливий!";
+                    break;
+                case UserActionEnum.Install:
+                    programPart = isSinglePrograsm
+                        ? $"Встановлення програми {prograsmNames.First()} неможливе!"
+                        : $"Встановлення наступних програм неможливе:\n{string.Join(";\n", prograsmNames)}.";
+                    break;
+            }
+            // 2. Блок антивірусу
+            bool isSingleAntivirus = antivirusesNames.Count == 1;
+            string antivirusNamesPart = isSingleAntivirus
+                ? $"антивірус {antivirusesNames.First()}"
+                : "наступні антивіруси";
+
+            // 3. Блок причини
+            string reasonPart;
+            if (reasonAntivirusConflict == ReasonAntivirusConflictEnum.unManual)
+            {
+                reasonPart = isSingleAntivirus
+                    ? "не керується програмно!"
+                    : $"не керуються програмно:\n{string.Join(";\n", antivirusesNames)}.";
+            }
+            else
+            {
+                reasonPart = isSingleAntivirus
+                    ? "захищений від змін!"
+                    : $"захищені від змін:\n{string.Join(";\n", antivirusesNames)}.";
+            }
+
+            // 4. Фінальна збірка
+            var message = $"{programPart}\n\nОскільки {antivirusNamesPart} {reasonPart}";
+
+            if (userAction == UserActionEnum.Install)
+                message += isSinglePrograsm ? "\n\nВстановлення цієї програми буде пропущено!" : "\n\nВстановлення цих програм буде пропущено!";
 
             _messageDialogService.ShowInfoDialog(message, "Увага");
         }
-        private void ShowConflictDialog(ProtectedProgram protectedProgram, List<IAntivirus> avs, string reason)
+        private async Task<bool> IsAllAntivirusManual(List<string> programs, UserActionEnum userAction)
         {
-            var aNames = avs.Select(av => av.AntivirusInfo.DisplayName).ToList();
+            var unManualAntiviruses = _antiviruses.Where(av => !av.IsControlled).ToList();
 
-            var message = $"{(aNames.Count > 1 ? "Антивіруси" : "Антивірус")} ({reason}):\n" +
-                            $"{string.Join(";\n", aNames)}.\n\n" +
-                            $"Запуск {protectedProgram.Name} неможливий!";
+            if (unManualAntiviruses.Any())
+            {
+                ShowAntivirusConflictDialog(programs, unManualAntiviruses.Select(x => x.AntivirusInfo.DisplayName).ToList(), userAction, ReasonAntivirusConflictEnum.unManual);
+                return false;
+            }
+            else
+            {
+                while (true)
+                {
+                    var tamperProtectionAntiviruses = (await _antiviruses.WhereAsync(async av => await av.GetTamperProtectionStatus() != AntivirusStatusEnum.Disabled)).ToList();
+                    if (!tamperProtectionAntiviruses.Any())
+                        return true;
 
-            _messageDialogService.ShowInfoDialog(message, "Увага");
+                    var result = _messageDialogService.ShowYesNoDialog(
+                        $"Для встановлення деяких програм потрібно вимкнути 'Захист від підробки' (Tamper Protection) у налаштуваннях {(tamperProtectionAntiviruses.Count > 1 ? "антивірусів" : "антивірусу")}.\n" +
+                        "Відкрити налаштування зараз?", "Необхідна дія");
+
+                    if (result == MessageDialogResultEnum.Yes)
+                    {
+                        tamperProtectionAntiviruses.ForEach(x => x.OpenSettings());
+                        _messageDialogService.ShowInfoDialog("Натисніть 'ОК' ПІСЛЯ того, як вимкнете захист у налаштуваннях.", "Очікування");
+                    }
+                    else
+                    {
+                        ShowAntivirusConflictDialog(programs, tamperProtectionAntiviruses.Select(x => x.AntivirusInfo.DisplayName).ToList(), userAction, ReasonAntivirusConflictEnum.tamperProtection);
+                        return false;
+                    }
+                }
+            }
+        }
+        private string[] GetExeMsiFile(string fileName, string folderPath)
+        {
+            return _fileSystemReaderWriter.GetListFile(folderPath).Where(x => x.Contains(fileName, StringComparison.InvariantCultureIgnoreCase))
+                .Where(x => x.Contains("exe", StringComparison.InvariantCultureIgnoreCase) || x.Contains("msi", StringComparison.InvariantCultureIgnoreCase)).ToArray();
         }
     }
 }

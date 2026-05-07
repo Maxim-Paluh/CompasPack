@@ -20,7 +20,7 @@ namespace CompasPack.Helper.Service
         public override Task<AntivirusStatusEnum> DisableRealTimeMonitoring() => Task.FromResult(AntivirusStatusEnum.Error);
         public override Task<AntivirusStatusEnum> EnableRealTimeMonitoring() => Task.FromResult(AntivirusStatusEnum.Error);
         public override Task<AntivirusStatusEnum> GetRealTimeMonitoringStatus() => Task.FromResult(AntivirusStatusEnum.Error);
-        public override AntivirusStatusEnum GetTamperProtectionStatus() => AntivirusStatusEnum.Error;
+        public override Task<AntivirusStatusEnum> GetTamperProtectionStatus() => Task.FromResult(AntivirusStatusEnum.Error);
         public override void OpenSettings() { return; }
     }
 }
